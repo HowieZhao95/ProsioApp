@@ -96,6 +96,12 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
         let transcriber = prepared.transcriber
         let analyzerFormat = prepared.format
 
+        // Biases recognition toward the user's personal dictionary (e.g. "Prosio", "PR") via
+        // `AnalysisContext.contextualStrings` — the only documented tag is `.general`. This plus
+        // `.etiquetteReplacements` above are the two-pronged fix for a live bug where the zh-CN
+        // preview phonetically mangled "PR" into a vulgar Chinese phrase: biasing makes the
+        // correct term more likely to win, and etiquette replacements masks it if it doesn't.
+        // Best-effort: a failure to set context should degrade to no bias, not break the preview.
         if !options.vocabulary.isEmpty {
             let context = AnalysisContext()
             context.contextualStrings[.general] = options.vocabulary
@@ -141,7 +147,7 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
                     let combined = result.isFinal
                         ? await accumulator.applyFinal(text)
                         : await accumulator.applyVolatile(text)
-                    continuation.yield(.partial(combined))
+                    continuation.yield(.partial(Self.redactProfanity(combined)))
                 }
             }
             try await group.waitForAll()
@@ -149,7 +155,28 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
 
         let finalText = await accumulator.combined
         guard !finalText.isEmpty else { throw ProsioError.emptyTranscript }
-        continuation.yield(.final(finalText))
+        continuation.yield(.final(Self.redactProfanity(finalText)))
+    }
+
+    // MARK: - Preview profanity backstop
+
+    /// Small, explicit backstop redaction for the live preview. `.etiquetteReplacements` (enabled
+    /// in `buildPrepared`) is the primary defense and does activate — confirmed live, a volatile
+    /// result briefly rendered "****" — but was observed to be inconsistent across later
+    /// revisions of the same still-volatile segment (a later partial re-guessed the word without
+    /// the replacement re-applying, live-reproduced with "PR" -> a vulgar Chinese phrase in the
+    /// zh-CN preview). Since the preview must never show an offensive word even transiently, this
+    /// is a last-resort net, not a general-purpose profanity filter — extend the list if more
+    /// live cases turn up.
+    static let previewProfanityBlocklist = ["屁眼儿", "屁眼"]
+
+    static func redactProfanity(_ text: String) -> String {
+        guard !previewProfanityBlocklist.isEmpty else { return text }
+        var result = text
+        for term in previewProfanityBlocklist where !term.isEmpty {
+            result = result.replacingOccurrences(of: term, with: String(repeating: "*", count: term.count))
+        }
+        return result
     }
 
     // MARK: - Locale resolution
@@ -314,8 +341,19 @@ actor PreparedAnalyzerCache {
 
     /// Returns a ready pair for `locale`, using a pre-warmed one if available (and kicking off
     /// preparing the next one in the background either way).
+    ///
+    /// If a prewarm for this locale is still in flight (e.g. `prepareAssets(for:)` was called at
+    /// app launch and the user starts dictating before it finished), this **awaits it** instead
+    /// of racing ahead with a redundant fresh build — without this, a first session that starts
+    /// shortly after launch would silently fall through to the slow path even though a prewarm
+    /// was already requested, defeating the whole point of calling `prepareAssets` early.
     func checkout(locale: Locale) async throws -> Prepared {
         let key = locale.identifier(.bcp47)
+
+        if let inFlight = preparingTasks[key] {
+            await inFlight.value
+        }
+
         if let existing = cache.removeValue(forKey: key) {
             prepareInBackground(locale: locale, key: key)
             return existing
@@ -353,7 +391,10 @@ actor PreparedAnalyzerCache {
         let transcriber = DictationTranscriber(
             locale: locale,
             contentHints: [.shortForm],
-            transcriptionOptions: [.punctuation],
+            // `.etiquetteReplacements` masks profanity in the preview — a live run rendered "PR"
+            // as a vulgar Chinese phrase in the zh-CN preview HUD; the final text (cloud) was
+            // fine, but the on-device preview must never show offensive words on its own.
+            transcriptionOptions: [.punctuation, .etiquetteReplacements],
             reportingOptions: [.volatileResults, .frequentFinalization],
             attributeOptions: []
         )

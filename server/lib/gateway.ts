@@ -1,5 +1,48 @@
-import { gateway } from "@ai-sdk/gateway";
+import { createGateway } from "@ai-sdk/gateway";
 import { experimental_transcribe as transcribe } from "ai";
+import { Agent as UndiciAgent, fetch as undiciFetch } from "undici";
+
+// --- Long-keep-alive HTTP agent for the Gateway client ---------------------
+//
+// Live-measured (2026-09-26, real AI_GATEWAY_API_KEY, production `next
+// start`): the first request after any idle gap of a few seconds pays a
+// ~1.2-1.6s penalty vs. a back-to-back request. Node/undici's default
+// `keepAliveTimeout` is ~4s — well under real dictation's think time between
+// recordings — so the pooled connection to the Gateway is closing while
+// idle and every "first request of a session" re-does a TCP+TLS handshake.
+// Real dictation is almost always exactly that "first request after idle"
+// case, so this is not a micro-optimization.
+//
+// Fix: give the Gateway client its own undici `Agent` with a much longer
+// keep-alive, created once at module scope (so it — and whatever
+// connections it's pooling — survives across requests in a warm process,
+// not just within one). See server/README.md's Latency section for
+// before/after numbers with idle gaps.
+const GATEWAY_KEEP_ALIVE_MS = 60_000;
+const gatewayAgent = new UndiciAgent({
+  keepAliveTimeout: GATEWAY_KEEP_ALIVE_MS,
+  keepAliveMaxTimeout: GATEWAY_KEEP_ALIVE_MS,
+});
+
+// Bridges undici's fetch (which accepts an undici-specific `dispatcher`
+// option) to the plain `typeof globalThis.fetch` shape `@ai-sdk/gateway`
+// expects. Undici's Request/Response/Headers are structurally compatible
+// with the DOM lib's (same Fetch spec), just nominally different TS types —
+// hence the casts.
+const gatewayFetch: typeof globalThis.fetch = ((input: unknown, init?: unknown) =>
+  undiciFetch(input as string, {
+    ...(init as Record<string, unknown>),
+    dispatcher: gatewayAgent,
+  })) as unknown as typeof globalThis.fetch;
+
+/**
+ * Module-scope Gateway client (created once per warm process, like the
+ * package's own default `gateway` singleton) — but with `gatewayFetch`
+ * above so its connections use our long keep-alive instead of undici's
+ * ~4s default. `mintTranscribeToken` and `transcribeBatch` below both use
+ * this, since both are plain HTTPS calls to the same Gateway origin.
+ */
+export const gateway = createGateway({ fetch: gatewayFetch });
 
 /** Models the backend will mint transcription tokens for. First is the default. */
 export const ALLOWED_TRANSCRIBE_MODELS = [

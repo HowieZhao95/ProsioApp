@@ -2,50 +2,56 @@ import Foundation
 import ProsioCore
 
 /// Fake `CloudBatchTranscribing` for `CloudBatchTranscriptionEngine` tests: returns a fixed
-/// `CloudTranscript` or throws a fixed error, records every call (including the WAV bytes and
-/// options it was given) and whether/how many times `prewarm()` was called.
+/// `CloudTranscript` (or throws a fixed error) for every call by default, or — via the
+/// closure-based initializer — arbitrary per-call behavior (different result/error/delay per
+/// call, needed for speculative-finalization tests where a session can make several calls).
+/// Records every call (WAV bytes + options, in order) and whether/how many times `prewarm()` was
+/// called.
 final class FakeCloudBatchTranscribing: CloudBatchTranscribing, @unchecked Sendable {
+    struct Call: Sendable {
+        let wav: Data
+        let options: TranscriptionOptions
+    }
+
     private let lock = NSLock()
-    private var _transcribeCallCount = 0
+    private var _calls: [Call] = []
     private var _prewarmCallCount = 0
-    private var _lastWAV: Data?
-    private var _lastOptions: TranscriptionOptions?
 
-    private let result: CloudTranscript?
-    private let error: Error?
-    /// Optional delay before `transcribe` returns/throws — lets tests exercise cancellation
-    /// while a "network" call is in flight.
-    private let transcribeDelay: Duration?
+    private let handler: @Sendable (Data, TranscriptionOptions, Int) async throws -> CloudTranscript
 
-    var transcribeCallCount: Int { lock.withLock { _transcribeCallCount } }
+    var transcribeCallCount: Int { lock.withLock { _calls.count } }
     var prewarmCallCount: Int { lock.withLock { _prewarmCallCount } }
-    var lastWAV: Data? { lock.withLock { _lastWAV } }
-    var lastOptions: TranscriptionOptions? { lock.withLock { _lastOptions } }
+    var calls: [Call] { lock.withLock { _calls } }
+    var lastWAV: Data? { lock.withLock { _calls.last?.wav } }
+    var lastOptions: TranscriptionOptions? { lock.withLock { _calls.last?.options } }
+
+    /// `handler` receives the 0-based index of this call (in call order) alongside the wav/options,
+    /// so tests can vary behavior per call (e.g. "first call is slow and speculative, second call
+    /// is the fast real final").
+    init(handler: @escaping @Sendable (Data, TranscriptionOptions, Int) async throws -> CloudTranscript) {
+        self.handler = handler
+    }
 
     init(result: CloudTranscript, transcribeDelay: Duration? = nil) {
-        self.result = result
-        self.error = nil
-        self.transcribeDelay = transcribeDelay
+        self.handler = { _, _, _ in
+            if let transcribeDelay { try await Task.sleep(for: transcribeDelay) }
+            return result
+        }
     }
 
     init(error: Error, transcribeDelay: Duration? = nil) {
-        self.result = nil
-        self.error = error
-        self.transcribeDelay = transcribeDelay
+        self.handler = { _, _, _ in
+            if let transcribeDelay { try await Task.sleep(for: transcribeDelay) }
+            throw error
+        }
     }
 
     func transcribe(wav: Data, options: TranscriptionOptions) async throws -> CloudTranscript {
-        lock.withLock {
-            _transcribeCallCount += 1
-            _lastWAV = wav
-            _lastOptions = options
+        let index = lock.withLock {
+            _calls.append(Call(wav: wav, options: options))
+            return _calls.count - 1
         }
-        if let transcribeDelay {
-            try await Task.sleep(for: transcribeDelay)
-        }
-        if let error { throw error }
-        guard let result else { throw ProsioError.network("FakeCloudBatchTranscribing misconfigured") }
-        return result
+        return try await handler(wav, options, index)
     }
 
     func prewarm() async {

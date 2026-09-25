@@ -7,11 +7,11 @@ const { getTokenMock } = vi.hoisted(() => ({ getTokenMock: vi.fn() }));
 // Gateway call is mocked here; the real thing "just works" once a key is set
 // (see server/README.md).
 vi.mock("@ai-sdk/gateway", () => ({
-  gateway: {
+  createGateway: () => ({
     experimental_transcription: {
       getToken: getTokenMock,
     },
-  },
+  }),
 }));
 
 import { POST } from "@/app/api/transcribe/token/route";

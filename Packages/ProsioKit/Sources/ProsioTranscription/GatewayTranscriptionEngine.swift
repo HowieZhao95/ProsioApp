@@ -114,6 +114,7 @@ public struct GatewayTranscriptionEngine: TranscriptionEngine {
         // enforces the post-audio-done final timeout by force-closing the socket (which makes
         // the blocked `receive()` in `receiveEvents` throw promptly) rather than racing a fresh
         // `TaskGroup` per incoming message.
+        let timedOut = TimeoutFlag()
         try await withThrowingTaskGroup(of: ChildOutcome.self) { group in
             group.addTask {
                 try await Self.sendAudio(relay: relay, connection: connection, audioDoneMarker: audioDoneMarker)
@@ -124,7 +125,7 @@ public struct GatewayTranscriptionEngine: TranscriptionEngine {
                 return .receiverDone
             }
             group.addTask {
-                try await Self.finalTimeoutWatchdog(connection: connection, audioDoneMarker: audioDoneMarker, finalTimeout: finalTimeout)
+                try await Self.finalTimeoutWatchdog(connection: connection, audioDoneMarker: audioDoneMarker, finalTimeout: finalTimeout, timedOut: timedOut)
             }
 
             do {
@@ -140,7 +141,10 @@ public struct GatewayTranscriptionEngine: TranscriptionEngine {
                 group.cancelAll()
             } catch {
                 connection.close(code: 1011)
-                throw error
+                // The watchdog closes the socket before throwing, so the receiver's resulting
+                // "connection closed" error can win the race — report the timeout either way.
+                if timedOut.isSet { throw Self.finalTimeoutError }
+                throw Self.mapTransportError(error)
             }
         }
 
@@ -262,17 +266,30 @@ public struct GatewayTranscriptionEngine: TranscriptionEngine {
     private static func finalTimeoutWatchdog(
         connection: any WebSocketConnection,
         audioDoneMarker: DeadlineMarker,
-        finalTimeout: Duration
+        finalTimeout: Duration,
+        timedOut: TimeoutFlag
     ) async throws -> Never {
         let deadline = await audioDoneMarker.deadline(after: finalTimeout)
         try await Task.sleep(until: deadline)
+        timedOut.set()
         connection.close(code: 1000)
-        throw ProsioError.network("timed out waiting for final transcript")
+        throw finalTimeoutError
     }
+
+    private static let finalTimeoutError = ProsioError.network("timed out waiting for final transcript")
 
     private static func mapTransportError(_ error: Error) -> Error {
         if error is ProsioError { return error }
         if error is CancellationError { return ProsioError.cancelled }
         return ProsioError.network(String(describing: error))
     }
+}
+
+/// Set by the final-timeout watchdog just before it force-closes the socket.
+private final class TimeoutFlag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value = false
+
+    var isSet: Bool { lock.withLock { value } }
+    func set() { lock.withLock { value = true } }
 }

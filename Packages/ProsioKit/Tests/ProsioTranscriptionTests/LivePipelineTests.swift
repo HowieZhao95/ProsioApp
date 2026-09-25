@@ -30,12 +30,19 @@ struct LivePipelineTests {
             try dictionary.add(term: String(term))
         }
 
+        // Speculative finalization is off by default; `PROSIO_PIPELINE_ENABLE_SPECULATION=1` turns it
+        // on for before/after comparisons.
+        let cloudEngine = CloudBatchTranscriptionEngine(
+            transcriber: backend,
+            speculativeFinalization: env["PROSIO_PIPELINE_ENABLE_SPECULATION"] == "1"
+        )
+
         let audio = WavAudio(wav: wav)
         let inserter = RecordingInserter()
         let controller = DictationController(
             audio: audio,
             engines: EngineSet(
-                cloud: CloudBatchTranscriptionEngine(transcriber: backend),
+                cloud: cloudEngine,
                 local: SpeechAnalyzerEngine(locale: Locale(identifier: settings.languageHints.first ?? "en-US"))
             ),
             inserter: inserter,
@@ -107,13 +114,34 @@ private final class WavAudio: AudioCapturing, @unchecked Sendable {
             while offset < pcm.count, !Task.isCancelled {
                 let end = min(offset + chunkBytes, pcm.count)
                 let samples = pcm.subdata(in: offset..<end)
-                continuation.yield(AudioChunk(pcm16: samples, level: 0.5, timestamp: Double(offset) / 32_000))
+                continuation.yield(AudioChunk(pcm16: samples, level: Self.level(ofPCM16: samples), timestamp: Double(offset) / 32_000))
                 offset = end
                 try? await Task.sleep(for: .milliseconds(50))
             }
             self?.lock.withLock { self?._exhausted = true }
         }
         return stream
+    }
+
+    /// Real RMS-derived level (same -55...0 dBFS mapping `AudioCapture` uses), NOT a hardcoded
+    /// constant — `CloudBatchTranscriptionEngine`'s speculative-finalization pause detector reads
+    /// `AudioChunk.level`, so a fake microphone that always reports "loud" would silently defeat
+    /// it (this is exactly what the previous hardcoded `level: 0.5` here did).
+    private static func level(ofPCM16 samples: Data) -> Float {
+        let int16Samples = int16SamplesFromLittleEndianData(samples)
+        guard !int16Samples.isEmpty else { return 0 }
+        var sumSquares: Double = 0
+        for sample in int16Samples {
+            let normalized = Double(sample) / Double(Int16.max)
+            sumSquares += normalized * normalized
+        }
+        let rms = Float(sqrt(sumSquares / Double(int16Samples.count)))
+        guard rms > 0 else { return 0 }
+        let db = 20 * log10(rms)
+        let minDB: Float = -55
+        let maxDB: Float = 0
+        let clamped = min(max(db, minDB), maxDB)
+        return (clamped - minDB) / (maxDB - minDB)
     }
 
     func stop() {

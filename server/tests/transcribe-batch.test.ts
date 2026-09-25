@@ -12,9 +12,9 @@ vi.mock("ai", async (importOriginal) => {
   return { ...actual, experimental_transcribe: transcribeMock };
 });
 vi.mock("@ai-sdk/gateway", () => ({
-  gateway: {
+  createGateway: () => ({
     transcriptionModel: vi.fn((id: string) => ({ modelId: id })),
-  },
+  }),
 }));
 
 import { HEAD, POST } from "@/app/api/transcribe/route";

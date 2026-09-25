@@ -7,6 +7,12 @@ import Testing
     #expect(SpeechAnalyzerEngine().isOnDevice)
 }
 
+@Test func redactProfanity_masksKnownTerms() {
+    #expect(SpeechAnalyzerEngine.redactProfanity("我今天要做三件事，医生影响屁眼儿更新") == "我今天要做三件事，医生影响***更新")
+    #expect(SpeechAnalyzerEngine.redactProfanity("clean text") == "clean text")
+    #expect(SpeechAnalyzerEngine.redactProfanity("") == "")
+}
+
 /// Diagnostic, not a pass/fail assertion either way (this machine's OS build and downloaded
 /// language assets vary): prints `DictationTranscriber.supportedLocales` (the module
 /// `SpeechAnalyzerEngine` actually uses — see its doc comment for why `DictationTranscriber` was

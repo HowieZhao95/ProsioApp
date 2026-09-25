@@ -5,14 +5,58 @@ import ProsioCore
 /// (`POST /api/transcribe` -> Gateway `google/gemini-3.5-transcribe`, non-streaming). Pairs with
 /// `SpeechAnalyzerEngine` as the live on-device preview: this engine only ever yields one
 /// `.final`, no `.partial`s.
+///
+/// Speculative finalization: release->insert latency is dominated by the cloud request only
+/// starting once audio ends (~1.8-2.3s warm, backend overhead ~100ms — Gemini processing
+/// dominates). While audio is still streaming, a pause (`speculativePauseThreshold` of
+/// below-`speculativeLevelThreshold` chunk levels, using `AudioChunk.level`/`timestamp` — no
+/// separate VAD) fires a speculative transcription of all audio captured so far, overlapping most
+/// of that latency with the tail of the recording instead of starting cold at release. At most
+/// one speculative request is in flight at a time, capped at `maxSpeculativeRequests` per
+/// session. If the user keeps talking after a speculative snapshot, that request is cancelled
+/// (best-effort) and ignored — trailing silence at audio end never triggers a fresh request when
+/// a still-valid speculative result already covers everything.
 /// PUBLIC API — implementation owned by speech agent.
 public struct CloudBatchTranscriptionEngine: TranscriptionEngine {
     public let transcriber: any CloudBatchTranscribing
     public let model: String
 
-    public init(transcriber: any CloudBatchTranscribing, model: String = "google/gemini-3.5-transcribe") {
+    /// Internal tunables (no public API surface) — see the type doc comment.
+    let maxSpeculativeRequests: Int
+    /// Seconds of continuous below-`speculativeLevelThreshold` `AudioChunk.level` (measured via
+    /// `AudioChunk.timestamp` deltas, not wall-clock — deterministic and testable with synthetic
+    /// chunks) before a pause fires a speculative request.
+    let speculativePauseThreshold: TimeInterval
+    let speculativeLevelThreshold: Float
+
+    /// - Parameter speculativeFinalization: fire speculative requests at pauses to cut release→insert
+    ///   latency (~0.7–1.3 s in testing). Off by default: a speculative snapshot transcribed a proper
+    ///   noun differently than the full recording ("brochure" vs "Prosio"); re-evaluate on real
+    ///   recordings before enabling.
+    public init(transcriber: any CloudBatchTranscribing, model: String = "google/gemini-3.5-transcribe", speculativeFinalization: Bool = false) {
+        self.init(
+            transcriber: transcriber,
+            model: model,
+            maxSpeculativeRequests: speculativeFinalization ? 3 : 0,
+            speculativePauseThreshold: 0.6,
+            speculativeLevelThreshold: 0.08
+        )
+    }
+
+    /// Test seam for tunables (shorter pause threshold, smaller cap) — the public initializer
+    /// above is unchanged and uses the production defaults.
+    init(
+        transcriber: any CloudBatchTranscribing,
+        model: String = "google/gemini-3.5-transcribe",
+        maxSpeculativeRequests: Int,
+        speculativePauseThreshold: TimeInterval,
+        speculativeLevelThreshold: Float
+    ) {
         self.transcriber = transcriber
         self.model = model
+        self.maxSpeculativeRequests = maxSpeculativeRequests
+        self.speculativePauseThreshold = speculativePauseThreshold
+        self.speculativeLevelThreshold = speculativeLevelThreshold
     }
 
     public var id: String { "cloud.gemini-3.5-transcribe" }
@@ -43,26 +87,49 @@ public struct CloudBatchTranscriptionEngine: TranscriptionEngine {
         // request (sent once audio ends) doesn't pay connection-setup latency.
         Task { await transcriber.prewarm() }
 
+        let speculation = SpeculativeFinalizer(
+            transcriber: transcriber,
+            options: options,
+            maxRequests: maxSpeculativeRequests,
+            pauseThreshold: speculativePauseThreshold,
+            levelThreshold: speculativeLevelThreshold
+        )
+
         var pcm16 = Data()
         for await chunk in audio {
-            if Task.isCancelled { throw CancellationError() }
+            if Task.isCancelled {
+                speculation.cancelInFlight()
+                throw CancellationError()
+            }
             pcm16.append(chunk.pcm16)
+            speculation.noteChunk(chunk, pcmSoFar: pcm16)
         }
         try Task.checkCancellation()
 
-        guard !pcm16.isEmpty else { throw ProsioError.emptyTranscript }
-
-        let wav = Self.makeWAV(pcm16: pcm16, sampleRate: AudioFormat.pcm16Mono16k.sampleRate, channelCount: 1)
+        guard !pcm16.isEmpty else {
+            speculation.cancelInFlight()
+            throw ProsioError.emptyTranscript
+        }
 
         let transcript: CloudTranscript
-        do {
-            transcript = try await transcriber.transcribe(wav: wav, options: options)
-        } catch let error as ProsioError {
-            throw error
-        } catch is CancellationError {
-            throw ProsioError.cancelled
-        } catch {
-            throw ProsioError.network(String(describing: error))
+        if let speculative = await speculation.resultIfStillValid() {
+            transcript = speculative
+        } else {
+            speculation.cancelInFlight()
+            // If we got here because awaiting the speculative result was itself cancelled (not
+            // because it was stale/failed for another reason), don't waste a doomed fresh network
+            // call — surface cancellation immediately.
+            try Task.checkCancellation()
+            let wav = Self.makeWAV(pcm16: pcm16, sampleRate: AudioFormat.pcm16Mono16k.sampleRate, channelCount: 1)
+            do {
+                transcript = try await transcriber.transcribe(wav: wav, options: options)
+            } catch let error as ProsioError {
+                throw error
+            } catch is CancellationError {
+                throw ProsioError.cancelled
+            } catch {
+                throw ProsioError.network(String(describing: error))
+            }
         }
 
         let text = transcript.text.trimmingCharacters(in: .whitespacesAndNewlines)
