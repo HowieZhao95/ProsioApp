@@ -1,0 +1,242 @@
+[
+  {
+    "id": "mixed-01",
+    "category": "code-switch",
+    "language": "mixed",
+    "script": "嗯那个我们的 staging environment 已经 deploy 好了，你可以帮我 review 一下这个，呃，PR 三十七号吗？",
+    "expected": "我们的 staging environment 已经 deploy 好了，你可以帮我 review 一下这个 PR 37 号吗？",
+    "vocabulary": ["staging environment", "deploy", "review", "PR"]
+  },
+  {
+    "id": "mixed-02",
+    "category": "code-switch",
+    "language": "mixed",
+    "script": "老板说这个 sprint 的 deadline 要往后推一下，就是因为 QA team 还在 test 那个 new feature。",
+    "expected": "老板说这个 sprint 的 deadline 要往后推一下，因为 QA team 还在 test 那个 new feature。",
+    "vocabulary": ["sprint", "deadline", "QA team", "new feature"]
+  },
+  {
+    "id": "mixed-03",
+    "category": "code-switch",
+    "language": "mixed",
+    "script": "Hi Zoe，那个，我们上周讨论的 roadmap，呃，我已经更新到 Notion 里了，你 review 一下 okay 吗？",
+    "expected": "Hi Zoe，我们上周讨论的 roadmap，我已经更新到 Notion 里了，你 review 一下 okay 吗？",
+    "vocabulary": ["Zoe", "roadmap", "Notion", "review"]
+  },
+  {
+    "id": "mixed-04",
+    "category": "code-switch",
+    "language": "mixed",
+    "script": "这个 function 里面，嗯，有个 edge case 没有 handle，就是当 input 是 null 的时候会 crash。",
+    "expected": "这个 function 里面有个 edge case 没有 handle，就是当 input 是 null 的时候会 crash。",
+    "vocabulary": ["function", "edge case", "handle", "input", "null", "crash"]
+  },
+  {
+    "id": "mixed-05",
+    "category": "filler",
+    "language": "mixed",
+    "script": "嗯，那个，我觉得这个 design 呃，还挺 solid 的，就是，嗯，color scheme 可能需要再调一下。",
+    "expected": "我觉得这个 design 还挺 solid 的，就是 color scheme 可能需要再调一下。",
+    "vocabulary": ["design", "solid", "color scheme"]
+  },
+  {
+    "id": "mixed-06",
+    "category": "self-correction",
+    "language": "mixed",
+    "script": "我们周三，不对，周四下午三点开会，地点在 Room 302，啊不是，是 Room 402。",
+    "expected": "我们周四下午三点开会，地点在 Room 402。",
+    "vocabulary": ["Room 402"]
+  },
+  {
+    "id": "mixed-07",
+    "category": "list",
+    "language": "mixed",
+    "script": "我今天需要做几件事：第一个是 review 昨天的 PR，第二个是回复 client 的 email，第三个，呃，就是准备明天的 demo。",
+    "expected": "我今天需要做几件事：\n1. review 昨天的 PR\n2. 回复 client 的 email\n3. 准备明天的 demo",
+    "vocabulary": ["PR", "client", "demo"]
+  },
+  {
+    "id": "mixed-08",
+    "category": "names-jargon",
+    "language": "mixed",
+    "script": "呃，麻烦帮我把这个 bug 分配给 Kevin，然后在 Jira 里面标记成 P1，就是 Prosio 那个 dictation engine 的 crash 问题。",
+    "expected": "麻烦帮我把这个 bug 分配给 Kevin，然后在 Jira 里面标记成 P1，就是 Prosio 那个 dictation engine 的 crash 问题。",
+    "vocabulary": ["Kevin", "Jira", "P1", "Prosio", "dictation engine"]
+  },
+  {
+    "id": "mixed-09",
+    "category": "punctuation",
+    "language": "mixed",
+    "script": "你觉得呢 我们是先上线 SMART mode 还是先做 verbatim 的 fallback 如果 SMART mode 的 latency 太高的话 我们可能得先做 fallback",
+    "expected": "你觉得呢？我们是先上线 SMART mode，还是先做 verbatim 的 fallback？如果 SMART mode 的 latency 太高的话，我们可能得先做 fallback。",
+    "vocabulary": ["SMART mode", "verbatim", "fallback", "latency"]
+  },
+  {
+    "id": "mixed-10",
+    "category": "long-form",
+    "language": "mixed",
+    "script": "这周的进展是这样的，呃，我们把 audio capture 那块的 bug 修好了，然后，那个，transcription engine 这边接入了 Gateway 的 streaming API，嗯，目前 latency 大概在 300 毫秒左右，就是，呃，还有一个已知问题是长句子的时候 partial text 会闪烁，这个我们下周会 fix。",
+    "expected": "这周的进展是这样的，我们把 audio capture 那块的 bug 修好了，然后 transcription engine 这边接入了 Gateway 的 streaming API，目前 latency 大概在 300 毫秒左右，还有一个已知问题是长句子的时候 partial text 会闪烁，这个我们下周会 fix。",
+    "vocabulary": ["audio capture", "transcription engine", "Gateway", "streaming API", "latency", "partial text"]
+  },
+  {
+    "id": "mixed-11",
+    "category": "self-correction",
+    "language": "mixed",
+    "script": "把这个 PR merge 到 main，啊不对，先 merge 到 develop 分支，等 QA sign off 了再合到 main。",
+    "expected": "把这个 PR merge 到 develop 分支，等 QA sign off 了再合到 main。",
+    "vocabulary": ["PR", "merge", "develop", "QA", "sign off", "main"]
+  },
+  {
+    "id": "mixed-12",
+    "category": "list",
+    "language": "mixed",
+    "script": "明天 demo 需要准备三样东西 第一 laptop 要充满电 第二 呃 把 slides 导出成 PDF 第三 就是 提前测试一下 wifi",
+    "expected": "明天 demo 需要准备三样东西：\n1. laptop 要充满电\n2. 把 slides 导出成 PDF\n3. 提前测试一下 wifi",
+    "vocabulary": ["demo", "slides", "wifi"]
+  },
+  {
+    "id": "zh-01",
+    "category": "filler",
+    "language": "zh",
+    "script": "嗯，那个，我们今天的会议，呃，主要是讨论一下下个季度的规划，就是，嗯，具体的时间安排。",
+    "expected": "我们今天的会议主要是讨论一下下个季度的规划，具体的时间安排。",
+    "vocabulary": []
+  },
+  {
+    "id": "zh-02",
+    "category": "filler",
+    "language": "zh",
+    "script": "那个新来的实习生，嗯，他昨天问了我一个问题，就是，呃，关于报销流程的。",
+    "expected": "那个新来的实习生昨天问了我一个问题，就是关于报销流程的。",
+    "vocabulary": ["报销流程"]
+  },
+  {
+    "id": "zh-03",
+    "category": "self-correction",
+    "language": "zh",
+    "script": "会议改到明天上午十点，不对，是十点半，在三楼会议室。",
+    "expected": "会议改到明天上午十点半，在三楼会议室。",
+    "vocabulary": ["三楼会议室"]
+  },
+  {
+    "id": "zh-04",
+    "category": "self-correction",
+    "language": "zh",
+    "script": "麻烦把这份合同发给张总，啊不是，发给李总审核。",
+    "expected": "麻烦把这份合同发给李总审核。",
+    "vocabulary": ["张总", "李总"]
+  },
+  {
+    "id": "zh-05",
+    "category": "list",
+    "language": "zh",
+    "script": "购物清单是这样的，第一是买点水果，第二是买洗衣液，第三，呃，就是记得买猫粮。",
+    "expected": "购物清单是这样的：\n1. 买点水果\n2. 买洗衣液\n3. 记得买猫粮",
+    "vocabulary": ["猫粮"]
+  },
+  {
+    "id": "zh-06",
+    "category": "names-jargon",
+    "language": "zh",
+    "script": "帮我把这个客户的联系方式发给王芳，就是负责华东区销售的那个王芳，不是市场部的王芳。",
+    "expected": "帮我把这个客户的联系方式发给王芳，就是负责华东区销售的那个王芳，不是市场部的王芳。",
+    "vocabulary": ["王芳", "华东区销售", "市场部"]
+  },
+  {
+    "id": "zh-07",
+    "category": "punctuation",
+    "language": "zh",
+    "script": "你明天有空吗 我想约你聊一下项目的事情 如果没空的话 我们改到后天也可以",
+    "expected": "你明天有空吗？我想约你聊一下项目的事情。如果没空的话，我们改到后天也可以。",
+    "vocabulary": []
+  },
+  {
+    "id": "zh-08",
+    "category": "long-form",
+    "language": "zh",
+    "script": "关于这次促销活动的复盘，嗯，整体效果还不错，转化率比上个月提升了大概百分之十五，那个，主要是因为我们把首页的banner换了，呃，不过客服那边反馈说咨询量增加了不少，所以下次可能需要提前多招几个客服。",
+    "expected": "关于这次促销活动的复盘，整体效果还不错，转化率比上个月提升了大概百分之十五，主要是因为我们把首页的 banner 换了，不过客服那边反馈说咨询量增加了不少，所以下次可能需要提前多招几个客服。",
+    "vocabulary": ["banner", "转化率"]
+  },
+  {
+    "id": "zh-09",
+    "category": "long-form",
+    "language": "zh",
+    "script": "今天跟供应商开了个会，嗯，主要谈了三个事情，第一个是交货周期，他们说，呃，从下个月开始可以缩短到两周，第二个是价格，就是原材料涨价了所以他们想涨百分之五，第三个，那个，是关于售后服务的条款，我们还在谈。",
+    "expected": "今天跟供应商开了个会，主要谈了三个事情：第一个是交货周期，他们说从下个月开始可以缩短到两周；第二个是价格，就是原材料涨价了所以他们想涨百分之五；第三个是关于售后服务的条款，我们还在谈。",
+    "vocabulary": ["供应商", "交货周期", "售后服务"]
+  },
+  {
+    "id": "zh-10",
+    "category": "list",
+    "language": "zh",
+    "script": "今天下班前要交的东西有 第一个季度总结报告 第二个是费用报销单 呃 第三个 就是明天会议的PPT",
+    "expected": "今天下班前要交的东西有：\n1. 季度总结报告\n2. 费用报销单\n3. 明天会议的 PPT",
+    "vocabulary": ["季度总结报告", "PPT"]
+  },
+  {
+    "id": "en-01",
+    "category": "filler",
+    "language": "en",
+    "script": "Um, so I think the, uh, the main issue with the current design is that, like, it's not really mobile friendly.",
+    "expected": "I think the main issue with the current design is that it's not really mobile friendly.",
+    "vocabulary": ["mobile friendly"]
+  },
+  {
+    "id": "en-02",
+    "category": "self-correction",
+    "language": "en",
+    "script": "Let's schedule the call for Tuesday, actually no, let's do Wednesday at 2pm instead.",
+    "expected": "Let's schedule the call for Wednesday at 2pm.",
+    "vocabulary": []
+  },
+  {
+    "id": "en-03",
+    "category": "list",
+    "language": "en",
+    "script": "Before we ship this we need to do three things. First, run the full test suite. Second, um, update the changelog. Third, get sign off from the product team.",
+    "expected": "Before we ship this we need to do three things:\n1. Run the full test suite.\n2. Update the changelog.\n3. Get sign off from the product team.",
+    "vocabulary": ["changelog", "sign off"]
+  },
+  {
+    "id": "en-04",
+    "category": "names-jargon",
+    "language": "en",
+    "script": "Can you ping Sarah Chen about the Redis caching layer, I think she's the one who owns the rate limiter.",
+    "expected": "Can you ping Sarah Chen about the Redis caching layer? I think she's the one who owns the rate limiter.",
+    "vocabulary": ["Sarah Chen", "Redis", "caching layer", "rate limiter"]
+  },
+  {
+    "id": "en-05",
+    "category": "punctuation",
+    "language": "en",
+    "script": "do you want to grab lunch today or are you slammed if youre free lets do noon otherwise ill just grab something at my desk",
+    "expected": "Do you want to grab lunch today, or are you slammed? If you're free, let's do noon — otherwise I'll just grab something at my desk.",
+    "vocabulary": []
+  },
+  {
+    "id": "en-06",
+    "category": "long-form",
+    "language": "en",
+    "script": "So the postmortem for last night's outage, um, basically the root cause was a memory leak in the ingestion service that had been building up for, like, about six hours before it finally OOMed, and the, uh, the fix we shipped this morning adds a circuit breaker so it won't take down the whole cluster next time.",
+    "expected": "The postmortem for last night's outage: the root cause was a memory leak in the ingestion service that had been building up for about six hours before it finally OOMed. The fix we shipped this morning adds a circuit breaker so it won't take down the whole cluster next time.",
+    "vocabulary": ["postmortem", "ingestion service", "OOM", "circuit breaker", "cluster"]
+  },
+  {
+    "id": "en-07",
+    "category": "filler",
+    "language": "en",
+    "script": "I mean, you know, honestly I think the onboarding flow is, like, way too long right now, it's got, um, seven steps.",
+    "expected": "Honestly, I think the onboarding flow is way too long right now — it's got seven steps.",
+    "vocabulary": ["onboarding flow"]
+  },
+  {
+    "id": "en-08",
+    "category": "self-correction",
+    "language": "en",
+    "script": "Assign this ticket to the backend team, sorry, I mean the platform team, they own that service now.",
+    "expected": "Assign this ticket to the platform team — they own that service now.",
+    "vocabulary": ["backend team", "platform team"]
+  }
+]
