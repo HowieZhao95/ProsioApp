@@ -106,8 +106,9 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         #expect(record.trimmedSeconds != nil)
         #expect(record.timings.startToMicOpenMs != nil)
         #expect(record.timings.micOpenToFirstChunkMs != nil)
-        #expect(record.timings.stopToFinalReceivedMs != nil)
-        #expect(record.timings.finalReceivedToInsertionDoneMs != nil)
+        #expect(record.timings.stopToAudioPreparedMs != nil)
+        #expect(record.timings.audioPreparedToResponseReceivedMs != nil)
+        #expect(record.timings.responseReceivedToInsertionDoneMs != nil)
     }
 
     @Test @MainActor func doesNotWriteWhenSaveDebugRecordingsIsDisabled() async throws {

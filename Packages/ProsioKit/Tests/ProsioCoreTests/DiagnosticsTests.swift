@@ -83,8 +83,9 @@ import Testing
                 startToMicOpenMs: 12,
                 micOpenToFirstChunkMs: 40,
                 firstChunkToFirstLocalPartialMs: 200,
-                stopToFinalReceivedMs: 2400,
-                finalReceivedToInsertionDoneMs: 15
+                stopToAudioPreparedMs: 80,
+                audioPreparedToResponseReceivedMs: 2400,
+                responseReceivedToInsertionDoneMs: 15
             )
         )
     }
@@ -117,7 +118,7 @@ import Testing
         #expect(decoded.insertedText == "cloud text")
         #expect(decoded.outcome == "pasted")
         #expect(decoded.suspectedDrop == true)
-        #expect(decoded.timings.stopToFinalReceivedMs == 2400)
+        #expect(decoded.timings.audioPreparedToResponseReceivedMs == 2400)
     }
 
     @Test func prunesToKeepOnlyTheNewestSessions() throws {

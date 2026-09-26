@@ -11,11 +11,13 @@ struct DebugSessionRecord: Codable, Sendable {
         var micOpenToFirstChunkMs: Double?
         /// First audio chunk -> first local (on-device) partial.
         var firstChunkToFirstLocalPartialMs: Double?
-        /// `stop()` called -> the final-determining engine's `.final` received (cloud in
-        /// `.auto`/`.cloud`, local in `.local`).
-        var stopToFinalReceivedMs: Double?
-        /// Final received -> insertion finished.
-        var finalReceivedToInsertionDoneMs: Double?
+        /// P1.2: `stop()` called -> `AudioPreparing.prepare` finished (trim + Opus encode).
+        var stopToAudioPreparedMs: Double?
+        /// P1.2: audio prepared -> the single `/api/transcribe` response received (network +
+        /// server-side Jev/Gemini time), or the offline-fallback decision made.
+        var audioPreparedToResponseReceivedMs: Double?
+        /// P1.2: response received -> insertion finished (compose, when it ran, + insert).
+        var responseReceivedToInsertionDoneMs: Double?
     }
 
     var sessionID: String

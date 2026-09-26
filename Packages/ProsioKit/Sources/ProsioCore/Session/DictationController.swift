@@ -138,7 +138,13 @@ public final class DictationController {
     private var tFirstAudioChunk: Date?
     private var tFirstLocalPartial: Date?
     private var tStopCalled: Date?
-    private var tFinalReceived: Date?
+    /// P1.2: `AudioPreparing.prepare` (trim + Opus encode) finished.
+    private var tAudioPrepared: Date?
+    /// P1.2: the single `/api/transcribe` response received (success or failure/timeout treated as
+    /// the offline fallback) — replaces the old (mislabelled, pre-P1.2) "final received" timestamp,
+    /// which was actually stamped when the *local* engine's own `.final` arrived, not when the
+    /// server responded.
+    private var tResponseReceived: Date?
     private var tInsertionDone: Date?
     private var composeModeForDebug: String?
     private var composeLatencyMsForDebug: Double?
@@ -271,7 +277,8 @@ public final class DictationController {
         tFirstAudioChunk = nil
         tFirstLocalPartial = nil
         tStopCalled = nil
-        tFinalReceived = nil
+        tAudioPrepared = nil
+        tResponseReceived = nil
         tInsertionDone = nil
         composeLabel = nil
         composeModeForDebug = nil
@@ -357,9 +364,6 @@ public final class DictationController {
                         }
                         self.previewText = text
                     case .final(let text):
-                        if self.tFinalReceived == nil {
-                            self.tFinalReceived = Date()
-                        }
                         self.localFinalText = text
                         self.previewText = text
                     }
@@ -474,6 +478,7 @@ public final class DictationController {
 
         let prepared = await audioPreparer.prepare(pcm16: capturedPCM, sampleRate: AudioFormat.pcm16Mono16k.sampleRate)
         guard generation == sessionGeneration else { return } // cancel() could race in above (prepare is async)
+        tAudioPrepared = Date()
         originalSecondsForDebug = prepared.originalSeconds
         trimmedSecondsForDebug = prepared.trimmedSeconds
         uploadBytesForDebug = prepared.data.count
@@ -491,9 +496,11 @@ public final class DictationController {
 
         do {
             let response = try await requestTranscription(request, rawPCM: capturedPCM, sampleRate: AudioFormat.pcm16Mono16k.sampleRate)
+            tResponseReceived = Date()
             guard generation == sessionGeneration else { return }
             await handleCloudResponse(response, localFallback: localTranscript, hasSelection: hasSelection, generation: generation)
         } catch {
+            tResponseReceived = Date()
             guard generation == sessionGeneration else { return }
             // Offline/unreachable/timed-out -> fall back to the local transcript, same as today.
             guard let localTranscript else {
@@ -1081,8 +1088,9 @@ public final class DictationController {
             startToMicOpenMs: deltaMs(tStart, tMicOpen),
             micOpenToFirstChunkMs: deltaMs(tMicOpen, tFirstAudioChunk),
             firstChunkToFirstLocalPartialMs: deltaMs(tFirstAudioChunk, tFirstLocalPartial),
-            stopToFinalReceivedMs: deltaMs(tStopCalled, tFinalReceived),
-            finalReceivedToInsertionDoneMs: deltaMs(tFinalReceived, tInsertionDone)
+            stopToAudioPreparedMs: deltaMs(tStopCalled, tAudioPrepared),
+            audioPreparedToResponseReceivedMs: deltaMs(tAudioPrepared, tResponseReceived),
+            responseReceivedToInsertionDoneMs: deltaMs(tResponseReceived, tInsertionDone)
         )
     }
 
@@ -1090,7 +1098,7 @@ public final class DictationController {
         func fmt(_ ms: Double?) -> String {
             ms.map { String(format: "%.0f", $0) } ?? "n/a"
         }
-        DictationLog.logger.info("timings(ms) start->micOpen=\(fmt(timings.startToMicOpenMs), privacy: .public) micOpen->firstChunk=\(fmt(timings.micOpenToFirstChunkMs), privacy: .public) firstChunk->firstLocalPartial=\(fmt(timings.firstChunkToFirstLocalPartialMs), privacy: .public) stop->finalReceived=\(fmt(timings.stopToFinalReceivedMs), privacy: .public) finalReceived->insertionDone=\(fmt(timings.finalReceivedToInsertionDoneMs), privacy: .public)")
+        DictationLog.logger.info("timings(ms) start->micOpen=\(fmt(timings.startToMicOpenMs), privacy: .public) micOpen->firstChunk=\(fmt(timings.micOpenToFirstChunkMs), privacy: .public) firstChunk->firstLocalPartial=\(fmt(timings.firstChunkToFirstLocalPartialMs), privacy: .public) stop->audioPrepared=\(fmt(timings.stopToAudioPreparedMs), privacy: .public) audioPrepared->responseReceived=\(fmt(timings.audioPreparedToResponseReceivedMs), privacy: .public) responseReceived->insertionDone=\(fmt(timings.responseReceivedToInsertionDoneMs), privacy: .public)")
     }
 
     private static func defaultDebugRecordingsRoot() -> URL {

@@ -185,28 +185,11 @@ extension CloudBatchTranscribing {
     }
 }
 
-// MARK: - Routing (auto mode: is the on-device transcript good enough to insert as-is?)
-
-public struct RouteDecision: Sendable, Codable, Hashable {
-    /// True when the cloud SMART pass is needed; false = insert the on-device transcript directly.
-    public var needsCloud: Bool
-    /// Router's probability that the local transcript is clean enough to insert as-is (0...1), if known.
-    public var cleanProbability: Double?
-    /// Short machine-readable reason, e.g. "clean", "needs-cleanup", "likely-misrecognized", "router-error".
-    public var reason: String
-
-    public init(needsCloud: Bool, cleanProbability: Double? = nil, reason: String) {
-        self.needsCloud = needsCloud
-        self.cleanProbability = cleanProbability
-        self.reason = reason
-    }
-}
-
-/// Decides, from the on-device transcript, whether the cloud pass is needed (backend -> Gateway `typesafe-ai/jev`).
-/// Implemented by `BackendClient` (`POST /api/route`, see docs/API.md). Callers must treat errors/timeouts as "needs cloud".
-public protocol RouteDeciding: Sendable {
-    func decide(localTranscript: String, options: TranscriptionOptions) async throws -> RouteDecision
-}
+// `RouteDecision`/`RouteDeciding` (client-side "is the local transcript clean enough to skip
+// cloud?" pre-check, `POST /api/route`) removed 2026-09-26: P1.2 moved this decision server-side,
+// folded into the single `/api/transcribe` request/response (`CloudTranscript.source`/`.route`,
+// `TranscribeRouteInfo`) — see docs/P1.2-AUDIO-ROUTING.md §3. Nothing else in the codebase
+// referenced these types at removal time.
 
 // MARK: - Gateway token
 
