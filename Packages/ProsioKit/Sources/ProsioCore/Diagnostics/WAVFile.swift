@@ -1,9 +1,11 @@
 import Foundation
 
-/// Builds a minimal RIFF/WAVE container around raw little-endian PCM16 mono samples. Not part of
-/// the public contract — used only by debug recordings.
-enum WAVFile {
-    static func make(pcm16: Data, sampleRate: Double, channelCount: Int = 1) -> Data {
+/// Builds a minimal RIFF/WAVE container around raw little-endian PCM16 mono samples. Originally
+/// debug-recordings-only; made `public` for P1.2 so `AudioPreparing` conformers outside ProsioCore
+/// (e.g. ProsioAudio's real trim+encode implementation) can build the WAV fallback used when Opus
+/// encoding fails, without duplicating this format logic.
+public enum WAVFile {
+    public static func make(pcm16: Data, sampleRate: Double, channelCount: Int = 1) -> Data {
         let bitsPerSample: UInt16 = 16
         let numChannels = UInt16(channelCount)
         let sampleRateInt = UInt32(sampleRate)

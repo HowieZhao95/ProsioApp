@@ -33,18 +33,6 @@ struct GeneralSettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("Engine") {
-                Picker("Transcription engine", selection: $settings.enginePreference) {
-                    Text("Auto").tag(EnginePreference.auto)
-                    Text("Cloud").tag(EnginePreference.cloud)
-                    Text("On-device").tag(EnginePreference.local)
-                }
-                .pickerStyle(.segmented)
-                Text(engineDescription)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
             Section("Language Hints") {
                 LanguageHintPicker(selection: $settings.languageHints, available: availableLanguages)
             }
@@ -58,14 +46,6 @@ struct GeneralSettingsView: View {
             }
         }
         .formStyle(.grouped)
-    }
-
-    private var engineDescription: String {
-        switch settings.enginePreference {
-        case .auto: "Uses the cloud model, falling back to on-device recognition when offline."
-        case .cloud: "Always uses the cloud model. Requires an internet connection and sign-in."
-        case .local: "Always transcribes on-device. Works offline, no account needed."
-        }
     }
 
     private var launchAtLoginBinding: Binding<Bool> {

@@ -17,7 +17,8 @@ vi.mock("@ai-sdk/gateway", () => ({
 }));
 
 import { POST } from "@/app/api/intent/route";
-import { BREAKER_COOLDOWN_MS, classifyIntent, resetIntentCircuitBreakerForTests } from "@/lib/intent";
+import { classifyIntent } from "@/lib/intent";
+import { BREAKER_COOLDOWN_MS, resetJevCircuitBreakerForTests } from "@/lib/jev";
 import { authedUser, jsonRequest } from "./helpers";
 
 function choiceAnswer(choice: string, probabilities: Record<string, number>) {
@@ -30,7 +31,7 @@ describe("POST /api/intent", () => {
     // Every test starts from a clean circuit breaker — otherwise a
     // preceding test's Jev failure/timeout would leave the breaker "open"
     // and silently skip Jev in a later test that expects it to be called.
-    resetIntentCircuitBreakerForTests();
+    resetJevCircuitBreakerForTests();
   });
 
   it("401s without a session token", async () => {
@@ -180,7 +181,7 @@ describe("POST /api/intent", () => {
 describe("classifyIntent — circuit breaker", () => {
   beforeEach(() => {
     evaluateMock.mockReset();
-    resetIntentCircuitBreakerForTests();
+    resetJevCircuitBreakerForTests();
     vi.useFakeTimers();
   });
 

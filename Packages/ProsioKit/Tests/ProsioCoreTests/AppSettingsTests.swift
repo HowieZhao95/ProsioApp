@@ -16,7 +16,6 @@ import Testing
 
         let settings = AppSettings(defaults: defaults)
         #expect(settings.triggerKey == .fn)
-        #expect(settings.enginePreference == .auto)
         #expect(settings.backendURL == URL(string: "http://localhost:3000")!)
         #expect(settings.languageHints == ["zh-CN", "en-US"])
         #expect(settings.showEdgeGlow == true)
@@ -31,7 +30,6 @@ import Testing
 
         let settings = AppSettings(defaults: defaults)
         settings.triggerKey = .rightOption
-        settings.enginePreference = .local
         settings.backendURL = URL(string: "https://example.com")!
         settings.languageHints = ["fr-FR"]
         settings.showEdgeGlow = false
@@ -41,7 +39,6 @@ import Testing
 
         let reloaded = AppSettings(defaults: defaults)
         #expect(reloaded.triggerKey == .rightOption)
-        #expect(reloaded.enginePreference == .local)
         #expect(reloaded.backendURL == URL(string: "https://example.com")!)
         #expect(reloaded.languageHints == ["fr-FR"])
         #expect(reloaded.showEdgeGlow == false)

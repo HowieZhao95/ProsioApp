@@ -5,20 +5,23 @@ import Testing
 @MainActor
 private func makeDebugTestController(
     audio: FakeAudio = FakeAudio(),
-    cloud: FakeEngine,
     local: FakeEngine,
+    cloud: FakeCloudTranscriber,
+    audioPreparer: any AudioPreparing = WAVAudioPreparer(),
     composer: FakeComposer? = nil,
     settings: AppSettings,
     debugRoot: URL
 ) -> DictationController {
     let controller = DictationController(
         audio: audio,
-        engines: EngineSet(cloud: cloud, local: local),
+        localEngine: local,
+        cloudTranscriber: cloud,
         inserter: FakeInserter(),
         contextProvider: FakeContextProvider(),
         history: HistoryStore(fileURL: nil),
         dictionary: DictionaryStore(fileURL: nil),
         settings: settings,
+        audioPreparer: audioPreparer,
         composer: composer
     )
     controller.debugRecordingsRootOverride = debugRoot
@@ -50,13 +53,17 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         defer { try? FileManager.default.removeItem(at: root) }
 
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "gateway.gemini-3.5-transcribe", steps: [.final("Cloud final text")])
         let local = FakeEngine(id: "apple.speechanalyzer", isOnDevice: true, steps: [.partial("Local partial"), .final("Local final text")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(
+            text: "Cloud final text",
+            source: "cloud",
+            route: TranscribeRouteInfo(cleanProbability: 0.2, reason: "needs-cleanup")
+        ))
         let settings = makeTestSettings()
-        settings.enginePreference = .auto
         settings.saveDebugRecordings = true
 
-        let controller = makeDebugTestController(audio: audio, cloud: cloud, local: local, settings: settings, debugRoot: root)
+        let controller = makeDebugTestController(audio: audio, local: local, cloud: cloud, settings: settings, debugRoot: root)
 
         controller.start(trigger: .hold)
         let chunk1 = AudioChunk(pcm16: Data([0x01, 0x02]), level: 0.2, timestamp: 0.1)
@@ -83,13 +90,20 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         let record = try decoder.decode(DebugSessionRecord.self, from: Data(contentsOf: jsonURL))
         #expect(record.mode == "auto")
         #expect(record.localEngineID == "apple.speechanalyzer")
-        #expect(record.cloudEngineID == "gateway.gemini-3.5-transcribe")
-        #expect(record.engineIDUsed == "gateway.gemini-3.5-transcribe")
+        #expect(record.cloudEngineID == DictationController.cloudEngineID)
+        #expect(record.engineIDUsed == DictationController.cloudEngineID)
         #expect(record.localFinalText == "Local final text")
         #expect(record.cloudFinalText == "Cloud final text")
         #expect(record.insertedText == "Cloud final text")
         #expect(record.outcome == "pasted")
         #expect(record.suspectedDrop == false)
+        #expect(record.routeSource == "cloud")
+        #expect(record.routeCleanProbability == 0.2)
+        #expect(record.routeReason == "needs-cleanup")
+        #expect(record.audioFormat == "wav")
+        #expect(record.uploadBytes != nil)
+        #expect(record.originalSeconds != nil)
+        #expect(record.trimmedSeconds != nil)
         #expect(record.timings.startToMicOpenMs != nil)
         #expect(record.timings.micOpenToFirstChunkMs != nil)
         #expect(record.timings.stopToFinalReceivedMs != nil)
@@ -101,13 +115,13 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         defer { try? FileManager.default.removeItem(at: root) }
 
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("Cloud text")])
         let local = FakeEngine(id: "local", steps: [.final("Local text")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "Cloud text", source: "cloud"))
         let settings = makeTestSettings()
-        settings.enginePreference = .auto
         settings.saveDebugRecordings = false
 
-        let controller = makeDebugTestController(audio: audio, cloud: cloud, local: local, settings: settings, debugRoot: root)
+        let controller = makeDebugTestController(audio: audio, local: local, cloud: cloud, settings: settings, debugRoot: root)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -128,13 +142,13 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         // cloud only returned the first — well under the 55% ratio floor with 12+ local chars.
         let longLocal = "第一个问题是启动的速度不够跟手第二个问题是识别经常出错第三个问题是偶尔会闪退"
         let shortCloud = "第一个问题是启动的速度不够跟手"
-        let cloud = FakeEngine(id: "cloud", steps: [.delay(.milliseconds(50)), .final(shortCloud)])
         let local = FakeEngine(id: "local", steps: [.final(longLocal)])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .delayThenResult(.milliseconds(50), CloudTranscript(text: shortCloud, source: "cloud"))
         let settings = makeTestSettings()
-        settings.enginePreference = .auto
         settings.saveDebugRecordings = true
 
-        let controller = makeDebugTestController(audio: audio, cloud: cloud, local: local, settings: settings, debugRoot: root)
+        let controller = makeDebugTestController(audio: audio, local: local, cloud: cloud, settings: settings, debugRoot: root)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -154,15 +168,15 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         defer { try? FileManager.default.removeItem(at: root) }
 
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("what is the capital of Portugal")])
         let local = FakeEngine(id: "local", steps: [.final("what is the capital of Portugal")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "what is the capital of Portugal", source: "cloud"))
         let composer = FakeComposer()
         composer.behavior = .deltas(["Lisbon ", "is the capital of Portugal."])
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.saveDebugRecordings = true
 
-        let controller = makeDebugTestController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings, debugRoot: root)
+        let controller = makeDebugTestController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings, debugRoot: root)
 
         controller.start(trigger: .hold, intent: .ask)
         controller.stop()
@@ -179,5 +193,39 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
         #expect(record.composeOutput == "Lisbon is the capital of Portugal.")
         #expect(record.composeLatencyMs != nil)
         #expect(record.insertedText == "Lisbon is the capital of Portugal.")
+    }
+
+    @Test @MainActor func recordsRouteSourceLocalWhenServerSkipsGemini() async throws {
+        let root = makeTempFileURL("debug").deletingLastPathComponent()
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let audio = FakeAudio()
+        let local = FakeEngine(id: "local", steps: [.final("clean text")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(
+            text: "clean text",
+            source: "local",
+            intent: IntentDecision(intent: .dictate, confidence: 0.95, source: "jev"),
+            route: TranscribeRouteInfo(cleanProbability: 0.97, reason: "clean")
+        ))
+        let settings = makeTestSettings()
+        settings.saveDebugRecordings = true
+
+        let controller = makeDebugTestController(audio: audio, local: local, cloud: cloud, settings: settings, debugRoot: root)
+
+        controller.start(trigger: .hold)
+        controller.stop()
+        await waitUntil { if case .finished = controller.phase { return true }; return false }
+
+        let jsonURL = try #require(await waitForDebugFile("session.json", in: root))
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let record = try decoder.decode(DebugSessionRecord.self, from: Data(contentsOf: jsonURL))
+
+        #expect(record.routeSource == "local")
+        #expect(record.routeCleanProbability == 0.97)
+        #expect(record.routeReason == "clean")
+        #expect(record.intentDecisionClassified == "dictate")
+        #expect(record.intentDecisionSource == "jev")
     }
 }

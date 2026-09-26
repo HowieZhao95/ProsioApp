@@ -99,21 +99,90 @@ public struct CloudTranscript: Sendable, Codable, Hashable {
     public var text: String
     public var language: String?
     public var durationSeconds: Double?
+    /// P1.2 additive: "local" (the server found `CloudTranscribeRequest.localTranscript` clean
+    /// enough and skipped Gemini) or "cloud". `nil` from the legacy `transcribe(wav:options:)` path.
+    public var source: String?
+    /// P1.2 additive: the server-side intent decision for this session, returned inline with the
+    /// transcript — replaces a separate `/api/intent` call on the main dictation path. A `nil`
+    /// `intent` inside means "unavailable"; callers fall back to `IntentRules`.
+    public var intent: IntentDecision?
+    /// P1.2 additive: the server router's verdict that produced `source`.
+    public var route: TranscribeRouteInfo?
 
-    public init(text: String, language: String? = nil, durationSeconds: Double? = nil) {
+    public init(text: String, language: String? = nil, durationSeconds: Double? = nil, source: String? = nil, intent: IntentDecision? = nil, route: TranscribeRouteInfo? = nil) {
         self.text = text
         self.language = language
         self.durationSeconds = durationSeconds
+        self.source = source
+        self.intent = intent
+        self.route = route
+    }
+}
+
+/// P1.2 additive: upload codec for a batch transcription request — "wav" (uncompressed, today's
+/// baseline) or "ogg-opus" (speech's `OggOpusEncoder`, ~16x smaller). See docs/P1.2-AUDIO-ROUTING.md.
+public enum UploadAudioFormat: String, Sendable, Codable, Hashable {
+    case wav
+    case oggOpus = "ogg-opus"
+}
+
+/// P1.2 additive: the server router's verdict on `CloudTranscribeRequest.localTranscript`, included
+/// on every `/api/transcribe` response (`CloudTranscript.route`).
+public struct TranscribeRouteInfo: Sendable, Codable, Hashable {
+    /// Router's probability that the local transcript is clean enough to insert as-is (0...1), if known.
+    public var cleanProbability: Double?
+    /// Short machine-readable reason, e.g. "clean", "needs-cleanup", "router-unavailable".
+    public var reason: String
+
+    public init(cleanProbability: Double? = nil, reason: String) {
+        self.cleanProbability = cleanProbability
+        self.reason = reason
+    }
+}
+
+/// P1.2 additive: everything `POST /api/transcribe` needs to do local-transcript-aware routing and
+/// intent classification server-side in one round trip, instead of separate `/api/route` +
+/// `/api/intent` calls. See docs/P1.2-AUDIO-ROUTING.md §3.
+public struct CloudTranscribeRequest: Sendable {
+    public var audioData: Data
+    public var audioFormat: UploadAudioFormat
+    public var options: TranscriptionOptions
+    /// The on-device transcript, if any — lets the server skip Gemini when it's already clean.
+    public var localTranscript: String?
+    public var hasSelection: Bool
+    public var app: AppContext?
+    public var sessionID: UUID
+
+    public init(audioData: Data, audioFormat: UploadAudioFormat = .wav, options: TranscriptionOptions, localTranscript: String? = nil, hasSelection: Bool = false, app: AppContext? = nil, sessionID: UUID = UUID()) {
+        self.audioData = audioData
+        self.audioFormat = audioFormat
+        self.options = options
+        self.localTranscript = localTranscript
+        self.hasSelection = hasSelection
+        self.app = app
+        self.sessionID = sessionID
     }
 }
 
 /// Transcribes a complete recording in the cloud (Prosio backend -> Gateway `google/gemini-3.5-transcribe`, SMART).
 /// Implemented by `BackendClient` (`POST /api/transcribe`, see docs/API.md).
 public protocol CloudBatchTranscribing: Sendable {
-    /// - Parameter wav: a complete RIFF/WAVE file, 16 kHz mono PCM16.
+    /// - Parameter wav: a complete RIFF/WAVE file, 16 kHz mono PCM16. Legacy single-shot call,
+    ///   kept for existing conformers/callers (e.g. `ProsioTranscription.CloudBatchTranscriptionEngine`).
     func transcribe(wav: Data, options: TranscriptionOptions) async throws -> CloudTranscript
+    /// P1.2: the main dictation path's single request (see `CloudTranscribeRequest`). Conformers
+    /// that don't override this get a default bridge to the legacy method above (audioFormat/
+    /// localTranscript/hasSelection/app silently dropped, `source`/`intent`/`route` come back nil)
+    /// — see the `public extension` below. `BackendClient` overrides it with the real behavior.
+    func transcribe(_ request: CloudTranscribeRequest) async throws -> CloudTranscript
     /// Opens/refreshes the HTTPS connection ahead of time (called when dictation starts) to cut first-byte latency.
     func prewarm() async
+}
+
+extension CloudBatchTranscribing {
+    public func transcribe(_ request: CloudTranscribeRequest) async throws -> CloudTranscript {
+        try await transcribe(wav: request.audioData, options: request.options)
+    }
 }
 
 // MARK: - Routing (auto mode: is the on-device transcript good enough to insert as-is?)
@@ -278,11 +347,16 @@ public struct IntentDecision: Sendable, Codable, Hashable {
     public var confidence: Double?
     /// e.g. "jev", "unavailable". Set to "rules" client-side when `IntentRules` made the call instead.
     public var source: String
+    /// P1.2 additive: "local" | "final" — which transcript this decision was made on, when the
+    /// server evaluated more than one (see docs/P1.2-AUDIO-ROUTING.md §3 step 3). `nil` from the
+    /// standalone `/api/intent` response or when unavailable.
+    public var classifiedOn: String?
 
-    public init(intent: ClassifiedIntent?, confidence: Double? = nil, source: String) {
+    public init(intent: ClassifiedIntent?, confidence: Double? = nil, source: String, classifiedOn: String? = nil) {
         self.intent = intent
         self.confidence = confidence
         self.source = source
+        self.classifiedOn = classifiedOn
     }
 }
 

@@ -4,8 +4,8 @@ import Testing
 @MainActor
 private func makeComposeController(
     audio: FakeAudio = FakeAudio(),
-    cloud: FakeEngine,
     local: FakeEngine,
+    cloud: FakeCloudTranscriber,
     composer: FakeComposer? = nil,
     contextProvider: FakeContextProvider = FakeContextProvider(),
     inserter: FakeInserter = FakeInserter(),
@@ -14,7 +14,8 @@ private func makeComposeController(
 ) -> DictationController {
     DictationController(
         audio: audio,
-        engines: EngineSet(cloud: cloud, local: local),
+        localEngine: local,
+        cloudTranscriber: cloud,
         inserter: inserter,
         contextProvider: contextProvider,
         history: history,
@@ -24,24 +25,32 @@ private func makeComposeController(
     )
 }
 
+/// A `FakeCloudTranscriber` that just echoes `text` back with `source: "cloud"` — used throughout
+/// this file so compose dispatch (which needs a non-"local" source, see `DictationController
+/// .handleCloudResponse`) always runs, exactly mirroring what the local engine transcribed.
+private func echoingCloud(_ text: String) -> FakeCloudTranscriber {
+    let cloud = FakeCloudTranscriber()
+    cloud.behavior = .result(CloudTranscript(text: text, source: "cloud"))
+    return cloud
+}
+
 @Suite struct DictationControllerComposeTests {
 
     // MARK: - .dictate: rewrite
 
     @Test @MainActor func rewrite_AdaptToAppOnNonGeneralScene_InsertsComposedText() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("please review the attached document")])
         let local = FakeEngine(id: "local", steps: [.final("please review the attached document")])
+        let cloud = echoingCloud("please review the attached document")
         let composer = FakeComposer()
         composer.behavior = .delayThenDeltas(.milliseconds(100), ["Please review the ", "attached document."])
         let contextProvider = FakeContextProvider()
         contextProvider.contextToReturn = FocusContext(bundleID: "com.apple.mail", appName: "Mail")
         let history = HistoryStore(fileURL: nil)
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.adaptToApp = true
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, contextProvider: contextProvider, history: history, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, contextProvider: contextProvider, history: history, settings: settings)
 
         controller.start(trigger: .hold)
         #expect(controller.scene == .email)
@@ -63,15 +72,14 @@ private func makeComposeController(
 
     @Test @MainActor func rewrite_GeneralScene_SkipsComposeEntirely() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("hello there")])
         let local = FakeEngine(id: "local", steps: [.final("hello there")])
+        let cloud = echoingCloud("hello there")
         let composer = FakeComposer()
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.adaptToApp = true
         // Default FakeContextProvider has no recognizable app -> .general scene.
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -83,17 +91,16 @@ private func makeComposeController(
 
     @Test @MainActor func rewrite_FailureFallsBackToUntransformedTranscript() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("draft message body")])
         let local = FakeEngine(id: "local", steps: [.final("draft message body")])
+        let cloud = echoingCloud("draft message body")
         let composer = FakeComposer()
         composer.behavior = .fail(.network("compose down"))
         let contextProvider = FakeContextProvider()
         contextProvider.contextToReturn = FocusContext(bundleID: "com.apple.mail", appName: "Mail")
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.adaptToApp = true
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, contextProvider: contextProvider, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, contextProvider: contextProvider, settings: settings)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -109,17 +116,16 @@ private func makeComposeController(
 
     @Test @MainActor func rewrite_TimeoutFallsBackToUntransformedTranscript() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("some text")])
         let local = FakeEngine(id: "local", steps: [.final("some text")])
+        let cloud = echoingCloud("some text")
         let composer = FakeComposer()
         composer.behavior = .hang
         let contextProvider = FakeContextProvider()
         contextProvider.contextToReturn = FocusContext(bundleID: "com.apple.mail", appName: "Mail")
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.adaptToApp = true
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, contextProvider: contextProvider, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, contextProvider: contextProvider, settings: settings)
         controller.composeTimeout = .milliseconds(50)
 
         controller.start(trigger: .hold)
@@ -133,15 +139,14 @@ private func makeComposeController(
         // composer: nil -> P1 off, exactly today's behavior even with adaptToApp on and a
         // non-general scene.
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("hi")])
         let local = FakeEngine(id: "local", steps: [.final("hi")])
+        let cloud = echoingCloud("hi")
         let contextProvider = FakeContextProvider()
         contextProvider.contextToReturn = FocusContext(bundleID: "com.apple.mail", appName: "Mail")
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.adaptToApp = true
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: nil, contextProvider: contextProvider, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: nil, contextProvider: contextProvider, settings: settings)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -154,16 +159,15 @@ private func makeComposeController(
 
     @Test @MainActor func translateEnabled_ComposesWithTargetLanguage() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("hello world")])
         let local = FakeEngine(id: "local", steps: [.final("hello world")])
+        let cloud = echoingCloud("hello world")
         let composer = FakeComposer()
         composer.behavior = .deltas(["你好，", "世界"])
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.translateEnabled = true
         settings.translateTarget = "zh-CN"
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -177,16 +181,15 @@ private func makeComposeController(
 
     @Test @MainActor func oneOffTranslatePrefix_OverridesToggleAndStripsClientSide() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("翻译成英文：你好世界")])
         let local = FakeEngine(id: "local", steps: [.final("翻译成英文：你好世界")])
+        let cloud = echoingCloud("翻译成英文：你好世界")
         let composer = FakeComposer()
         composer.behavior = .deltas(["Hello world"])
         let history = HistoryStore(fileURL: nil)
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.translateEnabled = false // prefix alone should trigger translate
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, history: history, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, history: history, settings: settings)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -201,18 +204,17 @@ private func makeComposeController(
 
     @Test @MainActor func translateFailure_CopiesToClipboardAndFails_NeverInsertsUntranslated() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("hello world")])
         let local = FakeEngine(id: "local", steps: [.final("hello world")])
+        let cloud = echoingCloud("hello world")
         let composer = FakeComposer()
         composer.behavior = .fail(.network("translate down"))
         let inserter = FakeInserter()
         inserter.outcomeToReturn = .copiedToClipboard
         let history = HistoryStore(fileURL: nil)
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
         settings.translateEnabled = true
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, inserter: inserter, history: history, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, inserter: inserter, history: history, settings: settings)
         var completed: HistoryItem?
         controller.onSessionCompleted = { completed = $0 }
 
@@ -238,8 +240,8 @@ private func makeComposeController(
 
     @Test @MainActor func edit_AutoResolvedWhenSelectionPresent_InsertsComposedResult() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("make it shorter")])
         let local = FakeEngine(id: "local", steps: [.final("make it shorter")])
+        let cloud = echoingCloud("make it shorter")
         let composer = FakeComposer()
         composer.behavior = .delayThenDeltas(.milliseconds(100), ["Shortened text."])
         let contextProvider = FakeContextProvider()
@@ -247,9 +249,8 @@ private func makeComposeController(
         let inserter = FakeInserter()
         let history = HistoryStore(fileURL: nil)
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, contextProvider: contextProvider, inserter: inserter, history: history, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, contextProvider: contextProvider, inserter: inserter, history: history, settings: settings)
 
         controller.start(trigger: .hold) // no explicit intent -> auto-resolves to .edit
         #expect(controller.intent == .edit)
@@ -270,17 +271,16 @@ private func makeComposeController(
 
     @Test @MainActor func edit_Failure_FailsWithSelectionUntouched() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("fix the grammar")])
         let local = FakeEngine(id: "local", steps: [.final("fix the grammar")])
+        let cloud = echoingCloud("fix the grammar")
         let composer = FakeComposer()
         composer.behavior = .fail(.transcriptionFailed("edit engine down"))
         let contextProvider = FakeContextProvider()
         contextProvider.contextToReturn = FocusContext(appName: "Notes", selectedText: "some text")
         let inserter = FakeInserter()
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, contextProvider: contextProvider, inserter: inserter, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, contextProvider: contextProvider, inserter: inserter, settings: settings)
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -297,15 +297,15 @@ private func makeComposeController(
 
     @Test @MainActor func edit_ExplicitIntentOverridesAutoResolution() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("just dictate this")])
-        let local = FakeEngine(id: "local", steps: [.final("just dictate this")])
+        let local = FakeEngine(id: "local", steps: [.hang])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
         let contextProvider = FakeContextProvider()
         // Selection present, but caller explicitly requests .dictate -> must not become .edit.
         contextProvider.contextToReturn = FocusContext(appName: "Notes", selectedText: "existing selection")
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, contextProvider: contextProvider, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, contextProvider: contextProvider, settings: settings)
 
         controller.start(trigger: .hold, intent: .dictate)
         #expect(controller.intent == .dictate)
@@ -314,13 +314,14 @@ private func makeComposeController(
 
     @Test @MainActor func edit_SecureInputNeverAutoResolvesToEdit() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
         let local = FakeEngine(id: "local", steps: [.hang])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
         let contextProvider = FakeContextProvider()
         contextProvider.contextToReturn = FocusContext(appName: "Notes", isSecureInput: true, selectedText: "password123")
         let settings = makeTestSettings()
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, contextProvider: contextProvider, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, contextProvider: contextProvider, settings: settings)
 
         controller.start(trigger: .hold)
         #expect(controller.intent == .dictate)
@@ -331,15 +332,14 @@ private func makeComposeController(
 
     @Test @MainActor func ask_StreamsDeltasAndCanBeInserted() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("what is the capital of France")])
         let local = FakeEngine(id: "local", steps: [.final("what is the capital of France")])
+        let cloud = echoingCloud("what is the capital of France")
         let composer = FakeComposer()
         composer.behavior = .deltas(["Paris ", "is the capital of France."])
         let inserter = FakeInserter()
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, inserter: inserter, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, inserter: inserter, settings: settings)
 
         controller.start(trigger: .hold, intent: .ask)
         #expect(controller.intent == .ask)
@@ -362,14 +362,13 @@ private func makeComposeController(
 
     @Test @MainActor func ask_ErrorSurfacesOnAnswerState() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("why is the sky blue")])
         let local = FakeEngine(id: "local", steps: [.final("why is the sky blue")])
+        let cloud = echoingCloud("why is the sky blue")
         let composer = FakeComposer()
         composer.behavior = .fail(.network("ask down"))
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings)
 
         controller.start(trigger: .hold, intent: .ask)
         controller.stop()
@@ -383,14 +382,13 @@ private func makeComposeController(
         // The stream completes with no error but yields zero usable text (the real bug this test
         // guards against: a silently blank answer card with no error shown).
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("what time is it")])
         let local = FakeEngine(id: "local", steps: [.final("what time is it")])
+        let cloud = echoingCloud("what time is it")
         let composer = FakeComposer()
         composer.behavior = .deltas(["", "   "]) // whitespace-only deltas -> nothing usable
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings)
 
         controller.start(trigger: .hold, intent: .ask)
         controller.stop()
@@ -406,15 +404,14 @@ private func makeComposeController(
 
     @Test @MainActor func ask_DismissGoesIdleWithoutInserting() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("a question")])
         let local = FakeEngine(id: "local", steps: [.final("a question")])
+        let cloud = echoingCloud("a question")
         let composer = FakeComposer()
         composer.behavior = .deltas(["an answer"])
         let inserter = FakeInserter()
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, inserter: inserter, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, inserter: inserter, settings: settings)
 
         controller.start(trigger: .hold, intent: .ask)
         controller.stop()
@@ -428,14 +425,13 @@ private func makeComposeController(
 
     @Test @MainActor func ask_FollowUpKeepsTurnsAndDismissingDictateClearsCard() async throws {
         let audio = FakeAudio()
-        let firstCloud = FakeEngine(id: "cloud", steps: [.final("first question")])
         let firstLocal = FakeEngine(id: "local", steps: [.final("first question")])
+        let firstCloud = echoingCloud("first question")
         let composer = FakeComposer()
         composer.behavior = .deltas(["first answer"])
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: firstCloud, local: firstLocal, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: firstLocal, cloud: firstCloud, composer: composer, settings: settings)
 
         controller.start(trigger: .hold, intent: .ask)
         controller.stop()
@@ -456,14 +452,13 @@ private func makeComposeController(
 
     @Test @MainActor func startingDictateWhileAnsweringDismissesCardFirst() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("a question"), .hang])
         let local = FakeEngine(id: "local", steps: [.final("a question"), .hang])
+        let cloud = echoingCloud("a question")
         let composer = FakeComposer()
         composer.behavior = .deltas(["an answer"])
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings)
 
         controller.start(trigger: .hold, intent: .ask)
         controller.stop()
@@ -471,9 +466,9 @@ private func makeComposeController(
         #expect(controller.answer != nil)
 
         // Starting a plain dictate session must dismiss the card first.
-        let cloud2 = FakeEngine(id: "cloud2", steps: [.final("second controller question")])
         let local2 = FakeEngine(id: "local2", steps: [.final("second controller question")])
-        let controller2 = makeComposeController(audio: FakeAudio(), cloud: cloud2, local: local2, composer: composer, settings: settings)
+        let cloud2 = echoingCloud("second controller question")
+        let controller2 = makeComposeController(audio: FakeAudio(), local: local2, cloud: cloud2, composer: composer, settings: settings)
         controller2.start(trigger: .hold, intent: .ask)
         controller2.stop()
         await waitUntilAnswerReady(controller2)
@@ -484,13 +479,12 @@ private func makeComposeController(
 
     @Test @MainActor func ask_EmptyQuestionCancelsSilently() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("   ")])
         let local = FakeEngine(id: "local", steps: [.final("   ")])
+        let cloud = echoingCloud("   ")
         let composer = FakeComposer()
         let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeComposeController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings)
+        let controller = makeComposeController(audio: audio, local: local, cloud: cloud, composer: composer, settings: settings)
 
         controller.start(trigger: .toggle, intent: .ask)
         audio.push(makeAudioChunk(timestamp: 1.0)) // long enough that "empty" isn't the accidental-tap path

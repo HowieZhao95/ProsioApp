@@ -62,33 +62,24 @@ final class AppEnvironment {
         focus = FocusContextProvider()
         inserter = TextInserter(settings: settings)
 
-        // Live preview: on-device SpeechAnalyzer. Final text: cloud batch Gemini SMART via our backend.
-        // (GatewayTranscriptionEngine — live Gemini streaming — stays available but the Gateway live
-        // path proved unreliable in testing; see docs/gateway-ws-protocol.md.)
-        let engines = EngineSet(
-            cloud: CloudBatchTranscriptionEngine(transcriber: backend),
-            local: SpeechAnalyzerEngine(locale: Self.previewLocale(for: settings))
-        )
+        // Live preview: on-device SpeechAnalyzer. Final text: one /api/transcribe request with the
+        // silence-trimmed Ogg/Opus audio + the local transcript; the server decides (Jev) whether
+        // the local text is good enough (no Gemini call) and which mode the utterance is.
         let audio = AudioCapture()
         audioCapture = audio
         let cloudTranscriber = backend
         controller = DictationController(
             audio: audio,
-            engines: engines,
+            localEngine: SpeechAnalyzerEngine(locale: Self.previewLocale(for: settings)),
+            cloudTranscriber: backend,
             inserter: inserter,
             contextProvider: focus,
             history: history,
             dictionary: dictionary,
             settings: settings,
-            // Jev routing (`router: backend`) stays off until `typesafe-ai/jev` is allowlisted on the
-            // Gateway and server/scripts/route-eval.ts shows a ~0 false-"clean" rate; until then
-            // every call would fail over to cloud and only add latency.
-            router: nil,
+            audioPreparer: SilenceTrimmingOpusAudioPreparer(),
             prewarmCloud: { await cloudTranscriber.prewarm() },
-            composer: backend,
-            // Jev decides dictate/edit/ask/translate; when it's unavailable the controller
-            // degrades to bilingual IntentRules.
-            intentClassifier: backend
+            composer: backend
         )
 
         let backendRef = backend

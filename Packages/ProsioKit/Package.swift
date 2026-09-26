@@ -18,6 +18,9 @@ let package = Package(
         .target(name: "ProsioTranscription", dependencies: ["ProsioCore"]),
         .testTarget(name: "ProsioCoreTests", dependencies: ["ProsioCore"]),
         .testTarget(name: "ProsioTranscriptionTests", dependencies: ["ProsioTranscription", "ProsioCore"]),
+        // Added by speech agent (P1.2): tests for SilenceTrimmer / OggOpusEncoder. Additive only —
+        // no other targets changed. See final report, "Contract change request".
+        .testTarget(name: "ProsioAudioTests", dependencies: ["ProsioAudio"]),
     ],
     swiftLanguageModes: [.v6]
 )

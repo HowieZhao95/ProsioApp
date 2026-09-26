@@ -18,6 +18,7 @@ vi.mock("@ai-sdk/gateway", () => ({
 }));
 
 import { POST } from "@/app/api/route/route";
+import { resetJevCircuitBreakerForTests } from "@/lib/jev";
 import { authedUser, jsonRequest } from "./helpers";
 
 function booleanAnswers(clean: number, recognized: number) {
@@ -32,6 +33,11 @@ function booleanAnswers(clean: number, recognized: number) {
 describe("POST /api/route", () => {
   beforeEach(() => {
     evaluateMock.mockReset();
+    // Every test starts from a clean shared circuit breaker (lib/jev.ts) —
+    // otherwise a preceding test's Jev failure/timeout would leave the
+    // breaker "open" and silently skip Jev in a later test that expects a
+    // real call.
+    resetJevCircuitBreakerForTests();
   });
 
   it("401s without a session token", async () => {

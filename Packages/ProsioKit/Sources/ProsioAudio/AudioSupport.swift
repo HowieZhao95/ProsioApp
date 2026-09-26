@@ -19,6 +19,22 @@ func int16SamplesToLittleEndianData(_ samples: [Int16]) -> Data {
     return data
 }
 
+/// Decodes little-endian PCM16 `Data` back into `[Int16]` (inverse of `int16SamplesToLittleEndianData`).
+/// Ignores a trailing odd byte, if any.
+func int16Samples(fromLittleEndianData data: Data) -> [Int16] {
+    let count = data.count / 2
+    guard count > 0 else { return [] }
+    var samples = [Int16]()
+    samples.reserveCapacity(count)
+    var iterator = data.makeIterator()
+    for _ in 0..<count {
+        guard let lo = iterator.next(), let hi = iterator.next() else { break }
+        let unsigned = UInt16(lo) | (UInt16(hi) << 8)
+        samples.append(Int16(bitPattern: unsigned))
+    }
+    return samples
+}
+
 /// Normalized RMS (0...1, where 1 == full-scale Int16) for a block of PCM16 samples.
 func rms(ofInt16Samples samples: [Int16]) -> Float {
     guard !samples.isEmpty else { return 0 }

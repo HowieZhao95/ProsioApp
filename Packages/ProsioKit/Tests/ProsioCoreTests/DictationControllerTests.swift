@@ -4,201 +4,182 @@ import Testing
 @MainActor
 private func makeController(
     audio: FakeAudio = FakeAudio(),
-    cloud: FakeEngine,
     local: FakeEngine,
+    cloud: FakeCloudTranscriber = FakeCloudTranscriber(),
+    audioPreparer: any AudioPreparing = WAVAudioPreparer(),
     inserter: FakeInserter = FakeInserter(),
     contextProvider: FakeContextProvider = FakeContextProvider(),
     history: HistoryStore = HistoryStore(fileURL: nil),
     dictionary: DictionaryStore = DictionaryStore(fileURL: nil),
-    settings: AppSettings = makeTestSettings()
+    settings: AppSettings = makeTestSettings(),
+    composer: FakeComposer? = nil
 ) -> DictationController {
     DictationController(
         audio: audio,
-        engines: EngineSet(cloud: cloud, local: local),
+        localEngine: local,
+        cloudTranscriber: cloud,
         inserter: inserter,
         contextProvider: contextProvider,
         history: history,
         dictionary: dictionary,
-        settings: settings
+        settings: settings,
+        audioPreparer: audioPreparer,
+        composer: composer
     )
 }
 
+/// P1.2: no more engine-mode setting — every session runs the same flow (local preview + one
+/// `/api/transcribe` request at `stop()`). See docs/P1.2-AUDIO-ROUTING.md.
 @Suite struct DictationControllerTests {
 
-    // MARK: - .auto / .cloud parallel preview + final
+    // MARK: - Single-request cloud pass
 
-    @Test @MainActor func autoMode_PreviewFromLocalWhileCloudFinalIsInserted() async throws {
+    @Test @MainActor func cloudSource_InsertsCloudTextAndUsesCloudEngineID() async throws {
         let audio = FakeAudio()
-        // Cloud is staggered slightly behind local so the test can deterministically observe
-        // "local's final shown as preview while cloud is still pending" before cloud completes.
-        let cloud = FakeEngine(id: "gateway.gemini-3.5-transcribe-live", steps: [.delay(.milliseconds(150)), .final("Cloud final text")])
         let local = FakeEngine(id: "apple.speechanalyzer", isOnDevice: true, steps: [.partial("L1"), .partial("L1 L2"), .final("L1 L2 done")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "Cloud final text", source: "cloud"))
         let inserter = FakeInserter()
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, inserter: inserter, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, inserter: inserter, history: history)
 
         controller.start(trigger: .hold)
         #expect(controller.phase == .listening)
 
-        // Local's partials drive the live preview while cloud (final-only) is still pending.
         await waitUntil { controller.previewText == "L1 L2" }
         #expect(controller.previewText == "L1 L2")
 
         controller.stop()
-
-        // Once audio ends, local's final text keeps showing as the preview while cloud finishes.
-        await waitUntil { controller.previewText == "L1 L2 done" }
-
         await waitUntil { if case .finished = controller.phase { return true }; return false }
 
-        // Cloud's final is what actually gets inserted, not local's.
         #expect(inserter.insertedTexts == ["Cloud final text"])
         #expect(controller.previewText == "Cloud final text")
-        #expect(controller.activeEngineID == "gateway.gemini-3.5-transcribe-live")
+        #expect(controller.activeEngineID == DictationController.cloudEngineID)
         #expect(history.items.first?.text == "Cloud final text")
-        #expect(history.items.first?.engineID == "gateway.gemini-3.5-transcribe-live")
+        #expect(history.items.first?.engineID == DictationController.cloudEngineID)
+        #expect(cloud.lastRequest?.localTranscript == "L1 L2 done")
     }
 
-    @Test @MainActor func autoMode_LocalUnavailable_StillInsertsCloudFinal() async throws {
+    @Test @MainActor func localSource_InsertsLocalTextDirectlyAndSkipsCompose() async throws {
+        // Server found the local transcript clean enough and skipped Gemini — the server-decided
+        // text is inserted as-is, HUD finishes as normal (docs/P1.2-AUDIO-ROUTING.md §3 step 4).
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "gateway.gemini-3.5-transcribe-live", steps: [.final("Cloud final text")])
-        let local = FakeEngine(id: "apple.speechanalyzer", isOnDevice: true, steps: [.fail(.engineUnavailable("assets missing"))])
+        let local = FakeEngine(id: "apple.speechanalyzer", isOnDevice: true, steps: [.final("clean local text")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(
+            text: "clean local text",
+            source: "local",
+            intent: IntentDecision(intent: .dictate, confidence: 0.97, source: "jev"),
+            route: TranscribeRouteInfo(cleanProbability: 0.98, reason: "clean")
+        ))
+        let composer = FakeComposer() // configured but must never be called on this fast path
+        let inserter = FakeInserter()
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, inserter: inserter, history: history, composer: composer)
 
         controller.start(trigger: .hold)
         controller.stop()
         await waitUntil { if case .finished = controller.phase { return true }; return false }
 
-        guard case .finished(let outcome) = controller.phase else {
-            Issue.record("expected .finished phase, got \(controller.phase)")
-            return
-        }
-        #expect(outcome == .pasted)
-        #expect(history.items.first?.text == "Cloud final text")
-        #expect(controller.activeEngineID == "gateway.gemini-3.5-transcribe-live")
+        #expect(inserter.insertedTexts == ["clean local text"])
+        #expect(controller.activeEngineID == local.id)
+        #expect(controller.intent == .dictate)
+        #expect(history.items.first?.engineID == local.id)
+        #expect(composer.callCount == 0)
     }
 
-    @Test @MainActor func autoMode_CloudFails_InsertsLocalFinalWithLocalEngineID() async throws {
+    @Test @MainActor func nullServerIntent_FallsBackToIntentRulesOnReturnedText() async throws {
+        // `intent: null` (Jev unavailable server-side) -> classify client-side via `IntentRules` on
+        // the returned (cloud) text — no separate `/api/intent` call in the main path.
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "gateway.gemini-3.5-transcribe-live", steps: [.fail(.engineUnavailable("offline"))])
-        let local = FakeEngine(id: "apple.speechanalyzer", isOnDevice: true, steps: [.final("local result")])
-        let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
+        let local = FakeEngine(id: "local", steps: [.final("提问，几点了")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(
+            text: "提问，几点了",
+            source: "cloud",
+            intent: IntentDecision(intent: nil, confidence: nil, source: "unavailable")
+        ))
+        let composer = FakeComposer()
+        composer.behavior = .deltas(["现在是下午三点。"])
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, composer: composer)
+
+        controller.start(trigger: .hold)
+        controller.stop()
+        await waitUntil { controller.phase == .answering && controller.answer?.isStreaming == false }
+
+        #expect(controller.intent == .ask)
+        #expect(controller.answer?.text == "现在是下午三点。")
+    }
+
+    @Test @MainActor func format415_RetriesOnceAsWAV() async throws {
+        let audio = FakeAudio()
+        let local = FakeEngine(id: "local", steps: [.final("hello")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .rejectNonWAV(thenResult: CloudTranscript(text: "hello", source: "cloud"))
+        let preparer = FakeAudioPreparer()
+        preparer.formatToReturn = .oggOpus
+        let inserter = FakeInserter()
+
+        let controller = makeController(audio: audio, local: local, cloud: cloud, audioPreparer: preparer, inserter: inserter)
 
         controller.start(trigger: .hold)
         controller.stop()
         await waitUntil { if case .finished = controller.phase { return true }; return false }
 
-        #expect(controller.activeEngineID == "apple.speechanalyzer")
-        #expect(history.items.first?.text == "local result")
-        #expect(history.items.first?.engineID == "apple.speechanalyzer")
+        #expect(cloud.requestedFormats == [.oggOpus, .wav])
+        #expect(cloud.callCount == 2)
+        #expect(inserter.insertedTexts == ["hello"])
     }
 
-    @Test @MainActor func autoMode_CloudFailsAndLocalUnusable_Fails() async throws {
+    @Test @MainActor func offlineFallsBackToLocalTranscriptClassifiedByRules() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.fail(.engineUnavailable("offline"))])
-        let local = FakeEngine(id: "local", steps: [.fail(.engineUnavailable("also offline"))])
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
-
-        let controller = makeController(audio: audio, cloud: cloud, local: local, settings: settings)
-
-        controller.start(trigger: .hold)
-        controller.stop()
-        await waitUntil { if case .failed = controller.phase { return true }; return false }
-
-        guard case .failed(let error) = controller.phase else {
-            Issue.record("expected .failed phase, got \(controller.phase)")
-            return
-        }
-        #expect(error == .engineUnavailable("offline"))
-    }
-
-    @Test @MainActor func cloudMode_CloudFails_Fails_NoLocalFallback() async throws {
-        let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.fail(.transcriptionFailed("boom"))])
-        let local = FakeEngine(id: "local", steps: [.final("local would have worked")])
+        let local = FakeEngine(id: "apple.speechanalyzer", steps: [.final("write this down please")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .fail(.network("offline"))
+        let inserter = FakeInserter()
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, inserter: inserter, history: history)
 
         controller.start(trigger: .hold)
         controller.stop()
-        await waitUntil { if case .failed = controller.phase { return true }; return false }
+        await waitUntil { if case .finished = controller.phase { return true }; return false }
 
-        guard case .failed(let error) = controller.phase else {
-            Issue.record("expected .failed phase, got \(controller.phase)")
-            return
-        }
-        #expect(error == .transcriptionFailed("boom"))
-        #expect(history.items.isEmpty)
+        #expect(inserter.insertedTexts == ["write this down please"])
+        #expect(controller.activeEngineID == local.id)
+        #expect(controller.intent == .dictate)
+        #expect(history.items.first?.text == "write this down please")
+        #expect(history.items.first?.engineID == local.id)
     }
 
-    @Test @MainActor func autoMode_CloudTimesOut_UsesLocalFinal() async throws {
+    @Test @MainActor func cloudRequestTimesOut_FallsBackToLocalTranscript() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
         let local = FakeEngine(id: "local", steps: [.final("local final on timeout")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
-        controller.finalTimeout = .milliseconds(50)
-        controller.localFallbackTimeout = .seconds(2)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, history: history)
+        controller.cloudRequestTimeout = .milliseconds(50)
 
         controller.start(trigger: .hold)
-        controller.stop() // local finishes ~instantly (audio ends immediately); cloud hangs past finalTimeout
-
+        controller.stop()
         await waitUntil(timeout: 3) { if case .finished = controller.phase { return true }; return false }
 
-        #expect(controller.activeEngineID == "local")
+        #expect(controller.activeEngineID == local.id)
         #expect(history.items.first?.text == "local final on timeout")
-        #expect(history.items.first?.engineID == "local")
     }
 
-    @Test @MainActor func cloudMode_CloudTimesOut_FailsWithNoLocalFallback() async throws {
+    @Test @MainActor func localEngineReceivesEveryAudioChunkAndItsTranscriptIsSentAsLocalTranscript() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
-        let local = FakeEngine(id: "local", steps: [.final("should not be used")])
-        let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .cloud
-
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
-        controller.finalTimeout = .milliseconds(50)
-
-        controller.start(trigger: .hold)
-        controller.stop()
-        await waitUntil(timeout: 3) { if case .failed = controller.phase { return true }; return false }
-
-        guard case .failed(let error) = controller.phase else {
-            Issue.record("expected .failed phase, got \(controller.phase)")
-            return
-        }
-        #expect(error == .transcriptionFailed("timeout"))
-        #expect(history.items.isEmpty)
-    }
-
-    @Test @MainActor func bothEnginesReceiveEveryAudioChunk() async throws {
-        let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("cloud final")])
         let local = FakeEngine(id: "local", steps: [.final("local final")])
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "cloud final", source: "cloud"))
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud)
 
         controller.start(trigger: .hold)
         let chunks = (0..<5).map { makeAudioChunk(timestamp: Double($0) * 0.1) }
@@ -208,23 +189,22 @@ private func makeController(
         controller.stop()
         await waitUntil { if case .finished = controller.phase { return true }; return false }
 
-        let cloudReceived = await cloud.recorder.receivedChunks
         let localReceived = await local.recorder.receivedChunks
-        #expect(cloudReceived.map(\.timestamp) == chunks.map(\.timestamp))
         #expect(localReceived.map(\.timestamp) == chunks.map(\.timestamp))
+        #expect(cloud.lastRequest?.localTranscript == "local final")
+        #expect((cloud.lastRequest?.audioData.count ?? 0) > 0)
     }
 
     @Test @MainActor func cancelDuringFinalizingWhileWaitingForCloud() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
-        let local = FakeEngine(id: "local", steps: [.hang])
+        let local = FakeEngine(id: "local", steps: [.final("local text")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
         let inserter = FakeInserter()
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, inserter: inserter, history: history, settings: settings)
-        controller.finalTimeout = .seconds(10) // long enough that we cancel well before it fires
+        let controller = makeController(audio: audio, local: local, cloud: cloud, inserter: inserter, history: history)
+        controller.cloudRequestTimeout = .seconds(10) // long enough that we cancel well before it fires
 
         controller.start(trigger: .hold)
         controller.stop()
@@ -237,108 +217,17 @@ private func makeController(
         #expect(controller.previewText.isEmpty)
         #expect(inserter.insertedTexts.isEmpty)
         #expect(history.items.isEmpty)
-
-        // The controller must be immediately reusable afterwards.
         #expect(!controller.isBusy)
     }
 
-    // MARK: - .local (unchanged single-engine path)
-
-    @Test @MainActor func localMode_PreviewAndFinalBothFromLocal() async throws {
-        let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud.id", steps: [.final("should not be used")])
-        let local = FakeEngine(id: "local.id", steps: [.final("local result")])
-        let settings = makeTestSettings()
-        settings.enginePreference = .local
-
-        let controller = makeController(audio: audio, cloud: cloud, local: local, settings: settings)
-
-        controller.start(trigger: .hold)
-        #expect(controller.activeEngineID == "local.id")
-
-        controller.stop()
-        await waitUntil { if case .finished = controller.phase { return true }; return false }
-
-        #expect(controller.previewText == "local result")
-        #expect(await cloud.recorder.callCount == 0)
-    }
-
-    @Test @MainActor func localMode_EngineErrorWhileListeningFailsImmediately() async throws {
-        let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
-        let local = FakeEngine(id: "local", steps: [.fail(.transcriptionFailed("boom"))])
-        let settings = makeTestSettings()
-        settings.enginePreference = .local
-
-        let controller = makeController(audio: audio, cloud: cloud, local: local, settings: settings)
-
-        controller.start(trigger: .hold)
-        await waitUntil { if case .failed = controller.phase { return true }; return false }
-
-        guard case .failed(let error) = controller.phase else {
-            Issue.record("expected .failed phase, got \(controller.phase)")
-            return
-        }
-        #expect(error == .transcriptionFailed("boom"))
-        #expect(audio.stopCallCount == 1)
-    }
-
-    @Test @MainActor func localMode_TimeoutFallsBackToLastPreview() async throws {
-        let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
-        let local = FakeEngine(id: "local", steps: [.partial("partial text"), .hang])
-        let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .local
-
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
-        controller.finalTimeout = .milliseconds(50)
-
-        controller.start(trigger: .hold)
-        audio.push(makeAudioChunk(timestamp: 0.5))
-        await waitUntil { controller.previewText == "partial text" }
-
-        controller.stop()
-        await waitUntil(timeout: 3) { if case .finished = controller.phase { return true }; return false }
-
-        #expect(controller.previewText == "partial text")
-        guard case .finished(let outcome) = controller.phase else {
-            Issue.record("expected .finished phase, got \(controller.phase)")
-            return
-        }
-        #expect(outcome == .pasted)
-        #expect(history.items.count == 1)
-        #expect(history.items.first?.text == "partial text")
-    }
-
-    @Test @MainActor func localMode_TimeoutWithNoPreviewFails() async throws {
-        let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
-        let local = FakeEngine(id: "local", steps: [.hang])
-        let settings = makeTestSettings()
-        settings.enginePreference = .local
-
-        let controller = makeController(audio: audio, cloud: cloud, local: local, settings: settings)
-        controller.finalTimeout = .milliseconds(50)
-
-        controller.start(trigger: .hold)
-        controller.stop()
-        await waitUntil(timeout: 3) { if case .failed = controller.phase { return true }; return false }
-
-        guard case .failed(let error) = controller.phase else {
-            Issue.record("expected .failed phase, got \(controller.phase)")
-            return
-        }
-        #expect(error == .transcriptionFailed("timeout"))
-    }
-
-    // MARK: - General session lifecycle (mode-agnostic)
+    // MARK: - General session lifecycle
 
     @Test @MainActor func startIsNoOpWhileBusy() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
         let local = FakeEngine(id: "local", steps: [.hang])
-        let controller = makeController(audio: audio, cloud: cloud, local: local)
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
+        let controller = makeController(audio: audio, local: local, cloud: cloud)
 
         controller.start(trigger: .hold)
         #expect(controller.phase == .listening)
@@ -353,13 +242,12 @@ private func makeController(
 
     @Test @MainActor func emptyShortAudioGoesIdleSilently() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("")])
         let local = FakeEngine(id: "local", steps: [.final("")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "", source: "cloud"))
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, history: history)
 
         controller.start(trigger: .toggle)
         audio.push(makeAudioChunk(timestamp: 0.15)) // total audio well under 0.4s
@@ -374,13 +262,12 @@ private func makeController(
 
     @Test @MainActor func emptyLongAudioFails() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("   ")])
         let local = FakeEngine(id: "local", steps: [.final("")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "   ", source: "cloud"))
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .auto
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, history: history)
 
         controller.start(trigger: .toggle)
         audio.push(makeAudioChunk(timestamp: 1.2)) // well over 0.4s
@@ -398,12 +285,13 @@ private func makeController(
 
     @Test @MainActor func cancelMidListeningGoesIdleWithoutInserting() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.partial("hi"), .hang])
-        let local = FakeEngine(id: "local", steps: [.hang])
+        let local = FakeEngine(id: "local", steps: [.partial("hi"), .hang])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
         let inserter = FakeInserter()
         let history = HistoryStore(fileURL: nil)
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, inserter: inserter, history: history)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, inserter: inserter, history: history)
 
         controller.start(trigger: .hold)
         await waitUntil { controller.previewText == "hi" }
@@ -420,10 +308,10 @@ private func makeController(
     @Test @MainActor func audioStartFailureReportsFailedPhase() async throws {
         let audio = FakeAudio()
         audio.startBehavior = .throwError(.microphonePermissionDenied)
-        let cloud = FakeEngine(id: "cloud", steps: [.final("x")])
         let local = FakeEngine(id: "local", steps: [.final("x")])
+        let cloud = FakeCloudTranscriber()
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local)
+        let controller = makeController(audio: audio, local: local, cloud: cloud)
         controller.start(trigger: .hold)
 
         guard case .failed(let error) = controller.phase else {
@@ -436,23 +324,24 @@ private func makeController(
 
     @Test @MainActor func cancelDuringInsertionDoesNotResurrectFinishedPhaseOrHistory() async throws {
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("hello")])
         let local = FakeEngine(id: "local", steps: [.hang])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "hello", source: "cloud"))
         let inserter = FakeInserter()
         inserter.holdUntilReleased = true
         let history = HistoryStore(fileURL: nil)
-        let settings = makeTestSettings()
-        settings.enginePreference = .cloud
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, inserter: inserter, history: history, settings: settings)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, inserter: inserter, history: history)
+        controller.localFinalTimeout = .milliseconds(50)
         var completed: HistoryItem?
         controller.onSessionCompleted = { completed = $0 }
 
         controller.start(trigger: .hold)
+        audio.push(makeAudioChunk(timestamp: 0.5)) // local never finalizes; some captured audio is needed to reach the cloud call
         controller.stop()
 
         // Wait until we're actually inside the (held) `inserter.insert` call.
-        await waitUntil { controller.phase == .inserting }
+        await waitUntil(timeout: 3) { controller.phase == .inserting }
         #expect(inserter.insertedTexts == ["hello"])
 
         controller.cancel()
@@ -471,14 +360,15 @@ private func makeController(
     @Test @MainActor func micOpensBeforeFocusContextIsRead() async throws {
         let audio = FakeAudio()
         let contextProvider = FakeContextProvider()
-        let cloud = FakeEngine(id: "cloud", steps: [.hang])
         let local = FakeEngine(id: "local", steps: [.hang])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .hang
 
         var order: [String] = []
         audio.onStart = { order.append("audioStart") }
         contextProvider.onCurrentContext = { order.append("context") }
 
-        let controller = makeController(audio: audio, cloud: cloud, local: local, contextProvider: contextProvider)
+        let controller = makeController(audio: audio, local: local, cloud: cloud, contextProvider: contextProvider)
 
         controller.start(trigger: .hold)
 

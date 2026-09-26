@@ -18,7 +18,6 @@ struct LivePipelineTests {
 
         let defaults = UserDefaults(suiteName: "prosio.livepipeline.\(UUID().uuidString)")!
         let settings = AppSettings(defaults: defaults)
-        settings.enginePreference = .auto
         settings.languageHints = (env["PROSIO_PIPELINE_LANGS"] ?? "zh-CN,en-US").split(separator: ",").map(String.init)
 
         let backend = BackendClient(baseURL: backendURL, keychainService: "app.prosio.livepipeline.\(UUID().uuidString)")
@@ -30,21 +29,15 @@ struct LivePipelineTests {
             try dictionary.add(term: String(term))
         }
 
-        // Speculative finalization is off by default; `PROSIO_PIPELINE_ENABLE_SPECULATION=1` turns it
-        // on for before/after comparisons.
-        let cloudEngine = CloudBatchTranscriptionEngine(
-            transcriber: backend,
-            speculativeFinalization: env["PROSIO_PIPELINE_ENABLE_SPECULATION"] == "1"
-        )
-
+        // P1.2: `DictationController` talks to `CloudBatchTranscribing` directly (one request at
+        // stop(), with the local transcript embedded) — `CloudBatchTranscriptionEngine`'s streaming
+        // adapter (and its speculative-finalization option) is no longer part of this path.
         let audio = WavAudio(wav: wav)
         let inserter = RecordingInserter()
         let controller = DictationController(
             audio: audio,
-            engines: EngineSet(
-                cloud: cloudEngine,
-                local: SpeechAnalyzerEngine(locale: Locale(identifier: settings.languageHints.first ?? "en-US"))
-            ),
+            localEngine: SpeechAnalyzerEngine(locale: Locale(identifier: settings.languageHints.first ?? "en-US")),
+            cloudTranscriber: backend,
             inserter: inserter,
             contextProvider: StaticContext(),
             history: HistoryStore(fileURL: nil),

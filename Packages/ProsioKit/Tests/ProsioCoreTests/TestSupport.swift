@@ -287,54 +287,114 @@ final class FakeComposer: Composing, @unchecked Sendable {
     }
 }
 
-// MARK: - FakeRouter
+// MARK: - FakeCloudTranscriber
 
-/// Scripted `RouteDeciding`.
-final class FakeRouter: RouteDeciding, @unchecked Sendable {
+/// Scripted `CloudBatchTranscribing`, implementing the P1.2 `transcribe(_:CloudTranscribeRequest)`
+/// entry point directly (not the legacy `transcribe(wav:options:)` bridge).
+final class FakeCloudTranscriber: CloudBatchTranscribing, @unchecked Sendable {
     enum Behavior: Sendable {
-        case decision(RouteDecision)
+        case result(CloudTranscript)
         case fail(ProsioError)
-        /// Never completes on its own (until cancelled) — used for timeout/cancellation tests.
+        /// Never completes on its own (until cancelled) — used for timeout tests.
         case hang
+        case delayThenResult(Duration, CloudTranscript)
+        /// Throws `ProsioError.network("unsupported-audio-format")` (415) unless `request.audioFormat`
+        /// is already `.wav` — lets a test verify `DictationController`'s one-shot WAV retry.
+        case rejectNonWAV(thenResult: CloudTranscript)
     }
 
-    var behavior: Behavior = .decision(RouteDecision(needsCloud: false, cleanProbability: 0.95, reason: "clean"))
+    var behavior: Behavior = .result(CloudTranscript(text: "cloud text", source: "cloud"))
 
     private let lock = NSLock()
     private var _callCount = 0
-    private var _lastLocalTranscript: String?
+    private var _prewarmCount = 0
+    private var _lastRequest: CloudTranscribeRequest?
+    private var _requestedFormats: [UploadAudioFormat] = []
 
     var callCount: Int {
         lock.lock(); defer { lock.unlock() }
         return _callCount
     }
 
-    var lastLocalTranscript: String? {
+    var prewarmCount: Int {
         lock.lock(); defer { lock.unlock() }
-        return _lastLocalTranscript
+        return _prewarmCount
     }
 
-    func decide(localTranscript: String, options: TranscriptionOptions) async throws -> RouteDecision {
-        recordCall(localTranscript)
+    var lastRequest: CloudTranscribeRequest? {
+        lock.lock(); defer { lock.unlock() }
+        return _lastRequest
+    }
 
+    /// Every `audioFormat` seen, in call order — lets a test confirm a 415 really triggered exactly
+    /// one WAV retry (e.g. `[.oggOpus, .wav]`).
+    var requestedFormats: [UploadAudioFormat] {
+        lock.lock(); defer { lock.unlock() }
+        return _requestedFormats
+    }
+
+    /// Legacy single-shot method — not exercised by `DictationController` anymore (P1.2 calls
+    /// `transcribe(_:CloudTranscribeRequest)` directly), implemented only so this fake satisfies
+    /// the full `CloudBatchTranscribing` protocol.
+    func transcribe(wav: Data, options: TranscriptionOptions) async throws -> CloudTranscript {
+        try await transcribe(CloudTranscribeRequest(audioData: wav, options: options))
+    }
+
+    func transcribe(_ request: CloudTranscribeRequest) async throws -> CloudTranscript {
+        recordCall(request)
         switch behavior {
-        case .decision(let decision):
-            return decision
+        case .result(let result):
+            return result
         case .fail(let error):
             throw error
         case .hang:
             try? await Task.sleep(for: .seconds(3600))
             throw ProsioError.cancelled
+        case .delayThenResult(let duration, let result):
+            try? await Task.sleep(for: duration)
+            return result
+        case .rejectNonWAV(let thenResult):
+            guard request.audioFormat == .wav else {
+                throw ProsioError.network("unsupported-audio-format")
+            }
+            return thenResult
         }
+    }
+
+    func prewarm() async {
+        recordPrewarm()
     }
 
     /// Synchronous (non-`async`) so the lock/unlock pair can be used directly — `NSLock` methods
     /// are unavailable from `async` function bodies.
-    private func recordCall(_ localTranscript: String) {
+    private func recordPrewarm() {
+        lock.lock()
+        _prewarmCount += 1
+        lock.unlock()
+    }
+
+    private func recordCall(_ request: CloudTranscribeRequest) {
         lock.lock()
         _callCount += 1
-        _lastLocalTranscript = localTranscript
+        _lastRequest = request
+        _requestedFormats.append(request.audioFormat)
         lock.unlock()
+    }
+}
+
+// MARK: - FakeAudioPreparer
+
+/// Scripted `AudioPreparing` — lets a test control the uploaded format/bytes/trim stats without
+/// depending on `ProsioAudio`, and simulate an Opus upload (`formatToReturn = .oggOpus`) for the
+/// 415->WAV retry tests.
+final class FakeAudioPreparer: AudioPreparing, @unchecked Sendable {
+    var formatToReturn: UploadAudioFormat = .wav
+    var originalSeconds: Double = 1.0
+    var trimmedSeconds: Double = 1.0
+    var dataToReturn = Data([0xAA, 0xBB])
+
+    func prepare(pcm16: Data, sampleRate: Double) async -> PreparedAudio {
+        PreparedAudio(data: dataToReturn, format: formatToReturn, originalSeconds: originalSeconds, trimmedSeconds: trimmedSeconds)
     }
 }
 

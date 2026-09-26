@@ -9,7 +9,7 @@ Every endpoint except `/api/auth/dev` and `/api/health` requires `Authorization:
 Real auth (Sign in with Apple / email via Better Auth) replaces `/api/auth/dev` later without changing the token shape.
 
 Error shape for every non-2xx: `{ "error": { "code": "<code>", "message": "<human text>" } }`
-Codes: `unauthorized` (401), `forbidden` (403), `quota_exceeded` (402), `bad_request` (400), `payload_too_large` (413), `upstream_error` (502), `not_found` (404).
+Codes: `unauthorized` (401), `forbidden` (403), `quota_exceeded` (402), `bad_request` (400), `payload_too_large` (413), `unsupported_media_type` (415), `upstream_error` (502), `not_found` (404).
 
 ### `POST /api/auth/dev`
 Only when `PROSIO_DEV_AUTH=1`, else 404.
@@ -26,19 +26,30 @@ Checks entitlement + quota, then calls `gateway.experimental_transcription.getTo
 → `200 { "token": "…", "url": "wss://…", "model": "google/gemini-3.5-transcribe-live", "expiresAt": "…" }`
 Errors: 401, 402 `quota_exceeded`, 400 model not allowed, 502 gateway failure.
 
-## Batch transcription (P0 final text)
+## Batch transcription (P1.2: single-request cloud pass with routing + intent)
 
 ### `POST /api/transcribe`
-Final, SMART-cleaned text for a complete recording. The client shows an on-device live preview meanwhile.
+Final, SMART-cleaned text for a complete recording. The client shows an on-device live preview meanwhile. Extended in P1.2 (docs/P1.2-AUDIO-ROUTING.md §3) to also decide, in the same request, whether the on-device transcript can be used as-is (skipping Gemini) and what the user wants done with it — backward compatible: every new field is optional.
 Request:
 ```json
-{ "audio": "<base64 of a RIFF/WAVE file, 16 kHz mono PCM16>", "mode": "smart", "vocabulary": ["Prosio"], "languageHints": ["zh-CN","en-US"], "sessionID": "uuid" }
+{ "audio": "<base64>", "audioFormat": "ogg-opus" | "wav", "mode": "smart",
+  "vocabulary": ["Prosio"], "languageHints": ["zh-CN","en-US"], "sessionID": "uuid",
+  "localTranscript": "…" | null, "hasSelection": false, "app": { "appName": "…", ... } | null }
 ```
-`mode`: `"smart"` (default) | `"verbatim"`. `vocabulary` ≤ 1000 terms. Max audio 120 s (≈3.9 MB base64 — under Vercel's 4.5 MB body limit); longer → 413 `payload_too_large`.
-Checks entitlement + quota, calls Gateway `transcribe({ model: 'google/gemini-3.5-transcribe', providerOptions: { google: { mode: 'SMART'|'VERBATIM', customVocabulary, languageCodes } } })`.
-Records usage server-side from the audio duration (idempotent on `sessionID`), so the client does NOT also call `/api/usage` for this path.
-→ `200 { "text": "…", "language": "zh" | null, "durationSeconds": 4.05 }`
-Errors: 401, 402 `quota_exceeded`, 400, 413 `payload_too_large`, 502 `upstream_error`.
+`audioFormat`: `"wav"` (default, backward compatible — RIFF/WAVE, 16 kHz mono PCM16) or `"ogg-opus"` (Ogg container, Opus-encoded, per docs/P1.2-AUDIO-ROUTING.md §1 — mono; media type is auto-detected server-side from the file's magic bytes, no separate field needed). An unrecognized `audioFormat` value → `415 unsupported_media_type`. `mode`: `"smart"` (default) | `"verbatim"`. `vocabulary` ≤ 1000 terms. Max audio: 120 s for `wav`, 600 s for `ogg-opus` (Opus's much smaller size keeps the body well under Vercel's 4.5 MB limit even at 600 s); longer → 413 `payload_too_large`. `localTranscript` ≤ 4000 chars, optional.
+
+**Flow when `localTranscript` is given:**
+1. One Jev `evaluate()` call asking both the router's `clean`/`recognized` questions (see "Routing" below) and the intent classifier's question (docs/PROMPTS.md §5b) together — behind the shared circuit breaker (`server/lib/jev.ts`; a recent Jev failure/timeout means this returns "unavailable" immediately, no added latency). Only the criterion matching `hasSelection` is offered (`dictate` vs `edit`), same as `/api/intent`.
+2. If the text is clean (`cleanProbability ≥ 0.9` — a stricter, separate threshold from `/api/route`'s 0.8, since skipping Gemini entirely is a stronger claim than just routing to SMART) **and** the classified intent is `dictate` or `edit` → return the local transcript as-is, **skip Gemini** (`source: "local"`). Usage is still metered by audio duration (no change to quota accounting), just no Gemini cost.
+3. Otherwise, call Gemini as before (`source: "cloud"`). The local intent classification is reused (`classifiedOn: "local"`) unless it was `null` (Jev was unavailable) or the final text's leading ~6 non-punctuation characters differ from the local transcript's — in either case intent is reclassified on the final text instead (`classifiedOn: "final"`, one more Jev call, same breaker).
+
+When `localTranscript` is omitted (old clients, or a genuinely unavailable local transcript), the server always takes the cloud path and always classifies intent on the final text (`classifiedOn: "final"`); `route` is `{ cleanProbability: null, reason: "no-local-transcript" }`.
+
+Checks entitlement + quota, calls Gateway `transcribe({ model: 'google/gemini-3.5-transcribe', providerOptions: { google: { mode: 'SMART'|'VERBATIM', customVocabulary, languageCodes } } })` (skipped entirely on the local fast path).
+Records usage server-side from the audio duration (idempotent on `sessionID`), so the client does NOT also call `/api/usage` for this path — this happens regardless of `source`.
+→ `200 { "text": "…", "language": "zh" | null, "durationSeconds": 4.05, "source": "local" | "cloud", "intent": { "intent": "dictate"|"edit"|"ask"|"translate"|null, "confidence": number|null, "source": "jev"|"unavailable", "classifiedOn": "local"|"final" }, "route": { "cleanProbability": number|null, "reason": "clean"|"needs-cleanup"|"likely-misrecognized"|"router-error"|"no-local-transcript" } }`
+On the local fast path, `text` is exactly `localTranscript` and `language` is `null` (no Gemini call was made to determine it).
+Errors: 401, 402 `quota_exceeded`, 400, 413 `payload_too_large`, 415 `unsupported_media_type`, 502 `upstream_error`. The routing/intent check itself never causes a 4xx/5xx — any Jev failure just falls through to the cloud path with `source: "unavailable"` fields, same as `/api/route` and `/api/intent`.
 
 ### `HEAD /api/transcribe`
 No auth. `204`. Used by the client to pre-warm the TLS connection when dictation starts.
@@ -81,6 +92,8 @@ Request: `{ "localTranscript": "…", "vocabulary": ["Prosio"], "languageHints":
 → `200 { "needsCloud": true|false, "cleanProbability": 0.0-1.0 | null, "reason": "clean" | "needs-cleanup" | "likely-misrecognized" | "router-error", "latencyMs": 123 }`
 Policy (server-side, conservative): `needsCloud = false` only when Jev's probability that the text is clean (no fillers/disfluencies, no self-corrections, no list/format needs, no likely recognition errors — esp. mangled mixed-language or dictionary terms) is ≥ 0.8. Any Jev error → `200 { needsCloud: true, reason: "router-error" }` (never block dictation).
 Auth required. Not metered as audio usage.
+Note: `POST /api/transcribe`'s P1.2 combined local-transcript check (below) asks this same `clean`/`recognized` question pair, but gates skipping Gemini entirely at a stricter, separately-configured 0.9 — this endpoint's own 0.8 threshold (gating the cheaper "route to SMART or not" decision) is unchanged.
+Both endpoints — plus `POST /api/intent` and the combined check — share one Jev circuit breaker (`server/lib/jev.ts`): after any failure/timeout, further calls return the "unavailable"/"router-error" shape immediately for 60s before one probe retries.
 
 ## Usage
 

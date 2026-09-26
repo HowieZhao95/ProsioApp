@@ -311,6 +311,81 @@ extension BackendClient: CloudBatchTranscribing {
         return try Self.makeDecoder().decode(CloudTranscript.self, from: data)
     }
 
+    /// P1.2: the main dictation path's single request. Sends `localTranscript`/`hasSelection`/`app`
+    /// alongside the audio so the server can skip Gemini when the local transcript is already clean
+    /// (`response.source == "local"`) and return the session's intent inline (`response.intent`) —
+    /// see docs/P1.2-AUDIO-ROUTING.md §3. On HTTP 415 ("unsupported audio format", e.g. an Opus
+    /// upload an older server can't decode yet) throws `ProsioError.network("unsupported-audio-format")`
+    /// — `DictationController` recognizes that specific message and retries once as WAV.
+    public func transcribe(_ request: CloudTranscribeRequest) async throws -> CloudTranscript {
+        struct RequestBody: Encodable {
+            let audio: String
+            let audioFormat: UploadAudioFormat
+            let mode: TranscriptionMode
+            let vocabulary: [String]
+            let languageHints: [String]
+            let sessionID: UUID
+            let localTranscript: String?
+            let hasSelection: Bool
+            let app: AppContext?
+        }
+        struct ResponseIntent: Decodable {
+            let intent: ClassifiedIntent?
+            let confidence: Double?
+            let source: String
+            let classifiedOn: String?
+        }
+        struct ResponseRoute: Decodable {
+            let cleanProbability: Double?
+            let reason: String
+        }
+        struct ResponseBody: Decodable {
+            let text: String
+            let language: String?
+            let durationSeconds: Double?
+            let source: String?
+            let intent: ResponseIntent?
+            let route: ResponseRoute?
+        }
+
+        let body = try Self.makeEncoder().encode(RequestBody(
+            audio: request.audioData.base64EncodedString(),
+            audioFormat: request.audioFormat,
+            mode: request.options.mode,
+            vocabulary: request.options.vocabulary,
+            languageHints: request.options.languageHints,
+            sessionID: request.sessionID,
+            localTranscript: request.localTranscript,
+            hasSelection: request.hasSelection,
+            app: request.app
+        ))
+        let urlRequest = try await makeRequest(
+            path: "api/transcribe",
+            method: "POST",
+            body: body,
+            requiresAuth: true,
+            timeout: Self.transcribeRequestTimeout
+        )
+        let (data, response) = try await performRequest(urlRequest)
+        if let http = response as? HTTPURLResponse, http.statusCode == 415 {
+            throw ProsioError.network("unsupported-audio-format")
+        }
+        try Self.checkResponse(response, data: data)
+        let decoded = try Self.makeDecoder().decode(ResponseBody.self, from: data)
+        let intent = decoded.intent.map {
+            IntentDecision(intent: $0.intent, confidence: $0.confidence, source: $0.source, classifiedOn: $0.classifiedOn)
+        }
+        let route = decoded.route.map { TranscribeRouteInfo(cleanProbability: $0.cleanProbability, reason: $0.reason) }
+        return CloudTranscript(
+            text: decoded.text,
+            language: decoded.language,
+            durationSeconds: decoded.durationSeconds,
+            source: decoded.source,
+            intent: intent,
+            route: route
+        )
+    }
+
     /// Opens/refreshes the HTTPS connection ahead of time. Best-effort: errors are ignored, and
     /// calls within `prewarmMinInterval` of the last one are skipped.
     public func prewarm() async {

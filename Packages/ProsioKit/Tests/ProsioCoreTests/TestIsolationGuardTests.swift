@@ -30,11 +30,12 @@ import Testing
     @Test @MainActor func typicalTestConstructedControllerResolvesButNeverWritesToTheRealDebugRoot() {
         let settings = makeTestSettings()
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("guard")])
         let local = FakeEngine(id: "local", steps: [.final("guard")])
+        let cloud = FakeCloudTranscriber()
         let controller = DictationController(
             audio: audio,
-            engines: EngineSet(cloud: cloud, local: local),
+            localEngine: local,
+            cloudTranscriber: cloud,
             inserter: FakeInserter(),
             contextProvider: FakeContextProvider(),
             history: HistoryStore(fileURL: nil),
@@ -57,11 +58,13 @@ import Testing
         let before = Set((try? FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil).map(\.lastPathComponent)) ?? [])
 
         let audio = FakeAudio()
-        let cloud = FakeEngine(id: "cloud", steps: [.final("isolation guard transcript")])
         let local = FakeEngine(id: "local", steps: [.final("isolation guard transcript")])
+        let cloud = FakeCloudTranscriber()
+        cloud.behavior = .result(CloudTranscript(text: "isolation guard transcript", source: "cloud"))
         let controller = DictationController(
             audio: audio,
-            engines: EngineSet(cloud: cloud, local: local),
+            localEngine: local,
+            cloudTranscriber: cloud,
             inserter: FakeInserter(),
             contextProvider: FakeContextProvider(),
             history: HistoryStore(fileURL: nil),

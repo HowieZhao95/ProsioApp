@@ -1,28 +1,17 @@
 import Foundation
 import Observation
 
-/// The engines a controller chooses from according to `AppSettings.enginePreference`.
+/// Orchestrates one dictation at a time: on-device preview -> one cloud batch request at `stop()`
+/// -> insertion -> history.
 ///
-/// `local` is the on-device engine (SpeechAnalyzer): used for the live preview in every mode, and
-/// as the sole engine (preview + final) in `.local` mode.
-/// `cloud` is the final-quality engine (cloud batch SMART transcription): used for the final text
-/// in `.auto`/`.cloud` mode. It's expected to yield only a single `.final` after audio ends, but
-/// the controller also copes if it yields `.partial`s along the way.
-public struct EngineSet: Sendable {
-    public var cloud: any TranscriptionEngine
-    public var local: any TranscriptionEngine
-
-    public init(cloud: any TranscriptionEngine, local: any TranscriptionEngine) {
-        self.cloud = cloud
-        self.local = local
-    }
-}
-
-/// Orchestrates one dictation at a time: audio -> engine(s) -> insertion -> history.
-///
-/// `.auto`/`.cloud`: audio is teed to both `local` (preview only) and `cloud` (the
-/// final-determining engine) concurrently. `.local`: `local` alone drives both preview and final.
-/// PUBLIC API FROZEN — implementation owned by core agent.
+/// P1.2: there is no more engine-mode setting (`AppSettings.enginePreference` removed) — every
+/// session runs the same flow. `localEngine` streams a live preview the whole time; at `stop()`,
+/// the finished recording (prepared for upload via `AudioPreparing`) plus the local transcript are
+/// sent to `cloudTranscriber` in a SINGLE request. The server decides whether the local transcript
+/// is already clean enough to skip Gemini (`response.source == "local"`) and returns the session's
+/// intent inline (replacing the old separate `/api/route` + `/api/intent` calls). Offline/
+/// unreachable falls back to the local transcript, classified client-side via `IntentRules`.
+/// See docs/P1.2-AUDIO-ROUTING.md. PUBLIC API FROZEN — implementation owned by core agent.
 @MainActor
 @Observable
 public final class DictationController {
@@ -56,16 +45,17 @@ public final class DictationController {
     /// Called on the main actor after every completed (inserted or copied) dictation, e.g. to report usage.
     public var onSessionCompleted: ((HistoryItem) -> Void)?
 
-    /// How long `stop()` waits for the final-determining engine's `.final` before falling back
-    /// (to local's final in `.auto`, or to the last preview / failure otherwise). 10s in
-    /// production — cloud batch transcription can take ~4s on a cold connection — overridable
-    /// (via `@testable import`) so tests don't have to sleep for real.
-    var finalTimeout: Duration = .seconds(10)
-    /// Bound on how long `resolveStop()` waits for `local` to finish when it needs local's final
-    /// text as a fallback (cloud failed/timed out in `.auto`). Local is on-device and expected to
-    /// finish quickly once audio ends; this just prevents a stuck local engine from blocking the
-    /// fallback indefinitely. Overridable via `@testable import`.
-    var localFallbackTimeout: Duration = .seconds(3)
+    /// How long `stop()` waits for `localEngine`'s own `.final` before proceeding with whatever's
+    /// on screen (its last partial) as the local transcript sent to the server. Local is on-device
+    /// and expected to finish quickly once audio ends. Overridable via `@testable import`.
+    var localFinalTimeout: Duration = .seconds(2)
+    /// How long `stop()` waits for the single `/api/transcribe` request (including one 415->WAV
+    /// retry) before giving up and falling back to the local transcript, same as an offline/network
+    /// failure. Overridable via `@testable import`.
+    var cloudRequestTimeout: Duration = .seconds(15)
+    /// How long rewrite/translate/edit compose calls wait before giving up (rewrite falls back to
+    /// the untransformed transcript; translate/edit fail). 12s per spec. Overridable via `@testable import`.
+    var composeTimeout: Duration = .seconds(12)
     /// Overrides where debug recordings are written (see `AppSettings.saveDebugRecordings`).
     /// `nil` (production default) means `~/Library/Application Support/Prosio/debug`.
     /// Internal test seam — not part of the public API.
@@ -78,62 +68,54 @@ public final class DictationController {
     var resolvedDebugRecordingsRootForTesting: URL {
         debugRecordingsRootOverride ?? Self.defaultDebugRecordingsRoot()
     }
-    /// How long `stop()` waits for local's final before deciding routing needs cloud regardless
-    /// (empty/unavailable local -> cloud). `.auto`-with-`router` only. Overridable via `@testable import`.
-    var routingLocalFinalTimeout: Duration = .seconds(1.5)
-    /// Client-side cap on `router.decide(...)` — any error or overrun is treated as "needs cloud"
-    /// per contract. `.auto`-with-`router` only. Overridable via `@testable import`.
-    var routerDecisionTimeout: Duration = .seconds(0.8)
-    /// How long rewrite/translate/edit compose calls wait before giving up (rewrite falls back to
-    /// the untransformed transcript; translate/edit fail). 12s per spec. Overridable via `@testable import`.
-    var composeTimeout: Duration = .seconds(12)
-    /// Client-side cap on `intentClassifier.classify(...)` — error/timeout/`intent: nil` all
-    /// degrade to `IntentRules`. 1.5s per spec. Overridable via `@testable import`.
-    var classifyIntentTimeout: Duration = .milliseconds(1500)
+
+    /// Stable identifier recorded as `activeEngineID`/`HistoryItem.engineID` when the server actually
+    /// ran Gemini (`response.source == "cloud"`) — there's no longer a `TranscriptionEngine` object
+    /// for the cloud pass to ask for its own `id` (P1.2: one-shot `CloudBatchTranscribing`, not a
+    /// streaming engine).
+    static let cloudEngineID = "cloud.gemini-3.5-transcribe"
 
     private let audio: any AudioCapturing
-    private let engines: EngineSet
+    /// On-device engine: drives the live preview and produces the local transcript sent to the
+    /// server with every `/api/transcribe` request. Never itself "final" for insertion purposes
+    /// anymore — see the type doc comment.
+    private let localEngine: any TranscriptionEngine
+    private let cloudTranscriber: any CloudBatchTranscribing
+    /// P1.2: trims/encodes the finished recording for upload. Defaults to `WAVAudioPreparer`
+    /// (untrimmed WAV) until speech's `SilenceTrimmer`/`OggOpusEncoder` land — see docs/P1.2-AUDIO-ROUTING.md.
+    private let audioPreparer: any AudioPreparing
     private let inserter: any TextInserting
     private let contextProvider: any FocusContextProviding
     private let history: HistoryStore
     private let dictionary: DictionaryStore
     private let settings: AppSettings
-    /// `.auto` mode only: decides whether local's transcript is clean enough to skip the cloud
-    /// pass. `nil` (default) means `.auto` behaves exactly as before — always runs cloud.
-    private let router: (any RouteDeciding)?
     /// Fired (best-effort, off the main actor) at the start of every session to warm the cloud
     /// HTTPS connection ahead of when it might actually be needed.
     private let prewarmCloud: (@Sendable () async -> Void)?
     /// P1: transforms text with an LLM (rewrite/translate/edit/ask). `nil` (default) turns every
     /// P1 feature off — sessions behave exactly as before (today's fast path).
     private let composer: (any Composing)?
-    /// P1: decides dictate/edit/ask/translate for a finished (non-follow-up) session. `nil` means
-    /// only `IntentRules` (client-side bilingual cues) ever runs — no server round-trip.
+    /// Kept for compatibility (e.g. a follow-up ask never needs it, since it's always `.ask`
+    /// unconditionally). P1.2: UNUSED in the main dictation path — the server now returns the
+    /// session's intent inline with `/api/transcribe`, so there's no separate `/api/intent` call to
+    /// make there anymore. Retained only so existing callers/tests that configure one don't break.
     private let intentClassifier: (any IntentClassifying)?
 
     private var meterTask: Task<Void, Never>?
-    /// Consumes the final-determining engine (`local` in `.local` mode, `cloud` otherwise) and
-    /// drives `finalOutcome`.
-    private var engineTask: Task<Void, Never>?
-    /// Only set in `.auto`/`.cloud` mode: consumes `local` purely for the live preview and as a
-    /// fallback final. Never touches `finalOutcome` — a local failure must never fail the session.
+    /// Consumes `localEngine` for the live preview; also what `stop()` awaits (bounded) to get the
+    /// best-available local transcript before building the `/api/transcribe` request.
     private var previewTask: Task<Void, Never>?
     private var stopTask: Task<Void, Never>?
-    private var timeoutTask: Task<Void, Never>?
 
     private var totalAudioDuration: TimeInterval = 0
-
-    /// The engine preference this session started with (captured once so a mid-session settings
-    /// change can't change how we resolve `stop()`).
-    private var activeMode: EnginePreference = .auto
-    /// Local's own final text in `.auto`/`.cloud` mode — the fallback used if cloud fails/times out.
+    /// Raw little-endian PCM16 mono samples, in order, captured this session — always accumulated
+    /// (P1.2: needed for every upload, not just debug recordings).
+    private var capturedPCM = Data()
+    /// `localEngine`'s own final text, if it produced one before `stop()`'s bounded wait elapsed.
     private var localFinalText: String?
-    /// True once local has produced at least one partial — after that, local partials always win
-    /// over cloud partials for `previewText`.
-    private var localHasPartial = false
-    /// True once `previewTask` has finished (success or failure) — lets `resolveStop` wait a
-    /// bounded amount of time for `localFinalText` to actually be populated before giving up on
-    /// the local fallback, instead of racing it.
+    /// True once `previewTask` has finished (success or failure) — lets `stop()` wait a bounded
+    /// amount of time for `localFinalText` to actually be populated before giving up and using
+    /// whatever's currently in `previewText` (a partial) instead.
     private var localOutcomeReady = false
     private var localReadyWaiters: [CheckedContinuation<Void, Never>] = []
 
@@ -143,23 +125,12 @@ public final class DictationController {
     /// `phase`/history/`onSessionCompleted`.
     private var sessionGeneration = 0
 
-    private enum FinalOutcome {
-        case success(String)
-        case failure(Error)
-        case timeout
-    }
-    private var finalOutcome: FinalOutcome?
-    private var finalReadyWaiters: [CheckedContinuation<Void, Never>] = []
-
     // MARK: - Debug recording (AppSettings.saveDebugRecordings)
 
     private var sessionID = UUID()
     private var sessionCreatedAt = Date()
-    /// Raw little-endian PCM16 mono samples, in order, sent to the engines this session. Only
-    /// accumulated while `settings.saveDebugRecordings` is on.
-    private var capturedAudioChunks: [Data] = []
-    /// Cloud's own final text in `.auto`/`.cloud` mode (distinct from `localFinalText`), captured
-    /// purely for the debug recording — `nil` in `.local` mode, where cloud never runs.
+    /// Cloud's own returned text, captured purely for the debug recording's `suspectedDrop` check
+    /// — `nil` when the server returned `source == "local"` (no Gemini pass ran) or on failure.
     private var cloudFinalTextForDebug: String?
 
     private var tStart: Date?
@@ -167,36 +138,25 @@ public final class DictationController {
     private var tFirstAudioChunk: Date?
     private var tFirstLocalPartial: Date?
     private var tStopCalled: Date?
-    /// When the final-determining engine's `.final` arrived (cloud in `.auto`/`.cloud`, local in `.local`).
     private var tFinalReceived: Date?
     private var tInsertionDone: Date?
-    private var routeDecisionForDebug: RouteDecision?
-    private var routeLatencyMsForDebug: Double?
     private var composeModeForDebug: String?
     private var composeLatencyMsForDebug: Double?
     private var composeOutputForDebug: String?
     private var intentDecisionClassifiedForDebug: String?
     private var intentDecisionSourceForDebug: String?
     private var intentDecisionConfidenceForDebug: Double?
-    private var intentDecisionLatencyMsForDebug: Double?
-    /// "local" | "final" — which transcript's decision was actually used to route this session.
-    private var intentDecisionClassifiedOnForDebug: String?
-    /// The stop()-time speculative decision (on the local preview), if one ran, kept separately
-    /// from the "winning" fields above even when it was later superseded by a final-transcript
-    /// reclassification — see `handleFinalTranscript`.
-    private var intentDecisionLocalClassifiedForDebug: String?
-    private var intentDecisionLocalSourceForDebug: String?
-    private var intentDecisionLocalConfidenceForDebug: Double?
-    private var intentDecisionLocalLatencyMsForDebug: Double?
-    /// The final-transcript (re)classification, if one ran (local was empty/too short, its leading
-    /// text diverged from the final transcript, or the local decision was a rules fallback, which
-    /// always reclassifies on the final).
-    private var intentDecisionFinalClassifiedForDebug: String?
-    private var intentDecisionFinalSourceForDebug: String?
-    private var intentDecisionFinalConfidenceForDebug: Double?
-    private var intentDecisionFinalLatencyMsForDebug: Double?
+    /// P1.2 debug fields per docs/P1.2-AUDIO-ROUTING.md §3: `response.source`/`route.*` and the
+    /// upload's shape (`AudioPreparing`'s output).
+    private var routeSourceForDebug: String?
+    private var routeCleanProbabilityForDebug: Double?
+    private var routeReasonForDebug: String?
+    private var originalSecondsForDebug: Double?
+    private var trimmedSecondsForDebug: Double?
+    private var uploadBytesForDebug: Int?
+    private var audioFormatForDebug: String?
 
-    // MARK: - P1: intent classification
+    // MARK: - P1: intent (dictate/edit/ask/translate)
 
     /// True when this session is a follow-up while the answer card is showing (started with
     /// `phase == .answering`) — always `.ask`, no classification needed.
@@ -204,34 +164,17 @@ public final class DictationController {
     /// Set when `start(trigger:intent:)` was given an explicit intent (tests/explicit callers) —
     /// skips classification entirely and is used as the final word.
     private var explicitIntent: DictationIntent?
-    /// Kicked off in `stop()` for non-follow-up sessions; `handleFinalTranscript` awaits it.
-    private var classifyIntentTask: Task<Void, Never>?
-    private var resolvedIntentDecision: IntentResolution?
-    /// The (trimmed) local-preview text the stop()-time speculative classification ran on, if any —
-    /// `nil` when it never started (preview too short/empty). Compared against the eventual final
-    /// transcript's leading text in `handleFinalTranscript` to decide whether to reclassify: cloud
-    /// SMART transcription can normalize a cue word away (observed: "提问" -> "请问") or the local
-    /// preview can clip a leading word, either of which would silently turn a command into a plain
-    /// dictation if the stale local-preview decision were kept.
-    private var classifyIntentSourceText: String?
 
     private struct IntentResolution {
         var intent: ClassifiedIntent
         var source: String
         var confidence: Double?
         /// Only for a rule-matched `.translate` — the parsed target + cue-stripped body, sent to
-        /// `compose(.translate)`. A classifier-matched `.translate` sends the whole utterance to
-        /// `compose(.translateCommand)` instead (nil here).
+        /// `compose(.translate)`. A server/classifier-matched `.translate` sends the whole
+        /// utterance to `compose(.translateCommand)` instead (nil here).
         var ruleTranslateTarget: String?
         var ruleTranslateBody: String?
     }
-
-    // MARK: - Routing (`.auto` mode with `router` set)
-
-    /// Every chunk sent to `local` this session, buffered so it can be replayed to `cloud` in one
-    /// shot if the router decides cloud is needed (cloud never sees live audio in routed mode).
-    private var bufferedChunksForReplay: [AudioChunk] = []
-    private var usesRouting: Bool { activeMode == .auto && router != nil }
 
     /// The user's personal dictionary plus fixed command-cue words (`IntentRules.vocabularyHints`)
     /// biasing every transcription pass (cloud SMART + on-device SpeechAnalyzer) so intent cues
@@ -249,25 +192,27 @@ public final class DictationController {
 
     public init(
         audio: any AudioCapturing,
-        engines: EngineSet,
+        localEngine: any TranscriptionEngine,
+        cloudTranscriber: any CloudBatchTranscribing,
         inserter: any TextInserting,
         contextProvider: any FocusContextProviding,
         history: HistoryStore,
         dictionary: DictionaryStore,
         settings: AppSettings,
-        router: (any RouteDeciding)? = nil,
+        audioPreparer: any AudioPreparing = WAVAudioPreparer(),
         prewarmCloud: (@Sendable () async -> Void)? = nil,
         composer: (any Composing)? = nil,
         intentClassifier: (any IntentClassifying)? = nil
     ) {
         self.audio = audio
-        self.engines = engines
+        self.localEngine = localEngine
+        self.cloudTranscriber = cloudTranscriber
+        self.audioPreparer = audioPreparer
         self.inserter = inserter
         self.contextProvider = contextProvider
         self.history = history
         self.dictionary = dictionary
         self.settings = settings
-        self.router = router
         self.prewarmCloud = prewarmCloud
         self.composer = composer
         self.intentClassifier = intentClassifier
@@ -286,10 +231,10 @@ public final class DictationController {
     /// - Parameter intent: kept for tests/explicit callers. The real (single, fn) hotkey always
     ///   passes `nil`: a fn press while the answer card is showing (`phase == .answering`) is a
     ///   follow-up `.ask` (no classification, existing turns kept); otherwise the session's real
-    ///   intent (dictate/edit/ask/translate) is decided after `stop()` by `intentClassifier` (with
-    ///   `IntentRules` as a client-side fallback) — `intent` here is only an optimistic placeholder
-    ///   for the HUD until that decision arrives. An explicit `intent` skips classification
-    ///   entirely and is used as-is (existing test/caller behavior).
+    ///   intent (dictate/edit/ask/translate) is decided by the server's `/api/transcribe` response
+    ///   (with `IntentRules` as a client-side fallback when unavailable/offline) — `intent` here is
+    ///   only an optimistic placeholder for the HUD until that response arrives. An explicit
+    ///   `intent` skips classification entirely and is used as-is (existing test/caller behavior).
     public func start(trigger: DictationTrigger, intent requestedIntent: DictationIntent? = nil) {
         guard !isBusy else { return }
 
@@ -313,16 +258,13 @@ public final class DictationController {
         levelHistory = Array(repeating: 0, count: Self.levelHistoryLength)
         self.trigger = trigger
         totalAudioDuration = 0
-        finalOutcome = nil
-        finalReadyWaiters = []
+        capturedPCM = Data()
         localFinalText = nil
-        localHasPartial = false
         localOutcomeReady = false
         localReadyWaiters = []
 
         sessionID = UUID()
         sessionCreatedAt = Date()
-        capturedAudioChunks = []
         cloudFinalTextForDebug = nil
         tStart = sessionCreatedAt
         tMicOpen = nil
@@ -331,9 +273,6 @@ public final class DictationController {
         tStopCalled = nil
         tFinalReceived = nil
         tInsertionDone = nil
-        routeDecisionForDebug = nil
-        routeLatencyMsForDebug = nil
-        bufferedChunksForReplay = []
         composeLabel = nil
         composeModeForDebug = nil
         composeLatencyMsForDebug = nil
@@ -341,25 +280,17 @@ public final class DictationController {
         intentDecisionClassifiedForDebug = nil
         intentDecisionSourceForDebug = nil
         intentDecisionConfidenceForDebug = nil
-        intentDecisionLatencyMsForDebug = nil
-        intentDecisionClassifiedOnForDebug = nil
-        intentDecisionLocalClassifiedForDebug = nil
-        intentDecisionLocalSourceForDebug = nil
-        intentDecisionLocalConfidenceForDebug = nil
-        intentDecisionLocalLatencyMsForDebug = nil
-        intentDecisionFinalClassifiedForDebug = nil
-        intentDecisionFinalSourceForDebug = nil
-        intentDecisionFinalConfidenceForDebug = nil
-        intentDecisionFinalLatencyMsForDebug = nil
-        classifyIntentTask = nil
-        resolvedIntentDecision = nil
-        classifyIntentSourceText = nil
+        routeSourceForDebug = nil
+        routeCleanProbabilityForDebug = nil
+        routeReasonForDebug = nil
+        originalSecondsForDebug = nil
+        trimmedSecondsForDebug = nil
+        uploadBytesForDebug = nil
+        audioFormatForDebug = nil
         explicitIntent = isFollowUpAsk ? nil : requestedIntent
         sessionTranslateTarget = nil
 
-        let mode = settings.enginePreference
-        activeMode = mode
-        activeEngineID = (mode == .local) ? engines.local.id : engines.cloud.id
+        activeEngineID = localEngine.id
 
         // Open the mic (and flip to `.listening`) before doing anything else, in particular
         // before reading focus context: `currentContext()` does synchronous Accessibility IPC
@@ -381,7 +312,7 @@ public final class DictationController {
         if isFollowUpAsk {
             intent = .ask
         } else {
-            // Optimistic placeholder for the HUD until classification resolves (or, with an
+            // Optimistic placeholder for the HUD until the server's response resolves (or, with an
             // explicit `requestedIntent`, the final word — classification is skipped entirely).
             intent = requestedIntent ?? (hasSelection ? .edit : .dictate)
         }
@@ -393,220 +324,9 @@ public final class DictationController {
             }
         }
 
-        if usesRouting {
-            startRoutedAutoSession(audioStream: audioStream)
-            return
-        }
-
-        // The final-determining engine always gets its own audio feed. In `.auto`/`.cloud` mode,
-        // `local` (preview-only) gets a second, independent feed of the very same chunks.
-        let finalEngine: any TranscriptionEngine = (mode == .local) ? engines.local : engines.cloud
-        let (finalAudio, finalContinuation) = AsyncStream<AudioChunk>.makeStream()
-
-        var previewAudioContinuation: AsyncStream<AudioChunk>.Continuation?
-        var previewAudioStream: AsyncStream<AudioChunk>?
-        if mode != .local {
-            let (stream, continuation) = AsyncStream<AudioChunk>.makeStream()
-            previewAudioStream = stream
-            previewAudioContinuation = continuation
-        }
-
-        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
-        let finalEvents = finalEngine.transcribe(audio: finalAudio, options: options)
-        let previewEvents = previewAudioStream.map { engines.local.transcribe(audio: $0, options: options) }
-
-        let meterTask = Task { @MainActor [weak self] in
-            guard let self else {
-                finalContinuation.finish()
-                previewAudioContinuation?.finish()
-                return
-            }
-            for await chunk in audioStream {
-                if self.tFirstAudioChunk == nil {
-                    self.tFirstAudioChunk = Date()
-                }
-                self.updateLevel(with: chunk.level)
-                self.totalAudioDuration = max(self.totalAudioDuration, TimeInterval(chunk.timestamp))
-                if self.settings.saveDebugRecordings {
-                    self.capturedAudioChunks.append(chunk.pcm16)
-                }
-                finalContinuation.yield(chunk)
-                previewAudioContinuation?.yield(chunk)
-            }
-            finalContinuation.finish()
-            previewAudioContinuation?.finish()
-        }
-        self.meterTask = meterTask
-
-        let engineTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            do {
-                for try await event in finalEvents {
-                    switch event {
-                    case .partial(let text):
-                        // In `.local` mode local IS the only source of preview. In `.auto`/
-                        // `.cloud` mode, cloud partials only show while local hasn't produced any
-                        // of its own yet (local, once it starts, always wins).
-                        if mode == .local {
-                            if self.tFirstLocalPartial == nil {
-                                self.tFirstLocalPartial = Date()
-                            }
-                            self.previewText = text
-                        } else if !self.localHasPartial {
-                            self.previewText = text
-                        }
-                    case .final(let text):
-                        if self.tFinalReceived == nil {
-                            self.tFinalReceived = Date()
-                        }
-                        if mode == .local {
-                            self.localFinalText = text
-                        } else {
-                            self.cloudFinalTextForDebug = text
-                        }
-                        self.resolveFinal(.success(text))
-                    }
-                }
-            } catch {
-                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
-                // Only `.local` mode has no fallback engine to lean on, so only there do we abort
-                // immediately; `.auto`/`.cloud` let `stop()`'s fallback logic decide once called.
-                if mode == .local, case .listening = self.phase {
-                    self.audio.stop()
-                    self.meterTask?.cancel()
-                    self.phase = .failed(mapped)
-                }
-                self.resolveFinal(.failure(mapped))
-            }
-        }
-        self.engineTask = engineTask
-
-        if let previewEvents {
-            let previewTask = Task { @MainActor [weak self] in
-                guard let self else { return }
-                do {
-                    for try await event in previewEvents {
-                        switch event {
-                        case .partial(let text):
-                            if self.tFirstLocalPartial == nil {
-                                self.tFirstLocalPartial = Date()
-                            }
-                            self.localHasPartial = true
-                            self.previewText = text
-                        case .final(let text):
-                            self.localFinalText = text
-                            // Keep showing local's final text as the preview while cloud is
-                            // still pending.
-                            self.previewText = text
-                        }
-                    }
-                } catch {
-                    // A local failure must never fail the session — cloud continues unaffected,
-                    // and `localFinalText` simply stays nil (no fallback value available).
-                }
-                self.markLocalReady()
-            }
-            self.previewTask = previewTask
-        }
-    }
-
-    /// Closes the mic, waits for final text, inserts it, records history.
-    public func stop() {
-        guard case .listening = phase else { return }
-        let generation = sessionGeneration
-        tStopCalled = Date()
-        audio.stop()
-        phase = .finalizing
-        finalOutcome = nil
-
-        // Classify concurrently with transcript finalization — never awaited here, so it adds no
-        // latency when it resolves before the transcript does. Skipped for follow-ups (always
-        // `.ask`) and when the caller gave an explicit intent (used as-is).
-        if !isFollowUpAsk, explicitIntent == nil {
-            let candidate = previewText.trimmingCharacters(in: .whitespacesAndNewlines)
-            let hasSelection = context?.selectedText?.isEmpty == false && !(context?.isSecureInput ?? false)
-            if candidate.count >= 2 {
-                classifyIntentSourceText = candidate
-                classifyIntentTask = Task { @MainActor [weak self] in
-                    guard let self else { return }
-                    let resolution = await self.resolveIntentDecision(transcript: candidate, hasSelection: hasSelection)
-                    guard generation == self.sessionGeneration else { return }
-                    self.applyIntentDecision(resolution, classifiedOn: "local")
-                }
-            }
-            // Else: local preview too short (or empty) to classify usefully — `handleFinalTranscript`
-            // classifies the real final transcript instead once it's available (adds latency).
-        }
-
-        if usesRouting {
-            stopTask = Task { @MainActor [weak self] in
-                guard let self else { return }
-                await self.resolveRoutedStop(generation: generation)
-            }
-            return
-        }
-
-        let timeoutTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            try? await Task.sleep(for: self.finalTimeout)
-            guard !Task.isCancelled else { return }
-            self.resolveFinal(.timeout)
-        }
-        self.timeoutTask = timeoutTask
-
-        stopTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            await self.waitForFinalOutcome()
-            self.timeoutTask?.cancel()
-            self.timeoutTask = nil
-            await self.resolveStop(generation: generation)
-        }
-    }
-
-    /// Aborts without inserting.
-    public func cancel() {
-        sessionGeneration += 1
-        audio.stop()
-        // Unblock anything still suspended in `waitForFinalOutcome()` (e.g. `stop()` was called
-        // and we're mid-`.finalizing`) so that task doesn't leak forever waiting on a continuation
-        // nobody will ever resume. Its generation is already stale, so `resolveStop` will bail.
-        resolveFinal(.failure(ProsioError.cancelled))
-        classifyIntentTask?.cancel()
-        classifyIntentTask = nil
-        classifyIntentSourceText = nil
-        meterTask?.cancel()
-        engineTask?.cancel()
-        previewTask?.cancel()
-        stopTask?.cancel()
-        timeoutTask?.cancel()
-        meterTask = nil
-        engineTask = nil
-        previewTask = nil
-        stopTask = nil
-        timeoutTask = nil
-        finalOutcome = nil
-        finalReadyWaiters = []
-        sessionTranslateTarget = nil
-        localFinalText = nil
-        localHasPartial = false
-        localOutcomeReady = false
-        localReadyWaiters = []
-        bufferedChunksForReplay = []
-        routeDecisionForDebug = nil
-        routeLatencyMsForDebug = nil
-        previewText = ""
-        phase = .idle
-    }
-
-    // MARK: - Routed `.auto` session (router set)
-
-    /// Runs ONLY `local` during listening (cloud only ever needs the audio at the end), while
-    /// buffering every chunk so it can be replayed to `cloud` in one shot if routing decides
-    /// cloud is needed.
-    private func startRoutedAutoSession(audioStream: AsyncStream<AudioChunk>) {
         let (localAudio, localContinuation) = AsyncStream<AudioChunk>.makeStream()
         let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
-        let localEvents = engines.local.transcribe(audio: localAudio, options: options)
+        let localEvents = localEngine.transcribe(audio: localAudio, options: options)
 
         let meterTask = Task { @MainActor [weak self] in
             guard let self else {
@@ -619,17 +339,14 @@ public final class DictationController {
                 }
                 self.updateLevel(with: chunk.level)
                 self.totalAudioDuration = max(self.totalAudioDuration, TimeInterval(chunk.timestamp))
-                self.bufferedChunksForReplay.append(chunk)
-                if self.settings.saveDebugRecordings {
-                    self.capturedAudioChunks.append(chunk.pcm16)
-                }
+                self.capturedPCM.append(chunk.pcm16)
                 localContinuation.yield(chunk)
             }
             localContinuation.finish()
         }
         self.meterTask = meterTask
 
-        let engineTask = Task { @MainActor [weak self] in
+        let previewTask = Task { @MainActor [weak self] in
             guard let self else { return }
             do {
                 for try await event in localEvents {
@@ -644,178 +361,51 @@ public final class DictationController {
                             self.tFinalReceived = Date()
                         }
                         self.localFinalText = text
-                        self.resolveFinal(.success(text))
-                    }
-                }
-            } catch {
-                // A local failure here just means routing has no local transcript to work with —
-                // `resolveRoutedStop` treats that the same as "empty" and goes straight to cloud,
-                // it must not fail the session outright.
-                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
-                self.resolveFinal(.failure(mapped))
-            }
-        }
-        self.engineTask = engineTask
-    }
-
-    /// `stop()` resolution for a routed `.auto` session: wait (bounded) for local's final, ask
-    /// the router if it's usable, then either insert it directly or replay the buffered audio to
-    /// cloud and continue exactly like the non-routed `.auto` flow (cloud final -> insert; cloud
-    /// failure -> local fallback).
-    private func resolveRoutedStop(generation: Int) async {
-        let localTimeoutTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            try? await Task.sleep(for: self.routingLocalFinalTimeout)
-            // `try?` swallows the `CancellationError` from a cancelled sleep, so without this
-            // check a *stale* timeout — cancelled while asleep, but already past the checkpoint
-            // by the time it gets a MainActor turn — would still fire `resolveFinal(.timeout)`.
-            // That's especially dangerous here because `runCloudReplay` deliberately resets
-            // `finalOutcome` to reuse this same signalling for cloud's phase: a late local
-            // timeout landing after that reset would corrupt cloud's outcome.
-            guard !Task.isCancelled else { return }
-            self.resolveFinal(.timeout)
-        }
-        await waitForFinalOutcome()
-        localTimeoutTask.cancel()
-
-        guard generation == sessionGeneration else { return } // cancel() could race in above
-
-        let localText: String? = {
-            guard case .success(let text) = finalOutcome else { return nil }
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            return trimmed.isEmpty ? nil : trimmed
-        }()
-
-        guard let localText else {
-            // Local final empty/unavailable/failed/timed out -> needs cloud, no point asking the router.
-            routeDecisionForDebug = RouteDecision(needsCloud: true, cleanProbability: nil, reason: "local-unavailable")
-            await runCloudReplay(generation: generation, localFallback: nil)
-            return
-        }
-
-        let decision = await decideRoute(localText: localText)
-        routeDecisionForDebug = decision
-        guard generation == sessionGeneration else { return } // cancel() could race in above (router call awaited)
-
-        if !decision.needsCloud {
-            activeEngineID = engines.local.id
-            await handleFinalTranscript(localText, generation: generation)
-        } else {
-            await runCloudReplay(generation: generation, localFallback: localText)
-        }
-    }
-
-    /// Calls `router.decide(...)`, capped client-side at `routerDecisionTimeout`. Any error or
-    /// overrun maps to `needsCloud: true` (never blocks dictation), per contract.
-    private func decideRoute(localText: String) async -> RouteDecision {
-        guard let router else {
-            return RouteDecision(needsCloud: true, cleanProbability: nil, reason: "no-router")
-        }
-        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
-        let startedAt = Date()
-
-        let outcome = await withTaskGroup(of: RouteDecision?.self) { group -> RouteDecision? in
-            group.addTask {
-                try? await router.decide(localTranscript: localText, options: options)
-            }
-            group.addTask {
-                try? await Task.sleep(for: self.routerDecisionTimeout)
-                return nil
-            }
-            let first = await group.next() ?? nil
-            group.cancelAll()
-            return first ?? nil
-        }
-
-        routeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
-        return outcome ?? RouteDecision(needsCloud: true, cleanProbability: nil, reason: "router-error")
-    }
-
-    /// Replays every buffered chunk to `cloud` (which never saw live audio in routed mode) and
-    /// resolves exactly like the non-routed `.auto` flow: cloud final wins; on cloud failure or
-    /// timeout, fall back to `localFallback` (already in hand — no extra wait needed) if any.
-    private func runCloudReplay(generation: Int, localFallback: String?) async {
-        guard generation == sessionGeneration else { return }
-        activeEngineID = engines.cloud.id
-
-        let chunks = bufferedChunksForReplay
-        let replayStream = AsyncStream<AudioChunk> { continuation in
-            for chunk in chunks { continuation.yield(chunk) }
-            continuation.finish()
-        }
-        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
-        let cloudEvents = engines.cloud.transcribe(audio: replayStream, options: options)
-
-        finalOutcome = nil
-        finalReadyWaiters = []
-
-        let cloudTimeoutTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            try? await Task.sleep(for: self.finalTimeout)
-            guard !Task.isCancelled else { return }
-            self.resolveFinal(.timeout)
-        }
-        self.timeoutTask = cloudTimeoutTask
-
-        let cloudTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            do {
-                for try await event in cloudEvents {
-                    switch event {
-                    case .partial(let text):
                         self.previewText = text
-                    case .final(let text):
-                        // Overwrite: this is the terminal final that actually determines the
-                        // outcome, superseding local's earlier timestamp.
-                        self.tFinalReceived = Date()
-                        self.cloudFinalTextForDebug = text
-                        self.resolveFinal(.success(text))
                     }
                 }
             } catch {
-                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
-                self.resolveFinal(.failure(mapped))
+                // A local failure must never fail the session — the cloud request still runs off
+                // whatever's in `previewText`, and `localFinalText` simply stays nil.
             }
+            self.markLocalReady()
         }
-        self.engineTask = cloudTask
+        self.previewTask = previewTask
+    }
 
-        await waitForFinalOutcome()
-        cloudTimeoutTask.cancel()
-        self.timeoutTask = nil
-        guard generation == sessionGeneration else { return } // cancel() could race in above
+    /// Closes the mic, waits for the local transcript, sends the single `/api/transcribe` request,
+    /// inserts the result, records history.
+    public func stop() {
+        guard case .listening = phase else { return }
+        let generation = sessionGeneration
+        tStopCalled = Date()
+        audio.stop()
+        phase = .finalizing
 
-        switch finalOutcome {
-        case .success(let text):
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty {
-                activeEngineID = engines.cloud.id
-                await handleFinalTranscript(trimmed, generation: generation)
-            } else if let localFallback {
-                activeEngineID = engines.local.id
-                await handleFinalTranscript(localFallback, generation: generation)
-            } else {
-                handleEmptyFinal()
-            }
-
-        case .failure(let error):
-            if let localFallback {
-                activeEngineID = engines.local.id
-                await handleFinalTranscript(localFallback, generation: generation)
-            } else {
-                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
-                phase = .failed(mapped)
-                finishSession()
-            }
-
-        case .timeout, .none:
-            if let localFallback {
-                activeEngineID = engines.local.id
-                await handleFinalTranscript(localFallback, generation: generation)
-            } else {
-                phase = .failed(.transcriptionFailed("timeout"))
-                finishSession()
-            }
+        stopTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            await self.resolveStop(generation: generation)
         }
+    }
+
+    /// Aborts without inserting.
+    public func cancel() {
+        sessionGeneration += 1
+        audio.stop()
+        meterTask?.cancel()
+        previewTask?.cancel()
+        stopTask?.cancel()
+        meterTask = nil
+        previewTask = nil
+        stopTask = nil
+        sessionTranslateTarget = nil
+        localFinalText = nil
+        localOutcomeReady = false
+        localReadyWaiters = []
+        // Unblock anything still suspended in `waitForLocalReady()`.
+        markLocalReady()
+        previewText = ""
+        phase = .idle
     }
 
     // MARK: - Level metering
@@ -834,26 +424,7 @@ public final class DictationController {
         levelHistory.append(level)
     }
 
-    // MARK: - Final-outcome signalling
-
-    private func resolveFinal(_ outcome: FinalOutcome) {
-        guard finalOutcome == nil else { return }
-        finalOutcome = outcome
-        let waiters = finalReadyWaiters
-        finalReadyWaiters = []
-        for waiter in waiters {
-            waiter.resume()
-        }
-    }
-
-    private func waitForFinalOutcome() async {
-        if finalOutcome != nil { return }
-        await withCheckedContinuation { continuation in
-            finalReadyWaiters.append(continuation)
-        }
-    }
-
-    // MARK: - Local-readiness signalling (for the `.auto` cloud-failed/timed-out fallback)
+    // MARK: - Local-readiness signalling
 
     private func markLocalReady() {
         guard !localOutcomeReady else { return }
@@ -872,15 +443,13 @@ public final class DictationController {
         }
     }
 
-    /// Waits (up to `localFallbackTimeout`) for `previewTask` to finish, so `localFinalText` is
-    /// actually populated (if it ever will be) before we check it — otherwise a fast cloud
-    /// failure could race ahead of a still-processing local engine and we'd wrongly conclude
-    /// there's no usable fallback. No-op outside `.auto` mode or once already ready.
-    private func waitForLocalReadyBounded() async {
-        guard activeMode == .auto, previewTask != nil, !localOutcomeReady else { return }
+    /// Waits (up to `localFinalTimeout`) for `previewTask` to finish, so `localFinalText` is
+    /// populated (if it's going to be) before we read it for the `/api/transcribe` request.
+    private func waitForLocalFinalBounded() async {
+        guard !localOutcomeReady else { return }
         let localTimeoutTask = Task { @MainActor [weak self] in
             guard let self else { return }
-            try? await Task.sleep(for: self.localFallbackTimeout)
+            try? await Task.sleep(for: self.localFinalTimeout)
             guard !Task.isCancelled else { return }
             self.markLocalReady()
         }
@@ -891,64 +460,131 @@ public final class DictationController {
     // MARK: - Stop resolution
 
     private func resolveStop(generation: Int) async {
-        // `cancel()` may have run (and bumped the generation) while we were suspended waiting for
-        // the final outcome; if so this session is no longer current and must not touch phase.
-        guard generation == sessionGeneration else { return }
+        await waitForLocalFinalBounded()
+        guard generation == sessionGeneration else { return } // cancel() could race in above
 
-        switch finalOutcome {
-        case .success(let text):
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            if trimmed.isEmpty {
+        let hasSelection = context?.selectedText?.isEmpty == false && !(context?.isSecureInput ?? false)
+        let localCandidate = (localFinalText ?? previewText).trimmingCharacters(in: .whitespacesAndNewlines)
+        let localTranscript: String? = localCandidate.isEmpty ? nil : localCandidate
+
+        guard localTranscript != nil || !capturedPCM.isEmpty else {
+            handleEmptyFinal()
+            return
+        }
+
+        let prepared = await audioPreparer.prepare(pcm16: capturedPCM, sampleRate: AudioFormat.pcm16Mono16k.sampleRate)
+        guard generation == sessionGeneration else { return } // cancel() could race in above (prepare is async)
+        originalSecondsForDebug = prepared.originalSeconds
+        trimmedSecondsForDebug = prepared.trimmedSeconds
+        uploadBytesForDebug = prepared.data.count
+        audioFormatForDebug = prepared.format.rawValue
+
+        let request = CloudTranscribeRequest(
+            audioData: prepared.data,
+            audioFormat: prepared.format,
+            options: TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints),
+            localTranscript: localTranscript,
+            hasSelection: hasSelection,
+            app: makeAppContext(),
+            sessionID: sessionID
+        )
+
+        do {
+            let response = try await requestTranscription(request, rawPCM: capturedPCM, sampleRate: AudioFormat.pcm16Mono16k.sampleRate)
+            guard generation == sessionGeneration else { return }
+            await handleCloudResponse(response, localFallback: localTranscript, hasSelection: hasSelection, generation: generation)
+        } catch {
+            guard generation == sessionGeneration else { return }
+            // Offline/unreachable/timed-out -> fall back to the local transcript, same as today.
+            guard let localTranscript else {
                 handleEmptyFinal()
-            } else {
-                await handleFinalTranscript(trimmed, generation: generation)
+                return
             }
-
-        case .failure(let error):
-            await waitForLocalReadyBounded()
-            guard generation == sessionGeneration else { return } // cancel() could race in above
-
-            if let fallback = usableAutoLocalFallback() {
-                activeEngineID = engines.local.id
-                await handleFinalTranscript(fallback, generation: generation)
-            } else {
-                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
-                phase = .failed(mapped)
-                finishSession()
-            }
-
-        case .timeout, .none:
-            await waitForLocalReadyBounded()
-            guard generation == sessionGeneration else { return } // cancel() could race in above
-
-            if let fallback = usableAutoLocalFallback() {
-                activeEngineID = engines.local.id
-                await handleFinalTranscript(fallback, generation: generation)
-            } else if activeMode != .cloud {
-                // `.local`: this IS the original single-engine "timeout -> last preview" fallback.
-                // `.auto`: tertiary fallback once local's own final isn't available either —
-                // whatever's currently on screen (a local or cloud partial) beats nothing.
-                let fallback = previewText.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !fallback.isEmpty {
-                    await handleFinalTranscript(fallback, generation: generation)
-                } else {
-                    phase = .failed(.transcriptionFailed("timeout"))
-                    finishSession()
-                }
-            } else {
-                // `.cloud`: no fallback engine at all.
-                phase = .failed(.transcriptionFailed("timeout"))
-                finishSession()
-            }
+            activeEngineID = localEngine.id
+            routeSourceForDebug = "offline-fallback"
+            await dispatchIntent(text: localTranscript, serverIntent: nil, hasSelection: hasSelection, generation: generation)
         }
     }
 
-    /// Non-nil only in `.auto` mode, when local produced usable (non-empty, trimmed) final text —
-    /// the fallback used when cloud fails or times out. `.cloud` mode never falls back.
-    private func usableAutoLocalFallback() -> String? {
-        guard activeMode == .auto, let localFinalText else { return nil }
-        let trimmed = localFinalText.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
+    /// Races `cloudTranscriber.transcribe(_:)` against `cloudRequestTimeout`; on HTTP 415
+    /// ("unsupported audio format" — `ProsioError.network("unsupported-audio-format")`, see
+    /// `BackendClient`) retries once as WAV, per docs/P1.2-AUDIO-ROUTING.md §1.
+    private func requestTranscription(_ request: CloudTranscribeRequest, rawPCM: Data, sampleRate: Double) async throws -> CloudTranscript {
+        do {
+            return try await withTimeout(cloudRequestTimeout) { try await self.cloudTranscriber.transcribe(request) }
+        } catch let error as ProsioError where Self.isUnsupportedAudioFormat(error) && request.audioFormat != .wav {
+            let wavData = WAVFile.make(pcm16: rawPCM, sampleRate: sampleRate)
+            let wavRequest = CloudTranscribeRequest(
+                audioData: wavData,
+                audioFormat: .wav,
+                options: request.options,
+                localTranscript: request.localTranscript,
+                hasSelection: request.hasSelection,
+                app: request.app,
+                sessionID: request.sessionID
+            )
+            audioFormatForDebug = wavRequest.audioFormat.rawValue
+            uploadBytesForDebug = wavRequest.audioData.count
+            return try await withTimeout(cloudRequestTimeout) { try await self.cloudTranscriber.transcribe(wavRequest) }
+        }
+    }
+
+    private static func isUnsupportedAudioFormat(_ error: ProsioError) -> Bool {
+        if case .network(let message) = error { return message == "unsupported-audio-format" }
+        return false
+    }
+
+    /// Races `operation` against `duration`, cancelling whichever loses. Throws
+    /// `ProsioError.transcriptionFailed("timeout")` if `operation` doesn't win in time.
+    private func withTimeout<T: Sendable>(_ duration: Duration, _ operation: @escaping @Sendable () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            group.addTask { try await operation() }
+            group.addTask {
+                try await Task.sleep(for: duration)
+                throw ProsioError.transcriptionFailed("timeout")
+            }
+            defer { group.cancelAll() }
+            return try await group.next()!
+        }
+    }
+
+    /// Handles a successful `/api/transcribe` v2 response: `source == "local"` is a direct-insert
+    /// fast path (the server already decided the local transcript needs no further processing);
+    /// otherwise routes through the normal dictate/edit/ask/translate dispatch using the server's
+    /// inline intent decision (falling back to `IntentRules` when it's `nil`/unavailable).
+    private func handleCloudResponse(_ response: CloudTranscript, localFallback: String?, hasSelection: Bool, generation: Int) async {
+        routeSourceForDebug = response.source
+        routeCleanProbabilityForDebug = response.route?.cleanProbability
+        routeReasonForDebug = response.route?.reason
+        if response.source == "cloud" {
+            cloudFinalTextForDebug = response.text
+        }
+
+        let text = response.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else {
+            if let localFallback {
+                activeEngineID = localEngine.id
+                await dispatchIntent(text: localFallback, serverIntent: response.intent, hasSelection: hasSelection, generation: generation)
+            } else {
+                handleEmptyFinal()
+            }
+            return
+        }
+
+        // The "server says it's clean, just insert it" fast path only applies when the server's
+        // intent decision is actually what determines this session's routing — a follow-up ask
+        // (always `.ask`, existing turns kept) or an explicit intent (test/caller-supplied) must
+        // still go through `dispatchIntent`, which honors those regardless of `response.source`.
+        if response.source == "local", !isFollowUpAsk, explicitIntent == nil {
+            activeEngineID = localEngine.id
+            let resolution = resolveMainPathIntent(serverIntent: response.intent, text: text, hasSelection: hasSelection)
+            applyIntentDecision(resolution)
+            await insertAndRecord(final: text, generation: generation)
+            return
+        }
+
+        activeEngineID = Self.cloudEngineID
+        await dispatchIntent(text: text, serverIntent: response.intent, hasSelection: hasSelection, generation: generation)
     }
 
     private func handleEmptyFinal() {
@@ -1000,84 +636,44 @@ public final class DictationController {
 
     // MARK: - P1: intent dispatch (rewrite / translate / edit / ask)
 
-    /// Every "we have the final transcript" path (whichever engine/fallback produced it) routes
-    /// through here so compose (rewrite/translate/edit/ask) applies uniformly regardless of source.
-    private func handleFinalTranscript(_ transcript: String, generation: Int) async {
+    /// Every "we have the final transcript" path (cloud, local-fallback, or offline) routes through
+    /// here so compose (rewrite/translate/edit/ask) applies uniformly regardless of source.
+    private func dispatchIntent(text: String, serverIntent: IntentDecision?, hasSelection: Bool, generation: Int) async {
         if isFollowUpAsk {
-            await runAsk(question: transcript, generation: generation)
+            await runAsk(question: text, generation: generation)
             return
         }
         if let explicitIntent {
             // Caller (test or explicit code path) gave the answer directly — classification never ran.
             switch explicitIntent {
-            case .edit: await runEdit(instruction: transcript, generation: generation)
-            case .ask: await runAsk(question: transcript, generation: generation)
-            case .dictate: await runDictateDefault(transcript: transcript, generation: generation)
+            case .edit: await runEdit(instruction: text, generation: generation)
+            case .ask: await runAsk(question: text, generation: generation)
+            case .dictate: await runDictateDefault(transcript: text, generation: generation)
             }
             return
         }
 
-        // Wait for the early (stop()-time) classification attempt, if one was started.
-        await classifyIntentTask?.value
-        guard generation == sessionGeneration else { return }
-
-        let hasSelection = context?.selectedText?.isEmpty == false && !(context?.isSecureInput ?? false)
-        let resolution: IntentResolution
-
-        if let resolvedIntentDecision,
-           let localCandidate = classifyIntentSourceText,
-           Self.normalizedLeadingText(localCandidate) == Self.normalizedLeadingText(transcript) {
-            // The early (stop()-time) decision's leading text still matches the final transcript.
-            if resolvedIntentDecision.source == "rules" {
-                // Rules fallback must always run on the best available transcript (here: the
-                // actual final) even when the leading text happens to match — a mismatch further
-                // into the utterance (target/body parsing) is still possible, and there's no
-                // benefit to keeping a rules decision computed on a possibly-stale preview. No
-                // point retrying the classifier again immediately, though — it was already
-                // unavailable/timed out/nil moments ago.
-                let rules = IntentRules.classify(transcript, hasSelection: hasSelection, defaultTranslateTarget: settings.translateTarget)
-                resolution = IntentResolution(
-                    intent: rules.intent,
-                    source: "rules",
-                    confidence: nil,
-                    ruleTranslateTarget: rules.translateTarget,
-                    ruleTranslateBody: rules.translateBody
-                )
-                intentDecisionLatencyMsForDebug = nil // no classifier round-trip this time
-                applyIntentDecision(resolution, classifiedOn: "final")
-            } else {
-                resolution = resolvedIntentDecision
-            }
-        } else {
-            // Local preview was too short to classify (`resolvedIntentDecision == nil`), or its
-            // leading text diverged from the final transcript — e.g. cloud SMART normalizing a cue
-            // word away (observed: "提问" -> "请问") or a clipped leading word in the local preview.
-            // Discard the early attempt (if any) and (re)classify on the actual final transcript.
-            // Adds latency; correctness wins here since a missed cue silently turns a command into
-            // plain dictation.
-            resolution = await resolveIntentDecision(transcript: transcript, hasSelection: hasSelection)
-            guard generation == sessionGeneration else { return }
-            applyIntentDecision(resolution, classifiedOn: "final")
-        }
+        let resolution = resolveMainPathIntent(serverIntent: serverIntent, text: text, hasSelection: hasSelection)
+        applyIntentDecision(resolution)
 
         switch resolution.intent {
         case .dictate:
-            await runDictateDefault(transcript: transcript, generation: generation)
+            await runDictateDefault(transcript: text, generation: generation)
         case .edit:
-            await runEdit(instruction: transcript, generation: generation)
+            await runEdit(instruction: text, generation: generation)
         case .ask:
-            await runAsk(question: transcript, generation: generation)
+            await runAsk(question: text, generation: generation)
         case .translate:
             if resolution.source == "rules", let target = resolution.ruleTranslateTarget, let body = resolution.ruleTranslateBody {
-                await runTranslate(mode: .translate, text: body, target: target, generation: generation, transcriptForHistory: transcript)
+                await runTranslate(mode: .translate, text: body, target: target, generation: generation, transcriptForHistory: text)
             } else {
-                await runTranslate(mode: .translateCommand, text: transcript, target: settings.translateTarget, generation: generation, transcriptForHistory: transcript)
+                await runTranslate(mode: .translateCommand, text: text, target: settings.translateTarget, generation: generation, transcriptForHistory: text)
             }
         }
     }
 
-    /// `.dictate`-classified (or classifier-less, or explicit `.dictate`) sessions: the persistent
-    /// Translate toggle, then scene adaptation, then the fast path — all unchanged from before P1.1.
+    /// `.dictate`-classified (or explicit `.dictate`) sessions: the persistent Translate toggle,
+    /// then scene adaptation, then the fast path — unchanged since before P1.2.
     private func runDictateDefault(transcript: String, generation: Int) async {
         if settings.translateEnabled {
             sessionTranslateTarget = settings.translateTarget
@@ -1090,35 +686,17 @@ public final class DictationController {
         }
     }
 
-    /// Classifier (`intentClassifier`, capped at `classifyIntentTimeout`) -> `IntentRules` fallback
-    /// -> default (dictate, or edit with a selection). Never fails to produce a result.
-    private func resolveIntentDecision(transcript: String, hasSelection: Bool) async -> IntentResolution {
-        if let intentClassifier {
-            let startedAt = Date()
-            let decision = await withTaskGroup(of: IntentDecision?.self) { group -> IntentDecision? in
-                group.addTask { [makeAppContext] in
-                    guard let decision = try? await intentClassifier.classify(transcript: transcript, hasSelection: hasSelection, app: makeAppContext()),
-                          decision.intent != nil else { return nil }
-                    return decision
-                }
-                group.addTask {
-                    try? await Task.sleep(for: self.classifyIntentTimeout)
-                    return nil
-                }
-                let first = await group.next() ?? nil
-                group.cancelAll()
-                return first ?? nil
-            }
-            intentDecisionLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
-
-            if let decision, let classified = decision.intent {
-                return IntentResolution(intent: classified, source: decision.source, confidence: decision.confidence)
-            }
-            // Classifier threw, timed out, or explicitly returned `intent: nil` ("unavailable") ->
-            // degrade to client-side rules.
+    /// P1.2: the server's inline intent decision (`/api/transcribe` response) -> `IntentRules`
+    /// fallback -> default (dictate, or edit with a selection). Never fails to produce a result.
+    /// Unlike the pre-P1.2 flow, this never calls `intentClassifier` — the main dictation path no
+    /// longer makes a separate `/api/intent` request (see the type doc comment on `intentClassifier`).
+    private func resolveMainPathIntent(serverIntent: IntentDecision?, text: String, hasSelection: Bool) -> IntentResolution {
+        if let serverIntent, let classified = serverIntent.intent {
+            return IntentResolution(intent: classified, source: serverIntent.source, confidence: serverIntent.confidence)
         }
-
-        let rules = IntentRules.classify(transcript, hasSelection: hasSelection, defaultTranslateTarget: settings.translateTarget)
+        // Server intent unavailable (no response at all, e.g. offline; or `intent: null` because
+        // Jev was down server-side) -> degrade to client-side rules.
+        let rules = IntentRules.classify(text, hasSelection: hasSelection, defaultTranslateTarget: settings.translateTarget)
         return IntentResolution(
             intent: rules.intent,
             source: "rules",
@@ -1128,13 +706,7 @@ public final class DictationController {
         )
     }
 
-    /// - Parameter classifiedOn: "local" (stop()-time speculative decision on the local preview) or
-    ///   "final" (decided/redecided on the actual final transcript) — recorded separately in the
-    ///   debug recording (`intentDecisionLocal*`/`intentDecisionFinal*`) alongside the "winning"
-    ///   flat fields (`intentDecisionClassified`/etc.), which always reflect whichever call this was
-    ///   invoked with most recently.
-    private func applyIntentDecision(_ resolution: IntentResolution, classifiedOn: String) {
-        resolvedIntentDecision = resolution
+    private func applyIntentDecision(_ resolution: IntentResolution) {
         // `ClassifiedIntent.translate` has no `DictationIntent` equivalent — publish `.dictate`
         // (a translate-classified session is still, structurally, a dictation).
         intent = {
@@ -1149,38 +721,8 @@ public final class DictationController {
         intentDecisionClassifiedForDebug = resolution.intent.rawValue
         intentDecisionSourceForDebug = resolution.source
         intentDecisionConfidenceForDebug = resolution.confidence
-        intentDecisionClassifiedOnForDebug = classifiedOn
 
-        let latencyMs = self.intentDecisionLatencyMsForDebug
-        switch classifiedOn {
-        case "local":
-            intentDecisionLocalClassifiedForDebug = resolution.intent.rawValue
-            intentDecisionLocalSourceForDebug = resolution.source
-            intentDecisionLocalConfidenceForDebug = resolution.confidence
-            intentDecisionLocalLatencyMsForDebug = latencyMs
-        case "final":
-            intentDecisionFinalClassifiedForDebug = resolution.intent.rawValue
-            intentDecisionFinalSourceForDebug = resolution.source
-            intentDecisionFinalConfidenceForDebug = resolution.confidence
-            intentDecisionFinalLatencyMsForDebug = latencyMs
-        default:
-            break
-        }
-
-        ProsioLog.intent.info("intent decision=\(resolution.intent.rawValue, privacy: .public) source=\(resolution.source, privacy: .public) confidence=\(resolution.confidence.map { String(format: "%.2f", $0) } ?? "n/a", privacy: .public) classifiedOn=\(classifiedOn, privacy: .public) latencyMs=\(latencyMs.map { String(format: "%.0f", $0) } ?? "n/a", privacy: .public)")
-    }
-
-    /// Strips whitespace/punctuation and keeps the first `count` characters — used to compare a
-    /// stop()-time local-preview candidate against the eventual final transcript. Insensitive to a
-    /// cue-word normalization or a clipped leading word only if it happens to fall entirely outside
-    /// this window; see `handleFinalTranscript`.
-    private static func normalizedLeadingText(_ text: String, count: Int = 6) -> String {
-        var result = ""
-        for character in text where !(character.isWhitespace || character.isPunctuation) {
-            result.append(character)
-            if result.count >= count { break }
-        }
-        return result
+        ProsioLog.intent.info("intent decision=\(resolution.intent.rawValue, privacy: .public) source=\(resolution.source, privacy: .public) confidence=\(resolution.confidence.map { String(format: "%.2f", $0) } ?? "n/a", privacy: .public)")
     }
 
     private func runRewrite(transcript: String, generation: Int) async {
@@ -1212,8 +754,8 @@ public final class DictationController {
     }
 
     /// - Parameter mode: `.translate` (rule-matched or persistent-toggle: cue already stripped
-    ///   client-side, `text` is the content) or `.translateCommand` (classifier-matched: `text` is
-    ///   the whole utterance, the server extracts the content and target itself).
+    ///   client-side, `text` is the content) or `.translateCommand` (server/classifier-matched:
+    ///   `text` is the whole utterance, the server extracts the content and target itself).
     private func runTranslate(mode: ComposeRequest.Mode, text: String, target: String, generation: Int, transcriptForHistory: String) async {
         guard let composer else {
             await failTranslate(transcript: transcriptForHistory, generation: generation, error: .engineUnavailable("compose disabled"))
@@ -1464,18 +1006,11 @@ public final class DictationController {
         if settings.saveDebugRecordings {
             writeDebugRecording(insertedText: insertedText, outcome: outcome)
         }
-        classifyIntentTask?.cancel()
-        classifyIntentTask = nil
         meterTask?.cancel()
-        engineTask?.cancel()
         previewTask?.cancel()
         meterTask = nil
-        engineTask = nil
         previewTask = nil
         stopTask = nil
-        timeoutTask = nil
-        finalOutcome = nil
-        finalReadyWaiters = []
         sessionTranslateTarget = nil
     }
 
@@ -1500,9 +1035,9 @@ public final class DictationController {
         let record = DebugSessionRecord(
             sessionID: sessionID.uuidString,
             createdAt: sessionCreatedAt,
-            mode: activeMode.rawValue,
-            localEngineID: engines.local.id,
-            cloudEngineID: engines.cloud.id,
+            mode: "auto",
+            localEngineID: localEngine.id,
+            cloudEngineID: Self.cloudEngineID,
             engineIDUsed: activeEngineID,
             localFinalText: localText,
             cloudFinalText: cloudText,
@@ -1511,10 +1046,13 @@ public final class DictationController {
             audioDurationSeconds: totalAudioDuration,
             suspectedDrop: suspectedDrop,
             timings: timings,
-            routeNeedsCloud: routeDecisionForDebug?.needsCloud,
-            routeCleanProbability: routeDecisionForDebug?.cleanProbability,
-            routeReason: routeDecisionForDebug?.reason,
-            routeLatencyMs: routeLatencyMsForDebug,
+            routeSource: routeSourceForDebug,
+            routeCleanProbability: routeCleanProbabilityForDebug,
+            routeReason: routeReasonForDebug,
+            originalSeconds: originalSecondsForDebug,
+            trimmedSeconds: trimmedSecondsForDebug,
+            uploadBytes: uploadBytesForDebug,
+            audioFormat: audioFormatForDebug,
             intent: intent?.rawValue,
             scene: scene.rawValue,
             composeMode: composeModeForDebug,
@@ -1522,25 +1060,10 @@ public final class DictationController {
             composeOutput: composeOutputForDebug,
             intentDecisionClassified: intentDecisionClassifiedForDebug,
             intentDecisionSource: intentDecisionSourceForDebug,
-            intentDecisionConfidence: intentDecisionConfidenceForDebug,
-            intentDecisionLatencyMs: intentDecisionLatencyMsForDebug,
-            intentDecisionClassifiedOn: intentDecisionClassifiedOnForDebug,
-            intentDecisionLocalClassified: intentDecisionLocalClassifiedForDebug,
-            intentDecisionLocalSource: intentDecisionLocalSourceForDebug,
-            intentDecisionLocalConfidence: intentDecisionLocalConfidenceForDebug,
-            intentDecisionLocalLatencyMs: intentDecisionLocalLatencyMsForDebug,
-            intentDecisionFinalClassified: intentDecisionFinalClassifiedForDebug,
-            intentDecisionFinalSource: intentDecisionFinalSourceForDebug,
-            intentDecisionFinalConfidence: intentDecisionFinalConfidenceForDebug,
-            intentDecisionFinalLatencyMs: intentDecisionFinalLatencyMsForDebug
+            intentDecisionConfidence: intentDecisionConfidenceForDebug
         )
 
-        var audioData = Data()
-        audioData.reserveCapacity(capturedAudioChunks.reduce(0) { $0 + $1.count })
-        for chunk in capturedAudioChunks {
-            audioData.append(chunk)
-        }
-
+        let audioData = capturedPCM
         let root = debugRecordingsRootOverride ?? Self.defaultDebugRecordingsRoot()
         let sessionIDForWrite = sessionID
         let sampleRate = AudioFormat.pcm16Mono16k.sampleRate

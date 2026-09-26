@@ -7,6 +7,7 @@ export type ErrorCode =
   | "quota_exceeded"
   | "bad_request"
   | "payload_too_large"
+  | "unsupported_media_type"
   | "upstream_error"
   | "not_found";
 
@@ -16,6 +17,7 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   quota_exceeded: 402,
   bad_request: 400,
   payload_too_large: 413,
+  unsupported_media_type: 415,
   upstream_error: 502,
   not_found: 404,
 };

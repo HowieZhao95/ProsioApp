@@ -5,22 +5,12 @@ public enum TriggerKey: String, Codable, CaseIterable, Sendable {
     case fn, rightOption, rightCommand, rightControl
 }
 
-public enum EnginePreference: String, Codable, CaseIterable, Sendable {
-    /// Cloud first, fall back to on-device on failure/offline.
-    case auto
-    case cloud
-    case local
-}
-
 /// User preferences, persisted in UserDefaults. PUBLIC API FROZEN — implementation owned by core agent.
 @MainActor
 @Observable
 public final class AppSettings {
     public var triggerKey: TriggerKey = .fn {
         didSet { defaults.set(triggerKey.rawValue, forKey: Keys.triggerKey) }
-    }
-    public var enginePreference: EnginePreference = .auto {
-        didSet { defaults.set(enginePreference.rawValue, forKey: Keys.enginePreference) }
     }
     public var backendURL: URL = URL(string: "http://localhost:3000")! {
         didSet { defaults.set(backendURL.absoluteString, forKey: Keys.backendURL) }
@@ -72,7 +62,6 @@ public final class AppSettings {
 
     private enum Keys {
         static let triggerKey = "prosio.triggerKey"
-        static let enginePreference = "prosio.enginePreference"
         static let backendURL = "prosio.backendURL"
         static let languageHints = "prosio.languageHints"
         static let showEdgeGlow = "prosio.showEdgeGlow"
@@ -86,6 +75,9 @@ public final class AppSettings {
         static let sceneOverrides = "prosio.sceneOverrides"
         // "prosio.askTriggerKey" removed (P1.1: single fn hotkey; Ask is voice-triggered). Not
         // read/written anymore — tolerate a stale value left over in a user's defaults.
+        // "prosio.enginePreference" removed (P1.2: no engine-mode setting — routing is always
+        // automatic, decided server-side per session). Not read/written anymore — tolerate a stale
+        // value left over in a user's defaults.
     }
 
     public init(defaults: UserDefaults = .standard) {
@@ -93,9 +85,6 @@ public final class AppSettings {
 
         if let raw = defaults.string(forKey: Keys.triggerKey), let value = TriggerKey(rawValue: raw) {
             triggerKey = value
-        }
-        if let raw = defaults.string(forKey: Keys.enginePreference), let value = EnginePreference(rawValue: raw) {
-            enginePreference = value
         }
         if let raw = defaults.string(forKey: Keys.backendURL), let url = URL(string: raw) {
             backendURL = url
