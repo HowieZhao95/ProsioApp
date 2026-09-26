@@ -70,6 +70,14 @@ public final class DictationController {
     /// `nil` (production default) means `~/Library/Application Support/Prosio/debug`.
     /// Internal test seam — not part of the public API.
     var debugRecordingsRootOverride: URL?
+    /// The debug-recording root this controller would actually write to right now — mirrors exactly
+    /// what `writeDebugRecording()` resolves. Test-only seam (see `TestIsolationGuardTests`) so a
+    /// `@testable` test can assert a test-constructed controller isn't one accidental
+    /// `saveDebugRecordings = true` away from writing into the user's real
+    /// `~/Library/Application Support/Prosio/debug` — the isolation bug this seam guards against.
+    var resolvedDebugRecordingsRootForTesting: URL {
+        debugRecordingsRootOverride ?? Self.defaultDebugRecordingsRoot()
+    }
     /// How long `stop()` waits for local's final before deciding routing needs cloud regardless
     /// (empty/unavailable local -> cloud). `.auto`-with-`router` only. Overridable via `@testable import`.
     var routingLocalFinalTimeout: Duration = .seconds(1.5)

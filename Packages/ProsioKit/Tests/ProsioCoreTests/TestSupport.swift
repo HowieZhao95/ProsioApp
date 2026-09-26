@@ -413,7 +413,17 @@ func makeAudioChunk(level: Float = 0.5, timestamp: TimeInterval) -> AudioChunk {
 func makeTestSettings() -> AppSettings {
     let suiteName = "prosio.tests.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
-    return AppSettings(defaults: defaults)
+    let settings = AppSettings(defaults: defaults)
+    // `AppSettings.saveDebugRecordings` defaults to `true`, and `DictationController` falls back to
+    // the REAL `~/Library/Application Support/Prosio/debug` whenever a test doesn't set
+    // `debugRecordingsRootOverride` — which is nearly every test in this package. Disable it here so
+    // that only tests which explicitly opt back in (and, doing so, must also point
+    // `debugRecordingsRootOverride` at a temp directory — see `DictationControllerDebugRecordingTests`
+    // and `IntentReclassificationDebugRecordingTests`) ever write a debug recording at all. See the
+    // test-isolation bug this fixes: ordinary test runs were evicting the user's real recordings
+    // (capped at the last 30) with test fixture data.
+    settings.saveDebugRecordings = false
+    return settings
 }
 
 /// Polls `condition` on the main actor until it's true or `timeout` elapses.
