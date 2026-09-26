@@ -22,13 +22,17 @@
  *     "hey Prosio" / "question" / "quick question" — Chinese cues must be
  *     followed by punctuation, 一下, or a question body; never 请问 (too
  *     common in normal writing); never bare "Ask …".
+ *   - write: 帮我写 / 帮我回复 / 帮我起草 / 帮我拟 / 替我回 / 写一封 / 起草一封 /
+ *     "help me write" / "draft a|an" / "write a|an (reply|email|message|
+ *     note|post)" / "reply saying" — only at the very start; never "你帮我…"
+ *     (usually addressed to a person, not Prosio).
  *   - translate: 翻译 / 翻成 / 译成 / 帮我翻译 / 用(英文|日语…)说 /
  *     "translate (this) (to|into) X" / "in English|Japanese…, " — target
  *     language from the cue, else the default.
  *   - otherwise: the default (dictate, or edit with a selection).
  */
 
-export type RulesIntent = "dictate" | "edit" | "ask" | "translate";
+export type RulesIntent = "dictate" | "edit" | "ask" | "translate" | "write";
 
 export interface RulesParams {
   transcript: string;
@@ -37,7 +41,7 @@ export interface RulesParams {
 
 export interface RulesDecision {
   intent: RulesIntent;
-  matchedRule: "ask" | "translate" | "default";
+  matchedRule: "ask" | "write" | "translate" | "default";
 }
 
 function defaultIntent(hasSelection: boolean): RulesIntent {
@@ -75,6 +79,14 @@ const ZH_USE_LANGUAGE_PATTERN = /^用(?:[一-鿿]{1,4}|[a-zA-Z]+)(?:说|跟.*说
 const EN_TRANSLATE_PATTERN = /^translate\b.*\b(?:to|into)\b/i;
 const EN_IN_LANGUAGE_PATTERN = /^in\s+[a-z]+\s*,/i;
 
+// Write cues (docs/PROMPTS.md §5b), prefix-only like every other rule here.
+// "你帮我…" is deliberately NOT matched — none of these cues start with
+// "你", and the anchor requires the cue at the very start, so "你帮我写…"
+// (usually a request addressed to a person) never matches.
+const ZH_WRITE_CUES = ["帮我写", "帮我回复", "帮我起草", "帮我拟", "替我回", "写一封", "起草一封"];
+const ZH_WRITE_CUE_PATTERN = new RegExp(`^(?:${ZH_WRITE_CUES.join("|")})`);
+const EN_WRITE_PATTERN = /^(?:help me write|draft (?:a|an)\b|write (?:a|an) (?:reply|email|message|note|post)\b|reply saying)/i;
+
 /**
  * Non-authoritative TS port of the client's bilingual rules, for eval
  * comparison only. See file header.
@@ -93,6 +105,10 @@ export function classifyIntentByRules(params: RulesParams): RulesDecision {
   }
   if (EN_ASK_CUE_PATTERN.test(text)) {
     return { intent: "ask", matchedRule: "ask" };
+  }
+
+  if (ZH_WRITE_CUE_PATTERN.test(text) || EN_WRITE_PATTERN.test(text)) {
+    return { intent: "write", matchedRule: "write" };
   }
 
   if (ZH_TRANSLATE_CUE_PATTERN.test(text) || ZH_USE_LANGUAGE_PATTERN.test(text)) {

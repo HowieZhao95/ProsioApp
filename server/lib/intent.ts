@@ -21,11 +21,22 @@ import { callJev, isChoiceAnswer } from "./jev";
 // alongside the router's two questions, in one Jev call.
 
 export const INTENT_MODEL = "typesafe-ai/jev";
+// Default threshold for every intent except `write` (below). Kept under
+// this name for backward compat with existing importers (scripts/intent-eval.ts).
 export const INTENT_CONFIDENCE_THRESHOLD = 0.7;
+// `write` needs a higher bar (docs/PROMPTS.md §5b): a wrong `write`
+// replaces the user's own words with generated text — the single most
+// destructive misclassification — so it's held to 0.8, not the default 0.7.
+export const WRITE_INTENT_CONFIDENCE_THRESHOLD = 0.8;
 export const INTENT_TIMEOUT_MS = 1200;
 
-export type IntentValue = "dictate" | "edit" | "ask" | "translate";
+export type IntentValue = "dictate" | "edit" | "ask" | "translate" | "write";
 export type IntentSource = "jev" | "unavailable";
+
+/** Per-choice confidence threshold (docs/PROMPTS.md §5b: "write needs probability ≥ 0.8 ... other commands ≥ 0.7"). Shared with `lib/transcribe-routing.ts`. */
+export function thresholdForIntent(intent: string): number {
+  return intent === "write" ? WRITE_INTENT_CONFIDENCE_THRESHOLD : INTENT_CONFIDENCE_THRESHOLD;
+}
 
 export interface IntentDecision {
   intent: IntentValue | null;
@@ -54,24 +65,27 @@ export const TRANSLATE_CRITERION =
   "The user explicitly asks Prosio to translate spoken content into another language (not when translation is merely mentioned in the text).";
 export const DICTATE_CRITERION = "Type the utterance as text. This includes questions, requests and messages written for other people.";
 export const EDIT_CRITERION = "Change the selected text as the utterance instructs.";
+export const WRITE_CRITERION =
+  "The user asks Prosio to write or draft text for them from a description (a reply, email, message, post or note) — describing what to say rather than saying the exact words. Not when the user is dictating a request meant for another person (for example asking a colleague to write something).";
 
 /** The criteria offered to Jev for a given `hasSelection` — shared with `lib/transcribe-routing.ts`. */
 export function intentCriteriaFor(hasSelection: boolean): Record<string, string> {
   return hasSelection
-    ? { edit: EDIT_CRITERION, ask: ASK_CRITERION, translate: TRANSLATE_CRITERION }
-    : { dictate: DICTATE_CRITERION, ask: ASK_CRITERION, translate: TRANSLATE_CRITERION };
+    ? { edit: EDIT_CRITERION, ask: ASK_CRITERION, translate: TRANSLATE_CRITERION, write: WRITE_CRITERION }
+    : { dictate: DICTATE_CRITERION, ask: ASK_CRITERION, translate: TRANSLATE_CRITERION, write: WRITE_CRITERION };
 }
 
 /**
- * Applies docs/PROMPTS.md §5b's threshold policy to a raw Jev choice
- * answer. Shared with `lib/transcribe-routing.ts`.
+ * Applies docs/PROMPTS.md §5b's per-choice threshold policy to a raw Jev
+ * choice answer (`write` needs ≥0.8, every other choice ≥0.7). Shared with
+ * `lib/transcribe-routing.ts`.
  */
 export function decideIntent(
   choice: string,
   confidence: number | null,
   hasSelection: boolean
 ): { intent: IntentValue; confidence: number | null } {
-  if (confidence !== null && confidence >= INTENT_CONFIDENCE_THRESHOLD) {
+  if (confidence !== null && confidence >= thresholdForIntent(choice)) {
     return { intent: choice as IntentValue, confidence };
   }
   return { intent: defaultIntent(hasSelection), confidence };

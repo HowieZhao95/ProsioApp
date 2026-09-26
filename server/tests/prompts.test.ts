@@ -6,6 +6,7 @@ import {
   buildRewritePrompt,
   buildTranslateCommandPrompt,
   buildTranslatePrompt,
+  buildWritePrompt,
   languageNameFromBCP47,
   sanitizeComposeOutput,
 } from "@/lib/prompts";
@@ -139,6 +140,38 @@ describe("buildAskPrompt", () => {
     const prompt = buildAskPrompt({ question: "hi", app: { appName: "Terminal" } });
     expect(prompt.system).toMatchSnapshot();
     expect(prompt.system).not.toContain("<context>");
+  });
+});
+
+describe("buildWritePrompt", () => {
+  it("email scene, no selection, with vocabulary", () => {
+    const prompt = buildWritePrompt({
+      transcript: "帮我回复他说明天可以，但会晚半小时到",
+      scene: "email",
+      app: { appName: "Mail", windowTitle: "New Message" },
+      vocabulary: ["Prosio"],
+    });
+    expect(prompt.system).toMatchSnapshot();
+    expect(prompt.messages).toEqual([
+      { role: "user", content: "<instruction>\n帮我回复他说明天可以，但会晚半小时到\n</instruction>" },
+    ]);
+    expect(prompt.system).not.toContain("<context>");
+  });
+
+  it("chat scene, with a selection as reply context", () => {
+    const prompt = buildWritePrompt({
+      transcript: "reply saying thanks, I'll review it tomorrow",
+      scene: "chat",
+      app: { appName: "Slack" },
+      selection: "Hey, can you take a look at the PR when you get a chance?",
+    });
+    expect(prompt.system).toMatchSnapshot();
+    expect(prompt.system).toContain("<context>");
+  });
+
+  it("no app (fallback to 'this app'), no vocabulary", () => {
+    const prompt = buildWritePrompt({ transcript: "write a short note", scene: "document" });
+    expect(prompt.system).toMatchSnapshot();
   });
 });
 

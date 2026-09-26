@@ -16,7 +16,10 @@ public enum IntentRules {
     /// far more common lookalike (observed: "提问" -> "请问", which `IntentRules` deliberately never
     /// treats as a cue — see `boundaryRequiredChineseAskKeywords`), or the on-device preview can
     /// clip a leading word — either way the cue never reaches this classifier.
-    public static let vocabularyHints: [String] = ["提问", "问答", "请教", "翻译", "翻成", "译成", "Prosio"]
+    public static let vocabularyHints: [String] = [
+        "提问", "问答", "请教", "翻译", "翻成", "译成", "Prosio",
+        "帮我写", "帮我回复", "帮我起草", "帮我拟", "替我回", "写一封", "起草一封"
+    ]
 
     public struct Result: Equatable, Sendable {
         public var intent: ClassifiedIntent
@@ -40,10 +43,38 @@ public enum IntentRules {
         if let (target, body) = parseTranslate(trimmed, defaultTarget: defaultTranslateTarget) {
             return Result(intent: .translate, translateTarget: target, translateBody: body)
         }
+        if isWrite(trimmed) {
+            return Result(intent: .write)
+        }
         if isAsk(trimmed) {
             return Result(intent: .ask)
         }
         return Result(intent: hasSelection ? .edit : .dictate)
+    }
+
+    // MARK: - Write cues ("Help me write", docs/PROMPTS.md §4b/§5b)
+    // 帮我写 / 帮我回复 / 帮我起草 / 帮我拟 / 替我回 / 写一封 / 起草一封 /
+    // "help me write" / "draft a|an" / "write a|an (reply|email|message|note|post)" / "reply saying"
+    // — only at the very start; never "你帮我…" (naturally excluded by anchoring at the start —
+    // "你帮我" doesn't itself begin with "帮我"). Unlike ask/translate, no punctuation/一下 boundary
+    // is required after the cue: the whole (untouched) transcript is sent as the write instruction,
+    // so there's no structural body to extract.
+
+    private static let chineseWriteCues = ["帮我写", "帮我回复", "帮我起草", "帮我拟", "替我回", "写一封", "起草一封"]
+
+    private static let englishWriteCues: [String] = {
+        var cues = ["help me write", "draft a", "draft an", "reply saying"]
+        for noun in ["reply", "email", "message", "note", "post"] {
+            cues.append("write a \(noun)")
+            cues.append("write an \(noun)")
+        }
+        return cues
+    }()
+
+    private static func isWrite(_ text: String) -> Bool {
+        if chineseWriteCues.contains(where: text.hasPrefix) { return true }
+        let lower = text.lowercased()
+        return englishWriteCues.contains(where: lower.hasPrefix)
     }
 
     // MARK: - Ask cues

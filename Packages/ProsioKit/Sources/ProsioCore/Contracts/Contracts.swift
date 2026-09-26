@@ -312,6 +312,10 @@ public enum DictationIntent: String, Sendable, Codable, Hashable {
     case edit
     /// The transcript is a question; the answer streams into the answer card.
     case ask
+    /// P1.3 "Help me write": the transcript describes text to draft (docs/PROMPTS.md §4b). No
+    /// selection: inserted at the cursor. With a selection: streamed into the answer card instead
+    /// (Insert/Copy), same as `.ask` — the selection is context, never replaced.
+    case write
 }
 
 // MARK: - Intent classification (server Jev, client `IntentRules` fallback — docs/PROMPTS.md §5b)
@@ -320,7 +324,7 @@ public enum DictationIntent: String, Sendable, Codable, Hashable {
 /// `IntentRules` fallback). A superset of `DictationIntent`: `.translate` has no `DictationIntent`
 /// equivalent — a translate-classified session still reports `DictationIntent.dictate`.
 public enum ClassifiedIntent: String, Codable, Sendable {
-    case dictate, edit, ask, translate
+    case dictate, edit, ask, translate, write
 }
 
 public struct IntentDecision: Sendable, Codable, Hashable {
@@ -387,12 +391,16 @@ public struct ComposeRequest: Sendable, Codable, Hashable {
         /// in whatever phrasing) — the server extracts the content and target itself, rather than
         /// the client stripping a fixed prefix. `targetLanguage` is still sent as the default.
         case translateCommand
+        /// P1.3 "Help me write" (docs/PROMPTS.md §4b): `text` is the spoken instruction describing
+        /// what to write; `selection`, if any, is context (e.g. the message being replied to), never
+        /// the thing being rewritten.
+        case write
     }
 
     public var mode: Mode
-    /// Dictation (rewrite/translate), instruction (edit) or question (ask).
+    /// Dictation (rewrite/translate), instruction (edit/write) or question (ask).
     public var text: String
-    /// Edit: the text to change. Ask: optional context.
+    /// Edit: the text to change. Ask/write: optional context.
     public var selection: String?
     public var scene: WritingScene
     /// BCP-47 target for `.translate`, e.g. "en-US".

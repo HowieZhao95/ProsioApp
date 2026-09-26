@@ -145,4 +145,32 @@ describe("checkLocalTranscript", () => {
     expect(decision.reason).toBe("clean");
     expect(evaluateMock).toHaveBeenCalledTimes(1);
   });
+
+  it("offers write and applies its stricter 0.8 threshold", async () => {
+    evaluateMock.mockResolvedValue(combinedAnswers(0.95, 0.97, "write", { dictate: 0.05, write: 0.8 }));
+    const decision = await checkLocalTranscript({
+      transcript: "帮我回复他说明天可以，但会晚半小时到",
+      vocabulary: [],
+      languageHints: [],
+      hasSelection: false,
+    });
+    expect(decision.intent).toBe("write");
+    const call = evaluateMock.mock.calls[0]![0];
+    expect(call.questions.intent.criteria.write).toBeDefined();
+  });
+
+  it("write below 0.8 (but above the default 0.7) defaults instead of being accepted, so it never takes the local fast path", async () => {
+    evaluateMock.mockResolvedValue(combinedAnswers(0.95, 0.97, "write", { dictate: 0.2, write: 0.75 }));
+    const decision = await checkLocalTranscript({
+      transcript: "x",
+      vocabulary: [],
+      languageHints: [],
+      hasSelection: false,
+    });
+    expect(decision.intent).toBe("dictate"); // defaulted
+    expect(decision.needsCloud).toBe(false); // text itself was clean...
+    // ...but app/api/transcribe's route only skips Gemini for dictate/edit,
+    // so a "write" classification (accepted or defaulted away from) can
+    // never reach the local fast path either way.
+  });
 });

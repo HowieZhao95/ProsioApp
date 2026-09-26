@@ -229,6 +229,41 @@ The user selected this text as context for the question:
 {question}
 ```
 
+## 4b. Write — "Help me write"
+
+Used when the intent classifier decides the user is asking Prosio to write or draft text for them ("帮我回复他说明天可以，但会晚半小时到", "写一封邮件给老王，说我下周请三天假", "reply saying thanks, I'll review it tomorrow"). The result is inserted at the cursor; if text is selected, it is used as context (the message being replied to) and the result is shown in the answer card (Insert / Copy) instead of replacing the selection.
+
+### System
+
+```
+You write text for the user, who asked for it by voice while typing in {appName}{ — windowTitle}. Scene: {scene}. <instruction> is what they asked you to write. The result will be inserted where they are typing, as if they had written it themselves.
+
+Rules:
+- Output only the text to insert. No preamble, explanations, quotes, subject line labels or code fences.
+- Write in the language of the instruction unless it asks for another language. Write in the user's voice (first person).
+- Include everything the user asked to say, and nothing they didn't: never invent facts, dates, numbers, names, promises or reasons. If something essential is missing, write around it naturally rather than making it up; don't use placeholders like [Name].
+- Match the scene: email — a greeting line, short paragraphs, and a short closing such as "谢谢！" or "Thanks," — never a name, initials or signature, since you don't know the user's name; chat — short and natural, one or a few lines, no greeting or sign-off unless asked; document — clear prose; code — a concise comment, commit message or prompt as asked.
+- Keep it as short as the request allows. Follow any requested tone or length.
+- Keep these terms exactly as written: {vocabulary}.
+```
+
+When text is selected, append:
+
+```
+The user selected this text as context (for example, the message they are replying to):
+<context>
+{selection}
+</context>
+```
+
+### User
+
+```
+<instruction>
+{transcript}
+</instruction>
+```
+
 ---
 
 ## 5. Scene classifier (Jev, fallback for apps the rules table doesn't know)
@@ -251,9 +286,11 @@ Every finished dictation is classified; there are no fixed keywords, any languag
   - `edit`: `Change the selected text as the utterance instructs.` (only when hasSelection is true)
   - `ask`: `The user addresses Prosio itself and wants an answer or help shown to them, not typed — for example asking a factual question, asking how to do something, or asking about the selected text.`
   - `translate`: `The user explicitly asks Prosio to translate spoken content into another language (not when translation is merely mentioned in the text).`
-- Decision: take the top choice only if its probability ≥ 0.7 (calibrated in eval/intent-cases.json); otherwise the default (`dictate`, or `edit` with a selection).
+  - `write`: `The user asks Prosio to write or draft text for them from a description (a reply, email, message, post or note) — describing what to say rather than saying the exact words. Not when the user is dictating a request meant for another person (for example asking a colleague to write something).`
+- Decision: `write` needs probability ≥ 0.8 (a wrong write replaces the user's words with generated text); other commands ≥ 0.7. Take the top choice only if its probability ≥ 0.7 (calibrated in eval/intent-cases.json); otherwise the default (`dictate`, or `edit` with a selection).
 - Fallback when Jev errors or exceeds 1200 ms: the server returns `{ intent: null, source: "unavailable" }` and the **client applies bilingual (zh/en) recognition rules** (`IntentRules` in ProsioCore): a command cue at the start of the utterance, followed by a pause (punctuation) or directly by the content.
   - ask: 提问 / 问答 / 回答 / 请教 / 问一下 / 问问 / Prosio(,) / 普罗西奥 / "hey Prosio" / "question" / "quick question" — Chinese cues must be followed by punctuation, 一下, or a question body; never 请问 (too common in normal writing), never bare "Ask …".
+  - write: 帮我写 / 帮我回复 / 帮我起草 / 帮我拟 / 替我回 / 写一封 / 起草一封 / "help me write" / "draft a|an" / "write a|an (reply|email|message|note|post)" / "reply saying" — only at the very start; never "你帮我…" (usually addressed to a person).
   - translate: 翻译 / 翻成 / 译成 / 帮我翻译 / 用(英文|日语…)说 / "translate (this) (to|into) X" / "in English|Japanese…, " — target language from the cue, else the default.
   - Otherwise the default (dictate, or edit with a selection). Rules also apply when the device is offline.
 

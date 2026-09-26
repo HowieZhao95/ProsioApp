@@ -48,7 +48,7 @@ When `localTranscript` is omitted (old clients, or a genuinely unavailable local
 
 Checks entitlement + quota, calls Gateway `transcribe({ model: 'google/gemini-3.5-transcribe', providerOptions: { google: { mode: 'SMART'|'VERBATIM', customVocabulary, languageCodes } } })` (skipped entirely on the local fast path).
 Records usage server-side from the audio duration (idempotent on `sessionID`), so the client does NOT also call `/api/usage` for this path — this happens regardless of `source`.
-→ `200 { "text": "…", "language": "zh" | null, "durationSeconds": 4.05, "source": "local" | "cloud", "intent": { "intent": "dictate"|"edit"|"ask"|"translate"|null, "confidence": number|null, "source": "jev"|"unavailable", "classifiedOn": "local"|"final" }, "route": { "cleanProbability": number|null, "reason": "clean"|"needs-cleanup"|"likely-misrecognized"|"router-error"|"no-local-transcript"|"needs-formatting" }, "formatRepair": "applied"|"rejected"|"timeout"|null }`
+→ `200 { "text": "…", "language": "zh" | null, "durationSeconds": 4.05, "source": "local" | "cloud", "intent": { "intent": "dictate"|"edit"|"ask"|"translate"|"write"|null, "confidence": number|null, "source": "jev"|"unavailable", "classifiedOn": "local"|"final" }, "route": { "cleanProbability": number|null, "reason": "clean"|"needs-cleanup"|"likely-misrecognized"|"router-error"|"no-local-transcript"|"needs-formatting" }, "formatRepair": "applied"|"rejected"|"timeout"|null }`
 On the local fast path, `text` is exactly `localTranscript` and `language` is `null` (no Gemini call was made to determine it).
 Errors: 401, 402 `quota_exceeded`, 400, 413 `payload_too_large`, 415 `unsupported_media_type`, 502 `upstream_error`. The routing/intent check itself never causes a 4xx/5xx — any Jev failure just falls through to the cloud path with `source: "unavailable"` fields, same as `/api/route` and `/api/intent`.
 
@@ -61,27 +61,29 @@ No auth. `204`. Used by the client to pre-warm the TLS connection when dictation
 LLM text transformation. Prompts: docs/PROMPTS.md (verbatim, in `server/lib/prompts.ts`). Auth required.
 Request (matches Swift `ComposeRequest`):
 ```json
-{ "mode": "rewrite" | "translate" | "translateCommand" | "edit" | "ask",
+{ "mode": "rewrite" | "translate" | "translateCommand" | "edit" | "ask" | "write",
   "text": "…", "selection": "…" | null, "scene": "general|email|chat|code|document",
   "targetLanguage": "en-US" | null,
   "app": { "bundleID": "…", "appName": "…", "windowTitle": "…", "url": "…" } | null,
-  "vocabulary": ["Prosio"], "history": [{ "role": "user"|"assistant", "text": "…" }] }
+  "vocabulary": ["Prosio"], "history": [{ "role": "user"|"assistant", "text": "…" }],
+  "stream": false }
 ```
 `translateCommand` (docs/PROMPTS.md §2b): used when the intent classifier (`POST /api/intent`) decides a whole dictation is a spoken translate request (e.g. "帮我翻成日语：我们明天开会"); `text` is the full utterance (request + content together) and the model extracts both itself. `targetLanguage` is optional here (unlike plain `translate`, where it's required) — omitted means translate into the server's default language (currently `en-US`).
-Validation: `text` 1–8000 chars; `selection` ≤ 20000 chars (required for `edit`); `targetLanguage` required for `translate` (optional for `translateCommand`); `history` ≤ 20 turns (ask only).
-Response: **streamed plain text** (`Content-Type: text/plain; charset=utf-8`, chunked) — the output deltas in order. For non-ask modes the server applies output sanitation at the end (strip a wrapping pair of quotes / single wrapping code fence), so non-ask clients should use the complete body; ask clients render deltas live.
-Headers: `Server-Timing` (auth, prompt, ttft, total) where possible, `X-Prosio-Model: <model id>`, `X-Prosio-Fallback: empty | drift` (non-ask only, present only when a guardrail fired — see below).
+`write` (docs/PROMPTS.md §4b, "Help me write"): used when the intent classifier decides the user is asking Prosio to write/draft text from a description, e.g. "帮我回复他说明天可以，但会晚半小时到", "write a reply saying sounds good, see you then". `text` is the spoken instruction; `selection` is optional context (e.g. the message being replied to) — unlike `edit`, it is never required and the result is never used to replace it. `scene`/`app` are used to match the scene's expected format (email/chat/document/code). **Buffered by default** like every other non-ask mode (sanitized + marker-normalized); set `"stream": true` to stream it live instead (unsanitized, like `ask`) — core does this when a selection exists so the answer card can render the result live. `stream` is ignored for every other mode.
+Validation: `text` 1–8000 chars; `selection` ≤ 20000 chars (required for `edit`, optional for `write`); `targetLanguage` required for `translate` (optional for `translateCommand`); `history` ≤ 20 turns (ask only).
+Response: **streamed plain text** (`Content-Type: text/plain; charset=utf-8`, chunked) — the output deltas in order. For non-ask modes (and `write` unless `stream: true`) the server applies output sanitation at the end (strip a wrapping pair of quotes / single wrapping code fence, normalize stray bullet markers to `- `), so those clients should use the complete body; `ask` (and streamed `write`) clients render deltas live, unsanitized.
+Headers: `Server-Timing` (auth, prompt, ttft, total — `total` omitted when streamed), `X-Prosio-Model: <model id>`, `X-Prosio-Fallback: empty | drift` (buffered non-ask only, present only when a guardrail fired — see below).
 Model: env `PROSIO_COMPOSE_MODEL` / `PROSIO_ASK_MODEL` (ask only; falls back to `PROSIO_COMPOSE_MODEL`), default `openai/gpt-6-luna` for both (chosen from the live compose bake-off — cheapest tested, 100% robustness). For non-ask modes, two guardrails retry once with `PROSIO_COMPOSE_FALLBACK_MODEL` (default `openai/gpt-5.4-mini`) on luna's two observed failure modes: empty/whitespace output, or edit-mode content drift (fabricated code-fence/box-drawing/ASCII-art the selection didn't contain, or output > 3x the selection's length when the instruction didn't ask to expand). If the fallback also fails, the response is the original input unchanged (`text` for rewrite/translate, `selection` for edit) with `X-Prosio-Fallback` set accordingly.
 Errors (before streaming starts): 400/401/402/502 structured as usual. Mid-stream upstream failure: the stream ends early and the client treats a truncated body as `ProsioError.network`.
 
 ## Intent classification (auto mode)
 
 ### `POST /api/intent`
-Decides which mode a finished dictation is: `dictate` (type as-is), `edit` (apply to the current selection), `ask` (answer it), or `translate` (translate the spoken content). Uses Gateway model `typesafe-ai/jev` (same choice-question decision model as `/api/route`, no fixed keywords, any language). Runs on the on-device transcript at stop time, in parallel with cloud transcription — see docs/PROMPTS.md §5b.
+Decides which mode a finished dictation is: `dictate` (type as-is), `edit` (apply to the current selection), `ask` (answer it), `translate` (translate the spoken content), or `write` (draft text from a description — docs/PROMPTS.md §4b). Uses Gateway model `typesafe-ai/jev` (same choice-question decision model as `/api/route`, no fixed keywords, any language). Runs on the on-device transcript at stop time, in parallel with cloud transcription — see docs/PROMPTS.md §5b.
 Request: `{ "transcript": "…", "hasSelection": true|false, "app": { "appName": "…", ... } | null }` (`transcript` 1–4000 chars; `app` optional, only `appName` is used)
-→ `200 { "intent": "dictate"|"edit"|"ask"|"translate"|null, "confidence": 0.0-1.0 | null, "source": "jev"|"unavailable", "latencyMs": 123 }`
-Only the criterion matching `hasSelection` is offered to Jev (`dictate` when there's no selection, `edit` when there is; `ask` and `translate` are always offered).
-Policy: take Jev's top choice only if its probability is ≥ 0.7 (`INTENT_CONFIDENCE_THRESHOLD`); below that, `intent` is the default (`dictate`, or `edit` with a selection) but `source` is still `"jev"` and `confidence` still reports the raw probability, since Jev did answer.
+→ `200 { "intent": "dictate"|"edit"|"ask"|"translate"|"write"|null, "confidence": 0.0-1.0 | null, "source": "jev"|"unavailable", "latencyMs": 123 }`
+Only the criterion matching `hasSelection` is offered to Jev (`dictate` when there's no selection, `edit` when there is; `ask`, `translate` and `write` are always offered — `write` doesn't require a selection, but is still meaningful with one, e.g. "reply saying...").
+Policy: take Jev's top choice only if its probability clears its own threshold — **`write` needs ≥ 0.8** (a wrong `write` replaces the user's own words with generated text — the costliest misclassification), every other choice needs ≥ 0.7 (`INTENT_CONFIDENCE_THRESHOLD`). Below threshold, `intent` is the default (`dictate`, or `edit` with a selection) but `source` is still `"jev"` and `confidence` still reports the raw probability, since Jev did answer.
 Jev error, an unexpected/unoffered answer, or no response within 1200 ms → `200 { intent: null, confidence: null, source: "unavailable", latencyMs }`. **The server does NOT fall back to an LLM.** In this case the client is responsible for applying its own bilingual (zh/en) rules-based fallback (`IntentRules` in ProsioCore; rules text in docs/PROMPTS.md §5b) — never blocking dictation.
 Auth required. Not metered as audio usage. Never returns 5xx for classifier failures (only for auth/validation errors).
 

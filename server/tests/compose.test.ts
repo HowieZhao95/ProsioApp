@@ -164,6 +164,98 @@ describe("POST /api/compose", () => {
     expect(body).toBe('"quoted answer"'); // NOT sanitized — ask streams live, quotes and all
   });
 
+  it("write: buffered by default, sanitized and marker-normalized", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(['"quoted"', "\n* 后续再同步"]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "write", text: "帮我回复他说明天可以，但会晚半小时到", scene: "chat" }, user.authHeader)
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/plain");
+    expect(res.headers.get("server-timing")).toContain("total;dur="); // buffered — total is known
+    const body = await res.text();
+    expect(body).toBe('"quoted"\n- 后续再同步'); // whole output isn't wrapped, so quotes stay; "*" bullet normalized to "-"
+  });
+
+  it("write: strips an invented signature line after a closing (the live-test regression)", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["老王：\n\n我下周请三天假，工作已经交接给小李了。\n\n谢谢！\n班尼"]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest(
+        "/api/compose",
+        "POST",
+        { mode: "write", text: "帮我写一封邮件给老王，说我下周请三天假，工作已经交接给小李了。", scene: "email" },
+        user.authHeader
+      )
+    );
+    const body = await res.text();
+    expect(body).toBe("老王：\n\n我下周请三天假，工作已经交接给小李了。\n\n谢谢！");
+    expect(body).not.toContain("班尼");
+  });
+
+  it("write: keeps a signature-shaped last line when it genuinely appears in the instruction", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["老王：\n\n我下周请三天假。\n\n谢谢！\n班尼"]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest(
+        "/api/compose",
+        "POST",
+        { mode: "write", text: "帮我写一封邮件给老王，说我下周请三天假，落款写班尼", scene: "email" },
+        user.authHeader
+      )
+    );
+    const body = await res.text();
+    expect(body).toContain("班尼"); // dictated explicitly — must not be stripped
+  });
+
+  it("write: does not require a selection", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["Thanks so much for your help!"]));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/compose", "POST", { mode: "write", text: "write a quick thank-you note" }, user.authHeader));
+    expect(res.status).toBe(200);
+  });
+
+  it("write: with a selection as reply context", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["Sounds good, see you then."]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest(
+        "/api/compose",
+        "POST",
+        { mode: "write", text: "reply saying sounds good, see you then", scene: "chat", selection: "Are we still on for 3pm?" },
+        user.authHeader
+      )
+    );
+    expect(res.status).toBe(200);
+    expect(streamTextMock.mock.calls[0]![0].system).toContain("<context>");
+  });
+
+  it("write: streams live (unsanitized) when stream:true is given", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(['"Sounds good', ', see you then."']));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest(
+        "/api/compose",
+        "POST",
+        { mode: "write", text: "reply saying sounds good", scene: "chat", selection: "Are we still on?", stream: true },
+        user.authHeader
+      )
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("server-timing")).not.toContain("total;dur=");
+    const body = await res.text();
+    expect(body).toBe('"Sounds good, see you then."'); // NOT sanitized when streamed
+  });
+
+  it("write: stream:true is ignored for other non-ask modes (rewrite stays buffered)", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["hello"]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "rewrite", text: "x", scene: "chat", stream: true }, user.authHeader)
+    );
+    expect(res.headers.get("server-timing")).toContain("total;dur=");
+  });
+
   it("402s when the monthly quota is already used up", async () => {
     const { getStore, resetStoreForTests } = await import("@/lib/store");
     resetStoreForTests();

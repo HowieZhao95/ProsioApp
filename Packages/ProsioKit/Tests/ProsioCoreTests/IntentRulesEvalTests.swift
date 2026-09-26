@@ -40,6 +40,7 @@ import Testing
         var falseCommands: [String] = []
         var askTotal = 0, askHits = 0
         var translateTotal = 0, translateHits = 0
+        var writeTotal = 0, writeHits = 0
 
         for testCase in cases {
             let result = IntentRules.classify(
@@ -50,7 +51,7 @@ import Testing
 
             switch testCase.expected {
             case "dictate", "edit":
-                if result.intent == .ask || result.intent == .translate {
+                if result.intent == .ask || result.intent == .translate || result.intent == .write {
                     falseCommands.append(
                         "\(testCase.id) [\(testCase.language)]: expected \(testCase.expected), IntentRules said \(result.intent) for \"\(testCase.transcript)\""
                     )
@@ -61,6 +62,9 @@ import Testing
             case "translate":
                 translateTotal += 1
                 if result.intent == .translate { translateHits += 1 }
+            case "write":
+                writeTotal += 1
+                if result.intent == .write { writeHits += 1 }
             default:
                 break
             }
@@ -68,18 +72,20 @@ import Testing
 
         let askAccuracy = askTotal > 0 ? Double(askHits) / Double(askTotal) * 100 : 0
         let translateAccuracy = translateTotal > 0 ? Double(translateHits) / Double(translateTotal) * 100 : 0
+        let writeAccuracy = writeTotal > 0 ? Double(writeHits) / Double(writeTotal) * 100 : 0
         print(
             """
             IntentRules eval (degraded-path fallback, not held to Jev's bar):
               ask:       \(askHits)/\(askTotal) (\(String(format: "%.1f", askAccuracy))%)
               translate: \(translateHits)/\(translateTotal) (\(String(format: "%.1f", translateAccuracy))%)
+              write:     \(writeHits)/\(writeTotal) (\(String(format: "%.1f", writeAccuracy))%)
               false commands on dictate/edit cases: \(falseCommands.count)
             """
         )
 
         #expect(
             falseCommands.isEmpty,
-            "IntentRules produced a false command (ask/translate) on \(falseCommands.count) dictate/edit case(s):\n\(falseCommands.joined(separator: "\n"))"
+            "IntentRules produced a false command (ask/translate/write) on \(falseCommands.count) dictate/edit case(s):\n\(falseCommands.joined(separator: "\n"))"
         )
     }
 }

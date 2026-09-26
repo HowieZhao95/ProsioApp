@@ -20,7 +20,7 @@
 
 import { normalizeListMarkers } from "./text-format";
 
-export type ComposeMode = "rewrite" | "translate" | "translateCommand" | "edit" | "ask";
+export type ComposeMode = "rewrite" | "translate" | "translateCommand" | "edit" | "ask" | "write";
 export type ComposeScene = "general" | "email" | "chat" | "code" | "document";
 
 export interface ComposeApp {
@@ -326,6 +326,44 @@ export function buildAskPrompt(params: {
   ];
 
   return { system, messages };
+}
+
+// --- 4b. Write — "Help me write" ---------------------------------------------
+
+export function buildWritePrompt(params: {
+  transcript: string;
+  scene: ComposeScene;
+  app?: ComposeApp | null;
+  selection?: string | null;
+  vocabulary?: readonly string[];
+}): ComposePrompt {
+  const baseSystem = lines(
+    `You write text for the user, who asked for it by voice while typing in ${appAndWindow(params.app)}. Scene: ${params.scene}. <instruction> is what they asked you to write. The result will be inserted where they are typing, as if they had written it themselves.`,
+    "",
+    "Rules:",
+    "- Output only the text to insert. No preamble, explanations, quotes, subject line labels or code fences.",
+    "- Write in the language of the instruction unless it asks for another language. Write in the user's voice (first person).",
+    "- Include everything the user asked to say, and nothing they didn't: never invent facts, dates, numbers, names, promises or reasons. If something essential is missing, write around it naturally rather than making it up; don't use placeholders like [Name].",
+    `- Match the scene: email — a greeting line, short paragraphs, and a short closing such as "谢谢！" or "Thanks," — never a name, initials or signature, since you don't know the user's name; chat — short and natural, one or a few lines, no greeting or sign-off unless asked; document — clear prose; code — a concise comment, commit message or prompt as asked.`,
+    "- Keep it as short as the request allows. Follow any requested tone or length.",
+    vocabularyLine("- Keep these terms exactly as written: ", params.vocabulary ?? [])
+  );
+
+  const system = params.selection
+    ? lines(
+        baseSystem,
+        "",
+        "The user selected this text as context (for example, the message they are replying to):",
+        "<context>",
+        params.selection,
+        "</context>"
+      )
+    : baseSystem;
+
+  return {
+    system,
+    messages: [{ role: "user", content: `<instruction>\n${params.transcript}\n</instruction>` }],
+  };
 }
 
 // --- output sanitation (non-ask modes only) ---------------------------------

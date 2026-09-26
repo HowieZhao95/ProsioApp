@@ -36,7 +36,7 @@
   { "id": "ask-zh-cue-02", "language": "zh", "hasSelection": false, "transcript": "提问 明天北京天气怎么样", "expected": "ask" },
   { "id": "ask-zh-selection-01", "language": "zh", "hasSelection": true, "transcript": "这段什么意思", "expected": "ask" },
   { "id": "ask-zh-selection-02", "language": "zh", "hasSelection": true, "transcript": "帮我解释一下这段代码", "expected": "ask" },
-  { "id": "ask-zh-write-01", "language": "zh", "hasSelection": false, "transcript": "帮我写一句关于秋天的诗", "expected": "ask", "note": "ask mode legitimately fulfills write requests" },
+  { "id": "ask-zh-write-01", "language": "zh", "hasSelection": false, "transcript": "帮我写一句关于秋天的诗", "expected": "write", "note": "relabeled 2026-09-26: predates the write intent (originally 'ask mode legitimately fulfills write requests'); now that a dedicated write intent exists, 帮我写... asking Prosio to draft/compose text is write, not ask" },
   { "id": "ask-mixed-01", "language": "mixed", "hasSelection": true, "transcript": "这个 error 是什么意思 undefined is not a function", "expected": "ask" },
   { "id": "ask-mixed-02", "language": "mixed", "hasSelection": false, "transcript": "这个 API 的 rate limit 一般是多少", "expected": "ask" },
   { "id": "ask-ja-01", "language": "ja", "hasSelection": false, "transcript": "フランスの首都はどこですか", "expected": "ask" },
@@ -80,5 +80,27 @@
   { "id": "ed-fr-01", "language": "fr", "hasSelection": true, "transcript": "rends-le plus poli", "expected": "edit" },
   { "id": "ed-ko-01", "language": "ko", "hasSelection": true, "transcript": "더 공손하게 바꿔줘", "expected": "edit" },
   { "id": "ed-en-vsask-01", "language": "en", "hasSelection": true, "transcript": "make this reply sound more professional", "expected": "edit", "note": "adjacent to ask; command targets the selection itself" },
-  { "id": "ed-zh-vsask-01", "language": "zh", "hasSelection": true, "transcript": "帮我把这段话改得专业一点", "expected": "edit", "note": "帮我 + selection-directed instruction is still edit, not ask" }
+  { "id": "ed-zh-vsask-01", "language": "zh", "hasSelection": true, "transcript": "帮我把这段话改得专业一点", "expected": "edit", "note": "帮我 + selection-directed instruction is still edit, not ask" },
+
+  { "id": "wr-zh-reply-01", "language": "zh", "hasSelection": false, "transcript": "帮我回复他说明天可以，但会晚半小时到", "expected": "write" },
+  { "id": "wr-zh-email-01", "language": "zh", "hasSelection": false, "transcript": "写一封邮件给老王，说我下周请三天假", "expected": "write" },
+  { "id": "wr-zh-draft-01", "language": "zh", "hasSelection": false, "transcript": "帮我起草一个消息 告诉团队会议改到下午三点", "expected": "write" },
+  { "id": "wr-zh-reply-selection-01", "language": "zh", "hasSelection": true, "transcript": "替我回一下 说收到了 谢谢", "expected": "write", "note": "write is offered even with a selection (the selection is reply context, not something to edit)" },
+  { "id": "wr-en-reply-01", "language": "en", "hasSelection": true, "transcript": "reply saying thanks, I'll review it tomorrow", "expected": "write" },
+  { "id": "wr-en-draft-01", "language": "en", "hasSelection": false, "transcript": "draft an email to the team about the delayed launch", "expected": "write" },
+  { "id": "wr-en-message-01", "language": "en", "hasSelection": false, "transcript": "write a message telling him the PR is merged", "expected": "write" },
+  { "id": "wr-en-helpme-01", "language": "en", "hasSelection": false, "transcript": "help me write a quick note about today's meeting", "expected": "write" },
+  { "id": "wr-mixed-01", "language": "mixed", "hasSelection": false, "transcript": "帮我写个 message 告诉他 PR 已经 merge 了", "expected": "write" },
+  { "id": "wr-mixed-02", "language": "mixed", "hasSelection": false, "transcript": "write 一封邮件 说这个 feature 下周三上线", "expected": "write" },
+  { "id": "wr-en-reply-selection-02", "language": "en", "hasSelection": true, "transcript": "write a reply saying sounds good, see you then", "expected": "write" },
+
+  { "id": "wr-neg-zh-01", "language": "zh", "hasSelection": false, "transcript": "你帮我写一下周报吧", "expected": "dictate", "note": "hard negative (coordinator example): 你帮我 addresses a person, not Prosio — this is dictation asking a colleague to write the report" },
+  { "id": "wr-neg-en-01", "language": "en", "hasSelection": false, "transcript": "Can you write the release notes today?", "expected": "dictate", "note": "hard negative (coordinator example): a message asking a colleague to write release notes, not a command to Prosio" },
+  { "id": "wr-neg-zh-02", "language": "zh", "hasSelection": false, "transcript": "帮我订一下会议室", "app": "Slack", "expected": "dictate", "note": "hard negative (coordinator example, in Slack): asking a colleague/assistant to book a room — not a write request at all, and 帮我 alone (without an object like 写/回复/起草) isn't a write cue" },
+  { "id": "wr-neg-zh-03", "language": "zh", "hasSelection": false, "transcript": "麻烦帮我回复一下客户", "expected": "dictate", "note": "hard negative (coordinator example): a message asking a colleague to reply to the customer, not asking Prosio to draft the reply itself" },
+  { "id": "wr-neg-zh-04", "language": "zh", "hasSelection": false, "transcript": "你写完那份周报了吗", "expected": "dictate", "note": "hard negative: asking a person whether THEY finished writing, not asking Prosio to write" },
+  { "id": "wr-neg-en-02", "language": "en", "hasSelection": false, "transcript": "Can you draft the proposal by Friday?", "expected": "dictate", "note": "hard negative: addressed to a colleague asking them to draft it, not Prosio" },
+  { "id": "wr-neg-zh-05", "language": "zh", "hasSelection": false, "transcript": "你帮我起草一下这个方案吧", "expected": "dictate", "note": "hard negative: 你帮我起草 (addressed to a person) is the negative form of the positive cue 帮我起草" },
+  { "id": "wr-neg-mixed-01", "language": "mixed", "hasSelection": false, "transcript": "你能不能帮我写一下这个 report", "expected": "dictate", "note": "hard negative: 你能不能帮我 addresses a person directly, asking them to write the report" },
+  { "id": "wr-neg-en-03", "language": "en", "hasSelection": false, "transcript": "please write up the meeting notes and send them to me", "expected": "dictate", "note": "hard negative: a message asking a colleague to write notes and send them, not a command to Prosio" }
 ]

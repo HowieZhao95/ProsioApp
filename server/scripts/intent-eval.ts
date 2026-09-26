@@ -40,8 +40,68 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 
-import { classifyIntent, INTENT_CONFIDENCE_THRESHOLD, type IntentValue } from "../lib/intent";
+import {
+  CLASSIFIER_INSTRUCTIONS,
+  decideIntent,
+  INTENT_TIMEOUT_MS,
+  intentCriteriaFor,
+  WRITE_INTENT_CONFIDENCE_THRESHOLD,
+  type IntentDecision,
+  type IntentValue,
+} from "../lib/intent";
+import { callJev, isChoiceAnswer } from "../lib/jev";
 import { classifyIntentByRules } from "./intent-rules";
+
+// --- Eval-only raw Jev call (captures the FULL probability distribution) --
+//
+// classifyIntent() (lib/intent.ts) only returns the top choice's own
+// probability (IntentDecision.confidence) — enough for production, but not
+// enough to sweep precision/recall for a specific choice like "write" at
+// several thresholds, since a case where "write" wasn't the top choice
+// still has a "write" probability worth knowing. This duplicates
+// classifyIntent()'s exact call shape (same criteria, same instructions,
+// same timeout, same shared circuit breaker via callJev) but keeps the
+// full `probabilities` map, purely for this eval's write precision/recall
+// section. It makes exactly ONE Jev call per case — the same one
+// classifyIntent() would have made — so this doesn't double live spend.
+interface RawJevResult {
+  choice: string | null; // null only when unavailable
+  confidence: number | null; // top choice's own probability
+  probabilities: Record<string, number> | null;
+  source: "jev" | "unavailable";
+  latencyMs: number;
+}
+
+async function classifyIntentRaw(transcript: string, hasSelection: boolean, appName: string | null): Promise<RawJevResult> {
+  const startedAt = performance.now();
+  const criteria = intentCriteriaFor(hasSelection);
+  const parsed = await callJev({
+    state: { utterance: transcript, hasSelection, app: appName },
+    questions: { intent: { type: "choice", instructions: CLASSIFIER_INSTRUCTIONS, criteria } },
+    timeoutMs: INTENT_TIMEOUT_MS,
+    parse: (result) => {
+      const answer = result.answers.intent;
+      if (!isChoiceAnswer(answer)) throw new Error("Unexpected Jev answer shape (expected a choice answer)");
+      if (!(answer.choice in criteria)) throw new Error(`Jev returned an unoffered choice: ${answer.choice}`);
+      return { choice: answer.choice, probabilities: answer.probabilities ?? null };
+    },
+  });
+  const latencyMs = Math.round(performance.now() - startedAt);
+  if (parsed === null) {
+    return { choice: null, confidence: null, probabilities: null, source: "unavailable", latencyMs };
+  }
+  const confidence = parsed.probabilities?.[parsed.choice] ?? null;
+  return { choice: parsed.choice, confidence, probabilities: parsed.probabilities, source: "jev", latencyMs };
+}
+
+/** Converts a raw Jev result into the same shape classifyIntent() would have returned (production-identical decision policy, via the shared decideIntent()). */
+function toIntentDecision(raw: RawJevResult, hasSelection: boolean): IntentDecision {
+  if (raw.source === "unavailable" || raw.choice === null) {
+    return { intent: null, confidence: null, source: "unavailable", latencyMs: raw.latencyMs };
+  }
+  const { intent, confidence } = decideIntent(raw.choice, raw.confidence, hasSelection);
+  return { intent, confidence, source: "jev", latencyMs: raw.latencyMs };
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const EVAL_DIR = resolve(__dirname, "../../eval");
@@ -52,7 +112,11 @@ const caseSchema = z.object({
   language: z.enum(["en", "zh", "ja", "es", "fr", "ko", "mixed"]),
   hasSelection: z.boolean(),
   transcript: z.string().min(1),
-  expected: z.enum(["dictate", "edit", "ask", "translate"]),
+  expected: z.enum(["dictate", "edit", "ask", "translate", "write"]),
+  // Optional app-name context (e.g. "Slack") — a handful of "write" hard
+  // negatives specifically depend on being dictated inside a chat app to
+  // read naturally as a message meant for a colleague, not a Prosio command.
+  app: z.string().nullable().optional(),
   note: z.string().optional(),
 });
 type IntentCase = z.infer<typeof caseSchema>;
@@ -82,6 +146,8 @@ interface CaseResult {
   confidence: number | null;
   jevSource: "jev" | "unavailable" | null; // raw jev source, for chain/threshold-sweep bookkeeping
   latencyMs: number | null;
+  /** Full probability distribution (jev source only) — for the write precision/recall sweep. */
+  probabilities?: Record<string, number> | null;
 }
 
 function isCorrect(predicted: IntentValue | null, expected: IntentValue): boolean {
@@ -104,7 +170,7 @@ function summarize(source: Source, results: CaseResult[]): void {
   }
 
   // Confusion matrix.
-  const intents: IntentValue[] = ["dictate", "edit", "ask", "translate"];
+  const intents: IntentValue[] = ["dictate", "edit", "ask", "translate", "write"];
   const matrix: Record<string, Record<string, number>> = {};
   for (const exp of intents) matrix[exp] = Object.fromEntries(intents.map((i) => [i, 0]));
   for (const r of results) {
@@ -194,8 +260,16 @@ async function main(): Promise<void> {
     rulesResults.push({ kase, predicted: rulesDecision.intent, confidence: null, jevSource: null, latencyMs: null });
 
     if (runJev) {
-      const decision = await classifyIntent({ transcript: kase.transcript, hasSelection: kase.hasSelection });
-      jevResults.push({ kase, predicted: decision.intent, confidence: decision.confidence, jevSource: decision.source, latencyMs: decision.latencyMs });
+      const raw = await classifyIntentRaw(kase.transcript, kase.hasSelection, kase.app ?? null);
+      const decision = toIntentDecision(raw, kase.hasSelection);
+      jevResults.push({
+        kase,
+        predicted: decision.intent,
+        confidence: decision.confidence,
+        jevSource: decision.source,
+        latencyMs: decision.latencyMs,
+        probabilities: raw.probabilities,
+      });
 
       const chainPredicted = decision.source === "unavailable" ? rulesDecision.intent : decision.intent;
       chainResults.push({ kase, predicted: chainPredicted, confidence: decision.confidence, jevSource: decision.source, latencyMs: decision.latencyMs });
@@ -212,13 +286,60 @@ async function main(): Promise<void> {
   if (runJev) {
     summarize("jev", jevResults);
     summarize("chain", chainResults);
+    reportWritePrecisionRecall(jevResults);
   } else {
     console.log(
       "\nJev was not run (no AI_GATEWAY_API_KEY, or --rules-only). If this is unexpected: Jev may currently be rate-limited " +
         '(GatewayRateLimitError, "upstream provider ... high demand") per the coordinator\'s note — set the key and re-run to check.'
     );
+    console.log(
+      '\n"write" precision/recall (0.7/0.8/0.9): not run — requires live Jev (see above). ' +
+        `--rules-only note: the rules port classified ${rulesResults.filter((r) => r.predicted === "write").length} case(s) as "write" ` +
+        `out of ${rulesResults.filter((r) => r.kase.expected === "write").length} true "write" case(s) — see the "rules" summary above for its accuracy.`
+    );
   }
   summarize("rules", rulesResults);
+}
+
+/**
+ * "write" needs probability ≥0.8 (docs/PROMPTS.md §5b) vs. every other
+ * choice's ≥0.7 — a wrong "write" is the most destructive misclassification
+ * (it replaces the user's own words with generated text). This sweeps
+ * precision/recall for treating "write" as positive at 0.7/0.8/0.9,
+ * computed from each case's raw `probabilities.write` (captured by
+ * `classifyIntentRaw`, independent of whether "write" was the case's actual
+ * top choice) — a proper sweep, not the top-choice-only proxy the generic
+ * threshold sweep above uses.
+ */
+function reportWritePrecisionRecall(results: CaseResult[]): void {
+  const withProbs = results.filter((r) => r.probabilities && "write" in r.probabilities);
+  console.log(`\n=== "write" precision/recall (production threshold: ${WRITE_INTENT_CONFIDENCE_THRESHOLD}) ===`);
+  if (withProbs.length === 0) {
+    console.log("  no cases had a usable probability distribution (Jev fully unavailable this run).");
+    return;
+  }
+  const trueWriteCount = withProbs.filter((r) => r.kase.expected === "write").length;
+  console.log(`  ${withProbs.length}/${results.length} cases had a usable distribution; ${trueWriteCount} are true "write" cases.`);
+
+  for (const threshold of [0.7, 0.8, 0.9]) {
+    const predictedWrite = withProbs.filter((r) => (r.probabilities!.write ?? 0) >= threshold);
+    const truePositives = predictedWrite.filter((r) => r.kase.expected === "write").length;
+    const precision = predictedWrite.length ? truePositives / predictedWrite.length : NaN;
+    const recall = trueWriteCount ? truePositives / trueWriteCount : NaN;
+    const marker = threshold === WRITE_INTENT_CONFIDENCE_THRESHOLD ? "  <- production threshold" : "";
+    console.log(
+      `  >= ${threshold.toFixed(1)}: precision=${predictedWrite.length ? (precision * 100).toFixed(1) : "n/a"}% (${truePositives}/${predictedWrite.length})  ` +
+        `recall=${trueWriteCount ? (recall * 100).toFixed(1) : "n/a"}% (${truePositives}/${trueWriteCount})${marker}`
+    );
+  }
+
+  const falseWrites = withProbs.filter((r) => (r.probabilities!.write ?? 0) >= WRITE_INTENT_CONFIDENCE_THRESHOLD && r.kase.expected !== "write");
+  if (falseWrites.length > 0) {
+    console.log(`  false "write" at the production threshold (costly — would overwrite the user's own words):`);
+    for (const r of falseWrites) {
+      console.log(`    - ${r.kase.id} (expected ${r.kase.expected}): "${r.kase.transcript}" write_p=${r.probabilities!.write!.toFixed(2)}`);
+    }
+  }
 }
 
 main().catch((err) => {

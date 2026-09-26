@@ -292,6 +292,20 @@ final class HUDController {
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .idle))
+            try? await Task.sleep(for: .milliseconds(500))
+
+            // "Help me write": intent (and the ✍️ chip) only resolves after listening stops, same
+            // as Ask/Translate — composing shows "Writing…" until the drafted reply arrives.
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .listening, previewText: "帮我回复他说明天可以，但会晚半小时到", levelHistory: waveform, level: 0.6))
+            try? await Task.sleep(for: .seconds(1))
+            self.apply(HUDViewState(phase: .composing, previewText: "", intent: .write, composeLabel: "Writing…"))
+            try? await Task.sleep(for: .seconds(1.2))
+            self.apply(HUDViewState(phase: .finished(.pasted), intent: .write))
+            try? await Task.sleep(for: .seconds(1))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .idle))
             self.isShowcasing = false
             self.startObserving()
         }

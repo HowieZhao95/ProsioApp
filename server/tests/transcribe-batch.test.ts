@@ -488,6 +488,25 @@ describe("POST /api/transcribe — P1.2 local-transcript routing", () => {
     expect(body.intent).toEqual({ intent: "ask", confidence: 0.88, source: "jev", classifiedOn: "final" });
   });
 
+  it("clean but intent=write: also still goes to cloud (dictate/edit only skip Gemini)", async () => {
+    evaluateMock.mockResolvedValueOnce(combinedAnswers(0.95, 0.97, "write", { write: 0.85 }));
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("write", { write: 0.9 }));
+    const user = await authedUser();
+    const audio = makeWavBase64({ sampleCount: 16000 });
+    const res = await POST(
+      jsonRequest(
+        "/api/transcribe",
+        "POST",
+        { audio, sessionID: randomUUID(), localTranscript: "帮我回复他说明天可以，但会晚半小时到", hasSelection: false },
+        user.authHeader
+      )
+    );
+    const body = await res.json();
+    expect(body.source).toBe("cloud");
+    expect(transcribeMock).toHaveBeenCalledTimes(1);
+    expect(body.intent.intent).toBe("write");
+  });
+
   it("messy transcript (needsCloud=true): goes to cloud, route reason carried through, intent reused when leading text matches", async () => {
     transcribeMock.mockResolvedValue({ text: "嗯那个，我们周四开会，别忘了。", language: "zh" });
     evaluateMock.mockResolvedValueOnce(combinedAnswers(0.3, 0.9, "dictate", { dictate: 0.6 }));

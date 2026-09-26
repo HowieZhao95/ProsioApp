@@ -9,6 +9,7 @@ import ProsioCore
 enum HUDModeChip: Equatable {
     case edit
     case ask
+    case write
     /// `shortCode` e.g. "EN" — see `TranslateLanguages`.
     case translate(shortCode: String)
 }
@@ -72,6 +73,7 @@ struct HUDViewState: Equatable {
         switch intent {
         case .edit: .edit
         case .ask: .ask
+        case .write: .write
         // `DictationIntent` has no `.translate` case — a translate-classified session still
         // reports `.dictate` (see `ClassifiedIntent` in Contracts.swift); `translateShortCode`
         // (set by `HUDController`) is what actually drives this chip for that case.
@@ -189,5 +191,6 @@ extension HUDViewState {
         level: 0.5,
         intent: .ask
     )
+    static let previewWriteComposing = HUDViewState(phase: .composing, intent: .write, composeLabel: "Writing…")
 }
 #endif

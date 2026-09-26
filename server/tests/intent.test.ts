@@ -137,6 +137,42 @@ describe("POST /api/intent", () => {
     expect(body.intent).toBe("translate");
   });
 
+  it("write is offered regardless of hasSelection, and requires the higher 0.8 threshold", async () => {
+    evaluateMock.mockResolvedValue(choiceAnswer("write", { dictate: 0.1, ask: 0.05, translate: 0.05, write: 0.8 }));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/intent", "POST", { transcript: "帮我回复他说明天可以", hasSelection: false }, user.authHeader)
+    );
+    const body = await res.json();
+    expect(body.intent).toBe("write");
+    expect(body.source).toBe("jev");
+
+    const call = evaluateMock.mock.calls[0]![0];
+    expect(call.questions.intent.criteria.write).toBeDefined();
+  });
+
+  it("write below the 0.8 threshold (but above the default 0.7) defaults instead of being accepted", async () => {
+    evaluateMock.mockResolvedValue(choiceAnswer("write", { dictate: 0.15, ask: 0.05, translate: 0.05, write: 0.75 }));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/intent", "POST", { transcript: "x", hasSelection: false }, user.authHeader));
+    const body = await res.json();
+    expect(body.intent).toBe("dictate"); // defaulted — 0.75 doesn't clear write's stricter 0.8 bar
+    expect(body.source).toBe("jev"); // Jev DID answer
+    expect(body.confidence).toBeCloseTo(0.75);
+  });
+
+  it("write is offered even with a selection (unlike dictate)", async () => {
+    evaluateMock.mockResolvedValue(choiceAnswer("write", { edit: 0.1, ask: 0.05, translate: 0.05, write: 0.85 }));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/intent", "POST", { transcript: "x", hasSelection: true }, user.authHeader));
+    const body = await res.json();
+    expect(body.intent).toBe("write");
+
+    const call = evaluateMock.mock.calls[0]![0];
+    expect(call.questions.intent.criteria.write).toBeDefined();
+    expect(call.questions.intent.criteria.dictate).toBeUndefined();
+  });
+
   it("Jev error: 200 with intent=null, source=unavailable, confidence=null", async () => {
     evaluateMock.mockRejectedValue(new Error("upstream boom"));
     const user = await authedUser();

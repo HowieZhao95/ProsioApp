@@ -655,6 +655,7 @@ public final class DictationController {
             switch explicitIntent {
             case .edit: await runEdit(instruction: text, generation: generation)
             case .ask: await runAsk(question: text, generation: generation)
+            case .write: await runWrite(instruction: text, hasSelection: hasSelection, generation: generation)
             case .dictate: await runDictateDefault(transcript: text, generation: generation)
             }
             return
@@ -670,6 +671,8 @@ public final class DictationController {
             await runEdit(instruction: text, generation: generation)
         case .ask:
             await runAsk(question: text, generation: generation)
+        case .write:
+            await runWrite(instruction: text, hasSelection: hasSelection, generation: generation)
         case .translate:
             if resolution.source == "rules", let target = resolution.ruleTranslateTarget, let body = resolution.ruleTranslateBody {
                 await runTranslate(mode: .translate, text: body, target: target, generation: generation, transcriptForHistory: text)
@@ -721,6 +724,7 @@ public final class DictationController {
             case .dictate, .translate: return .dictate
             case .edit: return .edit
             case .ask: return .ask
+            case .write: return .write
             }
         }()
         sessionTranslateTarget = (resolution.intent == .translate) ? (resolution.ruleTranslateTarget ?? settings.translateTarget) : nil
@@ -867,6 +871,125 @@ public final class DictationController {
         }
     }
 
+    /// "Help me write" (docs/PROMPTS.md §4b). No selection: composes and inserts at the cursor,
+    /// like `.dictate`/`.edit`. With a selection: the selection is context (never rewritten) — the
+    /// result streams into the answer card instead, same UI as `.ask`, so Insert/Copy decide.
+    /// Any failure (composer unavailable, compose error/timeout, or an empty result) is uniform
+    /// regardless of path: nothing is inserted, the instruction goes to the clipboard, and the
+    /// session fails with a message telling the user their words are safe there.
+    private func runWrite(instruction: String, hasSelection: Bool, generation: Int) async {
+        let trimmedInstruction = instruction.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedInstruction.isEmpty else {
+            finishSession()
+            phase = .idle
+            previewText = ""
+            return
+        }
+        guard let composer else {
+            await failWrite(instruction: trimmedInstruction, generation: generation)
+            return
+        }
+
+        let selectedText = hasSelection ? context?.selectedText : nil
+        let selection = selectedText?.isEmpty == false ? selectedText : nil
+
+        if let selection {
+            await runWriteAnswerCard(instruction: trimmedInstruction, selection: selection, composer: composer, generation: generation)
+            return
+        }
+
+        phase = .composing
+        previewText = trimmedInstruction
+        composeLabel = "Writing…"
+        composeModeForDebug = "write"
+
+        let request = ComposeRequest(mode: .write, text: trimmedInstruction, scene: scene, app: makeAppContext(), vocabulary: dictionary.vocabulary)
+        let result = await collectCompose(composer, request)
+        guard generation == sessionGeneration else { return }
+
+        switch result {
+        case .success(let text):
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            composeOutputForDebug = trimmed
+            guard !trimmed.isEmpty else {
+                await failWrite(instruction: trimmedInstruction, generation: generation)
+                return
+            }
+            await insertAndRecord(final: trimmed, generation: generation, transcriptForHistory: trimmedInstruction)
+        case .failure, .timeout:
+            await failWrite(instruction: trimmedInstruction, generation: generation)
+        }
+    }
+
+    /// The with-selection "Help me write" path: streams like `.ask`, but any error/empty result
+    /// falls through to the uniform `failWrite` treatment (clipboard + HUD error) instead of an
+    /// in-card error, since there's no partial "answer" worth keeping around here.
+    private func runWriteAnswerCard(instruction: String, selection: String, composer: any Composing, generation: Int) async {
+        var liveAnswer = AnswerState(question: instruction, text: "", isStreaming: true, error: nil, turns: [])
+        answer = liveAnswer
+        phase = .answering
+        composeModeForDebug = "write"
+
+        let request = ComposeRequest(mode: .write, text: instruction, selection: selection, scene: scene, app: makeAppContext(), vocabulary: dictionary.vocabulary)
+        let startedAt = Date()
+
+        do {
+            for try await delta in composer.compose(request) {
+                guard generation == sessionGeneration else { return }
+                liveAnswer.text += delta
+                answer = liveAnswer
+            }
+            guard generation == sessionGeneration else { return }
+            composeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+
+            let trimmedAnswer = liveAnswer.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedAnswer.isEmpty else {
+                await failWrite(instruction: instruction, generation: generation)
+                return
+            }
+            liveAnswer.isStreaming = false
+            liveAnswer.turns = [ComposeTurn(role: .user, text: instruction), ComposeTurn(role: .assistant, text: liveAnswer.text)]
+            answer = liveAnswer
+            composeOutputForDebug = liveAnswer.text
+            // Stays in `.answering`: the user Inserts, Copies, or dismisses explicitly.
+        } catch {
+            guard generation == sessionGeneration else { return }
+            composeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+            await failWrite(instruction: instruction, generation: generation)
+        }
+    }
+
+    /// Uniform "Help me write" failure: never insert anything or leave a half-drafted answer card
+    /// up — copy the user's own instruction out via the inserter's clipboard-fallback semantics
+    /// (`into: nil`, same trick as `failTranslate`) so their dictated words are recoverable, and
+    /// fail the session with a message that says exactly that.
+    private func failWrite(instruction: String, generation: Int) async {
+        _ = await inserter.insert(instruction, into: nil)
+        tInsertionDone = Date()
+        guard generation == sessionGeneration else { return }
+
+        answer = nil
+        phase = .failed(.transcriptionFailed("Couldn't write that — your words are on the clipboard"))
+        previewText = instruction
+
+        let item = HistoryItem(
+            text: instruction,
+            appBundleID: context?.bundleID,
+            appName: context?.appName,
+            engineID: activeEngineID ?? "unknown",
+            durationSeconds: totalAudioDuration,
+            insertion: .copiedToClipboard,
+            intent: intent,
+            transcript: instruction
+        )
+        if settings.historyEnabled {
+            try? history.append(item)
+        }
+        onSessionCompleted?(item)
+
+        finishSession(insertedText: instruction, outcome: .copiedToClipboard)
+    }
+
     private func runAsk(question: String, generation: Int) async {
         let trimmedQuestion = question.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuestion.isEmpty else {
@@ -956,7 +1079,10 @@ public final class DictationController {
             engineID: activeEngineID ?? "unknown",
             durationSeconds: totalAudioDuration,
             insertion: outcome,
-            intent: .ask,
+            // `intent` already reflects which mode produced this card — `.ask` for a question,
+            // `.write` for a with-selection "Help me write" (docs/PROMPTS.md §4b). Falls back to
+            // `.ask` only as a defensive default; it should always be set by the time a card exists.
+            intent: intent ?? .ask,
             transcript: currentAnswer.question
         )
         if settings.historyEnabled {

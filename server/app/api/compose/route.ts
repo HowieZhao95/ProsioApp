@@ -11,11 +11,13 @@ import {
   buildRewritePrompt,
   buildTranslateCommandPrompt,
   buildTranslatePrompt,
+  buildWritePrompt,
   sanitizeComposeOutput,
   type ComposeMode,
   type ComposePrompt,
 } from "@/lib/prompts";
 import { getStore } from "@/lib/store";
+import { stripInventedWriteSignature } from "@/lib/text-format";
 import { RequestTimer } from "@/lib/timing";
 
 // Node runtime; maxDuration covers ask's 45s cap (the larger of the two —
@@ -60,7 +62,7 @@ const historyTurnSchema = z.object({
 
 const bodySchema = z
   .object({
-    mode: z.enum(["rewrite", "translate", "translateCommand", "edit", "ask"]),
+    mode: z.enum(["rewrite", "translate", "translateCommand", "edit", "ask", "write"]),
     text: z.string().min(1).max(8000),
     selection: z.string().max(20000).nullable().optional(),
     scene: z.enum(["general", "email", "chat", "code", "document"]).default("general"),
@@ -68,6 +70,10 @@ const bodySchema = z
     app: appSchema,
     vocabulary: z.array(z.string()).default([]),
     history: z.array(historyTurnSchema).max(20).default([]),
+    // Write only (docs/PROMPTS.md §4b): defaults to buffered, like every
+    // other non-ask mode. Core sets this when a selection exists so the
+    // answer card can render the result live, same experience as Ask.
+    stream: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
     if (data.mode === "edit" && !data.selection) {
@@ -114,6 +120,14 @@ function buildPrompt(body: ComposeBody): ComposePrompt {
       return buildEditPrompt({ selection: body.selection!, instruction: body.text, vocabulary: body.vocabulary });
     case "ask":
       return buildAskPrompt({ question: body.text, app: body.app, selection: body.selection, history: body.history });
+    case "write":
+      return buildWritePrompt({
+        transcript: body.text,
+        scene: body.scene,
+        app: body.app,
+        selection: body.selection,
+        vocabulary: body.vocabulary,
+      });
   }
 }
 
@@ -210,11 +224,17 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   const modelId = modelIdFor(body.mode);
   const isAsk = body.mode === "ask";
+  // Write is buffered by default like every other non-ask mode (docs/PROMPTS.md
+  // §4b) — but the client can opt into live streaming with `stream: true`,
+  // which it does when a selection exists so the answer card can render the
+  // result live (the same UX as Ask), per the coordinator's spec.
+  const isWriteStreamed = body.mode === "write" && body.stream === true;
+  const streamed = isAsk || isWriteStreamed;
   const temperature = isAsk ? 0.4 : 0.2;
 
-  if (isAsk) {
+  if (streamed) {
     const abortController = new AbortController();
-    const timeout = setTimeout(() => abortController.abort(), ASK_TIMEOUT_MS);
+    const timeout = setTimeout(() => abortController.abort(), isAsk ? ASK_TIMEOUT_MS : NON_ASK_TIMEOUT_MS);
 
     const result = streamText({
       model: gateway(modelId),
@@ -224,10 +244,12 @@ export const POST = withErrorHandling(async (req: Request) => {
       ...callOptionsFor(modelId, temperature),
     });
 
-    // Stream live. Headers must go out before we know ttft/total, so the
-    // Server-Timing header here only carries auth+prompt — the full
-    // breakdown (incl. ttft) is still logged server-side once the stream
-    // finishes, for observability.
+    // Stream live, exactly like Ask: no sanitation or marker normalization
+    // on a streamed body (deltas go out as the model produces them) — the
+    // client renders it in the answer card, same as Ask's output. Headers
+    // must go out before we know ttft/total, so the Server-Timing header
+    // here only carries auth+prompt — the full breakdown (incl. ttft) is
+    // still logged server-side once the stream finishes, for observability.
     const headers = {
       "Server-Timing": timer.toServerTimingHeader({ includeTotal: false }),
       "X-Prosio-Model": modelId,
@@ -238,9 +260,10 @@ export const POST = withErrorHandling(async (req: Request) => {
         const finalText = await result.text; // resolves once the stream finishes (or rejects on failure)
         timer.mark("stream");
         if (isBlank(finalText)) {
-          // No guard/retry for ask (it's already streamed to the client) —
-          // the client shows "empty answer"; just log it server-side.
-          console.warn("[compose] ask produced empty output", { model: modelId });
+          // No guard/retry once streaming has started (it's already been
+          // sent to the client) — the client shows "empty answer"; just
+          // log it server-side. Applies to both ask and write-stream.
+          console.warn(`[compose] ${body.mode} produced empty output`, { model: modelId });
         }
       } catch {
         // Mid-stream failures are the client's problem too (truncated body,
@@ -254,11 +277,13 @@ export const POST = withErrorHandling(async (req: Request) => {
     return createTextStreamResponse({ stream: result.textStream, headers });
   }
 
-  // Non-ask: buffer (these outputs are short), sanitize, send as one body —
-  // sanitation needs the complete text (docs/PROMPTS.md: strip a wrapping
-  // quote pair or code fence, trim). Apply guardrails for the primary
-  // model's observed failure modes (empty output; edit-mode content drift),
-  // retrying once with a fallback model before giving up.
+  // Non-streamed (rewrite/translate/translateCommand/edit, and write unless
+  // `stream: true`): buffer (these outputs are short), sanitize, send as one
+  // body — sanitation needs the complete text (docs/PROMPTS.md: strip a
+  // wrapping quote pair or code fence, trim; plus marker normalization,
+  // lib/text-format.ts). Apply guardrails for the primary model's observed
+  // failure modes (empty output; edit-mode content drift), retrying once
+  // with a fallback model before giving up.
   let usedModelId = modelId;
   let fallbackReason: "empty" | "drift" | null = null;
 
@@ -291,7 +316,11 @@ export const POST = withErrorHandling(async (req: Request) => {
     }
   }
 
-  const sanitized = outcome.text;
+  // Write-only, deterministic backstop (2026-09-26 live test: luna signed a
+  // drafted email with an invented name, "班尼"): drop a last-line
+  // name/signature that isn't genuinely part of what the user dictated.
+  // See lib/text-format.ts's header comment for the exact heuristic.
+  const sanitized = body.mode === "write" ? stripInventedWriteSignature(outcome.text, body.text, body.selection) : outcome.text;
   timer.mark("sanitize");
 
   console.log("[compose]", { mode: body.mode, model: usedModelId, fallbackReason, ...timer.toObject() });

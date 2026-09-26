@@ -196,4 +196,101 @@ import Testing
         let result = IntentRules.classify("翻译成英文：你好", hasSelection: true, defaultTranslateTarget: defaultTarget)
         #expect(result.intent == .translate)
     }
+
+    // MARK: - Write ("Help me write"): positives
+
+    @Test func writeChineseBangwoXie() {
+        let result = IntentRules.classify("帮我写一封感谢邮件给老王", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeChineseBangwoHuifu() {
+        let result = IntentRules.classify("帮我回复他说明天可以，但会晚半小时到", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeChineseBangwoQicao() {
+        let result = IntentRules.classify("帮我起草一份会议纪要", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeChineseBangwoNi() {
+        let result = IntentRules.classify("帮我拟一份请假条", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeChineseTiwoHui() {
+        let result = IntentRules.classify("替我回一下这条消息", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeChineseXieYifeng() {
+        let result = IntentRules.classify("写一封邮件给老王，说我下周请三天假", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeChineseQicaoYifeng() {
+        let result = IntentRules.classify("起草一封辞职信", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeEnglishHelpMeWrite() {
+        let result = IntentRules.classify("help me write a follow-up to the client", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeEnglishDraftA() {
+        let result = IntentRules.classify("draft a resignation letter for me", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeEnglishDraftAn() {
+        let result = IntentRules.classify("draft an email to the landlord about the leak", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeEnglishWriteAReply() {
+        let result = IntentRules.classify("write a reply saying we can meet at three", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeEnglishWriteAnEmail() {
+        let result = IntentRules.classify("write an email to the team about the delay", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeEnglishReplySaying() {
+        let result = IntentRules.classify("reply saying thanks, I'll review it tomorrow", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    @Test func writeCueWinsOverSelectionDefault() {
+        // A write cue is meaningful even with a selection present (the selection becomes context,
+        // not the thing rewritten) — the cue must still be recognized as `.write`, not `.edit`.
+        let result = IntentRules.classify("帮我回复说好的没问题", hasSelection: true, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent == .write)
+    }
+
+    // MARK: - Write: negatives
+
+    @Test func writeNegative_niBangwoNeverMatches() {
+        // "你帮我…" is addressed to a person, not a command at the start — must never match.
+        let result = IntentRules.classify("你帮我写一下这个方案吧", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent != .write)
+    }
+
+    @Test func writeNegative_notAtStart() {
+        let result = IntentRules.classify("我想请你帮我写一封邮件", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent != .write)
+    }
+
+    @Test func writeNegative_mentionedNotRequested() {
+        let result = IntentRules.classify("I already wrote a reply to that email yesterday", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent != .write)
+    }
+
+    @Test func writeNegative_writingAboutSomethingElse() {
+        let result = IntentRules.classify("write down the address before I forget", hasSelection: false, defaultTranslateTarget: defaultTarget)
+        #expect(result.intent != .write)
+    }
 }

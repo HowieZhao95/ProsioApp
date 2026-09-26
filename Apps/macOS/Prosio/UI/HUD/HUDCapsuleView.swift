@@ -143,13 +143,14 @@ private struct ModeChipView: View {
         switch chip {
         case .edit: "✏️"
         case .ask: "✨"
+        case .write: "✍️"
         case .translate: "🌐"
         }
     }
 
     private var label: String? {
         switch chip {
-        case .edit, .ask: nil
+        case .edit, .ask, .write: nil
         case .translate(let shortCode): shortCode
         }
     }
@@ -287,6 +288,12 @@ private struct ShimmerText: View {
 
 #Preview("Ask chip") {
     HUDCapsuleView(state: .previewAskListening, dockInset: 0, onCopy: {})
+        .padding(40)
+        .background(Color.gray.opacity(0.2))
+}
+
+#Preview("Write chip (composing)") {
+    HUDCapsuleView(state: .previewWriteComposing, dockInset: 0, onCopy: {})
         .padding(40)
         .background(Color.gray.opacity(0.2))
 }

@@ -39,10 +39,11 @@ struct ModesSettingsView: View {
             }
 
             Section("Voice Commands") {
-                Text("Just say what you want — Prosio figures out whether to type it, answer it, or translate it.")
+                Text("Just say what you want — Prosio figures out whether to type it, write it for you, answer it, or translate it.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 voiceCommandRow(example: "“What's the capital of Portugal?”", mode: "Ask", detail: "streams an answer into a card you can insert or copy.")
+                voiceCommandRow(example: "“帮我回复他说明天可以，但会晚半小时到”", mode: "Write", detail: "drafts the reply and types it in for you.")
                 voiceCommandRow(example: "“帮我翻成日语：明天见”", mode: "Translate", detail: "types the Japanese translation for this one utterance.")
                 voiceCommandRow(example: "select text, then “shorter please”", mode: "Edit", detail: "rewrites the selection to match the instruction.")
                 voiceCommandRow(example: "“你明天有空吗？”", mode: "Dictate", detail: "typed as-is — it's a question to someone else, not to Prosio.")
