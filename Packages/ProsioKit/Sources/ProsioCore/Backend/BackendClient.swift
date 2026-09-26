@@ -15,6 +15,23 @@ public struct UsageReport: Codable, Sendable, Hashable {
     }
 }
 
+/// Settings-screen usage summary for the current billing period (`GET /api/usage`). Additive
+/// (2026-09-26).
+public struct UsageStatus: Sendable, Codable, Hashable {
+    public var periodStart: Date
+    public var periodEnd: Date
+    public var audioSecondsUsed: Double
+    /// `nil` when the plan has no fixed cap.
+    public var audioSecondsLimit: Double?
+
+    public init(periodStart: Date, periodEnd: Date, audioSecondsUsed: Double, audioSecondsLimit: Double? = nil) {
+        self.periodStart = periodStart
+        self.periodEnd = periodEnd
+        self.audioSecondsUsed = audioSecondsUsed
+        self.audioSecondsLimit = audioSecondsLimit
+    }
+}
+
 /// HTTP client for the Prosio backend (see docs/API.md). Session token stored in Keychain.
 /// PUBLIC API FROZEN — implementation owned by core agent.
 public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
@@ -24,12 +41,57 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
     private let keychainService: String
     private let keychain: any KeychainStoring
     private let accountName = "session"
+    /// Same store as `accountName`, alongside it — the signed-in account's email, so
+    /// `signedInEmail` survives a relaunch without a network round-trip.
+    private let emailAccountName = "session-email"
 
     /// Guards `tokenCache`/`lastPrewarmAt`/the session-token cache; kept as a plain lock (not an
     /// actor) so `isSignedIn` stays usable from synchronous, non-async call sites.
     private let lock = NSLock()
     private var tokenCache: [String: GatewayToken] = [:]
     private var lastPrewarmAt: Date?
+    private var _onSignInStateChange: (@Sendable (Bool) -> Void)?
+    /// The last value delivered to the *current* `_onSignInStateChange` closure — `nil` means it
+    /// hasn't been sent anything yet. Reset whenever a new closure is assigned, so a fresh
+    /// subscriber always gets exactly one initial value, and de-duplicated against on every
+    /// `notifySignInStateChange()` call so the immediate replay in the setter below and the
+    /// forwarding task started in `init` (which can both observe the same "already loaded" state
+    /// when they race) never deliver the same value twice.
+    private var _lastNotifiedSignInState: Bool?
+
+    /// Fired after the initial (background) session-token load completes, and again after every
+    /// `devSignIn`/`signOut` — lets an observer (e.g. a menu bar item) track sign-in state without
+    /// racing `isSignedIn`'s synchronous read against the async initial load (the bug this fixes: a
+    /// UI reading `isSignedIn` at launch, before the background Keychain/file read finishes, sees a
+    /// stale `false` even though a valid session is about to load). Always invoked off the main
+    /// actor — hop yourself if needed.
+    ///
+    /// Safe to set at any time: if the initial load (or a prior sign-in/out) already completed when
+    /// you assign this, it fires immediately (exactly once) with the current state, so there's no
+    /// lost-update window regardless of ordering. For a one-shot read instead of an ongoing
+    /// subscription, use `loadedIsSignedIn()`.
+    public var onSignInStateChange: (@Sendable (Bool) -> Void)? {
+        get {
+            lock.lock(); defer { lock.unlock() }
+            return _onSignInStateChange
+        }
+        set {
+            lock.lock()
+            _onSignInStateChange = newValue
+            _lastNotifiedSignInState = nil
+            let snapshot = sessionTokenCache.snapshot()
+            var valueToReplay: Bool?
+            if newValue != nil, snapshot.loaded {
+                let value = snapshot.token != nil
+                _lastNotifiedSignInState = value
+                valueToReplay = value
+            }
+            lock.unlock()
+            if let valueToReplay {
+                newValue?(valueToReplay)
+            }
+        }
+    }
 
     /// Session-token cache: loaded once in the background at init (never on the caller's thread —
     /// in particular, never blocking the main actor during app launch with a Keychain prompt) and
@@ -70,11 +132,25 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
 
         let cache = sessionTokenCache
         let accountName = self.accountName
-        self.initialTokenLoad = Task.detached {
-            // Runs on a background thread, never the caller's (e.g. main) actor.
-            let data = keychain.read(service: keychainService, account: accountName)
-            let token = data.flatMap { String(data: $0, encoding: .utf8) }
-            cache.set(token)
+        let emailAccountName = self.emailAccountName
+        let initialTokenLoad = Task.detached {
+            // Runs on a background thread, never the caller's (e.g. main) actor. Deliberately
+            // doesn't capture `self` — `self` isn't fully initialized until this initializer
+            // returns, and this must never block on that.
+            let tokenData = keychain.read(service: keychainService, account: accountName)
+            let token = tokenData.flatMap { String(data: $0, encoding: .utf8) }
+            let emailData = keychain.read(service: keychainService, account: emailAccountName)
+            let email = emailData.flatMap { String(data: $0, encoding: .utf8) }
+            cache.set(token: token, email: email)
+        }
+        self.initialTokenLoad = initialTokenLoad
+
+        // `self` is fully initialized from this point on, so this separate (non-detached, still
+        // off the main actor) task may safely capture it — it does no I/O of its own, just awaits
+        // the load above and forwards the result to `onSignInStateChange`, if anyone's listening.
+        Task { [weak self] in
+            await initialTokenLoad.value
+            self?.notifySignInStateChange()
         }
     }
 
@@ -83,6 +159,30 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
         // Not loaded yet (a call landing in the brief window right after init) must not block —
         // answer `false` rather than hit the Keychain synchronously.
         return snapshot.loaded && snapshot.token != nil
+    }
+
+    /// The signed-in account's email, persisted alongside the session token (same store) and
+    /// restored on load — `nil` when signed out, or (briefly, right after `init`) before the
+    /// initial background load finishes, same caveat as `isSignedIn`. Always current by the time
+    /// `onSignInStateChange` fires for a given transition (set before that notification goes out).
+    public var signedInEmail: String? {
+        sessionTokenCache.snapshot().email
+    }
+
+    /// Awaits the initial background session-token load (Keychain/file-backed store read) —
+    /// resolves immediately if it already finished. Never touches the Keychain on the caller's
+    /// thread/actor itself; it only awaits the background read that's already in flight.
+    public func waitUntilLoaded() async {
+        await initialTokenLoad.value
+    }
+
+    /// `isSignedIn`, but only answered after the initial session-token load has finished. Use this
+    /// (instead of reading `isSignedIn` synchronously) right after constructing `BackendClient` —
+    /// `isSignedIn` alone can read `false` in the brief window before that background Keychain/file
+    /// read completes, even though a valid stored session is about to load.
+    public func loadedIsSignedIn() async -> Bool {
+        await waitUntilLoaded()
+        return isSignedIn
     }
 
     /// Dev-only sign-in (server must run with PROSIO_DEV_AUTH=1). Stores the session token.
@@ -100,15 +200,44 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
             throw ProsioError.network("invalid session token encoding")
         }
         keychain.write(tokenData, service: keychainService, account: accountName)
-        setCachedSessionToken(decoded.sessionToken)
+        if let emailData = decoded.user.email.data(using: .utf8) {
+            keychain.write(emailData, service: keychainService, account: emailAccountName)
+        }
+        setCachedSession(token: decoded.sessionToken, email: decoded.user.email)
+        notifySignInStateChange()
     }
 
     public func signOut() {
         keychain.delete(service: keychainService, account: accountName)
-        setCachedSessionToken(nil)
+        keychain.delete(service: keychainService, account: emailAccountName)
+        setCachedSession(token: nil, email: nil)
         lock.lock()
         tokenCache = [:]
         lock.unlock()
+        notifySignInStateChange()
+    }
+
+    /// Fires `onSignInStateChange` (if set) with the current, already-loaded state. A no-op if the
+    /// initial load hasn't finished yet — the forwarding task started in `init` calls this again
+    /// once it has, so that case is never silently dropped.
+    private func notifySignInStateChange() {
+        lock.lock()
+        let callback = _onSignInStateChange
+        let snapshot = sessionTokenCache.snapshot()
+        guard snapshot.loaded else {
+            lock.unlock()
+            return
+        }
+        let value = snapshot.token != nil
+        guard _lastNotifiedSignInState != value else {
+            // Already delivered (e.g. the `onSignInStateChange` setter's own immediate replay
+            // raced this same "already loaded" state) — skip the duplicate.
+            lock.unlock()
+            return
+        }
+        _lastNotifiedSignInState = value
+        lock.unlock()
+        callback?(value)
     }
 
     public func token(for model: String) async throws -> GatewayToken {
@@ -126,6 +255,14 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
         let request = try await makeRequest(path: "api/usage", method: "POST", body: body, requiresAuth: true)
         let (data, response) = try await performRequest(request)
         try Self.checkResponse(response, data: data)
+    }
+
+    /// Settings-screen usage summary for the current billing period.
+    public func fetchUsage() async throws -> UsageStatus {
+        let request = try await makeRequest(path: "api/usage", method: "GET", body: nil, requiresAuth: true)
+        let (data, response) = try await performRequest(request)
+        try Self.checkResponse(response, data: data)
+        return try Self.makeDecoder().decode(UsageStatus.self, from: data)
     }
 
     public func fetchDictionary() async throws -> [DictionaryEntry] {
@@ -184,8 +321,8 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
 
     // MARK: - Session token
 
-    private func setCachedSessionToken(_ token: String?) {
-        sessionTokenCache.set(token)
+    private func setCachedSession(token: String?, email: String?) {
+        sessionTokenCache.set(token: token, email: email)
     }
 
     /// The current session token, awaiting the initial background Keychain load at most once
@@ -692,17 +829,19 @@ final class InMemoryKeychain: KeychainStoring, @unchecked Sendable {
 private final class SessionTokenCache: @unchecked Sendable {
     private let lock = NSLock()
     private var token: String?
+    private var email: String?
     private var loaded = false
 
-    func snapshot() -> (loaded: Bool, token: String?) {
+    func snapshot() -> (loaded: Bool, token: String?, email: String?) {
         lock.lock()
         defer { lock.unlock() }
-        return (loaded, token)
+        return (loaded, token, email)
     }
 
-    func set(_ token: String?) {
+    func set(token: String?, email: String?) {
         lock.lock()
         self.token = token
+        self.email = email
         loaded = true
         lock.unlock()
     }

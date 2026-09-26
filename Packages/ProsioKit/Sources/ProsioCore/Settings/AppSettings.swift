@@ -15,7 +15,10 @@ public final class AppSettings {
     public var backendURL: URL = URL(string: "http://localhost:3000")! {
         didSet { defaults.set(backendURL.absoluteString, forKey: Keys.backendURL) }
     }
-    public var languageHints: [String] = ["zh-CN", "en-US"] {
+    /// BCP-47 hints for transcription. Defaults to the user's preferred system languages (mapped to
+    /// the supported set below), falling back to `["en-US"]` when none map — only when nothing is
+    /// stored yet (2026-09-26).
+    public var languageHints: [String] = AppSettings.defaultLanguageHints() {
         didSet { defaults.set(languageHints, forKey: Keys.languageHints) }
     }
     public var showEdgeGlow: Bool = true {
@@ -119,5 +122,40 @@ public final class AppSettings {
         if let raw = defaults.dictionary(forKey: Keys.sceneOverrides) as? [String: String] {
             sceneOverrides = raw.compactMapValues { WritingScene(rawValue: $0) }
         }
+    }
+
+    /// Every BCP-47 tag `languageHints` will ever default to, and the language-code prefixes (and,
+    /// for Chinese, script/region hints) that map to each — in priority order, first match wins.
+    /// `nonisolated`: pure data, no `AppSettings` instance state — lets `defaultLanguageHints`
+    /// (also `nonisolated`) be called from a non-`@MainActor` context (e.g. plain unit tests).
+    private nonisolated static let supportedLanguageHints: [(bcp47: String, matches: @Sendable (String) -> Bool)] = [
+        ("zh-TW", { lower in
+            lower.hasPrefix("zh") && (lower.contains("hant") || lower.contains("-tw") || lower.contains("-hk") || lower.contains("-mo"))
+        }),
+        ("zh-CN", { lower in lower.hasPrefix("zh") }),
+        ("en-US", { lower in lower.hasPrefix("en") }),
+        ("ja-JP", { lower in lower.hasPrefix("ja") }),
+        ("ko-KR", { lower in lower.hasPrefix("ko") }),
+        ("es-ES", { lower in lower.hasPrefix("es") }),
+        ("fr-FR", { lower in lower.hasPrefix("fr") }),
+        ("de-DE", { lower in lower.hasPrefix("de") })
+    ]
+
+    /// Maps the user's system-preferred languages (`Locale.preferredLanguages` by default — a
+    /// parameter only so tests can supply a fixed list) to the supported BCP-47 tags above, in the
+    /// user's preference order, deduped, capped at 3. Falls back to `["en-US"]` if none map (e.g. a
+    /// system language this app doesn't have transcription support for). Used only as
+    /// `languageHints`'s default value — never overrides an already-stored preference.
+    nonisolated static func defaultLanguageHints(preferredLanguages: [String] = Locale.preferredLanguages) -> [String] {
+        var result: [String] = []
+        for identifier in preferredLanguages {
+            let lower = identifier.lowercased()
+            guard let mapped = supportedLanguageHints.first(where: { $0.matches(lower) })?.bcp47 else { continue }
+            if !result.contains(mapped) {
+                result.append(mapped)
+            }
+            if result.count >= 3 { break }
+        }
+        return result.isEmpty ? ["en-US"] : result
     }
 }

@@ -103,6 +103,10 @@ final class AppEnvironment {
     }
 
     func launch() {
+        // The stored session token loads asynchronously; reading `isSignedIn` at init is too early.
+        backend.onSignInStateChange = { [weak self] signedIn in
+            Task { @MainActor in self?.isSignedIn = signedIn }
+        }
         // Download/prepare on-device speech assets up front so the first dictation previews instantly.
         let locale = Self.previewLocale(for: settings)
         Task.detached(priority: .utility) {

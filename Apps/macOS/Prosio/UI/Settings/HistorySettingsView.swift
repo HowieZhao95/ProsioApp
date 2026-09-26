@@ -2,6 +2,8 @@ import AppKit
 import ProsioCore
 import SwiftUI
 
+/// Settings ▸ History — same row design as the menu bar's "Recent" (`HistoryRowView`), per the
+/// Settings audit.
 struct HistorySettingsView: View {
     let history: HistoryStore
     @Bindable private var settings: AppSettings
@@ -11,46 +13,41 @@ struct HistorySettingsView: View {
         self.settings = settings
     }
 
-    @State private var searchText = ""
     @State private var confirmClearAll = false
 
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter
-    }()
-
-    private var filtered: [HistoryItem] {
-        guard !searchText.isEmpty else { return history.items }
-        return history.items.filter {
-            $0.text.localizedCaseInsensitiveContains(searchText)
-                || ($0.appName?.localizedCaseInsensitiveContains(searchText) ?? false)
-        }
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Toggle("Keep history", isOn: $settings.historyEnabled)
+                Toggle("Save history on this Mac", isOn: $settings.historyEnabled)
                 Spacer()
                 Button("Clear All", role: .destructive) { confirmClearAll = true }
                     .disabled(history.items.isEmpty)
             }
             .padding(16)
 
-            if filtered.isEmpty {
+            if history.items.isEmpty {
                 emptyState
             } else {
                 List {
-                    ForEach(filtered) { item in
-                        row(for: item)
+                    ForEach(history.items) { item in
+                        HistoryRowView(
+                            item: item,
+                            onCopy: { copy(item) },
+                            onCopyTranscript: { copy(item, useTranscript: true) },
+                            onDelete: { try? history.delete(id: item.id) }
+                        )
+                        .listRowInsets(EdgeInsets())
                     }
                 }
                 .listStyle(.inset)
             }
+
+            Text("History never leaves this Mac.")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
         }
-        .searchable(text: $searchText, prompt: "Search history")
         .confirmationDialog("Clear all dictation history?", isPresented: $confirmClearAll, titleVisibility: .visible) {
             Button("Clear All", role: .destructive) { try? history.clear() }
             Button("Cancel", role: .cancel) {}
@@ -64,78 +61,31 @@ struct HistorySettingsView: View {
             Image(systemName: "clock.arrow.circlepath")
                 .font(.system(size: 28))
                 .foregroundStyle(.secondary)
-            Text(history.items.isEmpty ? "No dictation history yet" : "No matches")
+            Text("No dictation history yet")
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func row(for item: HistoryItem) -> some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(item.text)
-                    .lineLimit(2)
-                HStack(spacing: 8) {
-                    if let appName = item.appName {
-                        Label(appName, systemImage: "app.badge")
-                    }
-                    Text(Self.timeFormatter.string(from: item.createdAt))
-                    Text(item.engineID)
-                        .lineLimit(1)
-                    outcomeBadge(item.insertion)
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            }
-            Spacer()
-            Button {
-                copy(item)
-            } label: {
-                Image(systemName: "doc.on.doc")
-            }
-            .buttonStyle(.borderless)
-        }
-        .contentShape(Rectangle())
-        .padding(.vertical, 2)
-        .contextMenu {
-            Button("Copy") { copy(item) }
-            Button("Delete", role: .destructive) { try? history.delete(id: item.id) }
-        }
-        .swipeActions {
-            Button("Delete", role: .destructive) { try? history.delete(id: item.id) }
-        }
-    }
-
-    private func outcomeBadge(_ outcome: InsertionOutcome) -> some View {
-        let text: String
-        let color: Color
-        switch outcome {
-        case .pasted: text = "Pasted"; color = .green
-        case .accessibility: text = "Inserted"; color = .green
-        case .copiedToClipboard: text = "Copied"; color = .blue
-        case .failed: text = "Failed"; color = .red
-        }
-        return Text(text)
-            .font(.caption2.weight(.semibold))
-            .padding(.horizontal, 6)
-            .padding(.vertical, 1)
-            .background(color.opacity(0.15), in: Capsule())
-            .foregroundStyle(color)
-    }
-
-    private func copy(_ item: HistoryItem) {
+    private func copy(_ item: HistoryItem, useTranscript: Bool = false) {
+        let text = (useTranscript ? item.transcript : nil) ?? item.text
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.setString(item.text, forType: .string)
+        pasteboard.setString(text, forType: .string)
     }
 }
 
 #if DEBUG
 #Preview {
     let history = HistoryStore(fileURL: nil)
-    try? history.append(HistoryItem(text: "Let's ship the HUD by Friday", appName: "Notes", engineID: "gateway.gemini-3.5-transcribe-live", durationSeconds: 4.2, insertion: .pasted))
-    try? history.append(HistoryItem(text: "Copy this into the changelog", appName: "Xcode", engineID: "apple.speechanalyzer", durationSeconds: 2.1, insertion: .copiedToClipboard))
+    try? history.append(HistoryItem(text: "Let's ship the HUD by Friday", appBundleID: "com.apple.Notes", appName: "Notes", engineID: "gateway.gemini-3.5-transcribe-live", durationSeconds: 4.2, insertion: .pasted))
+    try? history.append(HistoryItem(text: "老王：\n\n- 我下周请三天假，工作已经交接给小李了。\n- 谢谢！", appBundleID: "com.apple.MobileSMS", appName: "Messages", engineID: "gateway.gemini-3.5-transcribe-live", durationSeconds: 3, insertion: .pasted, intent: .write, transcript: "帮我回复老王说下周请三天假"))
     return HistorySettingsView(history: history, settings: AppSettings())
-        .frame(width: 620, height: 460)
+        .frame(width: 520, height: 460)
+}
+
+#Preview("Empty") {
+    HistorySettingsView(history: HistoryStore(fileURL: nil), settings: AppSettings())
+        .frame(width: 520, height: 460)
 }
 #endif

@@ -51,6 +51,40 @@ private func makeStubbedSession() -> URLSession {
 
 /// Polls a non-actor-isolated condition (e.g. `BackendClient.isSignedIn`, loaded off the main
 /// actor in the background) until it's true or `timeout` elapses.
+/// Thread-safe recorder for `BackendClient.onSignInStateChange`, which fires off the main actor.
+private final class CapturedBools: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _values: [Bool] = []
+
+    var values: [Bool] {
+        lock.lock(); defer { lock.unlock() }
+        return _values
+    }
+
+    func append(_ value: Bool) {
+        lock.lock()
+        _values.append(value)
+        lock.unlock()
+    }
+}
+
+/// Thread-safe recorder for values observed inside `BackendClient.onSignInStateChange`.
+private final class CapturedStrings: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _values: [String] = []
+
+    var values: [String] {
+        lock.lock(); defer { lock.unlock() }
+        return _values
+    }
+
+    func append(_ value: String) {
+        lock.lock()
+        _values.append(value)
+        lock.unlock()
+    }
+}
+
 private func waitUntilTrue(timeout: TimeInterval = 2, _ condition: () -> Bool) async {
     let deadline = Date().addingTimeInterval(timeout)
     while !condition() && Date() < deadline {
@@ -102,6 +136,34 @@ struct BackendClientTests {
         let stored = keychain.read(service: "svc", account: "session")
         #expect(stored.flatMap { String(data: $0, encoding: .utf8) } == "tok_abc")
         #expect(capture.all().first?.url?.path == "/api/auth/dev")
+    }
+
+    @Test func devSignInPersistsEmailAlongsideTokenAndSignOutClearsBoth() async throws {
+        let keychain = InMemoryKeychain()
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+        #expect(client.signedInEmail == nil)
+
+        StubURLProtocol.handler = { request in
+            jsonResponse(request.url!, status: 200, body: #"{"sessionToken":"tok_abc","user":{"id":"u1","email":"a@b.com"}}"#)
+        }
+        defer { StubURLProtocol.handler = nil }
+        try await client.devSignIn(email: "a@b.com")
+
+        #expect(client.signedInEmail == "a@b.com")
+        let storedEmail = keychain.read(service: "svc", account: "session-email")
+        #expect(storedEmail.flatMap { String(data: $0, encoding: .utf8) } == "a@b.com")
+
+        // Persists across a relaunch (a fresh client reading the same store).
+        let relaunched = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+        let relaunchedEmail = await { () -> String? in
+            _ = await relaunched.loadedIsSignedIn()
+            return relaunched.signedInEmail
+        }()
+        #expect(relaunchedEmail == "a@b.com")
+
+        client.signOut()
+        #expect(client.signedInEmail == nil)
+        #expect(keychain.read(service: "svc", account: "session-email") == nil)
     }
 
     @Test func tokenDecodesFractionalSecondDatesAndSendsBearerHeader() async throws {
@@ -242,6 +304,168 @@ struct BackendClientTests {
 
         await waitUntilTrue { client.isSignedIn }
         #expect(client.isSignedIn == true)
+    }
+
+    // MARK: - loadedIsSignedIn / onSignInStateChange (fixes the "Not signed in" launch-race bug)
+
+    @Test func loadedIsSignedInAwaitsInitialLoadWithoutPolling() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        // No `waitUntilTrue` polling here — `loadedIsSignedIn()` itself must await the initial
+        // background load, which is exactly the fix for a caller reading `isSignedIn` too early.
+        let signedIn = await client.loadedIsSignedIn()
+        #expect(signedIn == true)
+    }
+
+    @Test func loadedIsSignedInReturnsFalseWhenNoStoredToken() async throws {
+        let keychain = InMemoryKeychain()
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        let signedIn = await client.loadedIsSignedIn()
+        #expect(signedIn == false)
+    }
+
+    @Test func onSignInStateChangeFiresAfterInitialLoadCompletes() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        let received = CapturedBools()
+        // Set immediately after construction — deliberately racing the initial background load, to
+        // prove the callback still fires once it finishes rather than being silently missed.
+        client.onSignInStateChange = { value in received.append(value) }
+
+        await waitUntilTrue { !received.values.isEmpty }
+        #expect(received.values == [true])
+    }
+
+    @Test func onSignInStateChangeReplaysImmediatelyWhenSetAfterLoadAlreadyCompleted() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        _ = await client.loadedIsSignedIn() // ensure the initial load has already finished
+
+        let received = CapturedBools()
+        client.onSignInStateChange = { value in received.append(value) }
+
+        // No polling: a caller that registers after the load already landed must be replayed to
+        // synchronously (or as good as), never left waiting for a change that already happened.
+        #expect(received.values == [true])
+    }
+
+    @Test func onSignInStateChangeFiresOnDevSignInAndSignOut() async throws {
+        let keychain = InMemoryKeychain()
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+        _ = await client.loadedIsSignedIn() // past the initial (signed-out) load
+
+        let received = CapturedBools()
+        client.onSignInStateChange = { value in received.append(value) }
+        #expect(received.values == [false]) // replayed immediately: already-loaded, signed out
+
+        StubURLProtocol.handler = { request in
+            jsonResponse(request.url!, status: 200, body: #"{"sessionToken":"tok_abc","user":{"id":"u1","email":"a@b.com"}}"#)
+        }
+        defer { StubURLProtocol.handler = nil }
+        try await client.devSignIn(email: "a@b.com")
+        #expect(received.values == [false, true])
+
+        client.signOut()
+        #expect(received.values == [false, true, false])
+    }
+
+    @Test func signedInEmailIsCurrentByTheTimeOnSignInStateChangeFires() async throws {
+        // "included in onSignInStateChange timing": a listener reading `signedInEmail` from inside
+        // the callback must already see the new value, not the pre-transition one.
+        let keychain = InMemoryKeychain()
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+        _ = await client.loadedIsSignedIn()
+
+        let observedEmails = CapturedStrings()
+        client.onSignInStateChange = { [weak client] signedIn in
+            observedEmails.append(client?.signedInEmail ?? (signedIn ? "MISSING" : "nil"))
+        }
+        #expect(observedEmails.values == ["nil"])
+
+        StubURLProtocol.handler = { request in
+            jsonResponse(request.url!, status: 200, body: #"{"sessionToken":"tok_abc","user":{"id":"u1","email":"a@b.com"}}"#)
+        }
+        defer { StubURLProtocol.handler = nil }
+        try await client.devSignIn(email: "a@b.com")
+        #expect(observedEmails.values == ["nil", "a@b.com"])
+
+        client.signOut()
+        #expect(observedEmails.values == ["nil", "a@b.com", "nil"])
+    }
+
+    // MARK: - fetchUsage
+
+    @Test func fetchUsageDecodesUsageStatus() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        let capture = RequestCapture()
+        StubURLProtocol.handler = { request in
+            capture.record(request)
+            return jsonResponse(
+                request.url!,
+                status: 200,
+                body: #"{"periodStart":"2026-09-01T00:00:00Z","periodEnd":"2026-10-01T00:00:00Z","audioSecondsUsed":1234.5,"audioSecondsLimit":36000}"#
+            )
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        let usage = try await client.fetchUsage()
+
+        #expect(usage.audioSecondsUsed == 1234.5)
+        #expect(usage.audioSecondsLimit == 36000)
+        let request = try #require(capture.all().first)
+        #expect(request.url?.path == "/api/usage")
+        #expect(request.httpMethod == "GET")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer session-token")
+    }
+
+    @Test func fetchUsageDecodesNilLimit() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        StubURLProtocol.handler = { request in
+            jsonResponse(
+                request.url!,
+                status: 200,
+                body: #"{"periodStart":"2026-09-01T00:00:00Z","periodEnd":"2026-10-01T00:00:00Z","audioSecondsUsed":0}"#
+            )
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        let usage = try await client.fetchUsage()
+        #expect(usage.audioSecondsLimit == nil)
+    }
+
+    @Test func fetchUsageWithoutSessionThrowsNotSignedInWithoutHittingNetwork() async throws {
+        let keychain = InMemoryKeychain()
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        let capture = RequestCapture()
+        StubURLProtocol.handler = { request in
+            capture.record(request)
+            return jsonResponse(request.url!, status: 200, body: "{}")
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        do {
+            _ = try await client.fetchUsage()
+            Issue.record("expected notSignedIn to be thrown")
+        } catch let error as ProsioError {
+            #expect(error == .notSignedIn)
+        } catch {
+            Issue.record("unexpected error type: \(error)")
+        }
+        #expect(capture.all().isEmpty)
     }
 
     // MARK: - CloudBatchTranscribing
