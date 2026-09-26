@@ -175,6 +175,15 @@ empty vocabulary omits the whole bullet line, missing app falls back
 gracefully, `general` scene drops the scene-rules block, BCP-47 codes
 render as English language names).
 
+**Added mode: `translateCommand`** (docs/PROMPTS.md §2b, `buildTranslateCommandPrompt`
+in `lib/prompts.ts`) — for when the intent classifier (`POST /api/intent`,
+below) decides a whole dictation is itself a spoken translate request (e.g.
+"帮我翻成日语：我们明天开会"). Unlike plain `translate`, `text` here is the
+full utterance (request + content together) and the model extracts both;
+`targetLanguage` is optional, defaulting server-side to `en-US`
+(`DEFAULT_TRANSLATE_COMMAND_LANGUAGE` in `app/api/compose/route.ts`) when
+omitted.
+
 - `streamText` via the same keep-alive Gateway client as `/api/transcribe`
   and `/api/route` (`lib/gateway.ts`). Temperature 0.2 (rewrite/translate/edit),
   0.4 (ask) — **except for models that reject it** (see below).
@@ -555,6 +564,115 @@ call per check):
 No guardrail fired on any of the three — luna handled all of them cleanly
 first try. `/api/transcribe` and `/api/health` re-checked unaffected (no
 regression from this change).
+
+### Intent classification (auto mode) — `POST /api/intent`
+
+Decides which mode a finished dictation is (`dictate`/`edit`/`ask`/`translate`),
+per `docs/PROMPTS.md` §5b. No fixed keywords, any language — same Jev
+choice-question protocol as `/api/route` (`lib/intent.ts`'s `classifyIntent()`,
+reusing the confirmed call shape from `lib/router.ts`). Only the criterion
+matching `hasSelection` is offered (`dictate` vs `edit`; `ask`/`translate`
+always offered). Threshold `INTENT_CONFIDENCE_THRESHOLD = 0.7`, timeout
+`INTENT_TIMEOUT_MS = 1200`.
+
+**Amendment (2026-09-26, user): no server-side LLM fallback.** The original
+task spec called for a compose-model fallback prompt when Jev fails; the
+user changed this mid-task to a rules-based client fallback instead. So:
+
+- Jev answers, top choice ≥ 0.7 → `{ intent: <choice>, confidence, source: "jev" }`.
+- Jev answers, but below threshold → `{ intent: <default>, confidence, source: "jev" }`
+  (`default` = `dictate`, or `edit` with a selection). `source` is still
+  `"jev"` here (it did answer) and `confidence` still reports the raw
+  probability, specifically so `scripts/intent-eval.ts`'s threshold sweep
+  can recompute decisions at other thresholds without re-calling Jev.
+- Jev errors, returns an unexpected/unoffered answer, or exceeds 1200ms →
+  `{ intent: null, confidence: null, source: "unavailable" }`. **The server
+  does not call any LLM as a fallback.** The client is responsible for
+  applying its own bilingual (zh/en) rules (`IntentRules` in ProsioCore,
+  Swift — source of truth is docs/PROMPTS.md §5b's rule text, not this repo).
+- `classifyIntent()` never throws, and the route wraps it in try/catch anyway
+  (defense in depth) — `/api/intent` never 5xxs for classifier failures, only
+  for auth (401) or validation (400) errors.
+
+Full request/response shape: see `docs/API.md`'s "Intent classification"
+section.
+
+**A TS port of the client's rules exists for eval comparison only**
+(`scripts/intent-rules.ts`, `classifyIntentByRules()`) — explicitly marked
+non-authoritative in its own header comment. It is never imported by any
+server route; core owns the real Swift implementation.
+
+#### Eval: `eval/intent-cases.json` + `scripts/intent-eval.ts`
+
+78 hand-labelled cases across en/zh/ja/es/fr/ko/mixed, weighted toward hard
+negatives per the task brief: messages/questions/requests addressed to
+other people (not Prosio) that must stay `dictate` even though they contain
+a question or an imperative (e.g. "Can you send me the report by end of
+day", "你明天有空吗 一起吃个饭", "请问这个价格含不含运费" — `请问` is
+explicitly excluded as a translate/ask cue per PROMPTS.md §5b, too common
+in ordinary writing); text that merely *mentions* translating without
+requesting one ("这段翻译得不太好", "she works as a translator for the
+embassy"); and positive `ask`/`translate` cases phrased many different ways
+with no shared keyword set, so a real semantic classifier is required to
+pass them (e.g. bare factual questions with no "Prosio" cue at all).
+
+`scripts/intent-eval.ts` runs three sources per case: `jev` (real Gateway
+call), `rules` (the non-authoritative TS port, no network), and `chain`
+(Jev's answer, replaced by the rules port only when Jev's `source` is
+`"unavailable"` — matching what the client actually does; a below-threshold
+Jev answer is *not* further replaced by rules, since the client doesn't
+invoke its fallback in that case either). Reports per source: accuracy,
+a full confusion matrix, false-command rate on `dictate`-expected cases
+(commanding when the user just wanted to dictate is the costly error —
+should be ~0), and (`jev` only) latency p50/p90 and a threshold sweep
+(0.5/0.6/0.7/0.8/0.9) recomputed from the raw confidence.
+
+**Live run status: Jev is currently rate-limited**, same failure mode the
+coordinator flagged mid-task — confirmed directly against the Gateway
+(bypassing the route's 1.2s timeout) with a standalone probe script:
+
+```
+RetryError: Failed after 3 attempts. Last error: GatewayRateLimitError:
+The upstream provider is currently experiencing high demand. Please retry shortly.
+```
+
+This is an upstream/provider-side condition, not a code or Model Allowlist
+problem (unlike the earlier `typesafe-ai/jev` 403 in the routing task —
+that was fixed by allowlisting; this is a live 429-equivalent that should
+clear on its own). Every live `/api/intent` call made during this task
+(3 checks against `:3200`) correctly hit the 1200ms timeout and returned
+`{ intent: null, source: "unavailable" }} `, confirming the "never blocks,
+degrades cleanly" behavior end-to-end even under a fully-blocked Jev.
+
+**`--rules-only` run (no network, always available)** — this is the
+rules-port's standalone accuracy, i.e. roughly what the client's fallback
+alone would score if it had to classify every case without Jev (in
+production it only runs on the subset where Jev is actually unavailable):
+
+```
+50/78 correct (accuracy=64.1%)
+false-command rate on dictate cases: 3/27 = 11.1%
+  - "这段翻译得不太好 语气有点生硬" -> translate (expected dictate)
+  - "他是我们公司的翻译 每天都很忙" -> translate (expected dictate)
+  - "can you help me translate the marketing deck into French..." -> translate (expected dictate)
+```
+
+The rules port does well distinguishing explicit `translate`/`edit` commands
+from plain dictation, but scores poorly on implicit `ask` cases with no
+cue word (e.g. "what's the capital of France" with no "Prosio"/"提问" cue) —
+those default to `dictate`, which is the intended, safe rules behavior
+(never invent a command from silence) but is exactly the accuracy Jev's
+semantic understanding is meant to recover. The three false-commands above
+are keyword substring matches on "翻译"/"translate" inside text that only
+*mentions* translation — a known, documented limitation of keyword rules
+that Jev's semantic criteria (`"not when translation is merely mentioned
+in the text"`) are designed to avoid.
+
+**Re-run once Jev clears:**
+`npx tsx --env-file=../.env.local scripts/intent-eval.ts` (add `--case <id>`
+to scope to one case). Compare `jev` vs `chain` accuracy once real numbers
+are available — the gap is literally "what the rules fallback costs",
+which is what the amendment asked this eval to measure.
 
 ### Dictionary PUT semantics
 

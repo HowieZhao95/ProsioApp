@@ -3,6 +3,7 @@ import {
   buildAskPrompt,
   buildEditPrompt,
   buildRewritePrompt,
+  buildTranslateCommandPrompt,
   buildTranslatePrompt,
   languageNameFromBCP47,
   sanitizeComposeOutput,
@@ -63,6 +64,21 @@ describe("buildTranslatePrompt", () => {
   it("en-US target, with vocabulary", () => {
     expect(
       buildTranslatePrompt({ transcript: "帮我查一下 Prosio 的文档", targetLanguage: "en-US", vocabulary: ["Prosio"] }).system
+    ).toMatchSnapshot();
+  });
+});
+
+describe("buildTranslateCommandPrompt", () => {
+  it("default language, no vocabulary", () => {
+    const prompt = buildTranslateCommandPrompt({ transcript: "帮我翻成日语：我们明天开会", defaultLanguage: "en-US" });
+    expect(prompt.system).toMatchSnapshot();
+    expect(prompt.messages).toEqual([{ role: "user", content: "<utterance>\n帮我翻成日语：我们明天开会\n</utterance>" }]);
+  });
+
+  it("with vocabulary", () => {
+    expect(
+      buildTranslateCommandPrompt({ transcript: "translate to Spanish, see you soon", defaultLanguage: "en-US", vocabulary: ["Prosio"] })
+        .system
     ).toMatchSnapshot();
   });
 });

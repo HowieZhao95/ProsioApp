@@ -3,9 +3,9 @@ import Carbon.HIToolbox
 import Observation
 import ProsioCore
 
-/// Global toggle hotkeys via CGEventTap: Dictate key press once to start/stop dictation, Ask key
-/// press once to start/stop a question (answer streams into the answer card). Owned by
-/// mac-system agent.
+/// Global toggle hotkey via CGEventTap: press once to start (dictate/edit/ask/translate are all
+/// resolved by core from the transcript — see `DictationIntent`/spoken keyword prefixes), press
+/// again to stop. Owned by mac-system agent.
 ///
 /// NOTE for onboarding copy (mac-ui): users should set System Settings > Keyboard >
 /// "Press \u{1F310} key to" = "Do Nothing" so the fn key doesn't also pop the emoji picker.
@@ -21,19 +21,15 @@ final class HotkeyMonitor {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     /// Tracks physical down/up purely to filter out auto-repeat/duplicate-down observations and
-    /// to ignore key-up entirely — see `TriggerPhysicalState`'s doc comment. One per physical key;
-    /// `HotkeyStateMachine` itself has no persistent state (every decision reads
-    /// `controller.phase`/`.intent` fresh), so there's nothing else to keep in sync here.
-    private var dictatePhysicalState = TriggerPhysicalState()
-    private var askPhysicalState = TriggerPhysicalState()
-    /// Throttles the "ask key equals dictate key" log line to once per collision, not once per
-    /// keypress.
-    private var loggedAskKeyCollision = false
+    /// to ignore key-up entirely — see `TriggerPhysicalState`'s doc comment. `HotkeyStateMachine`
+    /// itself has no persistent state (every decision reads `controller.phase` fresh), so there's
+    /// nothing else to keep in sync here.
+    private var triggerPhysicalState = TriggerPhysicalState()
     @ObservationIgnored private var activationObserver: NSObjectProtocol?
     @ObservationIgnored private var watchdogTimer: Timer?
     /// Fallback Esc handling: on this machine's config (Input Monitoring denied, Accessibility
     /// granted), `keyDown`/`keyUp` events are silently dropped by the `CGEventTap` even though
-    /// it's alive and `flagsChanged` events (the trigger keys) come through fine — macOS gates
+    /// it's alive and `flagsChanged` events (the trigger key) come through fine — macOS gates
     /// keyDown/keyUp delivery through event taps on Input Monitoring specifically, tap mode
     /// (`.defaultTap` vs `.listenOnly`) doesn't matter. `NSEvent` global keyDown monitors turned
     /// out to be gated by Input Monitoring too (confirmed live), so Esc instead uses a Carbon
@@ -119,7 +115,7 @@ final class HotkeyMonitor {
     // MARK: - Esc fallback (Carbon hotkey; see `escHotKeyRef`'s doc comment)
 
     /// Re-registers itself after every `controller.phase` change (`withObservationTracking`'s
-    /// `onChange` fires once per registration) so the Esc monitors stay in sync with phase for as
+    /// `onChange` fires once per registration) so the Esc hotkey stays in sync with phase for as
     /// long as `isStarted`.
     private func observePhaseForEscMonitor() {
         withObservationTracking {
@@ -275,8 +271,7 @@ final class HotkeyMonitor {
         }
         CGEvent.tapEnable(tap: tap, enable: true)
         isTapHealthy = true
-        dictatePhysicalState.reset()
-        askPhysicalState.reset()
+        triggerPhysicalState.reset()
         ProsioLog.hotkey.info("tap installed")
     }
 
@@ -290,8 +285,7 @@ final class HotkeyMonitor {
         eventTap = nil
         runLoopSource = nil
         isTapHealthy = false
-        dictatePhysicalState.reset()
-        askPhysicalState.reset()
+        triggerPhysicalState.reset()
     }
 
     fileprivate func handleTapDisabled(reason: String) {
@@ -309,8 +303,7 @@ final class HotkeyMonitor {
         }
         CGEvent.tapEnable(tap: tap, enable: true)
         isTapHealthy = CGEvent.tapIsEnabled(tap: tap)
-        dictatePhysicalState.reset()
-        askPhysicalState.reset()
+        triggerPhysicalState.reset()
         ProsioLog.hotkey.info("tap re-enable result: healthy=\(self.isTapHealthy, privacy: .public), accessibilityGranted=\(accessibilityGranted, privacy: .public)")
     }
 
@@ -331,30 +324,12 @@ final class HotkeyMonitor {
     }
 
     private func handleFlagsChanged(keycode: Int64, flags: CGEventFlags) {
-        let dictateKey = settings.triggerKey
-        let askKey = settings.askTriggerKey
-        let askKeyUsable = askKey != dictateKey
+        let key = settings.triggerKey
+        guard keycode == Self.keycode(for: key) else { return }
 
-        if !askKeyUsable {
-            if !loggedAskKeyCollision {
-                ProsioLog.hotkey.error("ask key equals dictate key (\(String(describing: dictateKey), privacy: .public)); ask key disabled until they differ")
-                loggedAskKeyCollision = true
-            }
-        } else {
-            loggedAskKeyCollision = false
-        }
-
-        if keycode == Self.keycode(for: dictateKey) {
-            processTriggerFlagsChanged(flags: flags, key: dictateKey, intent: .dictate, physicalState: &dictatePhysicalState)
-        } else if askKeyUsable, keycode == Self.keycode(for: askKey) {
-            processTriggerFlagsChanged(flags: flags, key: askKey, intent: .ask, physicalState: &askPhysicalState)
-        }
-    }
-
-    private func processTriggerFlagsChanged(flags: CGEventFlags, key: TriggerKey, intent: DictationIntent, physicalState: inout TriggerPhysicalState) {
         let mask = Self.mask(for: key)
         let isDown = flags.contains(mask)
-        let isRepeat = physicalState.observe(isDown: isDown)
+        let isRepeat = triggerPhysicalState.observe(isDown: isDown)
 
         // Key-up is ignored entirely (toggle is driven by down only), and so is a repeated
         // observation of the same state (auto-repeat/duplicate, or a redundant up).
@@ -367,9 +342,8 @@ final class HotkeyMonitor {
         }
 
         let phase = controller.phase
-        let activeIntent = controller.intent
-        let effect = HotkeyStateMachine.triggerKeyDown(intent: intent, phase: phase, activeIntent: activeIntent)
-        ProsioLog.hotkey.info("\(String(describing: intent), privacy: .public) key down, phase=\(String(describing: phase), privacy: .public), activeIntent=\(String(describing: activeIntent), privacy: .public) -> effect=\(String(describing: effect), privacy: .public)")
+        let effect = HotkeyStateMachine.triggerKeyDown(phase: phase)
+        ProsioLog.hotkey.info("trigger down, phase=\(String(describing: phase), privacy: .public) -> effect=\(String(describing: effect), privacy: .public)")
         scheduleEffect(effect)
     }
 
@@ -391,11 +365,10 @@ final class HotkeyMonitor {
     /// the system flagging the tap as unresponsive and disabling it.
     private func applyEffect(_ effect: HotkeyStateMachine.Effect) {
         switch effect {
-        case .start(let intent):
-            controller.start(trigger: .toggle, intent: Self.requestedIntent(for: intent))
-        case .dismissAnswerThenStart(let intent):
-            controller.dismissAnswer()
-            controller.start(trigger: .toggle, intent: Self.requestedIntent(for: intent))
+        case .start:
+            // Intent is always nil now: core auto-resolves dictate/edit from selection, and
+            // Ask/Translate are spoken keyword prefixes rather than a separate hotkey/intent.
+            controller.start(trigger: .toggle, intent: nil)
         case .dismissAnswer:
             controller.dismissAnswer()
         case .stop:
@@ -411,7 +384,7 @@ final class HotkeyMonitor {
         switch effect {
         case .ignore, .none:
             return
-        case .start, .dismissAnswerThenStart, .dismissAnswer, .stop, .cancel:
+        case .start, .dismissAnswer, .stop, .cancel:
             break
         }
         DispatchQueue.main.async { [weak self] in
@@ -420,12 +393,6 @@ final class HotkeyMonitor {
     }
 
     // MARK: - Keycodes
-
-    /// The dictate key passes `nil` so `DictationController` auto-resolves to `.edit` when text is
-    /// selected; only the Ask key forces an intent.
-    private static func requestedIntent(for keyIntent: DictationIntent) -> DictationIntent? {
-        keyIntent == .ask ? .ask : nil
-    }
 
     private static let escKeycode: Int64 = 53
 
@@ -476,8 +443,8 @@ private nonisolated func hotkeyEventTapCallback(
 
     // Synchronous, same-thread dispatch when we're already on the main thread (the normal case:
     // the tap's run loop source lives on the main run loop) removes scheduling latency. This only
-    // decides the effect (pure state-machine logic reading `controller.phase`/`.intent`); it
-    // never blocks — see `decideEffect`.
+    // decides the effect (pure state-machine logic reading `controller.phase`); it never blocks
+    // — see `decideEffect`.
     runOnMainActor {
         monitor.decideEffect(type: type, keycode: keycode, flagsRaw: flagsRaw)
     }

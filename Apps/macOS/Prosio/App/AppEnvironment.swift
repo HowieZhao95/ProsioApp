@@ -85,7 +85,10 @@ final class AppEnvironment {
             // every call would fail over to cloud and only add latency.
             router: nil,
             prewarmCloud: { await cloudTranscriber.prewarm() },
-            composer: backend
+            composer: backend,
+            // Jev decides dictate/edit/ask/translate; when it's unavailable the controller
+            // degrades to bilingual IntentRules.
+            intentClassifier: backend
         )
 
         let backendRef = backend

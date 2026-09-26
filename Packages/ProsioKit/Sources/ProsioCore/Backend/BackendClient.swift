@@ -369,6 +369,40 @@ extension BackendClient: RouteDeciding {
     }
 }
 
+// MARK: - IntentClassifying
+
+extension BackendClient: IntentClassifying {
+    /// Also a fast Jev decision (docs/PROMPTS.md §5b targets ~1200ms server-side); the client caps
+    /// tighter still (`DictationController.classifyIntentTimeout`) since a slow decision should
+    /// just fall through to `IntentRules`.
+    private static let intentRequestTimeout: TimeInterval = 1.5
+
+    public func classify(transcript: String, hasSelection: Bool, app: AppContext?) async throws -> IntentDecision {
+        struct RequestBody: Encodable {
+            let transcript: String
+            let hasSelection: Bool
+            let app: AppContext?
+        }
+        struct ResponseBody: Decodable {
+            let intent: ClassifiedIntent?
+            let confidence: Double?
+            let source: String
+        }
+        let body = try Self.makeEncoder().encode(RequestBody(transcript: transcript, hasSelection: hasSelection, app: app))
+        let request = try await makeRequest(
+            path: "api/intent",
+            method: "POST",
+            body: body,
+            requiresAuth: true,
+            timeout: Self.intentRequestTimeout
+        )
+        let (data, response) = try await performRequest(request)
+        try Self.checkResponse(response, data: data)
+        let decoded = try Self.makeDecoder().decode(ResponseBody.self, from: data)
+        return IntentDecision(intent: decoded.intent, confidence: decoded.confidence, source: decoded.source)
+    }
+}
+
 // MARK: - Composing
 
 extension BackendClient: Composing {

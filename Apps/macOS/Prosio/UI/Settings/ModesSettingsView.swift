@@ -1,7 +1,10 @@
 import ProsioCore
 import SwiftUI
 
-/// P1 modes: Translate, "adapt writing to the app" (+ per-app scene overrides), and the Ask key.
+/// P1 modes: Translate, "adapt writing to the app" (+ per-app scene overrides), and how Ask/Edit/
+/// Translate are actually triggered. P1.1: there's only ever one hotkey (dictation, fn by
+/// default), and no fixed trigger words either — a semantic classifier infers what the user wants
+/// from what they actually said, in any language, once they stop speaking.
 struct ModesSettingsView: View {
     let environment: AppEnvironment
     @Bindable private var settings: AppSettings
@@ -35,24 +38,38 @@ struct ModesSettingsView: View {
                 perAppOverrides
             }
 
-            Section("Ask Key") {
-                Picker("Ask key", selection: $settings.askTriggerKey) {
-                    ForEach(TriggerKey.allCases, id: \.self) { key in
-                        Text(key.displayName).tag(key)
-                    }
-                }
-                if settings.askTriggerKey == settings.triggerKey {
-                    Label("Must be different from the dictation key.", systemImage: "exclamationmark.triangle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                } else {
-                    Text("Press \(settings.askTriggerKey.shortSymbol) to ask a question instead of dictating; the answer streams into a card you can insert or copy.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            Section("Voice Commands") {
+                Text("Just say what you want — Prosio figures out whether to type it, answer it, or translate it.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                voiceCommandRow(example: "“What's the capital of Portugal?”", mode: "Ask", detail: "streams an answer into a card you can insert or copy.")
+                voiceCommandRow(example: "“帮我翻成日语：明天见”", mode: "Translate", detail: "types the Japanese translation for this one utterance.")
+                voiceCommandRow(example: "select text, then “shorter please”", mode: "Edit", detail: "rewrites the selection to match the instruction.")
+                voiceCommandRow(example: "“你明天有空吗？”", mode: "Dictate", detail: "typed as-is — it's a question to someone else, not to Prosio.")
+                Text("Press \(settings.triggerKey.shortSymbol) again while the answer card is open to ask a follow-up.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
+    }
+
+    private func voiceCommandRow(example: String, mode: String, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 6) {
+                Text(example)
+                    .font(.system(size: 12, weight: .medium))
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                Text(mode)
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            Text(detail)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 2)
     }
 
     // MARK: - Per-app scene overrides

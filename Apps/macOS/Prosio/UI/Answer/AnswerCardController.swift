@@ -38,7 +38,7 @@ final class AnswerCardController {
         hosting = NSHostingView(
             rootView: AnswerCardContainerView(
                 answer: nil,
-                askKeyLabel: settings.askTriggerKey.followUpLabel,
+                askKeyLabel: settings.triggerKey.followUpLabel,
                 dockInset: 0,
                 onInsert: {},
                 onCopy: {},
@@ -128,7 +128,7 @@ final class AnswerCardController {
     private func render() {
         hosting.rootView = AnswerCardContainerView(
             answer: controller.answer,
-            askKeyLabel: settings.askTriggerKey.followUpLabel,
+            askKeyLabel: settings.triggerKey.followUpLabel,
             dockInset: dockInset,
             onInsert: { [weak self] in self?.insert() },
             onCopy: { [weak self] in self?.copyAnswer() },
@@ -222,7 +222,7 @@ private struct AnswerCardContainerPreviewHost: View {
     var body: some View {
         AnswerCardContainerView(
             answer: answer,
-            askKeyLabel: "Right ⌘",
+            askKeyLabel: "fn",
             dockInset: 0,
             onInsert: {},
             onCopy: {},
@@ -255,7 +255,7 @@ private struct GrowingAnswerPreview: View {
     var body: some View {
         AnswerCardContainerView(
             answer: AnswerState(question: "Explain how this card grows while streaming.", text: text, isStreaming: isStreaming),
-            askKeyLabel: "Right ⌘",
+            askKeyLabel: "fn",
             dockInset: 0,
             onInsert: {},
             onCopy: {},

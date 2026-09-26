@@ -68,11 +68,6 @@ public final class AppSettings {
             defaults.set(raw, forKey: Keys.sceneOverrides)
         }
     }
-    /// P1: the key that triggers Ask mode (default right ⌘).
-    public var askTriggerKey: TriggerKey = .rightCommand {
-        didSet { defaults.set(askTriggerKey.rawValue, forKey: Keys.askTriggerKey) }
-    }
-
     private let defaults: UserDefaults
 
     private enum Keys {
@@ -89,7 +84,8 @@ public final class AppSettings {
         static let translateTarget = "prosio.translateTarget"
         static let adaptToApp = "prosio.adaptToApp"
         static let sceneOverrides = "prosio.sceneOverrides"
-        static let askTriggerKey = "prosio.askTriggerKey"
+        // "prosio.askTriggerKey" removed (P1.1: single fn hotkey; Ask is voice-triggered). Not
+        // read/written anymore — tolerate a stale value left over in a user's defaults.
     }
 
     public init(defaults: UserDefaults = .standard) {
@@ -133,9 +129,6 @@ public final class AppSettings {
         }
         if let raw = defaults.dictionary(forKey: Keys.sceneOverrides) as? [String: String] {
             sceneOverrides = raw.compactMapValues { WritingScene(rawValue: $0) }
-        }
-        if let raw = defaults.string(forKey: Keys.askTriggerKey), let value = TriggerKey(rawValue: raw) {
-            askTriggerKey = value
         }
     }
 }

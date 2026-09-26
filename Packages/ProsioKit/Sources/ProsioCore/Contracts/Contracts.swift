@@ -262,6 +262,37 @@ public enum DictationIntent: String, Sendable, Codable, Hashable {
     case ask
 }
 
+// MARK: - Intent classification (server Jev, client `IntentRules` fallback — docs/PROMPTS.md §5b)
+
+/// What a finished dictation is for, as decided by `IntentClassifying` (or its client-side
+/// `IntentRules` fallback). A superset of `DictationIntent`: `.translate` has no `DictationIntent`
+/// equivalent — a translate-classified session still reports `DictationIntent.dictate`.
+public enum ClassifiedIntent: String, Codable, Sendable {
+    case dictate, edit, ask, translate
+}
+
+public struct IntentDecision: Sendable, Codable, Hashable {
+    /// `nil` when the classifier is unavailable (error/timeout on the server, `source: "unavailable"`)
+    /// — callers must then fall back to `IntentRules`.
+    public var intent: ClassifiedIntent?
+    public var confidence: Double?
+    /// e.g. "jev", "unavailable". Set to "rules" client-side when `IntentRules` made the call instead.
+    public var source: String
+
+    public init(intent: ClassifiedIntent?, confidence: Double? = nil, source: String) {
+        self.intent = intent
+        self.confidence = confidence
+        self.source = source
+    }
+}
+
+/// Classifies a finished dictation (backend -> Gateway `typesafe-ai/jev`). Implemented by
+/// `BackendClient` (`POST /api/intent`). Callers must treat errors/timeouts/`intent: nil` as
+/// "unavailable" and fall back to `IntentRules`.
+public protocol IntentClassifying: Sendable {
+    func classify(transcript: String, hasSelection: Bool, app: AppContext?) async throws -> IntentDecision
+}
+
 public enum WritingScene: String, Sendable, Codable, Hashable, CaseIterable {
     /// No adaptation — insert the SMART transcript directly (fastest path).
     case general, email, chat, code, document
@@ -293,7 +324,13 @@ public struct ComposeTurn: Sendable, Codable, Hashable {
 }
 
 public struct ComposeRequest: Sendable, Codable, Hashable {
-    public enum Mode: String, Sendable, Codable, Hashable { case rewrite, translate, edit, ask }
+    public enum Mode: String, Sendable, Codable, Hashable {
+        case rewrite, translate, edit, ask
+        /// The whole utterance was a spoken translate command (e.g. "translate this to French: …",
+        /// in whatever phrasing) — the server extracts the content and target itself, rather than
+        /// the client stripping a fixed prefix. `targetLanguage` is still sent as the default.
+        case translateCommand
+    }
 
     public var mode: Mode
     /// Dictation (rewrite/translate), instruction (edit) or question (ask).

@@ -77,14 +77,18 @@ final class HUDController {
         #if DEBUG
         guard !isShowcasing else { return }
         #endif
+        let effectiveIntent = controller.intent ?? .dictate
+        // One-off translate (classifier/rules) publishes its target per session; otherwise the
+        // persistent menu-bar toggle applies to plain dictation.
+        let translateTarget: String? = controller.sessionTranslateTarget
+            ?? ((effectiveIntent == .dictate && settings.translateEnabled) ? settings.translateTarget : nil)
         let newState = HUDViewState(
             phase: HUDViewState.Phase(controller.phase),
             previewText: controller.previewText,
             levelHistory: controller.levelHistory,
             level: controller.level,
-            intent: controller.intent ?? .dictate,
-            translateShortCode: ((controller.intent ?? .dictate) == .dictate && settings.translateEnabled)
-                ? TranslateLanguages.shortCode(for: settings.translateTarget) : nil,
+            intent: effectiveIntent,
+            translateShortCode: translateTarget.map { TranslateLanguages.shortCode(for: $0) },
             composeLabel: controller.composeLabel
         )
         apply(newState)

@@ -108,7 +108,7 @@ struct OnboardingView: View {
                 TextField("Your dictation will appear here…", text: $tryItText, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
                     .lineLimit(3...5)
-                Text("Select text and press \(environment.settings.triggerKey.shortSymbol) to edit it by voice — or press \(environment.settings.askTriggerKey.shortSymbol) to ask a question.")
+                Text("Just say what you want — Prosio figures out whether to type it, answer it, or translate it. Select text first and speak an instruction (e.g. “shorter please”) to edit it by voice.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

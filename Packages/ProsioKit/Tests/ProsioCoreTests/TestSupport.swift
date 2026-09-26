@@ -97,6 +97,16 @@ final class FakeEngine: TranscriptionEngine, @unchecked Sendable {
     let steps: [Step]
     let recorder = FakeEngineRecorder()
 
+    private let lock = NSLock()
+    private var _lastOptions: TranscriptionOptions?
+
+    /// The `options` most recently passed to `transcribe(audio:options:)` — lets a test assert on
+    /// what vocabulary/languageHints/mode the controller actually sent this engine.
+    var lastOptions: TranscriptionOptions? {
+        lock.lock(); defer { lock.unlock() }
+        return _lastOptions
+    }
+
     init(id: String, isOnDevice: Bool = false, steps: [Step]) {
         self.id = id
         self.isOnDevice = isOnDevice
@@ -104,6 +114,10 @@ final class FakeEngine: TranscriptionEngine, @unchecked Sendable {
     }
 
     func transcribe(audio: AsyncStream<AudioChunk>, options: TranscriptionOptions) -> AsyncThrowingStream<TranscriptEvent, Error> {
+        lock.lock()
+        _lastOptions = options
+        lock.unlock()
+
         let steps = steps
         let recorder = recorder
         return AsyncThrowingStream { continuation in
@@ -145,6 +159,65 @@ final class FakeEngine: TranscriptionEngine, @unchecked Sendable {
             }
             continuation.onTermination = { _ in task.cancel() }
         }
+    }
+}
+
+// MARK: - FakeIntentClassifier
+
+/// Scripted `IntentClassifying`.
+final class FakeIntentClassifier: IntentClassifying, @unchecked Sendable {
+    enum Behavior: Sendable {
+        case decision(IntentDecision)
+        case fail(ProsioError)
+        /// Never completes on its own (until cancelled) — used for timeout tests.
+        case hang
+        case delayThenDecision(Duration, IntentDecision)
+    }
+
+    var behavior: Behavior = .decision(IntentDecision(intent: .dictate, confidence: 0.95, source: "jev"))
+
+    private let lock = NSLock()
+    private var _callCount = 0
+    private var _lastTranscript: String?
+    private var _lastHasSelection: Bool?
+
+    var callCount: Int {
+        lock.lock(); defer { lock.unlock() }
+        return _callCount
+    }
+
+    var lastTranscript: String? {
+        lock.lock(); defer { lock.unlock() }
+        return _lastTranscript
+    }
+
+    var lastHasSelection: Bool? {
+        lock.lock(); defer { lock.unlock() }
+        return _lastHasSelection
+    }
+
+    func classify(transcript: String, hasSelection: Bool, app: AppContext?) async throws -> IntentDecision {
+        recordCall(transcript, hasSelection)
+        switch behavior {
+        case .decision(let decision):
+            return decision
+        case .fail(let error):
+            throw error
+        case .hang:
+            try? await Task.sleep(for: .seconds(3600))
+            throw ProsioError.cancelled
+        case .delayThenDecision(let duration, let decision):
+            try? await Task.sleep(for: duration)
+            return decision
+        }
+    }
+
+    private func recordCall(_ transcript: String, _ hasSelection: Bool) {
+        lock.lock()
+        _callCount += 1
+        _lastTranscript = transcript
+        _lastHasSelection = hasSelection
+        lock.unlock()
     }
 }
 

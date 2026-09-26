@@ -36,7 +36,7 @@ struct MenuBarContentView: View {
                     .buttonStyle(.link)
                     .font(.caption)
             } else {
-                Text("\(environment.settings.triggerKey.shortSymbol) dictate · \(environment.settings.askTriggerKey.shortSymbol) ask")
+                Text("\(environment.settings.triggerKey.shortSymbol) to talk — ask, translate or dictate")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

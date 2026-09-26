@@ -120,6 +120,31 @@ describe("POST /api/compose", () => {
     expect(await res.text()).toBe("hello");
   });
 
+  it("translateCommand: targetLanguage is optional (defaults server-side), still sanitized like other non-ask modes", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["Let's meet tomorrow morning."]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "translateCommand", text: "帮我翻成英语 我们明天早上见" }, user.authHeader)
+    );
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("Let's meet tomorrow morning.");
+  });
+
+  it("translateCommand: honors an explicit targetLanguage when given", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["我们明天见"]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest(
+        "/api/compose",
+        "POST",
+        { mode: "translateCommand", text: "translate to Chinese: see you tomorrow", targetLanguage: "zh-CN" },
+        user.authHeader
+      )
+    );
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("我们明天见");
+  });
+
   it("ask: streams deltas through live, unsanitized", async () => {
     streamTextMock.mockReturnValue(mockStreamTextResult(['"quoted', " answer\""]));
     const user = await authedUser();

@@ -50,6 +50,30 @@ struct DebugSessionRecord: Codable, Sendable {
     /// P1: compose's raw output, distinct from `insertedText` (e.g. a failed rewrite still
     /// inserts the untransformed transcript, but `composeOutput` stays nil).
     var composeOutput: String? = nil
+
+    /// P1.1: the classifier/rules decision for this session (dictate/edit/ask/translate).
+    var intentDecisionClassified: String? = nil
+    /// "jev" (server classifier) or "rules" (client-side `IntentRules` fallback).
+    var intentDecisionSource: String? = nil
+    var intentDecisionConfidence: Double? = nil
+    var intentDecisionLatencyMs: Double? = nil
+    /// "local" | "final" — which of the two decisions below actually determined this session's
+    /// route (mirrors `intentDecisionClassified`/`intentDecisionSource`/etc. above).
+    var intentDecisionClassifiedOn: String? = nil
+    /// The stop()-time speculative decision made on the local preview, if one ran — kept even when
+    /// superseded by a final-transcript reclassification, so a mismatch (e.g. cloud SMART
+    /// normalizing a cue word away) is visible in the recording.
+    var intentDecisionLocalClassified: String? = nil
+    var intentDecisionLocalSource: String? = nil
+    var intentDecisionLocalConfidence: Double? = nil
+    var intentDecisionLocalLatencyMs: Double? = nil
+    /// The final-transcript (re)classification, if one ran (local preview was empty/too short, its
+    /// leading text diverged from the final transcript, or the local decision was a rules fallback
+    /// — which always reclassifies on the final transcript).
+    var intentDecisionFinalClassified: String? = nil
+    var intentDecisionFinalSource: String? = nil
+    var intentDecisionFinalConfidence: Double? = nil
+    var intentDecisionFinalLatencyMs: Double? = nil
 }
 
 /// Writes debug recordings to disk off the main actor, and prunes old sessions. Not part of the

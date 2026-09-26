@@ -1,46 +1,39 @@
 import Foundation
 import ProsioCore
 
-/// Pure decision logic for the two toggle hotkeys (Dictate, Ask), kept free of CGEvent/AppKit
-/// plumbing so it can be unit tested directly. Owned by mac-system agent.
+/// Pure decision logic for the single toggle hotkey, kept free of CGEvent/AppKit plumbing so it
+/// can be unit tested directly. Owned by mac-system agent.
 ///
-/// Semantics: plain toggle for each key, no hold-to-talk, no double-tap. Every decision is a pure
-/// function of `DictationController.phase`/`.intent` read fresh at the moment of the key press —
-/// there is no persistent state of our own, so there's nothing to desync.
-/// - idle/finished/failed -> `.start(intent)` for whichever key was pressed.
-/// - `.answering` (an answer card is up): Ask key -> `.start(.ask)` (a follow-up question in the
-///   same thread); Dictate key -> `.dismissAnswerThenStart(.dictate)` (leave Ask mode, dictate).
-/// - `.listening` with a press of the key that matches the *active* intent -> `.stop`. A press of
-///   the *other* key while listening is `.ignore` (it doesn't belong to the running session).
+/// Semantics: plain toggle, no hold-to-talk, no double-tap. Every decision is a pure function of
+/// `DictationController.phase` read fresh at the moment of the key press — there is no persistent
+/// state of our own, so there's nothing to desync. Ask/Translate are now spoken keyword prefixes
+/// handled in core, not separate hotkeys — every press calls `controller.start(trigger:
+/// .toggle, intent: nil)`.
+/// - idle/finished/failed -> `.start`.
+/// - `.answering` (an answer card is up) -> `.start` too: core treats a fresh press while
+///   answering as a follow-up question and keeps the card up (no dismiss).
+/// - `.listening` -> `.stop`.
 /// - `.finalizing`/`.composing`/`.inserting` -> `.ignore` (no queue).
 /// - Esc: `.listening` -> `.cancel`; `.answering` -> `.dismissAnswer`; otherwise `.none`.
 enum HotkeyStateMachine {
     enum Effect: Equatable {
-        case start(DictationIntent)
-        case dismissAnswerThenStart(DictationIntent)
-        case dismissAnswer
+        case start
         case stop
         case cancel
-        /// A key press that isn't currently actionable (previous session still finishing, or the
-        /// wrong key for the session that's running). Distinct from `.none` purely so the caller
-        /// can log it distinctly for diagnostics.
+        case dismissAnswer
+        /// A key press that isn't currently actionable (previous session still finishing).
+        /// Distinct from `.none` purely so the caller can log it distinctly for diagnostics.
         case ignore
         case none
     }
 
-    /// A trigger key (`intent` says which one: `.dictate` or `.ask`) went down.
-    static func triggerKeyDown(intent: DictationIntent, phase: DictationPhase, activeIntent: DictationIntent?) -> Effect {
+    /// The trigger key went down.
+    static func triggerKeyDown(phase: DictationPhase) -> Effect {
         switch phase {
-        case .idle, .finished, .failed:
-            return .start(intent)
-        case .answering:
-            return intent == .ask ? .start(intent) : .dismissAnswerThenStart(intent)
+        case .idle, .finished, .failed, .answering:
+            return .start
         case .listening:
-            // The dictate key owns both `.dictate` and auto-resolved `.edit` sessions.
-            if let activeIntent, (activeIntent == .ask) == (intent == .ask) {
-                return .stop
-            }
-            return .ignore
+            return .stop
         case .finalizing, .composing, .inserting:
             return .ignore
         }
@@ -55,20 +48,19 @@ enum HotkeyStateMachine {
         }
     }
 
-    /// Whether the Esc-fallback `NSEvent` monitors (see `HotkeyMonitor`) need to be installed for
+    /// Whether the Esc-fallback Carbon hotkey (see `HotkeyMonitor`) needs to be registered for
     /// this phase — exactly the phases where `escKeyDown` can produce an effect. Kept as its own
-    /// pure function so the install/remove *decision* is unit-testable even though the actual
-    /// `NSEvent` monitor plumbing isn't.
+    /// pure function so the register/unregister *decision* is unit-testable even though the
+    /// actual Carbon hotkey plumbing isn't.
     static func needsEscMonitor(phase: DictationPhase) -> Bool {
         escKeyDown(phase: phase) != .none
     }
 }
 
-/// Tracks whether a trigger key is physically held down, purely from a stream of "the OS says
+/// Tracks whether the trigger key is physically held down, purely from a stream of "the OS says
 /// down"/"the OS says up" observations (`flagsChanged` events), so the caller can act only on a
 /// genuine down transition and ignore auto-repeat/duplicate-down observations while the key is
-/// already held (and ignore key-up entirely, per the toggle-only hotkey design). One instance per
-/// physical key (Dictate and Ask each get their own).
+/// already held (and ignore key-up entirely, per the toggle-only hotkey design).
 struct TriggerPhysicalState: Equatable {
     private(set) var isDown = false
 

@@ -76,6 +76,9 @@ struct HUDCapsuleView: View {
         .overlay(Capsule().strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5))
         .shadow(color: .black.opacity(0.18), radius: 6, y: 2)
         .animation(.easeOut(duration: 0.18), value: state.phase)
+        // Mode chip can appear/disappear mid-listening (a keyword like "提问…" is detected partway
+        // through the utterance) — a subtle spring makes that feel like a recognition, not a glitch.
+        .animation(.spring(response: 0.32, dampingFraction: 0.72), value: state.modeChip)
     }
 
     private var previewText: some View {
@@ -112,32 +115,35 @@ struct HUDCapsuleView: View {
 }
 
 /// Tiny leading chip that says what this session is for — only shown when it isn't plain
-/// dictation (scene adaptation stays invisible). Edit/Ask are icon-only; Translate adds the
-/// target's short code. Static — no animation, negligible cost.
+/// dictation (scene adaptation stays invisible). Can appear mid-listening the moment a spoken
+/// keyword ("提问…", "翻译成…") is recognized in the live preview — the spring transition (see
+/// `HUDCapsuleView.content`) is what makes that read as "got it" rather than a jump cut.
+/// Edit/Ask are emoji-only; Translate adds the target's short code. Static glyph — no per-frame
+/// animation, negligible cost.
 private struct ModeChipView: View {
     var chip: HUDModeChip
 
     var body: some View {
         HStack(spacing: 3) {
-            Image(systemName: icon)
-                .font(.system(size: 10, weight: .semibold))
+            Text(glyph)
+                .font(.system(size: 11))
             if let label {
                 Text(label)
                     .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.secondary)
             }
         }
-        .foregroundStyle(.secondary)
         .padding(.horizontal, 6)
         .padding(.vertical, 3)
         .background(Color.primary.opacity(0.1), in: Capsule())
-        .transition(.opacity)
+        .transition(.scale(scale: 0.6).combined(with: .opacity))
     }
 
-    private var icon: String {
+    private var glyph: String {
         switch chip {
-        case .edit: "pencil"
-        case .ask: "sparkles"
-        case .translate: "globe"
+        case .edit: "✏️"
+        case .ask: "✨"
+        case .translate: "🌐"
         }
     }
 

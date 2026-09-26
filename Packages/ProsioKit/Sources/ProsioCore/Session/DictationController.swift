@@ -46,6 +46,10 @@ public final class DictationController {
     public private(set) var answer: AnswerState?
     /// Short label for the HUD while `phase == .composing`, e.g. "Translating…", "Editing…", "Polishing…".
     public private(set) var composeLabel: String?
+    /// P1: BCP-47 target language for *this session's* translate (persistent toggle, or a
+    /// one-off classifier/rules decision), for a HUD chip independent of `AppSettings.translateEnabled`.
+    /// `nil` outside a translate session.
+    public private(set) var sessionTranslateTarget: String?
 
     public static let levelHistoryLength = 48
 
@@ -75,6 +79,9 @@ public final class DictationController {
     /// How long rewrite/translate/edit compose calls wait before giving up (rewrite falls back to
     /// the untransformed transcript; translate/edit fail). 12s per spec. Overridable via `@testable import`.
     var composeTimeout: Duration = .seconds(12)
+    /// Client-side cap on `intentClassifier.classify(...)` — error/timeout/`intent: nil` all
+    /// degrade to `IntentRules`. 1.5s per spec. Overridable via `@testable import`.
+    var classifyIntentTimeout: Duration = .milliseconds(1500)
 
     private let audio: any AudioCapturing
     private let engines: EngineSet
@@ -92,6 +99,9 @@ public final class DictationController {
     /// P1: transforms text with an LLM (rewrite/translate/edit/ask). `nil` (default) turns every
     /// P1 feature off — sessions behave exactly as before (today's fast path).
     private let composer: (any Composing)?
+    /// P1: decides dictate/edit/ask/translate for a finished (non-follow-up) session. `nil` means
+    /// only `IntentRules` (client-side bilingual cues) ever runs — no server round-trip.
+    private let intentClassifier: (any IntentClassifying)?
 
     private var meterTask: Task<Void, Never>?
     /// Consumes the final-determining engine (`local` in `.local` mode, `cloud` otherwise) and
@@ -157,6 +167,56 @@ public final class DictationController {
     private var composeModeForDebug: String?
     private var composeLatencyMsForDebug: Double?
     private var composeOutputForDebug: String?
+    private var intentDecisionClassifiedForDebug: String?
+    private var intentDecisionSourceForDebug: String?
+    private var intentDecisionConfidenceForDebug: Double?
+    private var intentDecisionLatencyMsForDebug: Double?
+    /// "local" | "final" — which transcript's decision was actually used to route this session.
+    private var intentDecisionClassifiedOnForDebug: String?
+    /// The stop()-time speculative decision (on the local preview), if one ran, kept separately
+    /// from the "winning" fields above even when it was later superseded by a final-transcript
+    /// reclassification — see `handleFinalTranscript`.
+    private var intentDecisionLocalClassifiedForDebug: String?
+    private var intentDecisionLocalSourceForDebug: String?
+    private var intentDecisionLocalConfidenceForDebug: Double?
+    private var intentDecisionLocalLatencyMsForDebug: Double?
+    /// The final-transcript (re)classification, if one ran (local was empty/too short, its leading
+    /// text diverged from the final transcript, or the local decision was a rules fallback, which
+    /// always reclassifies on the final).
+    private var intentDecisionFinalClassifiedForDebug: String?
+    private var intentDecisionFinalSourceForDebug: String?
+    private var intentDecisionFinalConfidenceForDebug: Double?
+    private var intentDecisionFinalLatencyMsForDebug: Double?
+
+    // MARK: - P1: intent classification
+
+    /// True when this session is a follow-up while the answer card is showing (started with
+    /// `phase == .answering`) — always `.ask`, no classification needed.
+    private var isFollowUpAsk = false
+    /// Set when `start(trigger:intent:)` was given an explicit intent (tests/explicit callers) —
+    /// skips classification entirely and is used as the final word.
+    private var explicitIntent: DictationIntent?
+    /// Kicked off in `stop()` for non-follow-up sessions; `handleFinalTranscript` awaits it.
+    private var classifyIntentTask: Task<Void, Never>?
+    private var resolvedIntentDecision: IntentResolution?
+    /// The (trimmed) local-preview text the stop()-time speculative classification ran on, if any —
+    /// `nil` when it never started (preview too short/empty). Compared against the eventual final
+    /// transcript's leading text in `handleFinalTranscript` to decide whether to reclassify: cloud
+    /// SMART transcription can normalize a cue word away (observed: "提问" -> "请问") or the local
+    /// preview can clip a leading word, either of which would silently turn a command into a plain
+    /// dictation if the stale local-preview decision were kept.
+    private var classifyIntentSourceText: String?
+
+    private struct IntentResolution {
+        var intent: ClassifiedIntent
+        var source: String
+        var confidence: Double?
+        /// Only for a rule-matched `.translate` — the parsed target + cue-stripped body, sent to
+        /// `compose(.translate)`. A classifier-matched `.translate` sends the whole utterance to
+        /// `compose(.translateCommand)` instead (nil here).
+        var ruleTranslateTarget: String?
+        var ruleTranslateBody: String?
+    }
 
     // MARK: - Routing (`.auto` mode with `router` set)
 
@@ -164,6 +224,20 @@ public final class DictationController {
     /// shot if the router decides cloud is needed (cloud never sees live audio in routed mode).
     private var bufferedChunksForReplay: [AudioChunk] = []
     private var usesRouting: Bool { activeMode == .auto && router != nil }
+
+    /// The user's personal dictionary plus fixed command-cue words (`IntentRules.vocabularyHints`)
+    /// biasing every transcription pass (cloud SMART + on-device SpeechAnalyzer) so intent cues
+    /// like "提问"/"翻译" survive verbatim instead of being normalized away or clipped — see the
+    /// live-acceptance fix where cloud SMART silently turned a spoken "提问" into "请问". Deduped,
+    /// cues first so they win ties with `NSOrderedSet`-style biasing in the engines.
+    private var transcriptionVocabulary: [String] {
+        var seen = Set<String>()
+        var merged: [String] = []
+        for term in IntentRules.vocabularyHints + dictionary.vocabulary where seen.insert(term).inserted {
+            merged.append(term)
+        }
+        return merged
+    }
 
     public init(
         audio: any AudioCapturing,
@@ -175,7 +249,8 @@ public final class DictationController {
         settings: AppSettings,
         router: (any RouteDeciding)? = nil,
         prewarmCloud: (@Sendable () async -> Void)? = nil,
-        composer: (any Composing)? = nil
+        composer: (any Composing)? = nil,
+        intentClassifier: (any IntentClassifying)? = nil
     ) {
         self.audio = audio
         self.engines = engines
@@ -187,6 +262,7 @@ public final class DictationController {
         self.router = router
         self.prewarmCloud = prewarmCloud
         self.composer = composer
+        self.intentClassifier = intentClassifier
     }
 
     /// True while listening/finalizing/inserting.
@@ -199,18 +275,28 @@ public final class DictationController {
 
     /// Opens the mic and starts streaming, then captures focus context. No-op if busy.
     ///
-    /// - Parameter intent: `nil` (default) auto-resolves to `.edit` when text is selected at the
-    ///   focused element (and it's not secure input), else `.dictate`. Pass `.ask` explicitly for
-    ///   the Ask key — auto-resolution never produces `.ask`.
+    /// - Parameter intent: kept for tests/explicit callers. The real (single, fn) hotkey always
+    ///   passes `nil`: a fn press while the answer card is showing (`phase == .answering`) is a
+    ///   follow-up `.ask` (no classification, existing turns kept); otherwise the session's real
+    ///   intent (dictate/edit/ask/translate) is decided after `stop()` by `intentClassifier` (with
+    ///   `IntentRules` as a client-side fallback) — `intent` here is only an optimistic placeholder
+    ///   for the HUD until that decision arrives. An explicit `intent` skips classification
+    ///   entirely and is used as-is (existing test/caller behavior).
     public func start(trigger: DictationTrigger, intent requestedIntent: DictationIntent? = nil) {
         guard !isBusy else { return }
 
-        // A visible answer card, starting anything other than another `.ask`, gets dismissed
-        // first. (Auto-resolution never yields `.ask`, so `requestedIntent != .ask` also covers
-        // the `nil` case correctly.)
-        if answer != nil, requestedIntent != .ask {
-            dismissAnswer()
+        // A fn press while the answer card is showing is always a follow-up — never dismissed by
+        // starting a new session; the previous turns carry forward and no classification runs.
+        let isFollowUp: Bool
+        if case .answering = phase {
+            isFollowUp = requestedIntent == nil || requestedIntent == .ask
+        } else {
+            isFollowUp = false
         }
+        if !isFollowUp {
+            answer = nil
+        }
+        isFollowUpAsk = isFollowUp
 
         sessionGeneration += 1
 
@@ -244,6 +330,24 @@ public final class DictationController {
         composeModeForDebug = nil
         composeLatencyMsForDebug = nil
         composeOutputForDebug = nil
+        intentDecisionClassifiedForDebug = nil
+        intentDecisionSourceForDebug = nil
+        intentDecisionConfidenceForDebug = nil
+        intentDecisionLatencyMsForDebug = nil
+        intentDecisionClassifiedOnForDebug = nil
+        intentDecisionLocalClassifiedForDebug = nil
+        intentDecisionLocalSourceForDebug = nil
+        intentDecisionLocalConfidenceForDebug = nil
+        intentDecisionLocalLatencyMsForDebug = nil
+        intentDecisionFinalClassifiedForDebug = nil
+        intentDecisionFinalSourceForDebug = nil
+        intentDecisionFinalConfidenceForDebug = nil
+        intentDecisionFinalLatencyMsForDebug = nil
+        classifyIntentTask = nil
+        resolvedIntentDecision = nil
+        classifyIntentSourceText = nil
+        explicitIntent = isFollowUpAsk ? nil : requestedIntent
+        sessionTranslateTarget = nil
 
         let mode = settings.enginePreference
         activeMode = mode
@@ -265,7 +369,14 @@ public final class DictationController {
 
         let capturedContext = contextProvider.currentContext()
         context = capturedContext
-        intent = requestedIntent ?? ((capturedContext.selectedText?.isEmpty == false && !capturedContext.isSecureInput) ? .edit : .dictate)
+        let hasSelection = capturedContext.selectedText?.isEmpty == false && !capturedContext.isSecureInput
+        if isFollowUpAsk {
+            intent = .ask
+        } else {
+            // Optimistic placeholder for the HUD until classification resolves (or, with an
+            // explicit `requestedIntent`, the final word — classification is skipped entirely).
+            intent = requestedIntent ?? (hasSelection ? .edit : .dictate)
+        }
         scene = SceneResolver.scene(for: capturedContext, overrides: settings.sceneOverrides)
 
         if let prewarmCloud {
@@ -292,7 +403,7 @@ public final class DictationController {
             previewAudioContinuation = continuation
         }
 
-        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
         let finalEvents = finalEngine.transcribe(audio: finalAudio, options: options)
         let previewEvents = previewAudioStream.map { engines.local.transcribe(audio: $0, options: options) }
 
@@ -400,6 +511,25 @@ public final class DictationController {
         phase = .finalizing
         finalOutcome = nil
 
+        // Classify concurrently with transcript finalization — never awaited here, so it adds no
+        // latency when it resolves before the transcript does. Skipped for follow-ups (always
+        // `.ask`) and when the caller gave an explicit intent (used as-is).
+        if !isFollowUpAsk, explicitIntent == nil {
+            let candidate = previewText.trimmingCharacters(in: .whitespacesAndNewlines)
+            let hasSelection = context?.selectedText?.isEmpty == false && !(context?.isSecureInput ?? false)
+            if candidate.count >= 2 {
+                classifyIntentSourceText = candidate
+                classifyIntentTask = Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    let resolution = await self.resolveIntentDecision(transcript: candidate, hasSelection: hasSelection)
+                    guard generation == self.sessionGeneration else { return }
+                    self.applyIntentDecision(resolution, classifiedOn: "local")
+                }
+            }
+            // Else: local preview too short (or empty) to classify usefully — `handleFinalTranscript`
+            // classifies the real final transcript instead once it's available (adds latency).
+        }
+
         if usesRouting {
             stopTask = Task { @MainActor [weak self] in
                 guard let self else { return }
@@ -433,6 +563,9 @@ public final class DictationController {
         // and we're mid-`.finalizing`) so that task doesn't leak forever waiting on a continuation
         // nobody will ever resume. Its generation is already stale, so `resolveStop` will bail.
         resolveFinal(.failure(ProsioError.cancelled))
+        classifyIntentTask?.cancel()
+        classifyIntentTask = nil
+        classifyIntentSourceText = nil
         meterTask?.cancel()
         engineTask?.cancel()
         previewTask?.cancel()
@@ -445,6 +578,7 @@ public final class DictationController {
         timeoutTask = nil
         finalOutcome = nil
         finalReadyWaiters = []
+        sessionTranslateTarget = nil
         localFinalText = nil
         localHasPartial = false
         localOutcomeReady = false
@@ -463,7 +597,7 @@ public final class DictationController {
     /// cloud is needed.
     private func startRoutedAutoSession(audioStream: AsyncStream<AudioChunk>) {
         let (localAudio, localContinuation) = AsyncStream<AudioChunk>.makeStream()
-        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
         let localEvents = engines.local.transcribe(audio: localAudio, options: options)
 
         let meterTask = Task { @MainActor [weak self] in
@@ -569,7 +703,7 @@ public final class DictationController {
         guard let router else {
             return RouteDecision(needsCloud: true, cleanProbability: nil, reason: "no-router")
         }
-        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
         let startedAt = Date()
 
         let outcome = await withTaskGroup(of: RouteDecision?.self) { group -> RouteDecision? in
@@ -601,7 +735,7 @@ public final class DictationController {
             for chunk in chunks { continuation.yield(chunk) }
             continuation.finish()
         }
-        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let options = TranscriptionOptions(mode: .smart, vocabulary: transcriptionVocabulary, languageHints: settings.languageHints)
         let cloudEvents = engines.cloud.transcribe(audio: replayStream, options: options)
 
         finalOutcome = nil
@@ -861,28 +995,184 @@ public final class DictationController {
     /// Every "we have the final transcript" path (whichever engine/fallback produced it) routes
     /// through here so compose (rewrite/translate/edit/ask) applies uniformly regardless of source.
     private func handleFinalTranscript(_ transcript: String, generation: Int) async {
-        switch intent {
+        if isFollowUpAsk {
+            await runAsk(question: transcript, generation: generation)
+            return
+        }
+        if let explicitIntent {
+            // Caller (test or explicit code path) gave the answer directly — classification never ran.
+            switch explicitIntent {
+            case .edit: await runEdit(instruction: transcript, generation: generation)
+            case .ask: await runAsk(question: transcript, generation: generation)
+            case .dictate: await runDictateDefault(transcript: transcript, generation: generation)
+            }
+            return
+        }
+
+        // Wait for the early (stop()-time) classification attempt, if one was started.
+        await classifyIntentTask?.value
+        guard generation == sessionGeneration else { return }
+
+        let hasSelection = context?.selectedText?.isEmpty == false && !(context?.isSecureInput ?? false)
+        let resolution: IntentResolution
+
+        if let resolvedIntentDecision,
+           let localCandidate = classifyIntentSourceText,
+           Self.normalizedLeadingText(localCandidate) == Self.normalizedLeadingText(transcript) {
+            // The early (stop()-time) decision's leading text still matches the final transcript.
+            if resolvedIntentDecision.source == "rules" {
+                // Rules fallback must always run on the best available transcript (here: the
+                // actual final) even when the leading text happens to match — a mismatch further
+                // into the utterance (target/body parsing) is still possible, and there's no
+                // benefit to keeping a rules decision computed on a possibly-stale preview. No
+                // point retrying the classifier again immediately, though — it was already
+                // unavailable/timed out/nil moments ago.
+                let rules = IntentRules.classify(transcript, hasSelection: hasSelection, defaultTranslateTarget: settings.translateTarget)
+                resolution = IntentResolution(
+                    intent: rules.intent,
+                    source: "rules",
+                    confidence: nil,
+                    ruleTranslateTarget: rules.translateTarget,
+                    ruleTranslateBody: rules.translateBody
+                )
+                intentDecisionLatencyMsForDebug = nil // no classifier round-trip this time
+                applyIntentDecision(resolution, classifiedOn: "final")
+            } else {
+                resolution = resolvedIntentDecision
+            }
+        } else {
+            // Local preview was too short to classify (`resolvedIntentDecision == nil`), or its
+            // leading text diverged from the final transcript — e.g. cloud SMART normalizing a cue
+            // word away (observed: "提问" -> "请问") or a clipped leading word in the local preview.
+            // Discard the early attempt (if any) and (re)classify on the actual final transcript.
+            // Adds latency; correctness wins here since a missed cue silently turns a command into
+            // plain dictation.
+            resolution = await resolveIntentDecision(transcript: transcript, hasSelection: hasSelection)
+            guard generation == sessionGeneration else { return }
+            applyIntentDecision(resolution, classifiedOn: "final")
+        }
+
+        switch resolution.intent {
+        case .dictate:
+            await runDictateDefault(transcript: transcript, generation: generation)
         case .edit:
             await runEdit(instruction: transcript, generation: generation)
         case .ask:
             await runAsk(question: transcript, generation: generation)
-        case .dictate, .none:
-            await runDictate(transcript: transcript, generation: generation)
+        case .translate:
+            if resolution.source == "rules", let target = resolution.ruleTranslateTarget, let body = resolution.ruleTranslateBody {
+                await runTranslate(mode: .translate, text: body, target: target, generation: generation, transcriptForHistory: transcript)
+            } else {
+                await runTranslate(mode: .translateCommand, text: transcript, target: settings.translateTarget, generation: generation, transcriptForHistory: transcript)
+            }
         }
     }
 
-    private func runDictate(transcript: String, generation: Int) async {
-        if let (target, remainder) = TranslationPrefix.parse(transcript),
-           !remainder.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            await runTranslate(text: remainder, target: target, generation: generation, transcriptForHistory: transcript)
-        } else if settings.translateEnabled {
-            await runTranslate(text: transcript, target: settings.translateTarget, generation: generation, transcriptForHistory: transcript)
+    /// `.dictate`-classified (or classifier-less, or explicit `.dictate`) sessions: the persistent
+    /// Translate toggle, then scene adaptation, then the fast path — all unchanged from before P1.1.
+    private func runDictateDefault(transcript: String, generation: Int) async {
+        if settings.translateEnabled {
+            sessionTranslateTarget = settings.translateTarget
+            await runTranslate(mode: .translate, text: transcript, target: settings.translateTarget, generation: generation, transcriptForHistory: transcript)
         } else if settings.adaptToApp, scene != .general {
             await runRewrite(transcript: transcript, generation: generation)
         } else {
             // Today's fast path: no compose involved, insert exactly what was transcribed.
             await insertAndRecord(final: transcript, generation: generation)
         }
+    }
+
+    /// Classifier (`intentClassifier`, capped at `classifyIntentTimeout`) -> `IntentRules` fallback
+    /// -> default (dictate, or edit with a selection). Never fails to produce a result.
+    private func resolveIntentDecision(transcript: String, hasSelection: Bool) async -> IntentResolution {
+        if let intentClassifier {
+            let startedAt = Date()
+            let decision = await withTaskGroup(of: IntentDecision?.self) { group -> IntentDecision? in
+                group.addTask { [makeAppContext] in
+                    guard let decision = try? await intentClassifier.classify(transcript: transcript, hasSelection: hasSelection, app: makeAppContext()),
+                          decision.intent != nil else { return nil }
+                    return decision
+                }
+                group.addTask {
+                    try? await Task.sleep(for: self.classifyIntentTimeout)
+                    return nil
+                }
+                let first = await group.next() ?? nil
+                group.cancelAll()
+                return first ?? nil
+            }
+            intentDecisionLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+
+            if let decision, let classified = decision.intent {
+                return IntentResolution(intent: classified, source: decision.source, confidence: decision.confidence)
+            }
+            // Classifier threw, timed out, or explicitly returned `intent: nil` ("unavailable") ->
+            // degrade to client-side rules.
+        }
+
+        let rules = IntentRules.classify(transcript, hasSelection: hasSelection, defaultTranslateTarget: settings.translateTarget)
+        return IntentResolution(
+            intent: rules.intent,
+            source: "rules",
+            confidence: nil,
+            ruleTranslateTarget: rules.translateTarget,
+            ruleTranslateBody: rules.translateBody
+        )
+    }
+
+    /// - Parameter classifiedOn: "local" (stop()-time speculative decision on the local preview) or
+    ///   "final" (decided/redecided on the actual final transcript) — recorded separately in the
+    ///   debug recording (`intentDecisionLocal*`/`intentDecisionFinal*`) alongside the "winning"
+    ///   flat fields (`intentDecisionClassified`/etc.), which always reflect whichever call this was
+    ///   invoked with most recently.
+    private func applyIntentDecision(_ resolution: IntentResolution, classifiedOn: String) {
+        resolvedIntentDecision = resolution
+        // `ClassifiedIntent.translate` has no `DictationIntent` equivalent — publish `.dictate`
+        // (a translate-classified session is still, structurally, a dictation).
+        intent = {
+            switch resolution.intent {
+            case .dictate, .translate: return .dictate
+            case .edit: return .edit
+            case .ask: return .ask
+            }
+        }()
+        sessionTranslateTarget = (resolution.intent == .translate) ? (resolution.ruleTranslateTarget ?? settings.translateTarget) : nil
+
+        intentDecisionClassifiedForDebug = resolution.intent.rawValue
+        intentDecisionSourceForDebug = resolution.source
+        intentDecisionConfidenceForDebug = resolution.confidence
+        intentDecisionClassifiedOnForDebug = classifiedOn
+
+        let latencyMs = self.intentDecisionLatencyMsForDebug
+        switch classifiedOn {
+        case "local":
+            intentDecisionLocalClassifiedForDebug = resolution.intent.rawValue
+            intentDecisionLocalSourceForDebug = resolution.source
+            intentDecisionLocalConfidenceForDebug = resolution.confidence
+            intentDecisionLocalLatencyMsForDebug = latencyMs
+        case "final":
+            intentDecisionFinalClassifiedForDebug = resolution.intent.rawValue
+            intentDecisionFinalSourceForDebug = resolution.source
+            intentDecisionFinalConfidenceForDebug = resolution.confidence
+            intentDecisionFinalLatencyMsForDebug = latencyMs
+        default:
+            break
+        }
+
+        ProsioLog.intent.info("intent decision=\(resolution.intent.rawValue, privacy: .public) source=\(resolution.source, privacy: .public) confidence=\(resolution.confidence.map { String(format: "%.2f", $0) } ?? "n/a", privacy: .public) classifiedOn=\(classifiedOn, privacy: .public) latencyMs=\(latencyMs.map { String(format: "%.0f", $0) } ?? "n/a", privacy: .public)")
+    }
+
+    /// Strips whitespace/punctuation and keeps the first `count` characters — used to compare a
+    /// stop()-time local-preview candidate against the eventual final transcript. Insensitive to a
+    /// cue-word normalization or a clipped leading word only if it happens to fall entirely outside
+    /// this window; see `handleFinalTranscript`.
+    private static func normalizedLeadingText(_ text: String, count: Int = 6) -> String {
+        var result = ""
+        for character in text where !(character.isWhitespace || character.isPunctuation) {
+            result.append(character)
+            if result.count >= count { break }
+        }
+        return result
     }
 
     private func runRewrite(transcript: String, generation: Int) async {
@@ -913,7 +1203,10 @@ public final class DictationController {
         }
     }
 
-    private func runTranslate(text: String, target: String, generation: Int, transcriptForHistory: String) async {
+    /// - Parameter mode: `.translate` (rule-matched or persistent-toggle: cue already stripped
+    ///   client-side, `text` is the content) or `.translateCommand` (classifier-matched: `text` is
+    ///   the whole utterance, the server extracts the content and target itself).
+    private func runTranslate(mode: ComposeRequest.Mode, text: String, target: String, generation: Int, transcriptForHistory: String) async {
         guard let composer else {
             await failTranslate(transcript: transcriptForHistory, generation: generation, error: .engineUnavailable("compose disabled"))
             return
@@ -922,9 +1215,9 @@ public final class DictationController {
         phase = .composing
         previewText = transcriptForHistory
         composeLabel = "Translating…"
-        composeModeForDebug = "translate"
+        composeModeForDebug = mode.rawValue
 
-        let request = ComposeRequest(mode: .translate, text: text, scene: scene, targetLanguage: target, app: makeAppContext(), vocabulary: dictionary.vocabulary)
+        let request = ComposeRequest(mode: mode, text: text, scene: scene, targetLanguage: target, app: makeAppContext(), vocabulary: dictionary.vocabulary)
         let result = await collectCompose(composer, request)
         guard generation == sessionGeneration else { return }
 
@@ -1163,6 +1456,8 @@ public final class DictationController {
         if settings.saveDebugRecordings {
             writeDebugRecording(insertedText: insertedText, outcome: outcome)
         }
+        classifyIntentTask?.cancel()
+        classifyIntentTask = nil
         meterTask?.cancel()
         engineTask?.cancel()
         previewTask?.cancel()
@@ -1173,6 +1468,7 @@ public final class DictationController {
         timeoutTask = nil
         finalOutcome = nil
         finalReadyWaiters = []
+        sessionTranslateTarget = nil
     }
 
     // MARK: - Debug recording
@@ -1215,7 +1511,20 @@ public final class DictationController {
             scene: scene.rawValue,
             composeMode: composeModeForDebug,
             composeLatencyMs: composeLatencyMsForDebug,
-            composeOutput: composeOutputForDebug
+            composeOutput: composeOutputForDebug,
+            intentDecisionClassified: intentDecisionClassifiedForDebug,
+            intentDecisionSource: intentDecisionSourceForDebug,
+            intentDecisionConfidence: intentDecisionConfidenceForDebug,
+            intentDecisionLatencyMs: intentDecisionLatencyMsForDebug,
+            intentDecisionClassifiedOn: intentDecisionClassifiedOnForDebug,
+            intentDecisionLocalClassified: intentDecisionLocalClassifiedForDebug,
+            intentDecisionLocalSource: intentDecisionLocalSourceForDebug,
+            intentDecisionLocalConfidence: intentDecisionLocalConfidenceForDebug,
+            intentDecisionLocalLatencyMs: intentDecisionLocalLatencyMsForDebug,
+            intentDecisionFinalClassified: intentDecisionFinalClassifiedForDebug,
+            intentDecisionFinalSource: intentDecisionFinalSourceForDebug,
+            intentDecisionFinalConfidence: intentDecisionFinalConfidenceForDebug,
+            intentDecisionFinalLatencyMs: intentDecisionFinalLatencyMsForDebug
         )
 
         var audioData = Data()

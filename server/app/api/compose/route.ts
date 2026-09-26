@@ -8,6 +8,7 @@ import {
   buildAskPrompt,
   buildEditPrompt,
   buildRewritePrompt,
+  buildTranslateCommandPrompt,
   buildTranslatePrompt,
   sanitizeComposeOutput,
   type ComposeMode,
@@ -40,6 +41,10 @@ const DEFAULT_ASK_MODEL = "openai/gpt-6-luna";
 
 // Retried into when luna's output trips a guardrail (see runNonAsk below).
 const DEFAULT_FALLBACK_MODEL = "openai/gpt-5.4-mini";
+
+// translateCommand's target language is optional (docs/PROMPTS.md §2b) —
+// falls back to this when the client doesn't send one.
+const DEFAULT_TRANSLATE_COMMAND_LANGUAGE = "en-US";
 
 // --- per-model call-option capabilities (live-tested; see server/README.md) ---
 //
@@ -89,7 +94,7 @@ const historyTurnSchema = z.object({
 
 const bodySchema = z
   .object({
-    mode: z.enum(["rewrite", "translate", "edit", "ask"]),
+    mode: z.enum(["rewrite", "translate", "translateCommand", "edit", "ask"]),
     text: z.string().min(1).max(8000),
     selection: z.string().max(20000).nullable().optional(),
     scene: z.enum(["general", "email", "chat", "code", "document"]).default("general"),
@@ -130,6 +135,12 @@ function buildPrompt(body: ComposeBody): ComposePrompt {
         targetLanguage: body.targetLanguage!,
         scene: body.scene,
         app: body.app,
+        vocabulary: body.vocabulary,
+      });
+    case "translateCommand":
+      return buildTranslateCommandPrompt({
+        transcript: body.text,
+        defaultLanguage: body.targetLanguage ?? DEFAULT_TRANSLATE_COMMAND_LANGUAGE,
         vocabulary: body.vocabulary,
       });
     case "edit":

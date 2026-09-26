@@ -44,7 +44,7 @@ private extension View {
 /// failure mode entirely.)
 struct AnswerCardView: View {
     var answer: AnswerState
-    /// "Right ⌘"-style label for the footer hint (see `TriggerKey.followUpLabel` below).
+    /// Trigger-key label for the footer's "… to follow up" hint (see `TriggerKey.followUpLabel`).
     var askKeyLabel: String
     var height: CGFloat
     var onInsert: () -> Void
@@ -193,13 +193,15 @@ struct AnswerCardView: View {
     }
 }
 
-/// "Right ⌘"-style label (side + symbol, no trailing key name) — reads better in the footer's
-/// compact hint than the bare symbol alone. Kept local to `UI/Answer` (this fix's scope) rather
-/// than added to `UI/Support/TriggerKeyDisplay.swift`.
+/// Footer-hint label for "press … to follow up" — P1.1: there's only ever one hotkey (the
+/// dictation trigger key, fn by default) and pressing it while the answer card is open starts a
+/// follow-up question. Kept local to `UI/Answer` rather than added to
+/// `UI/Support/TriggerKeyDisplay.swift`, since this wording ("fn" plain, not "fn (🌐)") is specific
+/// to this compact hint.
 extension TriggerKey {
     var followUpLabel: String {
         switch self {
-        case .fn: "🌐"
+        case .fn: "fn"
         case .rightOption: "Right ⌥"
         case .rightCommand: "Right ⌘"
         case .rightControl: "Right ⌃"
@@ -482,32 +484,32 @@ extension AnswerState {
 }
 
 #Preview("Short answer") {
-    AnswerCardView(answer: .previewShort, askKeyLabel: "Right ⌘", height: 150, onInsert: {}, onCopy: {}, onClose: {})
+    AnswerCardView(answer: .previewShort, askKeyLabel: "fn", height: 150, onInsert: {}, onCopy: {}, onClose: {})
         .padding(40)
 }
 
 #Preview("Streaming") {
-    AnswerCardView(answer: .previewStreaming, askKeyLabel: "Right ⌘", height: 190, onInsert: {}, onCopy: {}, onClose: {})
+    AnswerCardView(answer: .previewStreaming, askKeyLabel: "fn", height: 190, onInsert: {}, onCopy: {}, onClose: {})
         .padding(40)
 }
 
 #Preview("Done with code") {
-    AnswerCardView(answer: .previewDoneWithCode, askKeyLabel: "Right ⌘", height: 330, onInsert: {}, onCopy: {}, onClose: {})
+    AnswerCardView(answer: .previewDoneWithCode, askKeyLabel: "fn", height: 330, onInsert: {}, onCopy: {}, onClose: {})
         .padding(40)
 }
 
 #Preview("Long answer (capped, scrolls)") {
-    AnswerCardView(answer: .previewLong, askKeyLabel: "Right ⌘", height: 420, onInsert: {}, onCopy: {}, onClose: {})
+    AnswerCardView(answer: .previewLong, askKeyLabel: "fn", height: 420, onInsert: {}, onCopy: {}, onClose: {})
         .padding(40)
 }
 
 #Preview("Error") {
-    AnswerCardView(answer: .previewError, askKeyLabel: "Right ⌘", height: 150, onInsert: {}, onCopy: {}, onClose: {})
+    AnswerCardView(answer: .previewError, askKeyLabel: "fn", height: 150, onInsert: {}, onCopy: {}, onClose: {})
         .padding(40)
 }
 
 #Preview("Follow-up (no duplicate question)") {
-    AnswerCardView(answer: .previewFollowUp, askKeyLabel: "Right ⌘", height: 210, onInsert: {}, onCopy: {}, onClose: {})
+    AnswerCardView(answer: .previewFollowUp, askKeyLabel: "fn", height: 210, onInsert: {}, onCopy: {}, onClose: {})
         .padding(40)
 }
 #endif

@@ -2,8 +2,10 @@ import Foundation
 import ProsioCore
 
 /// Tiny leading chip shown in the capsule only when the session isn't plain dictation. Scene
-/// adaptation (rewrite) is deliberately invisible — no chip — per the P1 design: the chip is only
-/// for things the user actively chose (Edit, Translate, Ask).
+/// adaptation (rewrite) is deliberately invisible — no chip. There's no fixed trigger word for
+/// Edit/Ask/Translate — a semantic classifier infers the mode from what was actually said, and the
+/// decision may only land once listening stops (during `.finalizing`/`.composing`), so `intent` —
+/// and therefore this chip — can appear or change mid-session; `HUDCapsuleView` animates that in.
 enum HUDModeChip: Equatable {
     case edit
     case ask
@@ -34,10 +36,13 @@ struct HUDViewState: Equatable {
     var previewText: String = ""
     var levelHistory: [Float] = Array(repeating: 0, count: DictationController.levelHistoryLength)
     var level: Float = 0
-    /// P1: what this session is for — drives the mode chip. `.dictate` (the common case) shows a
-    /// chip only when translating; `.edit`/`.ask` always show their own chip.
+    /// P1: what this session is for — drives the mode chip. `.dictate`/`.translate` show a chip
+    /// only when `translateShortCode` is set; `.edit`/`.ask` always show their own chip.
     var intent: DictationIntent = .dictate
-    /// Set only when `intent == .dictate && translateEnabled` — the chip's short target code.
+    /// Non-nil when this dictation is being translated — either the persistent menu-bar toggle
+    /// (`settings.translateEnabled`) or the classifier deciding `intent == .translate` for this
+    /// utterance; `HUDController` resolves which and picks the target. The chip's short target
+    /// code (see `TranslateLanguages`).
     var translateShortCode: String? = nil
     /// P1: shimmer placeholder label for `.composing` when there's no transcript yet (e.g.
     /// "Translating…", "Rewriting…"). Falls back to a generic label if nil.
@@ -67,6 +72,9 @@ struct HUDViewState: Equatable {
         switch intent {
         case .edit: .edit
         case .ask: .ask
+        // `DictationIntent` has no `.translate` case — a translate-classified session still
+        // reports `.dictate` (see `ClassifiedIntent` in Contracts.swift); `translateShortCode`
+        // (set by `HUDController`) is what actually drives this chip for that case.
         case .dictate: translateShortCode.map { .translate(shortCode: $0) }
         }
     }
