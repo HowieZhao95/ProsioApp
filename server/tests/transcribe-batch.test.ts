@@ -194,6 +194,16 @@ describe("POST /api/transcribe", () => {
     expect(body.route).toEqual({ cleanProbability: null, reason: "no-local-transcript" });
     expect(body.intent).toEqual({ intent: "dictate", confidence: 0.95, source: "jev", classifiedOn: "final" });
   });
+
+  it("cloud path: normalizes stray bullet markers ('• ') to '- ' in the returned text", async () => {
+    transcribeMock.mockResolvedValue({ text: "Here's the plan:\n• first step\n• second step", language: "en" });
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("dictate", { dictate: 0.95 }));
+    const user = await authedUser();
+    const audio = makeWavBase64({ sampleCount: 16000 });
+    const res = await POST(jsonRequest("/api/transcribe", "POST", { audio, sessionID: randomUUID() }, user.authHeader));
+    const body = await res.json();
+    expect(body.text).toBe("Here's the plan:\n- first step\n- second step");
+  });
 });
 
 describe("POST /api/transcribe — audioFormat", () => {
@@ -292,6 +302,30 @@ describe("POST /api/transcribe — P1.2 local-transcript routing", () => {
     transcribeMock.mockResolvedValue({ text: "帮我回复一下，明天上午十点可以。", language: "zh" });
     evaluateMock.mockReset();
     evaluateMock.mockRejectedValue(new Error("no evaluateMock behavior configured for this test"));
+  });
+
+  it("P1.2.1 list guard: an unformatted spoken local transcript always goes to cloud, reason=needs-formatting, no Jev call", async () => {
+    transcribeMock.mockResolvedValue({ text: "我们讲一下以下几个要点：\n- 新版本周二上线\n- 客服要提前培训\n- 监控要加延迟指标", language: "zh" });
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("dictate", { dictate: 0.9 })); // reclassify-on-final (intent was null)
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest(
+        "/api/transcribe",
+        "POST",
+        {
+          audio: makeWavBase64({ sampleCount: 16000 }),
+          sessionID: randomUUID(),
+          localTranscript: "我们讲一下以下几个要点，新版本周二上线，客服要提前培训，监控要加延迟指标",
+          hasSelection: false,
+        },
+        user.authHeader
+      )
+    );
+    const body = await res.json();
+    expect(body.source).toBe("cloud");
+    expect(body.route).toEqual({ cleanProbability: null, reason: "needs-formatting" });
+    expect(transcribeMock).toHaveBeenCalledTimes(1); // never took the local fast path
+    expect(evaluateMock).toHaveBeenCalledTimes(1); // only the reclassify-on-final call — the guard skipped the local check's Jev call entirely
   });
 
   it("clean + dictate: skips Gemini entirely, source=local, no Gateway call, usage still recorded", async () => {

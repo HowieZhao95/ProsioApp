@@ -1,6 +1,7 @@
 import { callJev, isBooleanAnswer, isChoiceAnswer } from "./jev";
 import { CLEAN_QUESTION_INSTRUCTIONS, RECOGNITION_QUESTION_INSTRUCTIONS, decideRoute, type RouteReason } from "./router";
 import { CLASSIFIER_INSTRUCTIONS, decideIntent, intentCriteriaFor, type IntentValue } from "./intent";
+import { needsFormattingGuard } from "./list-guard";
 
 // --- Combined local-transcript check (P1.2) --------------------------------
 //
@@ -60,6 +61,26 @@ export interface LocalCheckDecision {
  */
 export async function checkLocalTranscript(params: LocalCheckParams): Promise<LocalCheckDecision> {
   const startedAt = performance.now();
+
+  // Cheap, Jev-independent guard first (lib/list-guard.ts): an unformatted
+  // spoken list must never take the local fast path, even if Jev is wrong
+  // or unavailable. Forcing cloud here also skips the Jev call entirely —
+  // there's no need to ask a question we already have a confident answer
+  // to. Intent is left null/"unavailable"; the caller (app/api/transcribe's
+  // route handler) reclassifies on the final text either way, since intent
+  // being null is one of its own reclassify triggers.
+  if (needsFormattingGuard(params.transcript).triggered) {
+    return {
+      needsCloud: true,
+      cleanProbability: null,
+      reason: "needs-formatting",
+      intent: null,
+      intentConfidence: null,
+      intentSource: "unavailable",
+      latencyMs: Math.round(performance.now() - startedAt),
+    };
+  }
+
   const intentCriteria = intentCriteriaFor(params.hasSelection);
 
   const parsed = await callJev({

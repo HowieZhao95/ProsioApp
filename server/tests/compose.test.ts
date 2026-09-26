@@ -120,6 +120,13 @@ describe("POST /api/compose", () => {
     expect(await res.text()).toBe("hello");
   });
 
+  it("rewrite: normalizes stray bullet markers ('* ') to '- ' in the final output", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["Intro:\n* first item\n* second item"]));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/compose", "POST", { mode: "rewrite", text: "x", scene: "chat" }, user.authHeader));
+    expect(await res.text()).toBe("Intro:\n- first item\n- second item");
+  });
+
   it("translateCommand: targetLanguage is optional (defaults server-side), still sanitized like other non-ask modes", async () => {
     streamTextMock.mockReturnValue(mockStreamTextResult(["Let's meet tomorrow morning."]));
     const user = await authedUser();

@@ -18,12 +18,14 @@ import { callJev, isBooleanAnswer } from "./jev";
 export const CLEAN_THRESHOLD = 0.8;
 export const ROUTER_TIMEOUT_MS = 1500;
 
-// "no-local-transcript" is only ever produced by POST /api/transcribe
-// (lib/transcribe-routing.ts / app/api/transcribe/route.ts) when the
-// client didn't send a `localTranscript` at all, so no route check ran —
-// POST /api/route always has a localTranscript (its schema requires one),
-// so it never returns this value.
-export type RouteReason = "clean" | "needs-cleanup" | "likely-misrecognized" | "router-error" | "no-local-transcript";
+// "no-local-transcript" and "needs-formatting" are only ever produced by
+// POST /api/transcribe (lib/transcribe-routing.ts /
+// app/api/transcribe/route.ts): the former when the client didn't send a
+// `localTranscript` at all (so no route check ran), the latter when
+// lib/list-guard.ts's cheap, Jev-independent guard detects an unformatted
+// spoken list. POST /api/route always has a localTranscript and never runs
+// the list guard, so it never returns either value.
+export type RouteReason = "clean" | "needs-cleanup" | "likely-misrecognized" | "router-error" | "no-local-transcript" | "needs-formatting";
 
 export interface RouteParams {
   transcript: string;

@@ -117,4 +117,32 @@ describe("checkLocalTranscript", () => {
     expect(decision.intentSource).toBe("unavailable"); // breaker open — skipped
     expect(evaluateMock).not.toHaveBeenCalled();
   });
+
+  it("P1.2.1 list guard: an unformatted spoken list forces cloud WITHOUT calling Jev at all", async () => {
+    evaluateMock.mockResolvedValue(combinedAnswers(0.95, 0.97, "dictate", { dictate: 0.95 })); // would say "clean" if asked
+    const decision = await checkLocalTranscript({
+      transcript: "我们讲一下以下几个要点，新版本周二上线，客服要提前培训，监控要加延迟指标",
+      vocabulary: [],
+      languageHints: [],
+      hasSelection: false,
+    });
+    expect(decision.needsCloud).toBe(true);
+    expect(decision.reason).toBe("needs-formatting");
+    expect(decision.cleanProbability).toBeNull();
+    expect(decision.intent).toBeNull();
+    expect(decision.intentSource).toBe("unavailable");
+    expect(evaluateMock).not.toHaveBeenCalled(); // the guard is cheaper than asking Jev, so Jev is never asked
+  });
+
+  it("P1.2.1 list guard: does not fire on an ordinary clean transcript, Jev still runs normally", async () => {
+    evaluateMock.mockResolvedValue(combinedAnswers(0.95, 0.97, "dictate", { dictate: 0.95 }));
+    const decision = await checkLocalTranscript({
+      transcript: "好的，收到，谢谢。",
+      vocabulary: [],
+      languageHints: [],
+      hasSelection: false,
+    });
+    expect(decision.reason).toBe("clean");
+    expect(evaluateMock).toHaveBeenCalledTimes(1);
+  });
 });

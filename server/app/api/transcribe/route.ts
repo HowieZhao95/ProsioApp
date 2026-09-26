@@ -8,6 +8,7 @@ import { classifyIntent, type IntentDecision } from "@/lib/intent";
 import { OggOpusParseError, parseOggOpus } from "@/lib/ogg-opus";
 import { appContextSchema } from "@/lib/schemas";
 import { getStore } from "@/lib/store";
+import { normalizeListMarkers } from "@/lib/text-format";
 import { RequestTimer } from "@/lib/timing";
 import { checkLocalTranscript, type LocalCheckDecision } from "@/lib/transcribe-routing";
 import { parseWav, WavParseError } from "@/lib/wav";
@@ -252,6 +253,11 @@ export const POST = withErrorHandling(async (req: Request) => {
       const message = err instanceof Error ? err.message : "Gateway request failed";
       throw new ApiError("upstream_error", `Transcription failed: ${message}`);
     }
+    // Normalize stray bullet-marker glyphs ("* "/"• "/"· "/"– ") to "- "
+    // (lib/text-format.ts, auto-formatting follow-up) — done once here so
+    // every downstream use (leading-text comparison, intent reclassify,
+    // and the response body) sees the same normalized text.
+    const finalText = normalizeListMarkers(result.text);
     timer.mark("gateway");
 
     // Reclassify intent on the final text when there was no usable local
@@ -264,10 +270,10 @@ export const POST = withErrorHandling(async (req: Request) => {
     // reused as-is — it already answered the same question, just against
     // text that turned out close enough to the final.
     let intentResult: { intent: IntentDecision["intent"]; confidence: IntentDecision["confidence"]; source: IntentDecision["source"]; classifiedOn: "local" | "final" };
-    if (local !== null && local.intent !== null && !leadingTextDiffers(localTranscript ?? "", result.text)) {
+    if (local !== null && local.intent !== null && !leadingTextDiffers(localTranscript ?? "", finalText)) {
       intentResult = { intent: local.intent, confidence: local.intentConfidence, source: local.intentSource, classifiedOn: "local" };
     } else {
-      const reclassified = await classifyIntent({ transcript: result.text, hasSelection, appName: app?.appName ?? null });
+      const reclassified = await classifyIntent({ transcript: finalText, hasSelection, appName: app?.appName ?? null });
       timer.mark("reclassify");
       intentResult = { intent: reclassified.intent, confidence: reclassified.confidence, source: reclassified.source, classifiedOn: "final" };
     }
@@ -276,7 +282,7 @@ export const POST = withErrorHandling(async (req: Request) => {
 
     return Response.json(
       {
-        text: result.text,
+        text: finalText,
         language: result.language,
         durationSeconds,
         source: "cloud",
