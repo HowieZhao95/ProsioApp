@@ -6,18 +6,28 @@
  * Gemini SMART already emits Markdown lists... '以下几个要点。第一…第二…' ->
  * '1. …' lines; English 'first… second…' -> '- ' bullets").
  *
- * Generates ~12 zh/en/mixed test clips with macOS `say` (Tingting for
+ * Generates ~17 zh/en/mixed test clips with macOS `say` (Tingting for
  * zh/mixed, Samantha for en) piped through `afconvert -f WAVE -d
  * LEI16@16000 -c 1` (Gemini's required format), transcribes each via
  * `transcribeBatch()` (lib/gateway.ts, SMART mode — the exact function
- * POST /api/transcribe uses), and reports per case:
- *   - listDetected: does the transcript contain Markdown list lines?
+ * POST /api/transcribe uses), then runs the SAME post-processing pipeline
+ * POST /api/transcribe's cloud path does: `normalizeListMarkers()`
+ * (lib/text-format.ts) followed by `repairListFormatting()`
+ * (lib/list-repair.ts, docs/PROMPTS.md §1b — the P1.2.1 follow-up that
+ * repairs the mixed zh/en implicit-list gap this eval originally found).
+ * Reports per case:
+ *   - listDetected: does the FINAL (post-repair) transcript contain
+ *     Markdown list lines?
  *   - style: "bullet" ("- "), "numbered" ("1. "), "mixed", or "none"
  *   - leadInOnOwnLine: is there a non-list lead-in line before the list
  *     (docs/PROMPTS.md's Rewrite rule expects this)?
+ *   - formatRepair: "applied" | "rejected" | "timeout" | null (the repair
+ *     step's own outcome for this case) and its added latency.
  *   - a summary of consistency across categories (explicit lists with
  *     ordinals, implicit lists without them, step sequences, and negative
- *     cases that should NOT become lists).
+ *     cases that should NOT become lists), plus the repair step's overall
+ *     detector-firing rate, applied/rejected/timeout counts, and added
+ *     latency p50/p90 across the whole run.
  *
  * Usage (from server/, macOS with `say`/`afconvert` only):
  *   npx tsx --env-file=../.env.local scripts/format-eval.ts
@@ -35,6 +45,8 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 
 import { transcribeBatch } from "../lib/gateway";
+import { repairListFormatting, type FormatRepairOutcome } from "../lib/list-repair";
+import { normalizeListMarkers } from "../lib/text-format";
 
 const execFileAsync = promisify(execFile);
 
@@ -112,16 +124,17 @@ const CASES: FormatCase[] = [
     category: "implicit-list",
     text: "有几个 action items，更新 readme，加 unit tests，然后 deploy 到 staging。",
     expectListLike: true,
-    // Tracked known gap (2026-09-26 live run): SMART returned this as a
-    // single run-on sentence with NO list formatting at all —
-    // "有几个 action items：更新 README，加 unit tests，然后 deploy 到 staging。"
-    // — unlike the pure-zh and pure-en implicit-list cases (both correctly
-    // formatted, 2/2). Mixed zh/en implicit (no explicit ordinals) lists
-    // appear to be the one unreliable combination. No fix attempted here —
-    // the server-side list guard (lib/list-guard.ts) is a separate,
-    // Jev-independent safety net for the ON-DEVICE local transcript, not a
-    // fix for SMART's own cloud-side formatting behavior.
-    knownGap: "SMART sometimes fails to format mixed zh/en implicit (no-ordinal) spoken lists into Markdown — returns a single run-on sentence instead.",
+    // Originally a tracked known gap (2026-09-26): SMART returned this as a
+    // single run-on sentence with NO list formatting at all — unlike the
+    // pure-zh and pure-en implicit-list cases (both correctly formatted).
+    // FIXED (same day, follow-up task) by the P1.2.1 list-repair step
+    // (lib/list-repair.ts, docs/PROMPTS.md §1b): this eval now runs that
+    // same pipeline, and the repair reliably catches and reformats this
+    // case (verified live, "applied", ~1.5s added latency). The `knownGap`
+    // annotation is kept as a regression guard — if repair ever breaks,
+    // this case flips back to reporting "KNOWN-GAP [still present]"
+    // instead of silently passing.
+    knownGap: "SMART sometimes fails to format mixed zh/en implicit (no-ordinal) spoken lists into Markdown — returns a single run-on sentence instead (now caught by the P1.2.1 list-repair step).",
   },
   {
     id: "zh-steps-1",
@@ -161,6 +174,49 @@ const CASES: FormatCase[] = [
     voice: "Samantha",
     category: "negative",
     text: "So I went to the store, and then I grabbed some coffee, and then I headed to the office.",
+    expectListLike: false,
+  },
+  // --- P1.2.1 follow-up (list-repair): 3 more mixed zh/en implicit-list
+  // clips (the category with the tracked gap) and 2 mixed negatives, to
+  // confirm the repair step fixes the gap without over-triggering.
+  {
+    id: "mixed-implicit-2",
+    language: "mixed",
+    voice: "Tingting",
+    category: "implicit-list",
+    text: "有几个 things to do，更新 pricing page，通知 existing customers，然后 monitor 一下 support tickets。",
+    expectListLike: true,
+  },
+  {
+    id: "mixed-implicit-3",
+    language: "mixed",
+    voice: "Tingting",
+    category: "implicit-list",
+    text: "跟大家说几个 points，会议改到下午三点，报告要提前交，还有记得带 laptop。",
+    expectListLike: true,
+  },
+  {
+    id: "mixed-implicit-4",
+    language: "mixed",
+    voice: "Tingting",
+    category: "implicit-list",
+    text: "有几件 action items，fix 一下 login bug，写 unit tests，然后 update 一下 README。",
+    expectListLike: true,
+  },
+  {
+    id: "mixed-negative-1",
+    language: "mixed",
+    voice: "Tingting",
+    category: "negative",
+    text: "我今天开了个 meeting，然后跟 team 讨论了一下 roadmap，还有喝了杯咖啡。",
+    expectListLike: false,
+  },
+  {
+    id: "mixed-negative-2",
+    language: "mixed",
+    voice: "Tingting",
+    category: "negative",
+    text: "这个 feature 已经 ship 了，用户反馈还不错。",
     expectListLike: false,
   },
 ];
@@ -238,8 +294,11 @@ async function main(): Promise<void> {
 
   interface Result {
     kase: FormatCase;
-    transcript: string;
+    rawTranscript: string; // straight from SMART, before marker normalization/repair
+    transcript: string; // final, post-normalization, post-repair text — what the client would actually see
     analysis: ListAnalysis;
+    formatRepair: FormatRepairOutcome;
+    repairLatencyMs: number;
     error?: string;
   }
   const results: Result[] = [];
@@ -249,22 +308,38 @@ async function main(): Promise<void> {
     try {
       await synthesize(kase.text, kase.voice, wavPath);
       const audio = readFileSync(wavPath);
-      const { text } = await transcribeBatch({ audio, mode: "smart", vocabulary: [], languageHints: [] });
-      const analysis = analyzeListStructure(text);
-      results.push({ kase, transcript: text, analysis });
+      const { text: rawTranscript } = await transcribeBatch({ audio, mode: "smart", vocabulary: [], languageHints: [] });
+      // Same pipeline POST /api/transcribe's cloud path runs: normalize
+      // stray bullet glyphs, then the P1.2.1 list-repair step.
+      const markerNormalized = normalizeListMarkers(rawTranscript);
+      const repair = await repairListFormatting(markerNormalized);
+      const analysis = analyzeListStructure(repair.text);
+      results.push({
+        kase,
+        rawTranscript,
+        transcript: repair.text,
+        analysis,
+        formatRepair: repair.formatRepair,
+        repairLatencyMs: repair.latencyMs,
+      });
       const matches = analysis.listDetected === kase.expectListLike;
       const tag = matches ? "OK       " : kase.knownGap ? "KNOWN-GAP" : "DIFF     ";
       console.log(
         `${tag} ${kase.id.padEnd(20)} listDetected=${String(analysis.listDetected).padEnd(5)} style=${analysis.style.padEnd(
           8
-        )} leadIn=${String(analysis.leadInOnOwnLine).padEnd(5)} expected=${kase.expectListLike}`
+        )} leadIn=${String(analysis.leadInOnOwnLine).padEnd(5)} repair=${String(repair.formatRepair).padEnd(
+          10
+        )} (+${repair.latencyMs}ms) expected=${kase.expectListLike}`
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       results.push({
         kase,
+        rawTranscript: "",
         transcript: "",
         analysis: { listDetected: false, style: "none", lineCount: 0, leadInOnOwnLine: null },
+        formatRepair: null,
+        repairLatencyMs: 0,
         error: message,
       });
       console.log(`ERROR ${kase.id.padEnd(20)} ${message}`);
@@ -280,8 +355,13 @@ async function main(): Promise<void> {
   console.log("\n--- Transcripts ---");
   for (const r of results) {
     console.log(`\n[${r.kase.id}] (${r.kase.category}, ${r.kase.language})`);
-    console.log(`  spoken:      "${r.kase.text}"`);
-    console.log(`  transcribed: ${JSON.stringify(r.transcript)}`);
+    console.log(`  spoken:        "${r.kase.text}"`);
+    console.log(`  raw (SMART):   ${JSON.stringify(r.rawTranscript)}`);
+    if (r.formatRepair !== null) {
+      console.log(`  final (repaired, ${r.formatRepair}): ${JSON.stringify(r.transcript)}`);
+    } else {
+      console.log(`  final:         ${JSON.stringify(r.transcript)}`);
+    }
   }
 
   console.log("\n--- Summary by category ---");
@@ -302,6 +382,36 @@ async function main(): Promise<void> {
   if (errors.length > 0) {
     console.log(`\n${errors.length} case(s) errored:`);
     for (const r of errors) console.log(`  ${r.kase.id}: ${r.error}`);
+  }
+
+  // --- P1.2.1 list-repair statistics ---
+  console.log("\n--- List repair (P1.2.1, docs/PROMPTS.md §1b) ---");
+  const nonError = results.filter((r) => !r.error);
+  const fired = nonError.filter((r) => r.formatRepair !== null);
+  const applied = fired.filter((r) => r.formatRepair === "applied");
+  const rejected = fired.filter((r) => r.formatRepair === "rejected");
+  const timedOut = fired.filter((r) => r.formatRepair === "timeout");
+  console.log(`detector fired: ${fired.length}/${nonError.length} (${((fired.length / nonError.length) * 100).toFixed(0)}%)`);
+  console.log(`  applied:  ${applied.length}`);
+  console.log(`  rejected: ${rejected.length}`);
+  console.log(`  timeout:  ${timedOut.length}`);
+  if (fired.length > 0) {
+    const firedLatencies = fired.map((r) => r.repairLatencyMs).sort((a, b) => a - b);
+    const p = (pct: number) => firedLatencies[Math.min(firedLatencies.length - 1, Math.max(0, Math.ceil((pct / 100) * firedLatencies.length) - 1))]!;
+    console.log(`  added latency (fired cases only): p50=${p(50)}ms p90=${p(90)}ms`);
+  }
+  const allLatencies = nonError.map((r) => r.repairLatencyMs).sort((a, b) => a - b);
+  if (allLatencies.length > 0) {
+    const p = (pct: number) => allLatencies[Math.min(allLatencies.length - 1, Math.max(0, Math.ceil((pct / 100) * allLatencies.length) - 1))]!;
+    console.log(`  added latency (all cases, incl. 0ms no-op when detector doesn't fire): p50=${p(50)}ms p90=${p(90)}ms`);
+  }
+  if (applied.length > 0) {
+    console.log("  applied cases:");
+    for (const r of applied) console.log(`    ${r.kase.id}: "${r.rawTranscript}" -> "${r.transcript}"`);
+  }
+  if (rejected.length > 0) {
+    console.log("  rejected cases (safety check failed, kept original):");
+    for (const r of rejected) console.log(`    ${r.kase.id}: raw="${r.rawTranscript}"`);
   }
 
   const knownGaps = results.filter((r) => r.kase.knownGap);

@@ -5,6 +5,7 @@ import { currentBillingPeriod, getEntitlement } from "@/lib/entitlements";
 import { ApiError, withErrorHandling } from "@/lib/errors";
 import { ALLOWED_TRANSCRIBE_MODELS, mintTranscribeToken, transcribeBatch } from "@/lib/gateway";
 import { classifyIntent, type IntentDecision } from "@/lib/intent";
+import { repairListFormatting } from "@/lib/list-repair";
 import { OggOpusParseError, parseOggOpus } from "@/lib/ogg-opus";
 import { appContextSchema } from "@/lib/schemas";
 import { getStore } from "@/lib/store";
@@ -229,6 +230,11 @@ export const POST = withErrorHandling(async (req: Request) => {
               classifiedOn: "local",
             },
             route: { cleanProbability: local.cleanProbability, reason: local.reason },
+            // Never attempted on the local fast path: the list guard
+            // (lib/list-guard.ts, needsFormattingGuard) already forces
+            // cloud for anything that looks like an unformatted list, so a
+            // local transcript reaching here can't be one.
+            formatRepair: null,
           },
           { headers: { "Server-Timing": timer.toServerTimingHeader() } }
         );
@@ -257,8 +263,20 @@ export const POST = withErrorHandling(async (req: Request) => {
     // (lib/text-format.ts, auto-formatting follow-up) — done once here so
     // every downstream use (leading-text comparison, intent reclassify,
     // and the response body) sees the same normalized text.
-    const finalText = normalizeListMarkers(result.text);
+    const markerNormalized = normalizeListMarkers(result.text);
     timer.mark("gateway");
+
+    // P1.2.1 follow-up (docs/PROMPTS.md §1b): repair a run-on sentence that
+    // looks like an unformatted list (mixed zh/en implicit lists are the
+    // observed gap — scripts/format-eval.ts) into a proper Markdown list.
+    // Only fires when lib/list-guard.ts's detector fires; a no-op (`text`
+    // returned unchanged, `formatRepair: null`) otherwise, so this adds no
+    // latency to the common case. lib/list-repair.ts re-normalizes markers
+    // on its own output internally (the repair model's own bullet glyph
+    // may differ), so `repair.text` is always already normalized.
+    const repair = await repairListFormatting(markerNormalized);
+    const finalText = repair.text;
+    timer.mark("format");
 
     // Reclassify intent on the final text when there was no usable local
     // classification to reuse: no localTranscript was sent at all, the
@@ -288,6 +306,7 @@ export const POST = withErrorHandling(async (req: Request) => {
         source: "cloud",
         intent: intentResult,
         route: local ? { cleanProbability: local.cleanProbability, reason: local.reason } : { cleanProbability: null, reason: "no-local-transcript" },
+        formatRepair: repair.formatRepair,
       },
       { headers: { "Server-Timing": timer.toServerTimingHeader() } }
     );

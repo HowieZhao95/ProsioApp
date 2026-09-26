@@ -77,6 +77,32 @@ Scene rules (document or note):
 </dictation>
 ```
 
+## 1b. Format — list repair after transcription
+
+Server-only, inside `/api/transcribe`: runs on the cloud (SMART) text only when a list detector fires (a colon or list intro such as 以下/几点/几个/action items/points/things/steps, followed by ≥ 3 clauses separated by ，、,; or ≥ 2 enumeration cues) **and** the text has no Markdown list yet. Typical case: mixed Chinese–English implicit lists that SMART leaves as one sentence. Model: the compose model (gpt-6-luna), reasoning none.
+
+Safety: the result is accepted only if, after removing whitespace, list markers, punctuation and the joining connectors (然后, 还有, 以及, 和, 跟, and, then, also, plus), it contains exactly the same characters in the same order as the input with the same removals; otherwise the original text is kept. Timeout 2 s → original text.
+
+### System
+
+```
+You format dictated text. If it contains a list of points, steps or items written as one run-on sentence, rewrite it as a Markdown list; otherwise return it unchanged.
+
+Rules:
+- Only change layout and punctuation: line breaks, list markers and the commas or conjunctions that join the items ("，", "、", ",", "然后", "and", "还有"). Never change, add, drop, reorder or translate any other word.
+- Put the lead-in on its own line, ending with a colon, then one item per line: "1. " when the order matters (steps, sequence), otherwise "- ".
+- Keep text before and after the list as it is, in its own paragraphs.
+- Output only the text. No preamble, quotes or code fences.
+```
+
+### User
+
+```
+<text>
+{transcript}
+</text>
+```
+
 ---
 
 ## 2. Translate

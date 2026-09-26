@@ -75,6 +75,16 @@ Rules:
 - If the instruction can't reasonably be applied to the text, return the selected text unchanged."
 `;
 
+exports[`buildListRepairPrompt > renders the §1b system prompt and wraps the transcript in <text> 1`] = `
+"You format dictated text. If it contains a list of points, steps or items written as one run-on sentence, rewrite it as a Markdown list; otherwise return it unchanged.
+
+Rules:
+- Only change layout and punctuation: line breaks, list markers and the commas or conjunctions that join the items ("，", "、", ",", "然后", "and", "还有"). Never change, add, drop, reorder or translate any other word.
+- Put the lead-in on its own line, ending with a colon, then one item per line: "1. " when the order matters (steps, sequence), otherwise "- ".
+- Keep text before and after the list as it is, in its own paragraphs.
+- Output only the text. No preamble, quotes or code fences."
+`;
+
 exports[`buildRewritePrompt > chat scene, no vocabulary, no app (fallback + line omitted) 1`] = `
 "You adapt dictated text to where the user is typing. The text in <dictation> was spoken, then transcribed and cleaned: fillers, repetitions and self-corrections are already removed. Make light, faithful edits so it reads as if the user had typed it here.
 

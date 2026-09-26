@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { currentBillingPeriod, getEntitlement } from "@/lib/entitlements";
 import { ApiError, withErrorHandling } from "@/lib/errors";
 import { gateway } from "@/lib/gateway";
+import { callOptionsFor, DEFAULT_COMPOSE_MODEL } from "@/lib/model-options";
 import {
   buildAskPrompt,
   buildEditPrompt,
@@ -28,15 +29,11 @@ export const dynamic = "force-dynamic";
 const NON_ASK_TIMEOUT_MS = 15_000;
 const ASK_TIMEOUT_MS = 45_000;
 
-// Chosen by the user, 2026-09-26, after the live model bake-off
-// (scripts/compose-bakeoff.ts) found openai/gpt-6-luna the cheapest
-// candidate tested ($0.052/1k req), 100% robustness, and clean on the
-// Edit no-additions threat case 3/3 — see server/README.md's Compose
-// section for the full results table and the guardrails below, which
-// exist specifically for luna's two observed failure modes (empty output;
-// fabricating ASCII-art/box-drawing content on `ed-cant-apply`-style
-// cases). Either env var can still override per-deployment.
-const DEFAULT_COMPOSE_MODEL = "openai/gpt-6-luna";
+// DEFAULT_COMPOSE_MODEL, its per-model call-option capabilities
+// (temperature/reasoningEffort), and callOptionsFor() now live in
+// lib/model-options.ts, shared with the P1.2.1 list-repair step in
+// POST /api/transcribe (lib/list-repair.ts) — see that file for the full
+// history/reasoning (2026-09-26 model bake-off, live-tested capabilities).
 const DEFAULT_ASK_MODEL = "openai/gpt-6-luna";
 
 // Retried into when luna's output trips a guardrail (see runNonAsk below).
@@ -45,37 +42,6 @@ const DEFAULT_FALLBACK_MODEL = "openai/gpt-5.4-mini";
 // translateCommand's target language is optional (docs/PROMPTS.md §2b) —
 // falls back to this when the client doesn't send one.
 const DEFAULT_TRANSLATE_COMMAND_LANGUAGE = "en-US";
-
-// --- per-model call-option capabilities (live-tested; see server/README.md) ---
-//
-// Both openai/gpt-6-luna and openai/gpt-5.4-mini are OpenAI reasoning
-// models: they reject `temperature` outright (the Gateway logs "temperature
-// is not supported for reasoning models" on every call if you send it) and
-// don't need it — we omit it entirely for these rather than send a value
-// the model ignores anyway, so logs stay clean. Every other model tested so
-// far (anthropic/claude-haiku-4.5, google/gemini-3.x, minimax/*) accepts
-// temperature normally and still gets 0.2/0.4 as before.
-const MODELS_WITHOUT_TEMPERATURE = new Set(["openai/gpt-6-luna", "openai/gpt-5.4-mini"]);
-
-// gpt-6-luna accepts reasoningEffort "none"/"low"/"medium"/"high"/"xhigh"/"max"
-// — NOT "minimal" (confirmed live: Gateway rejects it with a warning naming
-// the valid set). "none" is the lowest-latency option and is what we want
-// for a real-time text-transform feature.
-const REASONING_EFFORT_BY_MODEL: Record<string, string> = {
-  "openai/gpt-6-luna": "none",
-};
-
-function callOptionsFor(modelId: string, temperature: number): { temperature?: number; providerOptions?: { openai: { reasoningEffort: string } } } {
-  const opts: { temperature?: number; providerOptions?: { openai: { reasoningEffort: string } } } = {};
-  if (!MODELS_WITHOUT_TEMPERATURE.has(modelId)) {
-    opts.temperature = temperature;
-  }
-  const reasoningEffort = REASONING_EFFORT_BY_MODEL[modelId];
-  if (reasoningEffort) {
-    opts.providerOptions = { openai: { reasoningEffort } };
-  }
-  return opts;
-}
 
 const appSchema = z
   .object({

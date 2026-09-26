@@ -28,7 +28,7 @@ const LATIN_ENUMERATION_PATTERN = new RegExp(`\\b(?:${LATIN_ENUMERATION_CUES.joi
 
 // List-intro cues: signal the transcript is introducing a set of points,
 // even without explicit ordinals ("以下几点是...", "a few things:", ...).
-const LIST_INTRO_CUES = ["以下", "几点", "几件事", "几个", "points", "things"];
+const LIST_INTRO_CUES = ["以下", "几点", "几个", "几件", "action items", "points", "things", "steps", "items"];
 
 function countEnumerationCues(text: string): number {
   const latinMatches = text.match(LATIN_ENUMERATION_PATTERN)?.length ?? 0;
@@ -78,4 +78,34 @@ export function needsFormattingGuard(transcript: string): ListGuardResult {
     enumerationCueCount,
     listLikeClauseCount,
   };
+}
+
+// --- Post-transcription list-repair detector (P1.2.1 follow-up, §1b) ------
+//
+// docs/PROMPTS.md §1b: after Gemini SMART + bullet-marker normalization
+// (lib/text-format.ts), some transcripts — mixed zh/en implicit lists
+// (no ordinals) being the observed case, scripts/format-eval.ts — come back
+// as one run-on sentence instead of a Markdown list. `needsListRepair()`
+// reuses the exact same enumeration-cue / list-like-clause detection as
+// `needsFormattingGuard()` above (same cues, same thresholds — "reuse/
+// extend", not a parallel implementation), gated additionally on the text
+// NOT already having a Markdown list (repairing an already-formatted list
+// would be pointless, and risks the repair model mangling it).
+
+/** A line matching a Markdown bullet ("- "/"* "/"• "/"· "/"– ") or numbered ("1. "/"1、") marker, optionally indented. */
+const MARKDOWN_LIST_LINE_RE = /^\s*(?:[-*•·–]\s+\S|\d+[.、]\s*\S)/;
+
+export function hasMarkdownListLines(text: string): boolean {
+  return text.split("\n").some((line) => MARKDOWN_LIST_LINE_RE.test(line));
+}
+
+/**
+ * Returns true when `text` (the final, post-Gemini, post-marker-
+ * normalization transcript) has no Markdown list yet AND looks like an
+ * unformatted list by the same detector `needsFormattingGuard` uses (≥2
+ * enumeration cues, or ≥3 clauses after a colon/list-intro cue).
+ */
+export function needsListRepair(text: string): boolean {
+  if (hasMarkdownListLines(text)) return false;
+  return needsFormattingGuard(text).triggered;
 }

@@ -171,6 +171,33 @@ export function buildRewritePrompt(params: {
   };
 }
 
+// --- 1b. Format — list repair after transcription ---------------------------
+//
+// Server-only, inside POST /api/transcribe (lib/list-repair.ts) — not a
+// client-facing compose mode. Runs on the cloud (SMART) text only when
+// lib/list-guard.ts's `needsListRepair()` detector fires: a run-on sentence
+// that looks like an unformatted list (mixed zh/en implicit lists are the
+// typical case SMART itself leaves unformatted) and has no Markdown list
+// yet. Model: the compose model (gpt-6-luna), reasoning none — see
+// lib/model-options.ts.
+
+export function buildListRepairPrompt(params: { transcript: string }): ComposePrompt {
+  const system = lines(
+    "You format dictated text. If it contains a list of points, steps or items written as one run-on sentence, rewrite it as a Markdown list; otherwise return it unchanged.",
+    "",
+    "Rules:",
+    `- Only change layout and punctuation: line breaks, list markers and the commas or conjunctions that join the items ("，", "、", ",", "然后", "and", "还有"). Never change, add, drop, reorder or translate any other word.`,
+    `- Put the lead-in on its own line, ending with a colon, then one item per line: "1. " when the order matters (steps, sequence), otherwise "- ".`,
+    "- Keep text before and after the list as it is, in its own paragraphs.",
+    "- Output only the text. No preamble, quotes or code fences."
+  );
+
+  return {
+    system,
+    messages: [{ role: "user", content: `<text>\n${params.transcript}\n</text>` }],
+  };
+}
+
 // --- 2. Translate ------------------------------------------------------------
 
 export function buildTranslatePrompt(params: {

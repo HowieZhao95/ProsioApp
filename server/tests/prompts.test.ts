@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildAskPrompt,
   buildEditPrompt,
+  buildListRepairPrompt,
   buildRewritePrompt,
   buildTranslateCommandPrompt,
   buildTranslatePrompt,
@@ -40,6 +41,18 @@ describe("buildRewritePrompt", () => {
     const prompt = buildRewritePrompt({ transcript: "x", scene: "general", app: { appName: "Notes" } });
     expect(prompt.system).toMatchSnapshot();
     expect(prompt.system).not.toContain("Scene rules");
+  });
+});
+
+describe("buildListRepairPrompt", () => {
+  it("renders the §1b system prompt and wraps the transcript in <text>", () => {
+    const prompt = buildListRepairPrompt({
+      transcript: "有几个 action items：更新 README，加 unit tests，然后 deploy 到 staging。",
+    });
+    expect(prompt.system).toMatchSnapshot();
+    expect(prompt.messages).toEqual([
+      { role: "user", content: "<text>\n有几个 action items：更新 README，加 unit tests，然后 deploy 到 staging。\n</text>" },
+    ]);
   });
 });
 

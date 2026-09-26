@@ -1,24 +1,33 @@
 import { randomUUID } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { transcribeMock, evaluateMock } = vi.hoisted(() => ({ transcribeMock: vi.fn(), evaluateMock: vi.fn() }));
+const { transcribeMock, evaluateMock, generateTextMock } = vi.hoisted(() => ({
+  transcribeMock: vi.fn(),
+  evaluateMock: vi.fn(),
+  generateTextMock: vi.fn(),
+}));
 
 // POST /api/transcribe (via lib/gateway.ts's transcribeBatch) calls
 // experimental_transcribe from "ai" with gateway.transcriptionModel(...).
 // P1.2 also calls experimental_evaluate (lib/jev.ts, via lib/router.ts /
 // lib/intent.ts / lib/transcribe-routing.ts) whenever a localTranscript is
 // given, or (for the intent reclassify-on-final step) even without one.
-// There's no AI_GATEWAY_API_KEY in this environment, so every call is
-// mocked here; both run for real once a key is set (see server/README.md).
+// P1.2.1's list-repair step (lib/list-repair.ts) calls generateText with
+// the plain callable `gateway(modelId)` form (like POST /api/compose does),
+// so the mocked gateway below must be callable AND have the two model
+// factory methods. There's no AI_GATEWAY_API_KEY in this environment, so
+// every call is mocked here; all three run for real once a key is set (see
+// server/README.md).
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof import("ai")>();
-  return { ...actual, experimental_transcribe: transcribeMock, experimental_evaluate: evaluateMock };
+  return { ...actual, experimental_transcribe: transcribeMock, experimental_evaluate: evaluateMock, generateText: generateTextMock };
 });
 vi.mock("@ai-sdk/gateway", () => ({
-  createGateway: () => ({
-    transcriptionModel: vi.fn((id: string) => ({ modelId: id })),
-    evaluationModel: vi.fn((id: string) => ({ modelId: id })),
-  }),
+  createGateway: () =>
+    Object.assign((id: string) => ({ modelId: id }), {
+      transcriptionModel: vi.fn((id: string) => ({ modelId: id })),
+      evaluationModel: vi.fn((id: string) => ({ modelId: id })),
+    }),
 }));
 
 import { HEAD, POST } from "@/app/api/transcribe/route";
@@ -51,6 +60,8 @@ describe("POST /api/transcribe", () => {
     // this file predates P1.2) get a fast, deterministic "unavailable"
     // instead of an unmocked call hanging or throwing unexpectedly.
     evaluateMock.mockRejectedValue(new Error("no evaluateMock behavior configured for this test"));
+    generateTextMock.mockReset();
+    generateTextMock.mockRejectedValue(new Error("no generateTextMock behavior configured for this test"));
   });
 
   it("401s without a session token", async () => {
@@ -203,6 +214,88 @@ describe("POST /api/transcribe", () => {
     const res = await POST(jsonRequest("/api/transcribe", "POST", { audio, sessionID: randomUUID() }, user.authHeader));
     const body = await res.json();
     expect(body.text).toBe("Here's the plan:\n- first step\n- second step");
+    expect(body.formatRepair).toBeNull(); // already had a Markdown list after marker normalization — repair never fires
+  });
+});
+
+describe("POST /api/transcribe — P1.2.1 list repair", () => {
+  beforeEach(() => {
+    resetStoreForTests();
+    resetJevCircuitBreakerForTests();
+    transcribeMock.mockReset();
+    evaluateMock.mockReset();
+    evaluateMock.mockRejectedValue(new Error("no evaluateMock behavior configured for this test"));
+    generateTextMock.mockReset();
+    generateTextMock.mockRejectedValue(new Error("no generateTextMock behavior configured for this test"));
+  });
+
+  const UNFORMATTED_MIXED_LIST = "有几个 action items，更新 readme，加 unit tests，然后 deploy 到 staging。";
+
+  it("applies the repair to a mixed zh/en implicit list SMART left as a run-on sentence", async () => {
+    transcribeMock.mockResolvedValue({ text: UNFORMATTED_MIXED_LIST, language: "zh" });
+    generateTextMock.mockResolvedValue({ text: "有几个 action items：\n- 更新 readme\n- 加 unit tests\n- deploy 到 staging" });
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("dictate", { dictate: 0.9 })); // reclassify (leading text changed)
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/transcribe", "POST", { audio: makeWavBase64({ sampleCount: 16000 }), sessionID: randomUUID() }, user.authHeader)
+    );
+    const body = await res.json();
+    expect(body.formatRepair).toBe("applied");
+    expect(body.text).toBe("有几个 action items：\n- 更新 readme\n- 加 unit tests\n- deploy 到 staging");
+    expect(generateTextMock).toHaveBeenCalledTimes(1);
+    const call = generateTextMock.mock.calls[0]![0];
+    expect(call.model).toEqual({ modelId: "openai/gpt-6-luna" }); // PROSIO_COMPOSE_MODEL default
+  });
+
+  it("does not call the repair model at all for ordinary clean text (detector doesn't fire)", async () => {
+    transcribeMock.mockResolvedValue({ text: "帮我回复一下，明天上午十点可以。", language: "zh" });
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("dictate", { dictate: 0.95 }));
+    const user = await authedUser();
+    await POST(jsonRequest("/api/transcribe", "POST", { audio: makeWavBase64({ sampleCount: 16000 }), sessionID: randomUUID() }, user.authHeader));
+    expect(generateTextMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects and keeps the original when the repair model changes content, still returns 200", async () => {
+    transcribeMock.mockResolvedValue({ text: UNFORMATTED_MIXED_LIST, language: "zh" });
+    generateTextMock.mockResolvedValue({ text: "- Update the readme\n- Add unit tests\n- Deploy to staging" }); // translated
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("dictate", { dictate: 0.9 }));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/transcribe", "POST", { audio: makeWavBase64({ sampleCount: 16000 }), sessionID: randomUUID() }, user.authHeader)
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.formatRepair).toBe("rejected");
+    expect(body.text).toBe(UNFORMATTED_MIXED_LIST); // kept unchanged
+  });
+
+  it("times out after 2s and keeps the original, still returns 200", async () => {
+    transcribeMock.mockResolvedValue({ text: UNFORMATTED_MIXED_LIST, language: "zh" });
+    generateTextMock.mockImplementation(
+      ({ abortSignal }: { abortSignal?: AbortSignal }) =>
+        new Promise((_resolve, reject) => {
+          abortSignal?.addEventListener("abort", () => reject(new Error("aborted")));
+        })
+    );
+    evaluateMock.mockResolvedValue(intentOnlyAnswer("dictate", { dictate: 0.9 }));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/transcribe", "POST", { audio: makeWavBase64({ sampleCount: 16000 }), sessionID: randomUUID() }, user.authHeader)
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.formatRepair).toBe("timeout");
+    expect(body.text).toBe(UNFORMATTED_MIXED_LIST);
+  }, 5000);
+
+  it("includes a 'format' Server-Timing mark", async () => {
+    transcribeMock.mockResolvedValue({ text: "帮我回复一下，明天上午十点可以。", language: "zh" });
+    evaluateMock.mockResolvedValueOnce(intentOnlyAnswer("dictate", { dictate: 0.95 }));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/transcribe", "POST", { audio: makeWavBase64({ sampleCount: 16000 }), sessionID: randomUUID() }, user.authHeader)
+    );
+    expect(res.headers.get("server-timing")).toContain("format;dur=");
   });
 });
 
@@ -214,6 +307,8 @@ describe("POST /api/transcribe — audioFormat", () => {
     transcribeMock.mockResolvedValue({ text: "hello there", language: "en" });
     evaluateMock.mockReset();
     evaluateMock.mockRejectedValue(new Error("no evaluateMock behavior configured for this test"));
+    generateTextMock.mockReset();
+    generateTextMock.mockRejectedValue(new Error("no generateTextMock behavior configured for this test"));
   });
 
   it("415s on an unrecognized audioFormat", async () => {
@@ -302,6 +397,8 @@ describe("POST /api/transcribe — P1.2 local-transcript routing", () => {
     transcribeMock.mockResolvedValue({ text: "帮我回复一下，明天上午十点可以。", language: "zh" });
     evaluateMock.mockReset();
     evaluateMock.mockRejectedValue(new Error("no evaluateMock behavior configured for this test"));
+    generateTextMock.mockReset();
+    generateTextMock.mockRejectedValue(new Error("no generateTextMock behavior configured for this test"));
   });
 
   it("P1.2.1 list guard: an unformatted spoken local transcript always goes to cloud, reason=needs-formatting, no Jev call", async () => {
