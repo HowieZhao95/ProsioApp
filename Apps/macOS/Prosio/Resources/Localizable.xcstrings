@@ -1,6 +1,16 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%lld / %lld min used this month": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本月已用 %lld / %lld 分钟"
+          }
+        }
+      }
+    },
     "Accessibility is off — the hotkey can't work.": {
       "localizations": {
         "zh-Hans": {
@@ -648,6 +658,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "听写时翻译"
+          }
+        }
+      }
+    },
+    "Used %lld min this month": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本月已用 %lld 分钟"
           }
         }
       }

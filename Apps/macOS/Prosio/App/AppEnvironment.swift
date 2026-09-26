@@ -42,6 +42,9 @@ final class AppEnvironment {
     /// Whether the backend has a stored session (kept in sync explicitly since `BackendClient`
     /// isn't itself `@Observable`; see `signIn`/`signOut`).
     private(set) var isSignedIn: Bool
+    /// The signed-in account's email, mirrored from `backend.signedInEmail` at the same points
+    /// `isSignedIn` is (init, `onSignInStateChange`, `signIn`/`signOut`) — `nil` when signed out.
+    private(set) var signedInEmail: String?
 
     @ObservationIgnored private var onboardingWindow: NSWindow?
     @ObservationIgnored private var onboardingWindowDelegate: OnboardingWindowDelegate?
@@ -58,6 +61,7 @@ final class AppEnvironment {
         // Not needed for the P0 skeleton, where the URL is effectively fixed at launch.
         backend = BackendClient(baseURL: settings.backendURL)
         isSignedIn = backend.isSignedIn
+        signedInEmail = backend.signedInEmail
         permissions = PermissionsManager()
         focus = FocusContextProvider()
         inserter = TextInserter(settings: settings)
@@ -105,7 +109,12 @@ final class AppEnvironment {
     func launch() {
         // The stored session token loads asynchronously; reading `isSignedIn` at init is too early.
         backend.onSignInStateChange = { [weak self] signedIn in
-            Task { @MainActor in self?.isSignedIn = signedIn }
+            Task { @MainActor in
+                guard let self else { return }
+                self.isSignedIn = signedIn
+                // `signedInEmail` is documented as current by the time this fires.
+                self.signedInEmail = self.backend.signedInEmail
+            }
         }
         // Download/prepare on-device speech assets up front so the first dictation previews instantly.
         let locale = Self.previewLocale(for: settings)
@@ -181,12 +190,14 @@ final class AppEnvironment {
     func signIn(email: String) async throws {
         try await backend.devSignIn(email: email)
         isSignedIn = backend.isSignedIn
+        signedInEmail = backend.signedInEmail
         await syncDictionaryAfterSignIn()
     }
 
     func signOut() {
         backend.signOut()
         isSignedIn = backend.isSignedIn
+        signedInEmail = backend.signedInEmail
     }
 
     /// Status of the global hotkey, for the UI to explain a non-working trigger key and offer a

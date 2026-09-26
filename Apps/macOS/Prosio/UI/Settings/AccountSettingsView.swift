@@ -1,13 +1,10 @@
 import ProsioCore
 import SwiftUI
 
-/// Signed in: email (remembered locally at sign-in time — `BackendClient` doesn't expose who's
-/// currently signed in, only whether) + Sign out. Signed out: a clean one-field sign-in form.
-/// "Backend URL" moved into a `#if DEBUG`-only collapsed "Developer" section.
-///
-/// Usage-this-month was requested but skipped: `GET /api/usage` exists per `docs/API.md`, but
-/// `BackendClient` (frozen, core-owned) only exposes `reportUsage` (`POST`) — no method to fetch
-/// it. Flagged in the task report; not something I can add without a contract change.
+/// Signed in: email (`environment.signedInEmail`, mirrored from `BackendClient.signedInEmail` —
+/// persisted server-side, current whenever `isSignedIn` is) + usage this month (`fetchUsage()`,
+/// loaded via `.task`, row hidden entirely on error) + Sign out. Signed out: a clean one-field
+/// sign-in form. "Backend URL" lives in a `#if DEBUG`-only collapsed "Developer" section.
 struct AccountSettingsView: View {
     let environment: AppEnvironment
     @Bindable private var settings: AppSettings
@@ -17,11 +14,10 @@ struct AccountSettingsView: View {
         self.settings = environment.settings
     }
 
-    @AppStorage("prosio.lastSignedInEmail") private var lastSignedInEmail = ""
-
     @State private var email = ""
     @State private var isSigningIn = false
     @State private var errorMessage: String?
+    @State private var usage: UsageStatus?
 
     var body: some View {
         Form {
@@ -33,14 +29,27 @@ struct AccountSettingsView: View {
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Signed in")
                                 .font(.callout)
-                            if !lastSignedInEmail.isEmpty {
-                                Text(lastSignedInEmail)
+                            if let email = environment.signedInEmail {
+                                Text(email)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                         }
                         Spacer()
                         Button("Sign Out", role: .destructive) { environment.signOut() }
+                    }
+
+                    if let usage {
+                        usageRow(usage)
+                    }
+                }
+                .task(id: environment.isSignedIn) {
+                    guard environment.isSignedIn else { usage = nil; return }
+                    do {
+                        usage = try await environment.backend.fetchUsage()
+                    } catch {
+                        // Hide the row entirely on error rather than showing a broken/stale number.
+                        usage = nil
                     }
                 }
             } else {
@@ -83,6 +92,27 @@ struct AccountSettingsView: View {
         .formStyle(.grouped)
     }
 
+    @ViewBuilder
+    private func usageRow(_ usage: UsageStatus) -> some View {
+        let usedMinutes = Int((usage.audioSecondsUsed / 60).rounded())
+        VStack(alignment: .leading, spacing: 4) {
+            if let limitSeconds = usage.audioSecondsLimit, limitSeconds > 0 {
+                let limitMinutes = Int((limitSeconds / 60).rounded())
+                Text("\(usedMinutes) / \(limitMinutes) min used this month")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                ProgressView(value: min(usage.audioSecondsUsed, limitSeconds), total: limitSeconds)
+                    .progressViewStyle(.linear)
+                    .tint(.accentColor)
+            } else {
+                Text("Used \(usedMinutes) min this month")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.top, 2)
+    }
+
     #if DEBUG
     private var backendURLBinding: Binding<String> {
         Binding(
@@ -102,7 +132,6 @@ struct AccountSettingsView: View {
         Task {
             do {
                 try await environment.signIn(email: trimmed)
-                lastSignedInEmail = trimmed
             } catch {
                 errorMessage = error.localizedDescription
             }
