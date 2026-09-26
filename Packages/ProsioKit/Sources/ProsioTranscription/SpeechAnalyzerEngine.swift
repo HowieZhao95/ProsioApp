@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 import ProsioCore
 import Speech
+import os
 
 /// On-device live-preview transcription with Apple SpeechAnalyzer + `DictationTranscriber`
 /// (macOS/iOS 26). The final, SMART-cleaned text now comes from the cloud batch engine
@@ -18,6 +19,8 @@ import Speech
 public struct SpeechAnalyzerEngine: TranscriptionEngine {
     /// Preferred locale; used when no usable hint is found in `TranscriptionOptions.languageHints`.
     public let locale: Locale
+
+    private static let logger = Logger(subsystem: "app.prosio.mac", category: "speech")
 
     /// Source PCM format for everything this engine receives, per contract.
     private static let sourceFormat = AVAudioFormat(
@@ -84,9 +87,13 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
         options: TranscriptionOptions,
         continuation: AsyncThrowingStream<TranscriptEvent, Error>.Continuation
     ) async throws {
+        let clock = ContinuousClock()
+        let t0 = clock.now
+
         guard let resolvedLocale = await Self.resolveLocale(languageHints: options.languageHints, fallback: locale) else {
             throw ProsioError.engineUnavailable("no supported DictationTranscriber locale for hints \(options.languageHints) / \(locale.identifier(.bcp47))")
         }
+        let tLocaleResolved = clock.now
 
         // A prepared analyzer (assets installed, `prepareToAnalyze` already done) if one was
         // pre-warmed via `prepareAssets(for:)` or a prior session's background prewarm; otherwise
@@ -95,6 +102,7 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
         let analyzer = prepared.analyzer
         let transcriber = prepared.transcriber
         let analyzerFormat = prepared.format
+        let tCheckedOut = clock.now
 
         // Biases recognition toward the user's personal dictionary (e.g. "Prosio", "PR") via
         // `AnalysisContext.contextualStrings` — the only documented tag is `.general`. This plus
@@ -114,6 +122,14 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
 
         let (inputSequence, inputContinuation) = AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy: .unbounded)
 
+        let tReady = clock.now
+        Self.logger.notice(
+            "transcribe(): localeResolve=\(Self.ms(t0, tLocaleResolved), privacy: .public)ms checkout=\(Self.ms(tLocaleResolved, tCheckedOut), privacy: .public)ms readyToAcceptAudio total=\(Self.ms(t0, tReady), privacy: .public)ms"
+        )
+
+        // `audio` is an `AsyncStream` (default `.unbounded` buffering): any chunks the caller
+        // yielded before this loop starts iterating are queued, not dropped, so the setup time
+        // logged above costs latency (later first partial) but never loses audio.
         let feedTask = Task<Void, Never> {
             for await chunk in audio {
                 if Task.isCancelled { break }
@@ -239,6 +255,10 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
         }
     }
 
+    private static func ms(_ start: ContinuousClock.Instant, _ end: ContinuousClock.Instant) -> Int {
+        Int((end - start) / .milliseconds(1))
+    }
+
     // MARK: - Audio conversion
 
     /// Converts one contract-format (16 kHz Int16 mono) chunk into an `AVAudioPCMBuffer` in
@@ -296,14 +316,14 @@ private final class UncheckedBox<T>: @unchecked Sendable {
 
 /// Running finalized/volatile transcript text, accumulated across `DictationTranscriber.Result`s.
 /// See `TranscriptEvent.partial`'s contract: cumulative, not a delta.
-private actor TranscriptAccumulator {
+actor TranscriptAccumulator {
     private var finalizedText = ""
     private var volatileText = ""
 
     /// Appends a finalized segment (no longer subject to revision) and clears the current
     /// volatile text (a fresh volatile result covering the next range will replace it).
     func applyFinal(_ text: String) -> String {
-        finalizedText += text
+        finalizedText = Self.joinCollapsingDuplicateTerminalPunctuation(finalizedText, text)
         volatileText = ""
         return combined
     }
@@ -314,7 +334,25 @@ private actor TranscriptAccumulator {
         return combined
     }
 
-    var combined: String { finalizedText + volatileText }
+    var combined: String { Self.joinCollapsingDuplicateTerminalPunctuation(finalizedText, volatileText) }
+
+    /// Sentence-final punctuation, CJK and Latin. Segment boundaries from `DictationTranscriber`
+    /// can each carry their own trailing/leading terminal mark (e.g. one segment ends "...怎么样？"
+    /// and the next starts "？Is cloud..."), which plain concatenation renders as a doubled mark
+    /// ("怎么样？？"). Collapses a run of *identical* adjacent terminal marks at the join into one;
+    /// does not touch punctuation that isn't duplicated at the boundary (so a genuine "?!" written
+    /// within a single segment, or two different marks meeting at a join, are left alone).
+    private static let terminalPunctuation: Set<Character> = [".", "!", "?", "。", "！", "？"]
+
+    private static func joinCollapsingDuplicateTerminalPunctuation(_ a: String, _ b: String) -> String {
+        guard !a.isEmpty, !b.isEmpty else { return a + b }
+        guard let lastA = a.last, terminalPunctuation.contains(lastA) else { return a + b }
+        var bTail = Substring(b)
+        while let firstB = bTail.first, firstB == lastA {
+            bTail.removeFirst()
+        }
+        return a + bTail
+    }
 }
 
 /// Caches a ready-to-use (assets installed, `prepareToAnalyze` already awaited) analyzer +

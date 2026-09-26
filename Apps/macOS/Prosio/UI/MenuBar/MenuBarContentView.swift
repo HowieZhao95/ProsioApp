@@ -36,12 +36,66 @@ struct MenuBarContentView: View {
                     .buttonStyle(.link)
                     .font(.caption)
             } else {
-                Text("Hold \(environment.settings.triggerKey.shortSymbol) to dictate · tap to toggle")
+                Text("Press \(environment.settings.triggerKey.shortSymbol) to start · press again to stop")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            hotkeyStatusLine
+            signInStatusLine
         }
         .padding(12)
+    }
+
+    // MARK: - Hotkey / sign-in status (mac-system: HotkeyStatus, isSignedIn)
+
+    @ViewBuilder
+    private var hotkeyStatusLine: some View {
+        switch environment.hotkeyStatus {
+        case .ready:
+            EmptyView()
+        case .missingAccessibility:
+            statusLine("Accessibility is off — the hotkey can't work.", buttonTitle: "Open Settings") {
+                environment.permissions.openSystemSettings(for: .accessibility)
+            }
+        case .tapDisabled:
+            Text("Hotkey temporarily disabled — recovering…")
+                .font(.caption2)
+                .foregroundStyle(.orange)
+        case .fnKeyConflict:
+            statusLine("\u{1F310} is set to start macOS Dictation, not Prosio.", buttonTitle: "Open Keyboard Settings") {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.keyboard") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var signInStatusLine: some View {
+        if !environment.isSignedIn {
+            HStack(spacing: 6) {
+                Text("Not signed in — cloud polishing off")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                SettingsLink {
+                    Text("Sign in")
+                }
+                .buttonStyle(.link)
+                .font(.caption2)
+            }
+        }
+    }
+
+    private func statusLine(_ message: String, buttonTitle: String, action: @escaping () -> Void) -> some View {
+        HStack(spacing: 6) {
+            Text(message)
+                .font(.caption2)
+                .foregroundStyle(.orange)
+            Button(buttonTitle, action: action)
+                .buttonStyle(.link)
+                .font(.caption2)
+        }
     }
 
     private var statusText: String {

@@ -285,6 +285,43 @@ extension BackendClient: CloudBatchTranscribing {
     }
 }
 
+// MARK: - RouteDeciding
+
+extension BackendClient: RouteDeciding {
+    /// `typesafe-ai/jev` is a fast decision model (70-500ms server-side); keep the client budget
+    /// tight since a slow route decision should just fall through to "needs cloud".
+    private static let routeRequestTimeout: TimeInterval = 1.5
+
+    public func decide(localTranscript: String, options: TranscriptionOptions) async throws -> RouteDecision {
+        struct RequestBody: Encodable {
+            let localTranscript: String
+            let vocabulary: [String]
+            let languageHints: [String]
+        }
+        struct ResponseBody: Decodable {
+            let needsCloud: Bool
+            let cleanProbability: Double?
+            let reason: String
+        }
+        let body = try Self.makeEncoder().encode(RequestBody(
+            localTranscript: localTranscript,
+            vocabulary: options.vocabulary,
+            languageHints: options.languageHints
+        ))
+        let request = try makeRequest(
+            path: "api/route",
+            method: "POST",
+            body: body,
+            requiresAuth: true,
+            timeout: Self.routeRequestTimeout
+        )
+        let (data, response) = try await performRequest(request)
+        try Self.checkResponse(response, data: data)
+        let decoded = try Self.makeDecoder().decode(ResponseBody.self, from: data)
+        return RouteDecision(needsCloud: decoded.needsCloud, cleanProbability: decoded.cleanProbability, reason: decoded.reason)
+    }
+}
+
 // MARK: - Keychain abstraction
 
 /// Injectable so tests can use an in-memory store instead of the real Security framework.

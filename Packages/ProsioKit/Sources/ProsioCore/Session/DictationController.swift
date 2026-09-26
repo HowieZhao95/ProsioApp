@@ -52,6 +52,16 @@ public final class DictationController {
     /// finish quickly once audio ends; this just prevents a stuck local engine from blocking the
     /// fallback indefinitely. Overridable via `@testable import`.
     var localFallbackTimeout: Duration = .seconds(3)
+    /// Overrides where debug recordings are written (see `AppSettings.saveDebugRecordings`).
+    /// `nil` (production default) means `~/Library/Application Support/Prosio/debug`.
+    /// Internal test seam — not part of the public API.
+    var debugRecordingsRootOverride: URL?
+    /// How long `stop()` waits for local's final before deciding routing needs cloud regardless
+    /// (empty/unavailable local -> cloud). `.auto`-with-`router` only. Overridable via `@testable import`.
+    var routingLocalFinalTimeout: Duration = .seconds(1.5)
+    /// Client-side cap on `router.decide(...)` — any error or overrun is treated as "needs cloud"
+    /// per contract. `.auto`-with-`router` only. Overridable via `@testable import`.
+    var routerDecisionTimeout: Duration = .seconds(0.8)
 
     private let audio: any AudioCapturing
     private let engines: EngineSet
@@ -60,6 +70,12 @@ public final class DictationController {
     private let history: HistoryStore
     private let dictionary: DictionaryStore
     private let settings: AppSettings
+    /// `.auto` mode only: decides whether local's transcript is clean enough to skip the cloud
+    /// pass. `nil` (default) means `.auto` behaves exactly as before — always runs cloud.
+    private let router: (any RouteDeciding)?
+    /// Fired (best-effort, off the main actor) at the start of every session to warm the cloud
+    /// HTTPS connection ahead of when it might actually be needed.
+    private let prewarmCloud: (@Sendable () async -> Void)?
 
     private var meterTask: Task<Void, Never>?
     /// Consumes the final-determining engine (`local` in `.local` mode, `cloud` otherwise) and
@@ -101,6 +117,35 @@ public final class DictationController {
     private var finalOutcome: FinalOutcome?
     private var finalReadyWaiters: [CheckedContinuation<Void, Never>] = []
 
+    // MARK: - Debug recording (AppSettings.saveDebugRecordings)
+
+    private var sessionID = UUID()
+    private var sessionCreatedAt = Date()
+    /// Raw little-endian PCM16 mono samples, in order, sent to the engines this session. Only
+    /// accumulated while `settings.saveDebugRecordings` is on.
+    private var capturedAudioChunks: [Data] = []
+    /// Cloud's own final text in `.auto`/`.cloud` mode (distinct from `localFinalText`), captured
+    /// purely for the debug recording — `nil` in `.local` mode, where cloud never runs.
+    private var cloudFinalTextForDebug: String?
+
+    private var tStart: Date?
+    private var tMicOpen: Date?
+    private var tFirstAudioChunk: Date?
+    private var tFirstLocalPartial: Date?
+    private var tStopCalled: Date?
+    /// When the final-determining engine's `.final` arrived (cloud in `.auto`/`.cloud`, local in `.local`).
+    private var tFinalReceived: Date?
+    private var tInsertionDone: Date?
+    private var routeDecisionForDebug: RouteDecision?
+    private var routeLatencyMsForDebug: Double?
+
+    // MARK: - Routing (`.auto` mode with `router` set)
+
+    /// Every chunk sent to `local` this session, buffered so it can be replayed to `cloud` in one
+    /// shot if the router decides cloud is needed (cloud never sees live audio in routed mode).
+    private var bufferedChunksForReplay: [AudioChunk] = []
+    private var usesRouting: Bool { activeMode == .auto && router != nil }
+
     public init(
         audio: any AudioCapturing,
         engines: EngineSet,
@@ -108,7 +153,9 @@ public final class DictationController {
         contextProvider: any FocusContextProviding,
         history: HistoryStore,
         dictionary: DictionaryStore,
-        settings: AppSettings
+        settings: AppSettings,
+        router: (any RouteDeciding)? = nil,
+        prewarmCloud: (@Sendable () async -> Void)? = nil
     ) {
         self.audio = audio
         self.engines = engines
@@ -117,6 +164,8 @@ public final class DictationController {
         self.history = history
         self.dictionary = dictionary
         self.settings = settings
+        self.router = router
+        self.prewarmCloud = prewarmCloud
     }
 
     /// True while listening/finalizing/inserting.
@@ -145,6 +194,21 @@ public final class DictationController {
         localOutcomeReady = false
         localReadyWaiters = []
 
+        sessionID = UUID()
+        sessionCreatedAt = Date()
+        capturedAudioChunks = []
+        cloudFinalTextForDebug = nil
+        tStart = sessionCreatedAt
+        tMicOpen = nil
+        tFirstAudioChunk = nil
+        tFirstLocalPartial = nil
+        tStopCalled = nil
+        tFinalReceived = nil
+        tInsertionDone = nil
+        routeDecisionForDebug = nil
+        routeLatencyMsForDebug = nil
+        bufferedChunksForReplay = []
+
         let mode = settings.enginePreference
         activeMode = mode
         activeEngineID = (mode == .local) ? engines.local.id : engines.cloud.id
@@ -160,9 +224,21 @@ public final class DictationController {
             phase = .failed((error as? ProsioError) ?? .audioUnavailable("\(error)"))
             return
         }
+        tMicOpen = Date()
         phase = .listening
 
         context = contextProvider.currentContext()
+
+        if let prewarmCloud {
+            Task.detached(priority: .utility) {
+                await prewarmCloud()
+            }
+        }
+
+        if usesRouting {
+            startRoutedAutoSession(audioStream: audioStream)
+            return
+        }
 
         // The final-determining engine always gets its own audio feed. In `.auto`/`.cloud` mode,
         // `local` (preview-only) gets a second, independent feed of the very same chunks.
@@ -188,8 +264,14 @@ public final class DictationController {
                 return
             }
             for await chunk in audioStream {
+                if self.tFirstAudioChunk == nil {
+                    self.tFirstAudioChunk = Date()
+                }
                 self.updateLevel(with: chunk.level)
                 self.totalAudioDuration = max(self.totalAudioDuration, TimeInterval(chunk.timestamp))
+                if self.settings.saveDebugRecordings {
+                    self.capturedAudioChunks.append(chunk.pcm16)
+                }
                 finalContinuation.yield(chunk)
                 previewAudioContinuation?.yield(chunk)
             }
@@ -207,10 +289,23 @@ public final class DictationController {
                         // In `.local` mode local IS the only source of preview. In `.auto`/
                         // `.cloud` mode, cloud partials only show while local hasn't produced any
                         // of its own yet (local, once it starts, always wins).
-                        if mode == .local || !self.localHasPartial {
+                        if mode == .local {
+                            if self.tFirstLocalPartial == nil {
+                                self.tFirstLocalPartial = Date()
+                            }
+                            self.previewText = text
+                        } else if !self.localHasPartial {
                             self.previewText = text
                         }
                     case .final(let text):
+                        if self.tFinalReceived == nil {
+                            self.tFinalReceived = Date()
+                        }
+                        if mode == .local {
+                            self.localFinalText = text
+                        } else {
+                            self.cloudFinalTextForDebug = text
+                        }
                         self.resolveFinal(.success(text))
                     }
                 }
@@ -235,6 +330,9 @@ public final class DictationController {
                     for try await event in previewEvents {
                         switch event {
                         case .partial(let text):
+                            if self.tFirstLocalPartial == nil {
+                                self.tFirstLocalPartial = Date()
+                            }
                             self.localHasPartial = true
                             self.previewText = text
                         case .final(let text):
@@ -258,13 +356,23 @@ public final class DictationController {
     public func stop() {
         guard case .listening = phase else { return }
         let generation = sessionGeneration
+        tStopCalled = Date()
         audio.stop()
         phase = .finalizing
         finalOutcome = nil
 
+        if usesRouting {
+            stopTask = Task { @MainActor [weak self] in
+                guard let self else { return }
+                await self.resolveRoutedStop(generation: generation)
+            }
+            return
+        }
+
         let timeoutTask = Task { @MainActor [weak self] in
             guard let self else { return }
             try? await Task.sleep(for: self.finalTimeout)
+            guard !Task.isCancelled else { return }
             self.resolveFinal(.timeout)
         }
         self.timeoutTask = timeoutTask
@@ -302,8 +410,231 @@ public final class DictationController {
         localHasPartial = false
         localOutcomeReady = false
         localReadyWaiters = []
+        bufferedChunksForReplay = []
+        routeDecisionForDebug = nil
+        routeLatencyMsForDebug = nil
         previewText = ""
         phase = .idle
+    }
+
+    // MARK: - Routed `.auto` session (router set)
+
+    /// Runs ONLY `local` during listening (cloud only ever needs the audio at the end), while
+    /// buffering every chunk so it can be replayed to `cloud` in one shot if routing decides
+    /// cloud is needed.
+    private func startRoutedAutoSession(audioStream: AsyncStream<AudioChunk>) {
+        let (localAudio, localContinuation) = AsyncStream<AudioChunk>.makeStream()
+        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let localEvents = engines.local.transcribe(audio: localAudio, options: options)
+
+        let meterTask = Task { @MainActor [weak self] in
+            guard let self else {
+                localContinuation.finish()
+                return
+            }
+            for await chunk in audioStream {
+                if self.tFirstAudioChunk == nil {
+                    self.tFirstAudioChunk = Date()
+                }
+                self.updateLevel(with: chunk.level)
+                self.totalAudioDuration = max(self.totalAudioDuration, TimeInterval(chunk.timestamp))
+                self.bufferedChunksForReplay.append(chunk)
+                if self.settings.saveDebugRecordings {
+                    self.capturedAudioChunks.append(chunk.pcm16)
+                }
+                localContinuation.yield(chunk)
+            }
+            localContinuation.finish()
+        }
+        self.meterTask = meterTask
+
+        let engineTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                for try await event in localEvents {
+                    switch event {
+                    case .partial(let text):
+                        if self.tFirstLocalPartial == nil {
+                            self.tFirstLocalPartial = Date()
+                        }
+                        self.previewText = text
+                    case .final(let text):
+                        if self.tFinalReceived == nil {
+                            self.tFinalReceived = Date()
+                        }
+                        self.localFinalText = text
+                        self.resolveFinal(.success(text))
+                    }
+                }
+            } catch {
+                // A local failure here just means routing has no local transcript to work with —
+                // `resolveRoutedStop` treats that the same as "empty" and goes straight to cloud,
+                // it must not fail the session outright.
+                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
+                self.resolveFinal(.failure(mapped))
+            }
+        }
+        self.engineTask = engineTask
+    }
+
+    /// `stop()` resolution for a routed `.auto` session: wait (bounded) for local's final, ask
+    /// the router if it's usable, then either insert it directly or replay the buffered audio to
+    /// cloud and continue exactly like the non-routed `.auto` flow (cloud final -> insert; cloud
+    /// failure -> local fallback).
+    private func resolveRoutedStop(generation: Int) async {
+        let localTimeoutTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(for: self.routingLocalFinalTimeout)
+            // `try?` swallows the `CancellationError` from a cancelled sleep, so without this
+            // check a *stale* timeout — cancelled while asleep, but already past the checkpoint
+            // by the time it gets a MainActor turn — would still fire `resolveFinal(.timeout)`.
+            // That's especially dangerous here because `runCloudReplay` deliberately resets
+            // `finalOutcome` to reuse this same signalling for cloud's phase: a late local
+            // timeout landing after that reset would corrupt cloud's outcome.
+            guard !Task.isCancelled else { return }
+            self.resolveFinal(.timeout)
+        }
+        await waitForFinalOutcome()
+        localTimeoutTask.cancel()
+
+        guard generation == sessionGeneration else { return } // cancel() could race in above
+
+        let localText: String? = {
+            guard case .success(let text) = finalOutcome else { return nil }
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }()
+
+        guard let localText else {
+            // Local final empty/unavailable/failed/timed out -> needs cloud, no point asking the router.
+            routeDecisionForDebug = RouteDecision(needsCloud: true, cleanProbability: nil, reason: "local-unavailable")
+            await runCloudReplay(generation: generation, localFallback: nil)
+            return
+        }
+
+        let decision = await decideRoute(localText: localText)
+        routeDecisionForDebug = decision
+        guard generation == sessionGeneration else { return } // cancel() could race in above (router call awaited)
+
+        if !decision.needsCloud {
+            activeEngineID = engines.local.id
+            await insertAndRecord(final: localText, generation: generation)
+        } else {
+            await runCloudReplay(generation: generation, localFallback: localText)
+        }
+    }
+
+    /// Calls `router.decide(...)`, capped client-side at `routerDecisionTimeout`. Any error or
+    /// overrun maps to `needsCloud: true` (never blocks dictation), per contract.
+    private func decideRoute(localText: String) async -> RouteDecision {
+        guard let router else {
+            return RouteDecision(needsCloud: true, cleanProbability: nil, reason: "no-router")
+        }
+        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let startedAt = Date()
+
+        let outcome = await withTaskGroup(of: RouteDecision?.self) { group -> RouteDecision? in
+            group.addTask {
+                try? await router.decide(localTranscript: localText, options: options)
+            }
+            group.addTask {
+                try? await Task.sleep(for: self.routerDecisionTimeout)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first ?? nil
+        }
+
+        routeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+        return outcome ?? RouteDecision(needsCloud: true, cleanProbability: nil, reason: "router-error")
+    }
+
+    /// Replays every buffered chunk to `cloud` (which never saw live audio in routed mode) and
+    /// resolves exactly like the non-routed `.auto` flow: cloud final wins; on cloud failure or
+    /// timeout, fall back to `localFallback` (already in hand — no extra wait needed) if any.
+    private func runCloudReplay(generation: Int, localFallback: String?) async {
+        guard generation == sessionGeneration else { return }
+        activeEngineID = engines.cloud.id
+
+        let chunks = bufferedChunksForReplay
+        let replayStream = AsyncStream<AudioChunk> { continuation in
+            for chunk in chunks { continuation.yield(chunk) }
+            continuation.finish()
+        }
+        let options = TranscriptionOptions(mode: .smart, vocabulary: dictionary.vocabulary, languageHints: settings.languageHints)
+        let cloudEvents = engines.cloud.transcribe(audio: replayStream, options: options)
+
+        finalOutcome = nil
+        finalReadyWaiters = []
+
+        let cloudTimeoutTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(for: self.finalTimeout)
+            guard !Task.isCancelled else { return }
+            self.resolveFinal(.timeout)
+        }
+        self.timeoutTask = cloudTimeoutTask
+
+        let cloudTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                for try await event in cloudEvents {
+                    switch event {
+                    case .partial(let text):
+                        self.previewText = text
+                    case .final(let text):
+                        // Overwrite: this is the terminal final that actually determines the
+                        // outcome, superseding local's earlier timestamp.
+                        self.tFinalReceived = Date()
+                        self.cloudFinalTextForDebug = text
+                        self.resolveFinal(.success(text))
+                    }
+                }
+            } catch {
+                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
+                self.resolveFinal(.failure(mapped))
+            }
+        }
+        self.engineTask = cloudTask
+
+        await waitForFinalOutcome()
+        cloudTimeoutTask.cancel()
+        self.timeoutTask = nil
+        guard generation == sessionGeneration else { return } // cancel() could race in above
+
+        switch finalOutcome {
+        case .success(let text):
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty {
+                activeEngineID = engines.cloud.id
+                await insertAndRecord(final: trimmed, generation: generation)
+            } else if let localFallback {
+                activeEngineID = engines.local.id
+                await insertAndRecord(final: localFallback, generation: generation)
+            } else {
+                handleEmptyFinal()
+            }
+
+        case .failure(let error):
+            if let localFallback {
+                activeEngineID = engines.local.id
+                await insertAndRecord(final: localFallback, generation: generation)
+            } else {
+                let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
+                phase = .failed(mapped)
+                finishSession()
+            }
+
+        case .timeout, .none:
+            if let localFallback {
+                activeEngineID = engines.local.id
+                await insertAndRecord(final: localFallback, generation: generation)
+            } else {
+                phase = .failed(.transcriptionFailed("timeout"))
+                finishSession()
+            }
+        }
     }
 
     // MARK: - Level metering
@@ -369,6 +700,7 @@ public final class DictationController {
         let localTimeoutTask = Task { @MainActor [weak self] in
             guard let self else { return }
             try? await Task.sleep(for: self.localFallbackTimeout)
+            guard !Task.isCancelled else { return }
             self.markLocalReady()
         }
         await waitForLocalReady()
@@ -453,6 +785,7 @@ public final class DictationController {
     private func insertAndRecord(final: String, generation: Int) async {
         phase = .inserting
         let outcome = await inserter.insert(final, into: context)
+        tInsertionDone = Date()
 
         // `cancel()` (or a brand new `start()`) may have happened while we were awaiting
         // insertion. That result is stale — the session it belongs to is no longer current — so
@@ -479,10 +812,13 @@ public final class DictationController {
             onSessionCompleted?(item)
         }
 
-        finishSession()
+        finishSession(insertedText: final, outcome: outcome)
     }
 
-    private func finishSession() {
+    private func finishSession(insertedText: String? = nil, outcome: InsertionOutcome? = nil) {
+        if settings.saveDebugRecordings {
+            writeDebugRecording(insertedText: insertedText, outcome: outcome)
+        }
         meterTask?.cancel()
         engineTask?.cancel()
         previewTask?.cancel()
@@ -493,5 +829,82 @@ public final class DictationController {
         timeoutTask = nil
         finalOutcome = nil
         finalReadyWaiters = []
+    }
+
+    // MARK: - Debug recording
+
+    private func writeDebugRecording(insertedText: String?, outcome: InsertionOutcome?) {
+        let localText = localFinalText
+        let cloudText = cloudFinalTextForDebug
+        let suspectedDrop = DropDetection.isSuspectedDrop(localText: localText, cloudText: cloudText)
+        if suspectedDrop {
+            DictationLog.logger.warning("suspected dropped content: cloud transcript much shorter than local (session \(self.sessionID.uuidString, privacy: .public))")
+        }
+
+        let failureDescription: String? = {
+            if case .failed(let error) = phase { return String(describing: error) }
+            return nil
+        }()
+
+        let timings = buildTimings()
+        logTimings(timings)
+
+        let record = DebugSessionRecord(
+            sessionID: sessionID.uuidString,
+            createdAt: sessionCreatedAt,
+            mode: activeMode.rawValue,
+            localEngineID: engines.local.id,
+            cloudEngineID: engines.cloud.id,
+            engineIDUsed: activeEngineID,
+            localFinalText: localText,
+            cloudFinalText: cloudText,
+            insertedText: insertedText,
+            outcome: outcome?.rawValue ?? failureDescription,
+            audioDurationSeconds: totalAudioDuration,
+            suspectedDrop: suspectedDrop,
+            timings: timings,
+            routeNeedsCloud: routeDecisionForDebug?.needsCloud,
+            routeCleanProbability: routeDecisionForDebug?.cleanProbability,
+            routeReason: routeDecisionForDebug?.reason,
+            routeLatencyMs: routeLatencyMsForDebug
+        )
+
+        var audioData = Data()
+        audioData.reserveCapacity(capturedAudioChunks.reduce(0) { $0 + $1.count })
+        for chunk in capturedAudioChunks {
+            audioData.append(chunk)
+        }
+
+        let root = debugRecordingsRootOverride ?? Self.defaultDebugRecordingsRoot()
+        let sessionIDForWrite = sessionID
+        let sampleRate = AudioFormat.pcm16Mono16k.sampleRate
+        Task.detached(priority: .utility) {
+            DebugRecordingWriter.write(root: root, sessionID: sessionIDForWrite, record: record, pcm16: audioData, sampleRate: sampleRate)
+        }
+    }
+
+    private func buildTimings() -> DebugSessionRecord.Timings {
+        func deltaMs(_ from: Date?, _ to: Date?) -> Double? {
+            guard let from, let to else { return nil }
+            return to.timeIntervalSince(from) * 1000
+        }
+        return DebugSessionRecord.Timings(
+            startToMicOpenMs: deltaMs(tStart, tMicOpen),
+            micOpenToFirstChunkMs: deltaMs(tMicOpen, tFirstAudioChunk),
+            firstChunkToFirstLocalPartialMs: deltaMs(tFirstAudioChunk, tFirstLocalPartial),
+            stopToFinalReceivedMs: deltaMs(tStopCalled, tFinalReceived),
+            finalReceivedToInsertionDoneMs: deltaMs(tFinalReceived, tInsertionDone)
+        )
+    }
+
+    private func logTimings(_ timings: DebugSessionRecord.Timings) {
+        func fmt(_ ms: Double?) -> String {
+            ms.map { String(format: "%.0f", $0) } ?? "n/a"
+        }
+        DictationLog.logger.info("timings(ms) start->micOpen=\(fmt(timings.startToMicOpenMs), privacy: .public) micOpen->firstChunk=\(fmt(timings.micOpenToFirstChunkMs), privacy: .public) firstChunk->firstLocalPartial=\(fmt(timings.firstChunkToFirstLocalPartialMs), privacy: .public) stop->finalReceived=\(fmt(timings.stopToFinalReceivedMs), privacy: .public) finalReceived->insertionDone=\(fmt(timings.finalReceivedToInsertionDoneMs), privacy: .public)")
+    }
+
+    private static func defaultDebugRecordingsRoot() -> URL {
+        URL.applicationSupportDirectory.appending(path: "Prosio/debug", directoryHint: .isDirectory)
     }
 }

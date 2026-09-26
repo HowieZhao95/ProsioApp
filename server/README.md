@@ -86,6 +86,79 @@ curl -s -X POST localhost:3000/api/transcribe/token \
   inline when called outside a real Next.js request scope (e.g. tests
   invoking the route handler directly), so this is transparent to callers
   either way — see `runAfterResponse` in the route file.
+- `lib/router.ts` — `routeTranscript()`, `POST /api/route`'s auto-mode
+  decision logic via Gateway model `typesafe-ai/jev`. Reuses `lib/gateway.ts`'s
+  same keep-alive-tuned `gateway` client. Never throws: any error or a call
+  over 1.5s (`ROUTER_TIMEOUT_MS`, via `AbortController`) resolves to
+  `{ needsCloud: true, reason: "router-error" }` — see the Routing section
+  below for the exact call shape and its live-calibration status.
+
+### Routing (auto mode) — `POST /api/route`
+
+Decides whether an on-device transcript can be inserted as-is, using
+Gateway model `typesafe-ai/jev` ("System One": typed questions against a
+shared state → typed answers + probabilities, ~70-500ms).
+
+**Call shape — confirmed vs inferred** (full detail in `lib/router.ts`'s
+header comment):
+
+- **Confirmed** by reading the installed `ai@7.0.114` / `@ai-sdk/gateway@4.0.92`
+  type definitions (the `evaluate` API — exported as `experimental_evaluate`
+  from `"ai"` — and `gateway.evaluationModel("typesafe-ai/jev")` are already
+  present; **no SDK upgrade was needed**) and **confirmed live** (see
+  below — the request reached Gateway's real
+  `POST /v4/ai/evaluation-model` endpoint and got back a structured,
+  well-formed error, not a client-side shape error):
+  `evaluate({ model: gateway.evaluationModel("typesafe-ai/jev"), state, questions })`,
+  where `state` is a plain object (`{ transcript, languageHints, vocabulary }`
+  here) and each question is `{ type: "boolean", instructions: "<statement>" }`,
+  answered as `{ type: "boolean", probability: <P(true)> }`. No Jev-specific
+  `providerOptions` exist in the SDK — it's driven entirely by this generic
+  question/state protocol.
+- **Inferred** (no web access in this environment to check TypeSafe's own
+  docs): the task's "Noul (probability a statement is true)" is TypeSafe's
+  own name for exactly what the AI SDK calls a `"boolean"` question — the
+  shapes match exactly (a statement in, one probability out), so this is
+  used with high confidence but isn't confirmed against TypeSafe's own
+  documentation.
+
+Two questions are asked per call (`lib/router.ts`): a primary one covering
+everything docs/API.md's policy cares about (fillers, self-corrections,
+lists, punctuation, likely recognition errors) — its probability is
+`cleanProbability`, gated at `>= 0.8` for `needsCloud = false` — and a
+narrower secondary one about recognition errors specifically, used only to
+pick `reason` between `"needs-cleanup"` and `"likely-misrecognized"` when
+the transcript isn't clean.
+
+**Live calibration: blocked, not run.** `eval/route-cases.json` (23
+hand-labelled transcripts: 11 clean, 12 needing cloud, zh/en/mixed) and
+`scripts/route-eval.ts` (accuracy, false-clean rate, false-messy rate,
+p50/p90 latency) are both written and ready. Running either against the
+real Gateway in this environment gets:
+
+```
+GatewayInternalServerError: Your team has restricted access to this model.
+Team owners can edit AI Gateway Settings (.../ai-gateway/settings) to
+enable this model in Model Allowlist. Model: typesafe-ai/jev
+```
+
+— a 403 from `POST https://ai-gateway.vercel.sh/v4/ai/evaluation-model`
+(`type: "no_providers_available"`, `resolvedProvider: "digitalocean"`,
+`fallbacksAvailable: ["typesafe-ai"]`). This is a **Vercel AI Gateway
+project setting** (Model Allowlist), not a code or request-shape problem —
+the request reaches the right endpoint with a well-formed body and gets a
+structured provider-side rejection, which is exactly what you'd expect if
+the call shape were wrong in a *confusing* way it is not. **Action needed:
+enable `typesafe-ai/jev` in the Vercel AI Gateway dashboard's Model
+Allowlist for this project**, then run
+`npx tsx --env-file=../.env.local scripts/route-eval.ts` and fold the
+accuracy/false-clean-rate numbers in here.
+
+Until then, `POST /api/route` is still safe to deploy: every call currently
+resolves to `{ needsCloud: true, reason: "router-error" }` (the same
+"always send to cloud" behavior as if this endpoint didn't exist), verified
+by both the mocked test suite (`tests/route.test.ts`) and the live 403
+above being caught by `routeTranscript`'s catch-all.
 
 ### Dictionary PUT semantics
 

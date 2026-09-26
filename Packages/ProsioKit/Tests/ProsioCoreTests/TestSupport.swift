@@ -148,6 +148,76 @@ final class FakeEngine: TranscriptionEngine, @unchecked Sendable {
     }
 }
 
+// MARK: - FakeRouter
+
+/// Scripted `RouteDeciding`.
+final class FakeRouter: RouteDeciding, @unchecked Sendable {
+    enum Behavior: Sendable {
+        case decision(RouteDecision)
+        case fail(ProsioError)
+        /// Never completes on its own (until cancelled) — used for timeout/cancellation tests.
+        case hang
+    }
+
+    var behavior: Behavior = .decision(RouteDecision(needsCloud: false, cleanProbability: 0.95, reason: "clean"))
+
+    private let lock = NSLock()
+    private var _callCount = 0
+    private var _lastLocalTranscript: String?
+
+    var callCount: Int {
+        lock.lock(); defer { lock.unlock() }
+        return _callCount
+    }
+
+    var lastLocalTranscript: String? {
+        lock.lock(); defer { lock.unlock() }
+        return _lastLocalTranscript
+    }
+
+    func decide(localTranscript: String, options: TranscriptionOptions) async throws -> RouteDecision {
+        recordCall(localTranscript)
+
+        switch behavior {
+        case .decision(let decision):
+            return decision
+        case .fail(let error):
+            throw error
+        case .hang:
+            try? await Task.sleep(for: .seconds(3600))
+            throw ProsioError.cancelled
+        }
+    }
+
+    /// Synchronous (non-`async`) so the lock/unlock pair can be used directly — `NSLock` methods
+    /// are unavailable from `async` function bodies.
+    private func recordCall(_ localTranscript: String) {
+        lock.lock()
+        _callCount += 1
+        _lastLocalTranscript = localTranscript
+        lock.unlock()
+    }
+}
+
+// MARK: - CallCounter
+
+/// Thread-safe call counter, e.g. for a `prewarmCloud` closure passed to `DictationController`.
+final class CallCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _count = 0
+
+    var count: Int {
+        lock.lock(); defer { lock.unlock() }
+        return _count
+    }
+
+    func increment() {
+        lock.lock()
+        _count += 1
+        lock.unlock()
+    }
+}
+
 // MARK: - FakeInserter
 
 @MainActor

@@ -26,6 +26,7 @@ final class TextInserter: TextInserting {
 
     func insert(_ text: String, into context: FocusContext?) async -> InsertionOutcome {
         if context?.isSecureInput == true {
+            ProsioLog.textInsertion.info("copiedToClipboard: secure input field focused")
             Self.writePlain(text)
             return .copiedToClipboard
         }
@@ -33,6 +34,7 @@ final class TextInserter: TextInserting {
         guard AXIsProcessTrusted() else {
             // Without Accessibility trust we can neither post a synthetic Cmd+V reliably nor use
             // the AX fallback; leave the text on the clipboard for the user to paste themselves.
+            ProsioLog.textInsertion.info("copiedToClipboard: Accessibility not trusted")
             Self.writePlain(text)
             return .copiedToClipboard
         }
@@ -44,6 +46,7 @@ final class TextInserter: TextInserting {
         let ourChangeCount = pasteboard.changeCount
 
         if Self.postCmdV() {
+            ProsioLog.textInsertion.info("pasted: posted synthetic Cmd+V")
             if settings.restoreClipboard {
                 Task {
                     try? await Task.sleep(nanoseconds: Self.clipboardRestoreDelayNanoseconds)
@@ -57,6 +60,7 @@ final class TextInserter: TextInserting {
 
         // Posting failed; try setting the selected text directly via Accessibility.
         if Self.setSelectedTextViaAX(text) {
+            ProsioLog.textInsertion.info("accessibility: Cmd+V post failed, AX selected-text fallback succeeded")
             if settings.restoreClipboard {
                 Self.restore(snapshot, to: pasteboard)
             }
@@ -65,6 +69,7 @@ final class TextInserter: TextInserting {
 
         // Both paths failed: make sure the plain text (no transient markers) is what's left on
         // the clipboard, since that's now the user's only way to get it.
+        ProsioLog.textInsertion.info("copiedToClipboard: Cmd+V post and AX fallback both failed")
         Self.writePlain(text)
         return .copiedToClipboard
     }

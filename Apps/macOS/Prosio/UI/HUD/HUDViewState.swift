@@ -1,9 +1,12 @@
-import CoreGraphics
+import Foundation
 import ProsioCore
 
 /// Plain, `Equatable` snapshot of everything the HUD needs to render.
 /// Derived from `DictationController` by `HUDController`, or synthesized by `HUDController.showcase()`.
 /// Keeping this a value type lets previews and the showcase render any state without a real session.
+///
+/// Intentionally does NOT carry a caret rect: the capsule is bottom-center only (no caret-following) —
+/// simpler, steadier, and one less thing that has to change every render.
 struct HUDViewState: Equatable {
     enum Phase: Equatable {
         case idle
@@ -18,15 +21,13 @@ struct HUDViewState: Equatable {
     var previewText: String = ""
     var levelHistory: [Float] = Array(repeating: 0, count: DictationController.levelHistoryLength)
     var level: Float = 0
-    /// Caret rect in global (AppKit, bottom-left origin) screen coordinates, if known.
-    var caretRect: CGRect?
 
     var isVisible: Bool { phase != .idle }
 
-    /// Whether the waveform + live preview strip should be shown (as opposed to a status line).
+    /// Whether the waveform + live preview strip should be shown (as opposed to a status glyph + line).
     var showsWaveform: Bool {
         switch phase {
-        case .listening, .finalizing: true
+        case .listening, .finalizing, .inserting: true
         default: false
         }
     }
@@ -34,12 +35,10 @@ struct HUDViewState: Equatable {
     /// Short status line shown once a session has stopped listening.
     var statusText: String? {
         switch phase {
-        case .inserting: "Inserting…"
-        case .finished(.pasted), .finished(.accessibility): "Inserted"
-        case .finished(.copiedToClipboard): "Copied — press ⌘V"
-        case .finished(.failed): "Couldn't insert — copied instead"
+        case .finished(.copiedToClipboard): "Copied — ⌘V"
+        case .finished(.failed): "Couldn't insert"
         case .failed(let message): message
-        case .idle, .listening, .finalizing: nil
+        case .idle, .listening, .finalizing, .inserting, .finished(.pasted), .finished(.accessibility): nil
         }
     }
 
@@ -102,6 +101,8 @@ extension HUDViewState {
         level: 0.6
     )
     static let previewFinalizing = HUDViewState(phase: .finalizing, previewText: previewListening.previewText, levelHistory: previewListening.levelHistory, level: 0.15)
+    /// The toggle-mode "cloud is still polishing" wait: mic already closed, no on-device text yet.
+    static let previewProcessingNoText = HUDViewState(phase: .finalizing, previewText: "", level: 0)
     static let previewFinishedPasted = HUDViewState(phase: .finished(.pasted), previewText: previewListening.previewText)
     static let previewFinishedCopied = HUDViewState(phase: .finished(.copiedToClipboard), previewText: previewListening.previewText)
     static let previewFailed = HUDViewState(phase: .failed(ProsioError.network("timeout").hudMessage), previewText: "")

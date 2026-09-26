@@ -1,125 +1,109 @@
+import Foundation
+import ProsioCore
 import Testing
-@testable import Prosio
+// HotkeyStateMachine/TriggerPhysicalState are compiled directly into this target (see
+// project.yml) — no `@testable import Prosio` needed (and this bundle has no host app at all).
 
 @Suite("HotkeyStateMachine")
 struct HotkeyStateMachineTests {
-    @Test("Trigger key down requests start immediately")
-    func startsOnKeyDown() {
-        var sm = HotkeyStateMachine()
-        #expect(sm.state == .idle)
+    // MARK: - triggerKeyDown: purely a function of DictationController.phase
 
-        let effect = sm.triggerKeyDown(at: 0, isBusy: false)
-
-        #expect(effect == .start)
-        #expect(sm.state == .holding)
+    @Test("idle -> start")
+    func idleStarts() {
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .idle) == .start)
     }
 
-    @Test("Holding past the threshold stops on release (push-to-talk)")
-    func holdStopsOnRelease() {
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-
-        let effect = sm.triggerKeyUp(at: 0.5, holdThreshold: 0.3)
-
-        #expect(effect == .stop)
-        #expect(sm.state == .idle)
+    @Test("listening -> stop")
+    func listeningStops() {
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .listening) == .stop)
     }
 
-    @Test("A quick tap arms toggle mode; the next trigger press stops it while still busy")
-    func tapArmsToggleThenStops() {
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-
-        let releaseEffect = sm.triggerKeyUp(at: 0.1, holdThreshold: 0.3)
-        #expect(releaseEffect == .none)
-        #expect(sm.state == .toggleActive)
-
-        // The dictation is still running (isBusy: true) when the second press arrives.
-        let secondPressEffect = sm.triggerKeyDown(at: 5, isBusy: true)
-        #expect(secondPressEffect == .stop)
-        #expect(sm.state == .idle)
+    @Test("finalizing -> ignore (no queue)")
+    func finalizingIgnores() {
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .finalizing) == .ignore)
     }
 
-    @Test("A trigger press while toggle-armed but no longer busy starts fresh instead of a no-op stop")
-    func togglePressAfterDesyncStartsFresh() {
-        // Simulates the dictation ending on its own (engine failure, or finished) while the
-        // state machine was still armed in `.toggleActive` — the next trigger press must not
-        // require a second press to recover.
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-        _ = sm.triggerKeyUp(at: 0.1, holdThreshold: 0.3)
-        #expect(sm.state == .toggleActive)
-
-        let effect = sm.triggerKeyDown(at: 5, isBusy: false)
-
-        #expect(effect == .start)
-        #expect(sm.state == .holding)
+    @Test("inserting -> ignore (no queue)")
+    func insertingIgnores() {
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .inserting) == .ignore)
     }
 
-    @Test("Another key while holding cancels (it was a shortcut, not dictation)")
-    func otherKeyWhileHoldingCancels() {
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-
-        let effect = sm.otherKeyDown()
-
-        #expect(effect == .cancel)
-        #expect(sm.state == .idle)
+    @Test("finished -> start (a fresh press after completion starts a new session)")
+    func finishedStarts() {
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .finished(.pasted)) == .start)
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .finished(.copiedToClipboard)) == .start)
     }
 
-    @Test("Another key while idle or toggling is a no-op")
-    func otherKeyIgnoredOutsideHolding() {
-        var sm = HotkeyStateMachine()
-        #expect(sm.otherKeyDown() == .none)
-
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-        _ = sm.triggerKeyUp(at: 0.1, holdThreshold: 0.3)
-        #expect(sm.state == .toggleActive)
-        #expect(sm.otherKeyDown() == .none)
-        #expect(sm.state == .toggleActive)
+    @Test("failed -> start (a fresh press after a failure starts a new session)")
+    func failedStarts() {
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .failed(.cancelled)) == .start)
+        #expect(HotkeyStateMachine.triggerKeyDown(phase: .failed(.emptyTranscript)) == .start)
     }
 
-    @Test("Esc cancels only when the caller reports it is busy")
-    func escCancelsOnlyWhenBusy() {
-        var sm = HotkeyStateMachine()
-        #expect(sm.escKeyDown(isBusy: false) == .none)
+    // MARK: - escKeyDown: only cancels while actively listening
 
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-        let effect = sm.escKeyDown(isBusy: true)
-
-        #expect(effect == .cancel)
-        #expect(sm.state == .idle)
+    @Test("esc while listening -> cancel")
+    func escWhileListeningCancels() {
+        #expect(HotkeyStateMachine.escKeyDown(phase: .listening) == .cancel)
     }
 
-    @Test("Esc cancels a toggle-armed dictation too")
-    func escCancelsToggleActive() {
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-        _ = sm.triggerKeyUp(at: 0.1, holdThreshold: 0.3)
-        #expect(sm.state == .toggleActive)
+    @Test("esc outside listening is a no-op")
+    func escOutsideListeningIsNoOp() {
+        #expect(HotkeyStateMachine.escKeyDown(phase: .idle) == .none)
+        #expect(HotkeyStateMachine.escKeyDown(phase: .finalizing) == .none)
+        #expect(HotkeyStateMachine.escKeyDown(phase: .inserting) == .none)
+        #expect(HotkeyStateMachine.escKeyDown(phase: .finished(.pasted)) == .none)
+        #expect(HotkeyStateMachine.escKeyDown(phase: .failed(.cancelled)) == .none)
+    }
+}
 
-        let effect = sm.escKeyDown(isBusy: true)
-
-        #expect(effect == .cancel)
-        #expect(sm.state == .idle)
+@Suite("TriggerPhysicalState")
+struct TriggerPhysicalStateTests {
+    @Test("First observed down is not a repeat")
+    func firstDownIsNotRepeat() {
+        var tracker = TriggerPhysicalState()
+        let isRepeat = tracker.observe(isDown: true)
+        #expect(isRepeat == false)
+        #expect(tracker.isDown == true)
     }
 
-    @Test("A duplicate/auto-repeat key-down while already holding is ignored")
-    func repeatedKeyDownWhileHoldingIsIgnored() {
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-
-        let effect = sm.triggerKeyDown(at: 0.05, isBusy: true)
-
-        #expect(effect == .none)
-        #expect(sm.state == .holding)
+    @Test("A normal down-then-up sequence is never a repeat")
+    func normalSequenceNeverRepeats() {
+        var tracker = TriggerPhysicalState()
+        #expect(tracker.observe(isDown: true) == false)
+        #expect(tracker.observe(isDown: false) == false)
+        #expect(tracker.observe(isDown: true) == false)
+        #expect(tracker.observe(isDown: false) == false)
     }
 
-    @Test("Reset returns to idle from any state")
-    func resetReturnsToIdle() {
-        var sm = HotkeyStateMachine()
-        _ = sm.triggerKeyDown(at: 0, isBusy: false)
-        sm.reset()
-        #expect(sm.state == .idle)
+    @Test("Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)")
+    func consecutiveDownsAreRepeat() {
+        var tracker = TriggerPhysicalState()
+        _ = tracker.observe(isDown: true)
+
+        let isRepeat = tracker.observe(isDown: true)
+
+        #expect(isRepeat == true)
+        #expect(tracker.isDown == true)
+    }
+
+    @Test("Two consecutive 'up' observations report a repeat")
+    func consecutiveUpsAreRepeat() {
+        var tracker = TriggerPhysicalState()
+        // Starts at isDown == false, so an initial "up" observation already collides.
+        let isRepeat = tracker.observe(isDown: false)
+
+        #expect(isRepeat == true)
+        #expect(tracker.isDown == false)
+    }
+
+    @Test("Reset returns to the not-down baseline")
+    func resetReturnsToNotDown() {
+        var tracker = TriggerPhysicalState()
+        _ = tracker.observe(isDown: true)
+        tracker.reset()
+        #expect(tracker.isDown == false)
+        // A subsequent "down" is treated as fresh, not a repeat.
+        #expect(tracker.observe(isDown: true) == false)
     }
 }

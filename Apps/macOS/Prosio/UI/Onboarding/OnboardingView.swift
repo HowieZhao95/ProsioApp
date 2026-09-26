@@ -36,8 +36,6 @@ struct OnboardingView: View {
         switch step {
         case .microphone: .microphone
         case .accessibility: .accessibility
-        case .inputMonitoring: .inputMonitoring
-        case .speechRecognition: .speechRecognition
         default: nil
         }
     }
@@ -75,11 +73,11 @@ struct OnboardingView: View {
                     )
                 Text("Welcome to Prosio")
                     .font(.title.bold())
-                Text("Dictate anywhere on your Mac. Hold a key, speak, and your words appear right where you're typing.")
+                Text("Dictate anywhere on your Mac. Press a key to start, speak, press again to stop — your words appear right where you're typing.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
             }
-        case .microphone, .accessibility, .inputMonitoring, .speechRecognition:
+        case .microphone, .accessibility:
             if let kind = permissionKind {
                 PermissionStepView(
                     kind: kind,
@@ -105,7 +103,7 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Text("Try It")
                     .font(.title2.bold())
-                Text("Hold \(environment.settings.triggerKey.shortSymbol) and speak into the field below.")
+                Text("Press \(environment.settings.triggerKey.shortSymbol) to start, press again to stop.")
                     .foregroundStyle(.secondary)
                 TextField("Your dictation will appear here…", text: $tryItText, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
@@ -141,9 +139,6 @@ struct OnboardingView: View {
                 Button("Back", action: goBack)
             }
             Spacer()
-            if step == .speechRecognition, (environment.permissions.statuses[.speechRecognition] ?? .notDetermined) != .granted {
-                Button("Skip", action: advance)
-            }
             Button(primaryButtonTitle, action: primaryAction)
                 .keyboardShortcut(.defaultAction)
         }
@@ -154,7 +149,7 @@ struct OnboardingView: View {
         switch step {
         case .welcome: "Get Started"
         case .done: "Done"
-        case .microphone, .accessibility, .inputMonitoring, .speechRecognition:
+        case .microphone, .accessibility:
             (environment.permissions.statuses[permissionKind!] ?? .notDetermined) == .granted ? "Continue" : "Continue Anyway"
         case .keyboardTip, .tryIt: "Continue"
         }
@@ -176,7 +171,9 @@ struct OnboardingView: View {
 }
 
 private enum OnboardingStep: Int, CaseIterable {
-    case welcome, microphone, accessibility, inputMonitoring, speechRecognition, keyboardTip, tryIt, done
+    // Only Microphone + Accessibility are needed: the hotkey uses an active event tap (no Input
+    // Monitoring) and on-device SpeechAnalyzer needs no Speech Recognition authorization.
+    case welcome, microphone, accessibility, keyboardTip, tryIt, done
 }
 
 private struct PermissionStepView: View {
@@ -233,9 +230,9 @@ private struct PermissionStepView: View {
 
     private var description: String {
         switch kind {
-        case .microphone: "Prosio listens only while you hold the dictation key."
+        case .microphone: "Prosio listens from when you press the dictation key until you press it again."
         case .accessibility: "Lets Prosio insert text and find your cursor in other apps."
-        case .inputMonitoring: "Lets Prosio detect when you hold the dictation key, system-wide."
+        case .inputMonitoring: "Lets Prosio detect the dictation key, system-wide."
         case .speechRecognition: "Enables on-device transcription when you're offline."
         }
     }

@@ -28,7 +28,7 @@ struct GeneralSettingsView: View {
                         Text(key.displayName).tag(key)
                     }
                 }
-                Text("Hold to dictate while speaking, or tap once to toggle continuous dictation.")
+                Text("Press \(settings.triggerKey.shortSymbol) to start, press again to stop.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -47,10 +47,6 @@ struct GeneralSettingsView: View {
 
             Section("Language Hints") {
                 LanguageHintPicker(selection: $settings.languageHints, available: availableLanguages)
-            }
-
-            Section("Appearance") {
-                Toggle("Show edge glow while dictating", isOn: $settings.showEdgeGlow)
             }
 
             Section("Insertion") {

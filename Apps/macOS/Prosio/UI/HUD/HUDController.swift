@@ -3,23 +3,31 @@ import Observation
 import ProsioCore
 import SwiftUI
 
-/// Non-activating overlay: Apple-Intelligence-style edge glow + glass capsule with waveform and
-/// live preview. Observes `controller` and shows/hides itself. Owned by mac-ui agent. INIT SIGNATURE FROZEN.
+/// Non-activating overlay: a small, minimal pill with a waveform and live preview, bottom-center
+/// of the active screen. Observes `controller` and shows/hides itself. Owned by mac-ui agent.
+/// INIT SIGNATURE FROZEN.
 ///
-/// Two borderless `NSPanel`s (never key, never main, mouse-transparent) render the edge glow and
-/// the capsule. Both are driven purely by `HUDViewState`, a plain value snapshot of the
-/// controller — that's what makes `showcase()` possible without touching the real session.
+/// A single borderless `NSPanel` (never key, never main, mouse-transparent except for the brief
+/// Copy affordance) renders the capsule, driven purely by `HUDViewState` — that's what makes
+/// `showcase()` possible without touching the real session.
+///
+/// The panel covers the target screen's full frame (so the capsule can be placed with plain
+/// SwiftUI layout — `.position()` inside a `GeometryReader` — instead of AppKit-side frame math
+/// that has to race the SwiftUI layout pass). This is NOT the old edge-glow panel: there is no
+/// per-frame drawing over that area — it's just an invisible, mostly-`Color.clear` layout
+/// container, and only the small capsule region ever actually redraws. Perf-critical: the panel
+/// is ordered OUT (not just faded) whenever idle, so nothing renders or animates at rest, and it
+/// is only ever resized when the target screen itself changes (essentially never).
 final class HUDController {
     private let controller: DictationController
     private let settings: AppSettings
 
-    private let edgeGlowPanel = HUDPanel()
     private let capsulePanel = HUDPanel()
-    private let edgeHosting: NSHostingView<EdgeGlowView>
     private let capsuleHosting: NSHostingView<HUDCapsuleView>
 
     private var state = HUDViewState()
     private var currentScreen: NSScreen?
+    private var dockInset: CGFloat = 0
     private var hideTask: Task<Void, Never>?
 
     #if DEBUG
@@ -31,14 +39,12 @@ final class HUDController {
         self.controller = controller
         self.settings = settings
 
-        edgeHosting = NSHostingView(rootView: EdgeGlowView(state: HUDViewState()))
-        capsuleHosting = NSHostingView(rootView: HUDCapsuleView(state: HUDViewState(), anchor: .zero, onCopy: {}))
-
-        edgeGlowPanel.contentView = edgeHosting
+        capsuleHosting = NSHostingView(rootView: HUDCapsuleView(state: HUDViewState(), dockInset: 0, onCopy: {}))
         capsulePanel.contentView = capsuleHosting
+        layoutForScreen()
 
         // Now that all stored properties are set, wire up the self-capturing bits and start observing.
-        renderHostingViews()
+        renderHostingView()
         startObserving()
 
         #if DEBUG
@@ -70,8 +76,7 @@ final class HUDController {
             phase: HUDViewState.Phase(controller.phase),
             previewText: controller.previewText,
             levelHistory: controller.levelHistory,
-            level: controller.level,
-            caretRect: controller.context?.caretRect
+            level: controller.level
         )
         apply(newState)
     }
@@ -81,24 +86,16 @@ final class HUDController {
     private func apply(_ newState: HUDViewState) {
         guard newState != state else { return }
         state = newState
-        if state.phase != .idle {
-            ensurePanelsPositioned()
-        }
-        renderHostingViews()
+        renderHostingView()
         handleVisibility()
     }
 
-    private func renderHostingViews() {
-        let anchor: HUDCapsuleAnchor
-        if let screen = currentScreen ?? targetScreen() {
-            anchor = capsuleAnchor(on: screen)
-        } else {
-            anchor = .zero
-        }
-        edgeHosting.rootView = EdgeGlowView(state: state)
-        capsuleHosting.rootView = HUDCapsuleView(state: state, anchor: anchor) { [weak self] in
-            self?.copyPreviewToPasteboard()
-        }
+    private func renderHostingView() {
+        capsuleHosting.rootView = HUDCapsuleView(
+            state: state,
+            dockInset: dockInset,
+            onCopy: { [weak self] in self?.copyPreviewToPasteboard() }
+        )
         capsulePanel.ignoresMouseEvents = !state.offersCopyAction
     }
 
@@ -108,22 +105,26 @@ final class HUDController {
             hideImmediately()
         case .listening, .finalizing, .inserting:
             show()
-        case .finished:
+        case .finished(.pasted), .finished(.accessibility):
             show()
-            scheduleHide(after: 1.2)
+            scheduleHide(after: 0.7)
+        case .finished(.copiedToClipboard):
+            show()
+            scheduleHide(after: 1.5)
+        case .finished(.failed):
+            show()
+            scheduleHide(after: 2.5)
         case .failed:
             show()
-            scheduleHide(after: 3.0)
+            scheduleHide(after: 2.5)
         }
     }
 
     // MARK: - Panel placement
 
-    /// Picks the screen containing the caret; falls back to the screen under the mouse, then main.
+    /// Picks the screen under the mouse, falling back to main. (No caret-following — the capsule
+    /// is always bottom-center, which keeps this cheap and steady.)
     private func targetScreen() -> NSScreen? {
-        if let rect = state.caretRect, let screen = NSScreen.screens.first(where: { $0.frame.intersects(rect) }) {
-            return screen
-        }
         let mouse = NSEvent.mouseLocation
         if let screen = NSScreen.screens.first(where: { $0.frame.contains(mouse) }) {
             return screen
@@ -131,32 +132,14 @@ final class HUDController {
         return NSScreen.main ?? NSScreen.screens.first
     }
 
-    private func ensurePanelsPositioned() {
-        guard let screen = targetScreen() else { return }
-        guard screen != currentScreen else { return }
+    /// Only touches AppKit (a `setFrame`) when the target screen actually changed — essentially
+    /// never in practice (single-display machines never call this after the first time).
+    private func layoutForScreen() {
+        guard let screen = targetScreen(), screen != currentScreen else { return }
         currentScreen = screen
-        edgeGlowPanel.setFrame(screen.frame, display: false)
+        dockInset = screen.visibleFrame.minY - screen.frame.minY
         capsulePanel.setFrame(screen.frame, display: false)
-    }
-
-    /// Computes the capsule's anchor in the panel's local (top-left origin) coordinate space,
-    /// just above the caret when known and on-screen, flipping below when too close to the top,
-    /// else bottom-center of the visible frame.
-    private func capsuleAnchor(on screen: NSScreen) -> HUDCapsuleAnchor {
-        let gap: CGFloat = 14
-        if let rect = state.caretRect, screen.frame.intersects(rect) {
-            let localX = rect.midX - screen.frame.minX
-            let spaceAbove = screen.frame.maxY - rect.maxY
-            let placeAbove = spaceAbove > 160
-            let appKitEdgeY = placeAbove ? rect.maxY + gap : rect.minY - gap
-            let topLeftY = screen.frame.height - (appKitEdgeY - screen.frame.minY)
-            return HUDCapsuleAnchor(point: CGPoint(x: localX, y: topLeftY), direction: placeAbove ? .above : .below)
-        }
-        let visible = screen.visibleFrame
-        let localX = visible.midX - screen.frame.minX
-        let appKitEdgeY = visible.minY + 90
-        let topLeftY = screen.frame.height - (appKitEdgeY - screen.frame.minY)
-        return HUDCapsuleAnchor(point: CGPoint(x: localX, y: topLeftY), direction: .above)
+        renderHostingView()
     }
 
     // MARK: - Show / hide
@@ -164,14 +147,13 @@ final class HUDController {
     private func show() {
         hideTask?.cancel()
         hideTask = nil
-        if !edgeGlowPanel.isVisible { edgeGlowPanel.orderFrontRegardless() }
+        layoutForScreen()
         if !capsulePanel.isVisible { capsulePanel.orderFrontRegardless() }
     }
 
     private func hideImmediately() {
         hideTask?.cancel()
         hideTask = nil
-        edgeGlowPanel.orderOut(nil)
         capsulePanel.orderOut(nil)
     }
 
@@ -222,13 +204,24 @@ final class HUDController {
                 try? await Task.sleep(for: .milliseconds(550))
             }
 
+            // Toggle mode: mic closes immediately, but the cloud takes ~2-4s to come back with
+            // polished text — show the "Processing…" wait first (no on-device text yet), then the
+            // on-device preview arriving mid-wait, dimmed, before the final insert.
             if Task.isCancelled { return }
-            self.apply(HUDViewState(phase: .finalizing, previewText: finalText, levelHistory: waveform.map { $0 * 0.25 }, level: 0.08))
-            try? await Task.sleep(for: .seconds(1.1))
+            self.apply(HUDViewState(phase: .finalizing, previewText: "", level: 0))
+            try? await Task.sleep(for: .seconds(1.4))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .finalizing, previewText: finalText, level: 0))
+            try? await Task.sleep(for: .seconds(1.6))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .inserting, previewText: finalText, level: 0))
+            try? await Task.sleep(for: .milliseconds(300))
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .finished(.pasted), previewText: finalText))
-            try? await Task.sleep(for: .seconds(1.8))
+            try? await Task.sleep(for: .seconds(1.2))
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .idle))
@@ -237,10 +230,10 @@ final class HUDController {
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .listening, previewText: finalText, levelHistory: waveform, level: 0.7))
             try? await Task.sleep(for: .seconds(1))
-            self.apply(HUDViewState(phase: .finalizing, previewText: finalText, levelHistory: waveform.map { $0 * 0.2 }, level: 0.05))
-            try? await Task.sleep(for: .seconds(1))
+            self.apply(HUDViewState(phase: .finalizing, previewText: finalText, level: 0))
+            try? await Task.sleep(for: .seconds(1.5))
             self.apply(HUDViewState(phase: .finished(.copiedToClipboard), previewText: finalText))
-            try? await Task.sleep(for: .seconds(1.8))
+            try? await Task.sleep(for: .seconds(2))
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .idle))
@@ -248,7 +241,7 @@ final class HUDController {
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .failed(ProsioError.network("request timed out").hudMessage), previewText: "So let's meet on Wednesday"))
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(2.5))
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .idle))

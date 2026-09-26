@@ -1,6 +1,6 @@
 import Testing
 import CoreGraphics
-@testable import Prosio
+// AXCoordinateConverter is compiled directly into this target (see project.yml) — no import needed.
 
 @Suite("AXCoordinateConverter")
 struct AXCoordinateConverterTests {

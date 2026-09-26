@@ -42,6 +42,13 @@ targets:
       properties:
         com.apple.security.app-sandbox: false
         com.apple.security.device.audio-input: true
+        # Under the hardened runtime, library validation rejects the ProsioTests.xctest bundle
+        # dlopen'd into the running Prosio.app at test time — self-signed certs without a real
+        # Team ID are treated as mismatched even when both the app and the test bundle use the
+        # same "Prosio Local Development" identity ("different Team IDs"). Same root cause as the
+        # ENABLE_DEBUG_DYLIB workaround below. TODO(P1): scope this to Debug/test builds only
+        # once the project has per-configuration entitlements; Release should not carry it.
+        com.apple.security.cs.disable-library-validation: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.prosio.mac
@@ -50,18 +57,30 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_STYLE: Manual
-        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_IDENTITY: "Prosio Local Development" # stable local identity so TCC grants survive rebuilds; see docs/DEV_SIGNING.md
         DEVELOPMENT_TEAM: ""
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         SWIFT_APPROACHABLE_CONCURRENCY: YES
         ENABLE_USER_SCRIPT_SANDBOXING: YES
+        # Xcode's separate Prosio.debug.dylib fails library validation under the hardened runtime
+        # with the self-signed dev identity ("different Team IDs"); link everything into the binary.
+        ENABLE_DEBUG_DYLIB: NO
   ProsioTests:
     type: bundle.unit-test
     platform: macOS
+    # Logic-only test bundle, no host application: it never launches (a real, or shared-bundle-id
+    # duplicate) `Prosio.app`, which matters because launching anything with bundle id
+    # `app.prosio.mac` can terminate an already-running instance of it (observed live). Instead of
+    # `@testable import Prosio` (which needs BUNDLE_LOADER/TEST_HOST to dlopen into the app), the
+    # handful of pure-logic files under test are compiled directly into this target as plain
+    # sources — they have no app-specific dependencies, only Foundation/AppKit/ProsioCore.
     sources:
       - path: Apps/macOS/ProsioTests
+      - path: Apps/macOS/Prosio/System/HotkeyStateMachine.swift
+      - path: Apps/macOS/Prosio/System/FocusContextProvider.swift
     dependencies:
-      - target: Prosio
+      - package: ProsioKit
+        product: ProsioCore
     settings:
       base:
         SWIFT_VERSION: "6.0"
@@ -69,10 +88,8 @@ targets:
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGN_STYLE: Manual
-        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_IDENTITY: "Prosio Local Development" # stable local identity so TCC grants survive rebuilds; see docs/DEV_SIGNING.md
         DEVELOPMENT_TEAM: ""
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Prosio.app/Contents/MacOS/Prosio"
-        BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
   Prosio:
     build:

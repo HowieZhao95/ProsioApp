@@ -43,6 +43,15 @@ Errors: 401, 402 `quota_exceeded`, 400, 413 `payload_too_large`, 502 `upstream_e
 ### `HEAD /api/transcribe`
 No auth. `204`. Used by the client to pre-warm the TLS connection when dictation starts.
 
+## Routing (auto mode)
+
+### `POST /api/route`
+Decides whether the on-device transcript can be inserted as-is or needs the cloud SMART pass. Uses Gateway model `typesafe-ai/jev` (a decision model: typed questions → typed answers + probabilities, 70–500 ms).
+Request: `{ "localTranscript": "…", "vocabulary": ["Prosio"], "languageHints": ["zh-CN","en-US"] }` (`localTranscript` ≤ 4000 chars)
+→ `200 { "needsCloud": true|false, "cleanProbability": 0.0-1.0 | null, "reason": "clean" | "needs-cleanup" | "likely-misrecognized" | "router-error", "latencyMs": 123 }`
+Policy (server-side, conservative): `needsCloud = false` only when Jev's probability that the text is clean (no fillers/disfluencies, no self-corrections, no list/format needs, no likely recognition errors — esp. mangled mixed-language or dictionary terms) is ≥ 0.8. Any Jev error → `200 { needsCloud: true, reason: "router-error" }` (never block dictation).
+Auth required. Not metered as audio usage.
+
 ## Usage
 
 ### `POST /api/usage`

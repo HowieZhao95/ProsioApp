@@ -1,100 +1,69 @@
 import Foundation
+import ProsioCore
 
-/// Pure decision logic for the push-to-talk / toggle hotkey, kept free of CGEvent/AppKit
-/// plumbing so it can be unit tested directly. Owned by mac-system agent.
+/// Pure decision logic for the toggle hotkey, kept free of CGEvent/AppKit plumbing so it can be
+/// unit tested directly. Owned by mac-system agent.
 ///
-/// Semantics:
-/// - Trigger key down (idle -> holding) requests `.start` immediately, so the first syllable
-///   is never lost.
-/// - Trigger key up while holding: if held >= `holdThreshold`, request `.stop` (push-to-talk).
-///   Otherwise it was a tap: arm `.toggleActive` and keep listening; the *next* trigger key
-///   down requests `.stop` — unless the dictation already ended on its own (engine failure,
-///   or finished) while armed, in which case `isBusy` will be false and it requests `.start`
-///   instead, so the user never has to press twice to recover from a desynced toggle.
-/// - Any other key pressed while holding (e.g. fn+arrow) requests `.cancel` (it was a shortcut,
-///   not dictation).
-/// - Esc while the caller reports it is busy requests `.cancel`, regardless of internal state.
-struct HotkeyStateMachine: Equatable {
-    enum State: Equatable {
-        case idle
-        case holding
-        case toggleActive
-    }
-
+/// Semantics (product decision: plain toggle, no hold-to-talk, no double-tap):
+/// - Press trigger once -> start. Press again -> stop (then the HUD shows a processing/waiting
+///   state until insertion finishes — mac-ui's concern, not ours).
+/// - Only the trigger key DOWN transition is acted on; key-up is ignored entirely, and so is any
+///   duplicate/auto-repeat "down" observed while the physical key is already held (see
+///   `TriggerPhysicalState`, which the caller uses to filter those out before calling in here).
+/// - There is deliberately no persistent state of our own: every decision is a pure function of
+///   `DictationController.phase` at the moment of the key press, read fresh each time. This means
+///   there is nothing for the hotkey to desync *about* — if a rebuilt/reinstalled event tap or a
+///   missed event ever caused confusion before, that entire class of bug is gone by construction.
+enum HotkeyStateMachine {
     enum Effect: Equatable {
         case start
+        /// Stop and finalize the current (listening) session.
         case stop
+        /// Cancel the current (listening) session without inserting anything.
         case cancel
+        /// The trigger was pressed while a previous session was still finalizing/inserting.
+        /// Deliberately dropped (no queue) — logged by the caller so it's visible in diagnostics.
+        case ignore
         case none
     }
 
-    private(set) var state: State = .idle
-    private var pressStartTime: TimeInterval?
-
-    init() {}
-
-    /// The trigger key was pressed (with no other relevant modifiers/keys held). `isBusy` should
-    /// reflect `DictationController.isBusy` at the moment of the press: it's the source of truth
-    /// for whether a `.toggleActive` dictation is actually still running, since it can end on its
-    /// own (engine failure, or finished) without going through `triggerKeyDown`/`triggerKeyUp`.
-    mutating func triggerKeyDown(at time: TimeInterval, isBusy: Bool) -> Effect {
-        switch state {
-        case .idle:
-            state = .holding
-            pressStartTime = time
+    /// The trigger key went down (a genuine new physical press — the caller is responsible for
+    /// filtering out key-up and repeat/duplicate-down events before calling this).
+    static func triggerKeyDown(phase: DictationPhase) -> Effect {
+        switch phase {
+        case .idle, .finished, .failed:
             return .start
-        case .toggleActive where isBusy:
-            // Second tap while a toggle-mode dictation is still running: stop it.
-            state = .idle
-            pressStartTime = nil
+        case .listening:
             return .stop
-        case .toggleActive:
-            // The armed dictation already ended on its own (e.g. the engine failed); this press
-            // is really a fresh start, not a stop. Without this, the state machine would issue a
-            // no-op `.stop` and the user would have to press the trigger twice to recover.
-            state = .holding
-            pressStartTime = time
-            return .start
-        case .holding:
-            // Auto-repeat or a spurious duplicate down event; ignore.
-            return .none
+        case .finalizing, .inserting:
+            return .ignore
         }
     }
 
-    /// The trigger key was released.
-    mutating func triggerKeyUp(at time: TimeInterval, holdThreshold: TimeInterval) -> Effect {
-        guard state == .holding else { return .none }
-        let held = time - (pressStartTime ?? time)
-        pressStartTime = nil
-        if held >= holdThreshold {
-            state = .idle
-            return .stop
-        } else {
-            state = .toggleActive
-            return .none
-        }
+    /// Esc was pressed. Only cancels while actively listening — there's nothing sensible to do
+    /// mid-finalize/insert, and nothing to do at all outside a session.
+    static func escKeyDown(phase: DictationPhase) -> Effect {
+        phase == .listening ? .cancel : .none
+    }
+}
+
+/// Tracks whether the trigger key is physically held down, purely from a stream of "the OS says
+/// down"/"the OS says up" observations (`flagsChanged` events), so the caller can act only on a
+/// genuine down transition and ignore auto-repeat/duplicate-down observations while the key is
+/// already held (and ignore key-up entirely, per the current toggle-only hotkey design).
+struct TriggerPhysicalState: Equatable {
+    private(set) var isDown = false
+
+    /// - Returns: `true` if this observation repeats the already-tracked state (no real
+    ///   transition happened — e.g. a duplicate/auto-repeat down, or a redundant up).
+    @discardableResult
+    mutating func observe(isDown newIsDown: Bool) -> Bool {
+        let isRepeat = newIsDown == isDown
+        isDown = newIsDown
+        return isRepeat
     }
 
-    /// Any other key (or modifier) went down. Only meaningful while the trigger is physically held.
-    mutating func otherKeyDown() -> Effect {
-        guard state == .holding else { return .none }
-        state = .idle
-        pressStartTime = nil
-        return .cancel
-    }
-
-    /// Esc was pressed. `isBusy` reflects `DictationController.isBusy`, which is the source of
-    /// truth for whether there is anything to cancel.
-    mutating func escKeyDown(isBusy: Bool) -> Effect {
-        guard isBusy else { return .none }
-        state = .idle
-        pressStartTime = nil
-        return .cancel
-    }
-
-    /// Forces back to idle, e.g. after the event tap is recreated.
     mutating func reset() {
-        state = .idle
-        pressStartTime = nil
+        isDown = false
     }
 }

@@ -41,6 +41,12 @@ public final class AppSettings {
     public var holdThreshold: TimeInterval = 0.3 {
         didSet { defaults.set(holdThreshold, forKey: Keys.holdThreshold) }
     }
+    /// When on, `DictationController` writes a debug recording (audio.wav + session.json) for
+    /// every session under Application Support, for diagnosing accuracy issues. Approved
+    /// additive public API (2026-09-26). Default `true` for now, during testing.
+    public var saveDebugRecordings: Bool = true {
+        didSet { defaults.set(saveDebugRecordings, forKey: Keys.saveDebugRecordings) }
+    }
 
     private let defaults: UserDefaults
 
@@ -53,6 +59,7 @@ public final class AppSettings {
         static let restoreClipboard = "prosio.restoreClipboard"
         static let historyEnabled = "prosio.historyEnabled"
         static let holdThreshold = "prosio.holdThreshold"
+        static let saveDebugRecordings = "prosio.saveDebugRecordings"
     }
 
     public init(defaults: UserDefaults = .standard) {
@@ -81,6 +88,9 @@ public final class AppSettings {
         }
         if defaults.object(forKey: Keys.holdThreshold) != nil {
             holdThreshold = defaults.double(forKey: Keys.holdThreshold)
+        }
+        if defaults.object(forKey: Keys.saveDebugRecordings) != nil {
+            saveDebugRecordings = defaults.bool(forKey: Keys.saveDebugRecordings)
         }
     }
 }

@@ -22,7 +22,8 @@ final class PermissionsManager {
     @ObservationIgnored nonisolated(unsafe) private var activationObserver: NSObjectProtocol?
 
     var allRequiredGranted: Bool {
-        [.microphone, .accessibility, .inputMonitoring].allSatisfy { statuses[$0] == .granted }
+        // The hotkey uses an active event tap, which needs Accessibility but not Input Monitoring.
+        [.microphone, .accessibility].allSatisfy { statuses[$0] == .granted }
     }
 
     init() {
@@ -46,10 +47,17 @@ final class PermissionsManager {
     }
 
     func refresh() {
-        statuses[.microphone] = Self.microphoneStatus()
-        statuses[.accessibility] = AXIsProcessTrusted() ? .granted : .denied
-        statuses[.inputMonitoring] = Self.inputMonitoringStatus()
-        statuses[.speechRecognition] = Self.speechRecognitionStatus()
+        set(.microphone, Self.microphoneStatus())
+        set(.accessibility, AXIsProcessTrusted() ? .granted : .denied)
+        set(.inputMonitoring, Self.inputMonitoringStatus())
+        set(.speechRecognition, Self.speechRecognitionStatus())
+    }
+
+    private func set(_ kind: PermissionKind, _ newStatus: PermissionStatus) {
+        let previous = statuses[kind]
+        guard previous != newStatus else { return }
+        statuses[kind] = newStatus
+        ProsioLog.permissions.info("\(String(describing: kind), privacy: .public): \(String(describing: previous), privacy: .public) -> \(String(describing: newStatus), privacy: .public)")
     }
 
     func request(_ kind: PermissionKind) async {
@@ -64,7 +72,9 @@ final class PermissionsManager {
             _ = CGRequestListenEventAccess()
         case .speechRecognition:
             await withCheckedContinuation { continuation in
-                SFSpeechRecognizer.requestAuthorization { _ in
+                // TCC calls back on a background queue. `@Sendable` keeps this closure from
+                // inheriting the module's default MainActor isolation, which would trap at runtime.
+                SFSpeechRecognizer.requestAuthorization { @Sendable _ in
                     continuation.resume()
                 }
             }
