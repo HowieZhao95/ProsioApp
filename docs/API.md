@@ -57,8 +57,8 @@ Request (matches Swift `ComposeRequest`):
 ```
 Validation: `text` 1–8000 chars; `selection` ≤ 20000 chars (required for `edit`); `targetLanguage` required for `translate`; `history` ≤ 20 turns (ask only).
 Response: **streamed plain text** (`Content-Type: text/plain; charset=utf-8`, chunked) — the output deltas in order. For non-ask modes the server applies output sanitation at the end (strip a wrapping pair of quotes / single wrapping code fence), so non-ask clients should use the complete body; ask clients render deltas live.
-Headers: `Server-Timing` (auth, prompt, ttft, total) where possible, `X-Prosio-Model: <model id>`.
-Model: env `PROSIO_COMPOSE_MODEL` (default chosen by the compose eval — fast, high-quality Gateway model); `PROSIO_ASK_MODEL` may override for ask.
+Headers: `Server-Timing` (auth, prompt, ttft, total) where possible, `X-Prosio-Model: <model id>`, `X-Prosio-Fallback: empty | drift` (non-ask only, present only when a guardrail fired — see below).
+Model: env `PROSIO_COMPOSE_MODEL` / `PROSIO_ASK_MODEL` (ask only; falls back to `PROSIO_COMPOSE_MODEL`), default `openai/gpt-6-luna` for both (chosen from the live compose bake-off — cheapest tested, 100% robustness). For non-ask modes, two guardrails retry once with `PROSIO_COMPOSE_FALLBACK_MODEL` (default `openai/gpt-5.4-mini`) on luna's two observed failure modes: empty/whitespace output, or edit-mode content drift (fabricated code-fence/box-drawing/ASCII-art the selection didn't contain, or output > 3x the selection's length when the instruction didn't ask to expand). If the fallback also fails, the response is the original input unchanged (`text` for rewrite/translate, `selection` for edit) with `X-Prosio-Fallback` set accordingly.
 Errors (before streaming starts): 400/401/402/502 structured as usual. Mid-stream upstream failure: the stream ends early and the client treats a truncated body as `ProsioError.network`.
 
 ## Routing (auto mode)

@@ -181,13 +181,127 @@ describe("POST /api/compose", () => {
     expect(rewriteRes.headers.get("x-prosio-model")).toBe("test/compose-model");
   });
 
-  it("passes temperature 0.2 for non-ask and 0.4 for ask", async () => {
+  it("passes temperature 0.2 for non-ask and 0.4 for ask, for a model that supports it", async () => {
+    // Use an env-overridden model outside MODELS_WITHOUT_TEMPERATURE (the
+    // default, openai/gpt-6-luna, is a reasoning model that never gets a
+    // temperature — see the dedicated test below) so this test is about
+    // temperature plumbing, not tied to whichever model happens to be default.
+    process.env.PROSIO_COMPOSE_MODEL = "test/compose-model";
+    process.env.PROSIO_ASK_MODEL = "test/compose-model";
     const user = await authedUser();
-    await POST(jsonRequest("/api/compose", "POST", { mode: "edit", text: "fix", selection: "y" }, user.authHeader));
+    await POST(jsonRequest("/api/compose", "POST", { mode: "edit", text: "fix", selection: "a somewhat longer selection so length checks behave" }, user.authHeader));
     expect(streamTextMock.mock.calls[0]![0].temperature).toBe(0.2);
 
     streamTextMock.mockReturnValue(mockStreamTextResult(["ok"]));
     await POST(jsonRequest("/api/compose", "POST", { mode: "ask", text: "hi" }, user.authHeader));
     expect(streamTextMock.mock.calls[1]![0].temperature).toBe(0.4);
+  });
+
+  it("omits temperature and sets reasoningEffort=none for openai/gpt-6-luna (the default)", async () => {
+    const user = await authedUser();
+    await POST(
+      jsonRequest("/api/compose", "POST", { mode: "rewrite", text: "hello there, how are you doing today", scene: "chat" }, user.authHeader)
+    );
+    const call = streamTextMock.mock.calls[0]![0];
+    expect(call.temperature).toBeUndefined();
+    expect(call.providerOptions).toEqual({ openai: { reasoningEffort: "none" } });
+  });
+});
+
+describe("POST /api/compose — guardrails (luna's observed failure modes)", () => {
+  beforeEach(() => {
+    streamTextMock.mockReset();
+  });
+
+  afterEach(() => {
+    delete process.env.PROSIO_COMPOSE_MODEL;
+    delete process.env.PROSIO_ASK_MODEL;
+    delete process.env.PROSIO_COMPOSE_FALLBACK_MODEL;
+  });
+
+  it("empty primary output: retries with the fallback model, uses its output", async () => {
+    streamTextMock
+      .mockReturnValueOnce(mockStreamTextResult([""])) // primary: empty
+      .mockReturnValueOnce(mockStreamTextResult(["Meeting moved to Thursday."])); // fallback: good
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "rewrite", text: "meeting moved to thursday", scene: "chat" }, user.authHeader)
+    );
+    expect(await res.text()).toBe("Meeting moved to Thursday.");
+    expect(res.headers.get("x-prosio-fallback")).toBeNull();
+    expect(res.headers.get("x-prosio-model")).toBe("openai/gpt-5.4-mini");
+    expect(streamTextMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("empty output from BOTH primary and fallback: returns the original text unchanged, X-Prosio-Fallback: empty", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["   "])); // whitespace-only, both calls
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "rewrite", text: "meeting moved to thursday", scene: "chat" }, user.authHeader)
+    );
+    expect(await res.text()).toBe("meeting moved to thursday");
+    expect(res.headers.get("x-prosio-fallback")).toBe("empty");
+    expect(streamTextMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("edit drift (ASCII bar chart the selection didn't contain): retries with fallback, uses its clean output", async () => {
+    streamTextMock
+      .mockReturnValueOnce(mockStreamTextResult(["Revenue grew steadily this quarter.\n\nRevenue trend:\n▂ ▃ ▄ ▅ ▆"]))
+      .mockReturnValueOnce(mockStreamTextResult(["Revenue grew steadily this quarter."]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "edit", text: "add a bar chart showing the trend", selection: "Revenue grew steadily this quarter." }, user.authHeader)
+    );
+    expect(await res.text()).toBe("Revenue grew steadily this quarter.");
+    expect(res.headers.get("x-prosio-fallback")).toBeNull();
+    expect(res.headers.get("x-prosio-model")).toBe("openai/gpt-5.4-mini");
+  });
+
+  it("edit drift on BOTH attempts: returns the selection unchanged, X-Prosio-Fallback: drift", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult(["Revenue grew steadily.\n\n```\n▁ ▂ ▃ ▄█\n```"]));
+    const user = await authedUser();
+    const res = await POST(
+      jsonRequest("/api/compose", "POST", { mode: "edit", text: "add a bar chart showing the trend", selection: "Revenue grew steadily this quarter." }, user.authHeader)
+    );
+    expect(await res.text()).toBe("Revenue grew steadily this quarter.");
+    expect(res.headers.get("x-prosio-fallback")).toBe("drift");
+  });
+
+  it("edit output 3x+ the selection length (no expansion requested): treated as drift", async () => {
+    const selection = "This is a normal length selection that a user might have picked to edit.";
+    streamTextMock
+      .mockReturnValueOnce(mockStreamTextResult(["x".repeat(selection.length * 4)]))
+      .mockReturnValueOnce(mockStreamTextResult(["A modestly edited version of the selection."]));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/compose", "POST", { mode: "edit", text: "make it better", selection }, user.authHeader));
+    expect(await res.text()).toBe("A modestly edited version of the selection.");
+  });
+
+  it("does NOT flag drift when the instruction explicitly asks to expand", async () => {
+    const selection = "我们应该采用这个方案。";
+    streamTextMock.mockReturnValue(
+      mockStreamTextResult(["我们应该采用这个方案，因为它成本更低、实施周期更短，并且已经在同行业中得到验证，能够显著降低项目风险。"])
+    );
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/compose", "POST", { mode: "edit", text: "扩写一下，补充理由", selection }, user.authHeader));
+    expect(res.headers.get("x-prosio-fallback")).toBeNull();
+    expect(streamTextMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("ask mode: no guard/retry on empty output, just streams it through (logged server-side)", async () => {
+    streamTextMock.mockReturnValue(mockStreamTextResult([""]));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/compose", "POST", { mode: "ask", text: "hi" }, user.authHeader));
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("");
+    expect(streamTextMock).toHaveBeenCalledTimes(1); // no fallback retry for ask
+  });
+
+  it("respects PROSIO_COMPOSE_FALLBACK_MODEL override", async () => {
+    process.env.PROSIO_COMPOSE_FALLBACK_MODEL = "test/custom-fallback";
+    streamTextMock.mockReturnValueOnce(mockStreamTextResult([""])).mockReturnValueOnce(mockStreamTextResult(["ok"]));
+    const user = await authedUser();
+    const res = await POST(jsonRequest("/api/compose", "POST", { mode: "rewrite", text: "hi there", scene: "chat" }, user.authHeader));
+    expect(res.headers.get("x-prosio-model")).toBe("test/custom-fallback");
   });
 });

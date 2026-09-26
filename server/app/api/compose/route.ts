@@ -17,9 +17,9 @@ import { getStore } from "@/lib/store";
 import { RequestTimer } from "@/lib/timing";
 
 // Node runtime; maxDuration covers ask's 45s cap (the larger of the two —
-// non-ask uses its own 15s AbortController). Module-scope `gateway` import
-// (lib/gateway.ts) reuses the same long-keep-alive HTTP agent as
-// /api/transcribe and /api/route.
+// non-ask uses its own 15s AbortController, up to 2x if a fallback retry
+// fires). Module-scope `gateway` import (lib/gateway.ts) reuses the same
+// long-keep-alive HTTP agent as /api/transcribe and /api/route.
 export const runtime = "nodejs";
 export const maxDuration = 45;
 export const dynamic = "force-dynamic";
@@ -27,11 +27,50 @@ export const dynamic = "force-dynamic";
 const NON_ASK_TIMEOUT_MS = 15_000;
 const ASK_TIMEOUT_MS = 45_000;
 
-// Chosen by the live model-selection eval (scripts/compose-eval.ts,
-// eval/compose-cases.json) — see server/README.md's Compose section for
-// the results table. Either can be overridden per-deployment via env.
-const DEFAULT_COMPOSE_MODEL = "anthropic/claude-haiku-4.5";
-const DEFAULT_ASK_MODEL = "anthropic/claude-haiku-4.5";
+// Chosen by the user, 2026-09-26, after the live model bake-off
+// (scripts/compose-bakeoff.ts) found openai/gpt-6-luna the cheapest
+// candidate tested ($0.052/1k req), 100% robustness, and clean on the
+// Edit no-additions threat case 3/3 — see server/README.md's Compose
+// section for the full results table and the guardrails below, which
+// exist specifically for luna's two observed failure modes (empty output;
+// fabricating ASCII-art/box-drawing content on `ed-cant-apply`-style
+// cases). Either env var can still override per-deployment.
+const DEFAULT_COMPOSE_MODEL = "openai/gpt-6-luna";
+const DEFAULT_ASK_MODEL = "openai/gpt-6-luna";
+
+// Retried into when luna's output trips a guardrail (see runNonAsk below).
+const DEFAULT_FALLBACK_MODEL = "openai/gpt-5.4-mini";
+
+// --- per-model call-option capabilities (live-tested; see server/README.md) ---
+//
+// Both openai/gpt-6-luna and openai/gpt-5.4-mini are OpenAI reasoning
+// models: they reject `temperature` outright (the Gateway logs "temperature
+// is not supported for reasoning models" on every call if you send it) and
+// don't need it — we omit it entirely for these rather than send a value
+// the model ignores anyway, so logs stay clean. Every other model tested so
+// far (anthropic/claude-haiku-4.5, google/gemini-3.x, minimax/*) accepts
+// temperature normally and still gets 0.2/0.4 as before.
+const MODELS_WITHOUT_TEMPERATURE = new Set(["openai/gpt-6-luna", "openai/gpt-5.4-mini"]);
+
+// gpt-6-luna accepts reasoningEffort "none"/"low"/"medium"/"high"/"xhigh"/"max"
+// — NOT "minimal" (confirmed live: Gateway rejects it with a warning naming
+// the valid set). "none" is the lowest-latency option and is what we want
+// for a real-time text-transform feature.
+const REASONING_EFFORT_BY_MODEL: Record<string, string> = {
+  "openai/gpt-6-luna": "none",
+};
+
+function callOptionsFor(modelId: string, temperature: number): { temperature?: number; providerOptions?: { openai: { reasoningEffort: string } } } {
+  const opts: { temperature?: number; providerOptions?: { openai: { reasoningEffort: string } } } = {};
+  if (!MODELS_WITHOUT_TEMPERATURE.has(modelId)) {
+    opts.temperature = temperature;
+  }
+  const reasoningEffort = REASONING_EFFORT_BY_MODEL[modelId];
+  if (reasoningEffort) {
+    opts.providerOptions = { openai: { reasoningEffort } };
+  }
+  return opts;
+}
 
 const appSchema = z
   .object({
@@ -67,6 +106,7 @@ const bodySchema = z
       ctx.addIssue({ code: "custom", message: "targetLanguage is required for translate mode", path: ["targetLanguage"] });
     }
   });
+type ComposeBody = z.infer<typeof bodySchema>;
 
 function modelIdFor(mode: ComposeMode): string {
   if (mode === "ask") {
@@ -75,7 +115,11 @@ function modelIdFor(mode: ComposeMode): string {
   return process.env.PROSIO_COMPOSE_MODEL || DEFAULT_COMPOSE_MODEL;
 }
 
-function buildPrompt(body: z.infer<typeof bodySchema>): ComposePrompt {
+function fallbackModelId(): string {
+  return process.env.PROSIO_COMPOSE_FALLBACK_MODEL || DEFAULT_FALLBACK_MODEL;
+}
+
+function buildPrompt(body: ComposeBody): ComposePrompt {
   switch (body.mode) {
     case "rewrite":
       return buildRewritePrompt({ transcript: body.text, scene: body.scene, app: body.app, vocabulary: body.vocabulary });
@@ -93,6 +137,69 @@ function buildPrompt(body: z.infer<typeof bodySchema>): ComposePrompt {
       return buildEditPrompt({ selection: body.selection!, instruction: body.text, vocabulary: body.vocabulary });
     case "ask":
       return buildAskPrompt({ question: body.text, app: body.app, selection: body.selection, history: body.history });
+  }
+}
+
+/** The text a guardrail falls back to returning unchanged, per mode. */
+function originalInputFor(body: ComposeBody): string {
+  return body.mode === "edit" ? body.selection! : body.text;
+}
+
+function isBlank(text: string): boolean {
+  return text.trim().length === 0;
+}
+
+// --- Edit drift guard --------------------------------------------------
+//
+// Observed live (scripts/compose-bakeoff.ts, `ed-cant-apply`): asked to
+// "add a bar chart" to plain text — something no text edit can literally
+// do — gpt-6-luna fabricated ASCII/box-drawing "chart" art 3/3 times
+// instead of following PROMPTS.md's "return the selection unchanged"
+// fallback rule. This guard catches that class of drift generically.
+
+const ART_OR_FENCE_RE = /```|[─-▟]|[+\-]{3,}|\|.*\|.*\|/;
+const EXPANSION_REQUESTED_RE = /\b(expand|elaborate|add (a|an|another|more|some))\b|扩写|补充|扩展/i;
+
+function hasArtOrFence(text: string): boolean {
+  return ART_OR_FENCE_RE.test(text);
+}
+
+/** Edit-mode only: true if the output looks like it drifted into fabricated content rather than a text edit. */
+function editDriftDetected(output: string, selection: string, instruction: string): boolean {
+  const introducedArt = hasArtOrFence(output) && !hasArtOrFence(selection);
+  const expansionRequested = EXPANSION_REQUESTED_RE.test(instruction);
+  // The >=20-char floor avoids false positives on very short selections
+  // (e.g. selection "No." — almost any real edit is "3x longer" than 3
+  // characters; that's normal politeness padding, not fabricated drift).
+  const tooLong = !expansionRequested && selection.length >= 20 && output.length > selection.length * 3;
+  return introducedArt || tooLong;
+}
+
+// --- non-ask generation (buffered + sanitized) --------------------------
+
+interface NonAskResult {
+  text: string;
+  error?: string;
+}
+
+async function runNonAsk(modelId: string, mode: ComposeMode, prompt: ComposePrompt, temperature: number): Promise<NonAskResult> {
+  const abortController = new AbortController();
+  const timeout = setTimeout(() => abortController.abort(), NON_ASK_TIMEOUT_MS);
+  try {
+    const result = streamText({
+      model: gateway(modelId),
+      system: prompt.system,
+      messages: prompt.messages,
+      abortSignal: abortController.signal,
+      ...callOptionsFor(modelId, temperature),
+    });
+    let full = "";
+    for await (const chunk of result.textStream) full += chunk;
+    return { text: sanitizeComposeOutput(full) };
+  } catch (err) {
+    return { text: "", error: err instanceof Error ? err.message : String(err) };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -127,20 +234,19 @@ export const POST = withErrorHandling(async (req: Request) => {
   const modelId = modelIdFor(body.mode);
   const isAsk = body.mode === "ask";
   const temperature = isAsk ? 0.4 : 0.2;
-  const timeoutMs = isAsk ? ASK_TIMEOUT_MS : NON_ASK_TIMEOUT_MS;
-
-  const abortController = new AbortController();
-  const timeout = setTimeout(() => abortController.abort(), timeoutMs);
-
-  const result = streamText({
-    model: gateway(modelId),
-    system: prompt.system,
-    messages: prompt.messages,
-    temperature,
-    abortSignal: abortController.signal,
-  });
 
   if (isAsk) {
+    const abortController = new AbortController();
+    const timeout = setTimeout(() => abortController.abort(), ASK_TIMEOUT_MS);
+
+    const result = streamText({
+      model: gateway(modelId),
+      system: prompt.system,
+      messages: prompt.messages,
+      abortSignal: abortController.signal,
+      ...callOptionsFor(modelId, temperature),
+    });
+
     // Stream live. Headers must go out before we know ttft/total, so the
     // Server-Timing header here only carries auth+prompt — the full
     // breakdown (incl. ttft) is still logged server-side once the stream
@@ -152,8 +258,13 @@ export const POST = withErrorHandling(async (req: Request) => {
 
     void (async () => {
       try {
-        await result.text; // resolves once the stream finishes (or rejects on failure)
+        const finalText = await result.text; // resolves once the stream finishes (or rejects on failure)
         timer.mark("stream");
+        if (isBlank(finalText)) {
+          // No guard/retry for ask (it's already streamed to the client) —
+          // the client shows "empty answer"; just log it server-side.
+          console.warn("[compose] ask produced empty output", { model: modelId });
+        }
       } catch {
         // Mid-stream failures are the client's problem too (truncated body,
         // per docs/API.md) — nothing more to do server-side.
@@ -168,35 +279,54 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   // Non-ask: buffer (these outputs are short), sanitize, send as one body —
   // sanitation needs the complete text (docs/PROMPTS.md: strip a wrapping
-  // quote pair or code fence, trim).
-  let firstChunkAt: number | null = null;
-  let full = "";
-  try {
-    for await (const chunk of result.textStream) {
-      if (firstChunkAt === null) {
-        firstChunkAt = performance.now();
-        timer.mark("ttft");
-      }
-      full += chunk;
-    }
-  } catch (err) {
-    clearTimeout(timeout);
-    const message = err instanceof Error ? err.message : "Gateway request failed";
-    throw new ApiError("upstream_error", `Compose failed: ${message}`);
-  }
-  clearTimeout(timeout);
-  if (firstChunkAt === null) timer.mark("ttft"); // empty stream: still record the stage, dur=0
+  // quote pair or code fence, trim). Apply guardrails for the primary
+  // model's observed failure modes (empty output; edit-mode content drift),
+  // retrying once with a fallback model before giving up.
+  let usedModelId = modelId;
+  let fallbackReason: "empty" | "drift" | null = null;
 
-  const sanitized = sanitizeComposeOutput(full);
+  let outcome = await runNonAsk(modelId, body.mode, prompt, temperature);
+  if (outcome.error) {
+    throw new ApiError("upstream_error", `Compose failed: ${outcome.error}`);
+  }
+  timer.mark("ttft"); // first attempt's generation, buffered (no true TTFT available here)
+
+  const isDrift = body.mode === "edit" && !isBlank(outcome.text) && editDriftDetected(outcome.text, body.selection!, body.text);
+
+  if (isBlank(outcome.text) || isDrift) {
+    const fbModel = fallbackModelId();
+    const retry = await runNonAsk(fbModel, body.mode, prompt, temperature);
+    timer.mark("fallback");
+
+    const retryStillBad =
+      retry.error !== undefined ||
+      isBlank(retry.text) ||
+      (body.mode === "edit" && editDriftDetected(retry.text, body.selection!, body.text));
+
+    if (retryStillBad) {
+      outcome = { text: originalInputFor(body) };
+      usedModelId = fbModel;
+      // Report whichever guard triggered the retry in the first place.
+      fallbackReason = isDrift ? "drift" : "empty";
+    } else {
+      outcome = retry;
+      usedModelId = fbModel;
+    }
+  }
+
+  const sanitized = outcome.text;
   timer.mark("sanitize");
 
-  console.log("[compose]", { mode: body.mode, model: modelId, ...timer.toObject() });
+  console.log("[compose]", { mode: body.mode, model: usedModelId, fallbackReason, ...timer.toObject() });
 
-  return new Response(sanitized, {
-    headers: {
-      "content-type": "text/plain; charset=utf-8",
-      "Server-Timing": timer.toServerTimingHeader(),
-      "X-Prosio-Model": modelId,
-    },
-  });
+  const headers: Record<string, string> = {
+    "content-type": "text/plain; charset=utf-8",
+    "Server-Timing": timer.toServerTimingHeader(),
+    "X-Prosio-Model": usedModelId,
+  };
+  if (fallbackReason) {
+    headers["X-Prosio-Fallback"] = fallbackReason;
+  }
+
+  return new Response(sanitized, { headers });
 });
