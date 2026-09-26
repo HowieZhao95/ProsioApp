@@ -11,4 +11,5 @@ enum ProsioLog {
     static let textInsertion = Logger(subsystem: subsystem, category: "textInsertion")
     static let permissions = Logger(subsystem: subsystem, category: "permissions")
     static let lifecycle = Logger(subsystem: subsystem, category: "lifecycle")
+    static let focus = Logger(subsystem: subsystem, category: "focus")
 }

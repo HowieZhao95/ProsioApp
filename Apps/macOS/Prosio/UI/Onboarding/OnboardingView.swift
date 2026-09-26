@@ -108,6 +108,10 @@ struct OnboardingView: View {
                 TextField("Your dictation will appear here…", text: $tryItText, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
                     .lineLimit(3...5)
+                Text("Select text and press \(environment.settings.triggerKey.shortSymbol) to edit it by voice — or press \(environment.settings.askTriggerKey.shortSymbol) to ask a question.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
         case .done:
             VStack(spacing: 16) {

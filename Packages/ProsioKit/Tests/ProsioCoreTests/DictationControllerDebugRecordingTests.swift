@@ -7,6 +7,7 @@ private func makeDebugTestController(
     audio: FakeAudio = FakeAudio(),
     cloud: FakeEngine,
     local: FakeEngine,
+    composer: FakeComposer? = nil,
     settings: AppSettings,
     debugRoot: URL
 ) -> DictationController {
@@ -17,7 +18,8 @@ private func makeDebugTestController(
         contextProvider: FakeContextProvider(),
         history: HistoryStore(fileURL: nil),
         dictionary: DictionaryStore(fileURL: nil),
-        settings: settings
+        settings: settings,
+        composer: composer
     )
     controller.debugRecordingsRootOverride = debugRoot
     return controller
@@ -145,5 +147,37 @@ private func waitForDebugFile(_ filename: String, in root: URL, timeout: TimeInt
 
         #expect(record.suspectedDrop == true)
         #expect(record.insertedText == shortCloud) // we don't change the inserted text yet, per spec
+    }
+
+    @Test @MainActor func askSessionIsRecordedWithComposeFields() async throws {
+        let root = makeTempFileURL("debug").deletingLastPathComponent()
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let audio = FakeAudio()
+        let cloud = FakeEngine(id: "cloud", steps: [.final("what is the capital of Portugal")])
+        let local = FakeEngine(id: "local", steps: [.final("what is the capital of Portugal")])
+        let composer = FakeComposer()
+        composer.behavior = .deltas(["Lisbon ", "is the capital of Portugal."])
+        let settings = makeTestSettings()
+        settings.enginePreference = .cloud
+        settings.saveDebugRecordings = true
+
+        let controller = makeDebugTestController(audio: audio, cloud: cloud, local: local, composer: composer, settings: settings, debugRoot: root)
+
+        controller.start(trigger: .hold, intent: .ask)
+        controller.stop()
+        await waitUntil { controller.answer?.isStreaming == false }
+        await controller.insertAnswer()
+
+        let jsonURL = try #require(await waitForDebugFile("session.json", in: root))
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let record = try decoder.decode(DebugSessionRecord.self, from: Data(contentsOf: jsonURL))
+
+        #expect(record.intent == "ask")
+        #expect(record.composeMode == "ask")
+        #expect(record.composeOutput == "Lisbon is the capital of Portugal.")
+        #expect(record.composeLatencyMs != nil)
+        #expect(record.insertedText == "Lisbon is the capital of Portugal.")
     }
 }

@@ -39,6 +39,17 @@ struct DebugSessionRecord: Codable, Sendable {
     var routeCleanProbability: Double? = nil
     var routeReason: String? = nil
     var routeLatencyMs: Double? = nil
+
+    /// P1: `DictationIntent.rawValue` ("dictate"/"edit"/"ask").
+    var intent: String? = nil
+    /// P1: `WritingScene.rawValue`.
+    var scene: String? = nil
+    /// P1: `ComposeRequest.Mode.rawValue` ("rewrite"/"translate"/"edit"/"ask"), if compose ran.
+    var composeMode: String? = nil
+    var composeLatencyMs: Double? = nil
+    /// P1: compose's raw output, distinct from `insertedText` (e.g. a failed rewrite still
+    /// inserts the untransformed transcript, but `composeOutput` stays nil).
+    var composeOutput: String? = nil
 }
 
 /// Writes debug recordings to disk off the main actor, and prunes old sessions. Not part of the

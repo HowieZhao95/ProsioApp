@@ -33,15 +33,18 @@ struct HUDCapsuleView: View {
     @ViewBuilder
     private var content: some View {
         HStack(spacing: 8) {
+            if state.showsModeChip, let chip = state.modeChip {
+                ModeChipView(chip: chip)
+            }
             switch state.phase {
             case .listening:
                 MiniWaveform(levelHistory: state.levelHistory)
                 if !state.previewText.isEmpty {
                     previewText
                 }
-            case .finalizing, .inserting:
+            case .finalizing, .composing, .inserting:
                 if state.previewText.isEmpty {
-                    ShimmerText(text: "Processing…")
+                    ShimmerText(text: state.shimmerPlaceholder)
                 } else {
                     ShimmerText(text: state.previewText)
                         .frame(maxWidth: maxTextWidth, alignment: .leading)
@@ -105,6 +108,44 @@ struct HUDCapsuleView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 2)
         .background(.quaternary, in: Capsule())
+    }
+}
+
+/// Tiny leading chip that says what this session is for — only shown when it isn't plain
+/// dictation (scene adaptation stays invisible). Edit/Ask are icon-only; Translate adds the
+/// target's short code. Static — no animation, negligible cost.
+private struct ModeChipView: View {
+    var chip: HUDModeChip
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon)
+                .font(.system(size: 10, weight: .semibold))
+            if let label {
+                Text(label)
+                    .font(.system(size: 10, weight: .semibold))
+            }
+        }
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(Color.primary.opacity(0.1), in: Capsule())
+        .transition(.opacity)
+    }
+
+    private var icon: String {
+        switch chip {
+        case .edit: "pencil"
+        case .ask: "sparkles"
+        case .translate: "globe"
+        }
+    }
+
+    private var label: String? {
+        switch chip {
+        case .edit, .ask: nil
+        case .translate(let shortCode): shortCode
+        }
     }
 }
 
@@ -222,6 +263,30 @@ private struct ShimmerText: View {
 
 #Preview("Failed") {
     HUDCapsuleView(state: .previewFailed, dockInset: 0, onCopy: {})
+        .padding(40)
+        .background(Color.gray.opacity(0.2))
+}
+
+#Preview("Edit chip") {
+    HUDCapsuleView(state: .previewEditListening, dockInset: 0, onCopy: {})
+        .padding(40)
+        .background(Color.gray.opacity(0.2))
+}
+
+#Preview("Translate chip") {
+    HUDCapsuleView(state: .previewTranslateListening, dockInset: 0, onCopy: {})
+        .padding(40)
+        .background(Color.gray.opacity(0.2))
+}
+
+#Preview("Ask chip") {
+    HUDCapsuleView(state: .previewAskListening, dockInset: 0, onCopy: {})
+        .padding(40)
+        .background(Color.gray.opacity(0.2))
+}
+
+#Preview("Composing (no text)") {
+    HUDCapsuleView(state: .previewComposingNoText, dockInset: 0, onCopy: {})
         .padding(40)
         .background(Color.gray.opacity(0.2))
 }

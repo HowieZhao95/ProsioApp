@@ -10,8 +10,13 @@ public struct HistoryItem: Identifiable, Codable, Sendable, Hashable {
     public var engineID: String
     public var durationSeconds: Double
     public var insertion: InsertionOutcome
+    /// P1: what this session was for (dictate/edit/ask). `nil` for pre-P1 history entries.
+    public var intent: DictationIntent? = nil
+    /// P1: the raw transcript before any compose transformation (rewrite/translate/edit result is
+    /// `text`). `nil` when nothing was composed, or for pre-P1 history entries.
+    public var transcript: String? = nil
 
-    public init(id: UUID = UUID(), createdAt: Date = .now, text: String, appBundleID: String? = nil, appName: String? = nil, engineID: String, durationSeconds: Double, insertion: InsertionOutcome) {
+    public init(id: UUID = UUID(), createdAt: Date = .now, text: String, appBundleID: String? = nil, appName: String? = nil, engineID: String, durationSeconds: Double, insertion: InsertionOutcome, intent: DictationIntent? = nil, transcript: String? = nil) {
         self.id = id
         self.createdAt = createdAt
         self.text = text
@@ -20,6 +25,8 @@ public struct HistoryItem: Identifiable, Codable, Sendable, Hashable {
         self.engineID = engineID
         self.durationSeconds = durationSeconds
         self.insertion = insertion
+        self.intent = intent
+        self.transcript = transcript
     }
 }
 

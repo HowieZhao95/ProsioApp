@@ -25,9 +25,17 @@ export class RequestTimer {
     return performance.now() - this.startedAt;
   }
 
-  /** `Server-Timing` header value: `auth;dur=1.2, parse;dur=0.4, ..., total;dur=812.3`. */
-  toServerTimingHeader(): string {
-    const entries = [...this.stages.map((s) => ({ name: s.name, durMs: s.durMs })), { name: "total", durMs: this.totalMs() }];
+  /**
+   * `Server-Timing` header value: `auth;dur=1.2, parse;dur=0.4, ..., total;dur=812.3`.
+   * Pass `{ includeTotal: false }` when headers must go out before the
+   * request is actually done (e.g. a streaming response, where later
+   * stages like `ttft` aren't known yet) — a `total` computed at that point
+   * would just be elapsed-so-far mislabeled as the real total.
+   */
+  toServerTimingHeader({ includeTotal = true }: { includeTotal?: boolean } = {}): string {
+    const entries = includeTotal
+      ? [...this.stages.map((s) => ({ name: s.name, durMs: s.durMs })), { name: "total", durMs: this.totalMs() }]
+      : this.stages.map((s) => ({ name: s.name, durMs: s.durMs }));
     return entries.map((s) => `${s.name};dur=${s.durMs.toFixed(1)}`).join(", ");
   }
 

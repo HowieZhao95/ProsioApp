@@ -36,15 +36,47 @@ struct MenuBarContentView: View {
                     .buttonStyle(.link)
                     .font(.caption)
             } else {
-                Text("Press \(environment.settings.triggerKey.shortSymbol) to start · press again to stop")
+                Text("\(environment.settings.triggerKey.shortSymbol) dictate · \(environment.settings.askTriggerKey.shortSymbol) ask")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
+            translateToggleLine
             hotkeyStatusLine
             signInStatusLine
         }
         .padding(12)
+    }
+
+    // MARK: - Translate quick toggle (P1)
+
+    private var translateToggleLine: some View {
+        HStack(spacing: 6) {
+            Toggle(isOn: translateEnabledBinding) {
+                HStack(spacing: 4) {
+                    Image(systemName: "globe")
+                    Text("Translate")
+                }
+                .font(.caption)
+            }
+            .toggleStyle(.switch)
+            .controlSize(.mini)
+
+            if environment.settings.translateEnabled {
+                Text("→ \(TranslateLanguages.shortCode(for: environment.settings.translateTarget))")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+        }
+    }
+
+    private var translateEnabledBinding: Binding<Bool> {
+        Binding(
+            get: { environment.settings.translateEnabled },
+            set: { environment.settings.translateEnabled = $0 }
+        )
     }
 
     // MARK: - Hotkey / sign-in status (mac-system: HotkeyStatus, isSignedIn)

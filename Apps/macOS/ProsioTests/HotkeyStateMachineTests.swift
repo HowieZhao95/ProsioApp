@@ -6,54 +6,101 @@ import Testing
 
 @Suite("HotkeyStateMachine")
 struct HotkeyStateMachineTests {
-    // MARK: - triggerKeyDown: purely a function of DictationController.phase
+    // MARK: - triggerKeyDown: idle/finished/failed always start whichever key was pressed
 
-    @Test("idle -> start")
+    @Test("idle -> start(intent) for either key")
     func idleStarts() {
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .idle) == .start)
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .idle, activeIntent: nil) == .start(.dictate))
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .idle, activeIntent: nil) == .start(.ask))
     }
 
-    @Test("listening -> stop")
-    func listeningStops() {
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .listening) == .stop)
-    }
-
-    @Test("finalizing -> ignore (no queue)")
-    func finalizingIgnores() {
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .finalizing) == .ignore)
-    }
-
-    @Test("inserting -> ignore (no queue)")
-    func insertingIgnores() {
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .inserting) == .ignore)
-    }
-
-    @Test("finished -> start (a fresh press after completion starts a new session)")
+    @Test("finished -> start(intent) (a fresh press after completion starts a new session)")
     func finishedStarts() {
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .finished(.pasted)) == .start)
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .finished(.copiedToClipboard)) == .start)
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .finished(.pasted), activeIntent: nil) == .start(.dictate))
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .finished(.pasted), activeIntent: nil) == .start(.ask))
     }
 
-    @Test("failed -> start (a fresh press after a failure starts a new session)")
+    @Test("failed -> start(intent) (a fresh press after a failure starts a new session)")
     func failedStarts() {
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .failed(.cancelled)) == .start)
-        #expect(HotkeyStateMachine.triggerKeyDown(phase: .failed(.emptyTranscript)) == .start)
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .failed(.cancelled), activeIntent: nil) == .start(.dictate))
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .failed(.cancelled), activeIntent: nil) == .start(.ask))
     }
 
-    // MARK: - escKeyDown: only cancels while actively listening
+    // MARK: - listening: only the key matching the active intent stops it
+
+    @Test("listening + matching key -> stop")
+    func listeningMatchingKeyStops() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .listening, activeIntent: .dictate) == .stop)
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .listening, activeIntent: .ask) == .stop)
+    }
+
+    @Test("listening + the other key -> ignore (doesn't belong to the running session)")
+    func listeningOtherKeyIgnores() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .listening, activeIntent: .dictate) == .ignore)
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .listening, activeIntent: .ask) == .ignore)
+    }
+
+    @Test("listening with no active intent recorded -> ignore (defensive; shouldn't normally happen)")
+    func listeningNoActiveIntentIgnores() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .listening, activeIntent: nil) == .ignore)
+    }
+
+    // MARK: - answering: Ask key = follow-up, Dictate key = dismiss then dictate
+
+    @Test("answering + ask key -> start(.ask) (follow-up question, same thread)")
+    func answeringAskKeyStartsFollowUp() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .answering, activeIntent: .ask) == .start(.ask))
+    }
+
+    @Test("answering + dictate key -> dismissAnswerThenStart(.dictate)")
+    func answeringDictateKeyDismissesThenStarts() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .answering, activeIntent: .ask) == .dismissAnswerThenStart(.dictate))
+    }
+
+    // MARK: - No queue: finalizing/composing/inserting always ignore
+
+    @Test("finalizing/composing/inserting -> ignore, for either key")
+    func busyPhasesIgnoreBothKeys() {
+        for phase: DictationPhase in [.finalizing, .composing, .inserting] {
+            #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: phase, activeIntent: .dictate) == .ignore)
+            #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: phase, activeIntent: .dictate) == .ignore)
+        }
+    }
+
+    // MARK: - escKeyDown
 
     @Test("esc while listening -> cancel")
     func escWhileListeningCancels() {
         #expect(HotkeyStateMachine.escKeyDown(phase: .listening) == .cancel)
     }
 
-    @Test("esc outside listening is a no-op")
-    func escOutsideListeningIsNoOp() {
+    @Test("esc while answering -> dismissAnswer")
+    func escWhileAnsweringDismisses() {
+        #expect(HotkeyStateMachine.escKeyDown(phase: .answering) == .dismissAnswer)
+    }
+
+    @Test("esc elsewhere is a no-op")
+    func escElsewhereIsNoOp() {
         #expect(HotkeyStateMachine.escKeyDown(phase: .idle) == .none)
         #expect(HotkeyStateMachine.escKeyDown(phase: .finalizing) == .none)
+        #expect(HotkeyStateMachine.escKeyDown(phase: .composing) == .none)
         #expect(HotkeyStateMachine.escKeyDown(phase: .inserting) == .none)
         #expect(HotkeyStateMachine.escKeyDown(phase: .finished(.pasted)) == .none)
         #expect(HotkeyStateMachine.escKeyDown(phase: .failed(.cancelled)) == .none)
+    }
+
+    // MARK: - needsEscMonitor (gates HotkeyMonitor's NSEvent-based Esc fallback)
+
+    @Test("needsEscMonitor is true exactly where escKeyDown produces an effect")
+    func needsEscMonitorMatchesEscKeyDown() {
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .listening) == true)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .answering) == true)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .idle) == false)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .finalizing) == false)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .composing) == false)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .inserting) == false)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .finished(.pasted)) == false)
+        #expect(HotkeyStateMachine.needsEscMonitor(phase: .failed(.cancelled)) == false)
     }
 }
 
@@ -105,5 +152,31 @@ struct TriggerPhysicalStateTests {
         #expect(tracker.isDown == false)
         // A subsequent "down" is treated as fresh, not a repeat.
         #expect(tracker.observe(isDown: true) == false)
+    }
+
+    @Test("Dictate and ask keys track independently (separate instances)")
+    func independentTrackers() {
+        var dictateState = TriggerPhysicalState()
+        var askState = TriggerPhysicalState()
+
+        _ = dictateState.observe(isDown: true)
+
+        // The ask key's own tracker is unaffected by the dictate key's state.
+        #expect(askState.observe(isDown: true) == false)
+        #expect(dictateState.isDown == true)
+        #expect(askState.isDown == true)
+    }
+}
+
+@Suite("Edit sessions")
+struct HotkeyStateMachineEditTests {
+    @Test("dictate key stops an auto-resolved edit session")
+    func dictateKeyStopsEdit() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .dictate, phase: .listening, activeIntent: .edit) == .stop)
+    }
+
+    @Test("ask key does not stop an edit session")
+    func askKeyIgnoresEdit() {
+        #expect(HotkeyStateMachine.triggerKeyDown(intent: .ask, phase: .listening, activeIntent: .edit) == .ignore)
     }
 }

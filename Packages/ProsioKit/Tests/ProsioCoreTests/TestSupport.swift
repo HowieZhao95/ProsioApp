@@ -148,6 +148,72 @@ final class FakeEngine: TranscriptionEngine, @unchecked Sendable {
     }
 }
 
+// MARK: - FakeComposer
+
+/// Scripted `Composing`.
+final class FakeComposer: Composing, @unchecked Sendable {
+    enum Behavior: Sendable {
+        case deltas([String])
+        case fail(ProsioError)
+        /// Never completes on its own (until cancelled) — used for timeout tests.
+        case hang
+        /// Sleeps before yielding the deltas — lets a test observe an intermediate phase (e.g.
+        /// `.composing`) that would otherwise resolve too fast to catch by polling.
+        case delayThenDeltas(Duration, [String])
+    }
+
+    var behavior: Behavior = .deltas([""])
+
+    private let lock = NSLock()
+    private var _callCount = 0
+    private var _lastRequest: ComposeRequest?
+
+    var callCount: Int {
+        lock.lock(); defer { lock.unlock() }
+        return _callCount
+    }
+
+    var lastRequest: ComposeRequest? {
+        lock.lock(); defer { lock.unlock() }
+        return _lastRequest
+    }
+
+    func compose(_ request: ComposeRequest) -> AsyncThrowingStream<String, Error> {
+        recordCall(request)
+        let behavior = behavior
+        return AsyncThrowingStream { continuation in
+            let task = Task {
+                switch behavior {
+                case .deltas(let deltas):
+                    for delta in deltas {
+                        continuation.yield(delta)
+                    }
+                    continuation.finish()
+                case .fail(let error):
+                    continuation.finish(throwing: error)
+                case .hang:
+                    try? await Task.sleep(for: .seconds(3600))
+                    continuation.finish(throwing: ProsioError.cancelled)
+                case .delayThenDeltas(let duration, let deltas):
+                    try? await Task.sleep(for: duration)
+                    for delta in deltas {
+                        continuation.yield(delta)
+                    }
+                    continuation.finish()
+                }
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+
+    private func recordCall(_ request: ComposeRequest) {
+        lock.lock()
+        _callCount += 1
+        _lastRequest = request
+        lock.unlock()
+    }
+}
+
 // MARK: - FakeRouter
 
 /// Scripted `RouteDeciding`.

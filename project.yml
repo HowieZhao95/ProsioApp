@@ -78,6 +78,7 @@ targets:
       - path: Apps/macOS/ProsioTests
       - path: Apps/macOS/Prosio/System/HotkeyStateMachine.swift
       - path: Apps/macOS/Prosio/System/FocusContextProvider.swift
+      - path: Apps/macOS/Prosio/System/ProsioLog.swift
     dependencies:
       - package: ProsioKit
         product: ProsioCore

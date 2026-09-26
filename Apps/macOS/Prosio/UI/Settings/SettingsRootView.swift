@@ -9,6 +9,9 @@ struct SettingsRootView: View {
             GeneralSettingsView(environment: environment)
                 .tabItem { Label("General", systemImage: "gearshape") }
 
+            ModesSettingsView(environment: environment)
+                .tabItem { Label("Modes", systemImage: "wand.and.stars") }
+
             DictionarySettingsView(dictionary: environment.dictionary)
                 .tabItem { Label("Dictionary", systemImage: "text.book.closed") }
 

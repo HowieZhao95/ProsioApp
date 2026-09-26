@@ -171,13 +171,22 @@ public struct FocusContext: Sendable, Codable, Hashable {
     public var caretRect: CGRect?
     /// True when a secure text field has focus (e.g. password) — never paste there.
     public var isSecureInput: Bool
+    /// Focused window title, if readable (P1: scene detection, prompts).
+    public var windowTitle: String?
+    /// Current page URL when the frontmost app is a browser, if readable.
+    public var url: URL?
+    /// Text selected in the focused element when dictation started (P1: Edit mode, Ask context).
+    public var selectedText: String?
 
-    public init(bundleID: String? = nil, appName: String? = nil, processID: Int32? = nil, caretRect: CGRect? = nil, isSecureInput: Bool = false) {
+    public init(bundleID: String? = nil, appName: String? = nil, processID: Int32? = nil, caretRect: CGRect? = nil, isSecureInput: Bool = false, windowTitle: String? = nil, url: URL? = nil, selectedText: String? = nil) {
         self.bundleID = bundleID
         self.appName = appName
         self.processID = processID
         self.caretRect = caretRect
         self.isSecureInput = isSecureInput
+        self.windowTitle = windowTitle
+        self.url = url
+        self.selectedText = selectedText
     }
 }
 
@@ -231,7 +240,107 @@ public enum DictationPhase: Sendable, Equatable {
     case listening
     /// Microphone closed, waiting for the engine's `.final`.
     case finalizing
+    /// P1: transcript is being transformed by the compose engine (rewrite / translate / edit).
+    case composing
     case inserting
+    /// P1 Ask mode: the answer card is shown (streaming or done). Leaves via `dismissAnswer()`/`insertAnswer()`.
+    case answering
     case finished(InsertionOutcome)
     case failed(ProsioError)
+}
+
+// MARK: - P1 modes (see docs/PROMPTS.md, docs/API.md "Compose")
+
+/// What a dictation session is for. Chosen at `start`: `.edit` automatically when text is selected,
+/// `.ask` from the Ask key, otherwise `.dictate`.
+public enum DictationIntent: String, Sendable, Codable, Hashable {
+    /// Insert what was said (optionally adapted to the scene or translated).
+    case dictate
+    /// The transcript is an instruction applied to `FocusContext.selectedText`; the result replaces the selection.
+    case edit
+    /// The transcript is a question; the answer streams into the answer card.
+    case ask
+}
+
+public enum WritingScene: String, Sendable, Codable, Hashable, CaseIterable {
+    /// No adaptation — insert the SMART transcript directly (fastest path).
+    case general, email, chat, code, document
+}
+
+public struct AppContext: Sendable, Codable, Hashable {
+    public var bundleID: String?
+    public var appName: String?
+    public var windowTitle: String?
+    public var url: String?
+
+    public init(bundleID: String? = nil, appName: String? = nil, windowTitle: String? = nil, url: String? = nil) {
+        self.bundleID = bundleID
+        self.appName = appName
+        self.windowTitle = windowTitle
+        self.url = url
+    }
+}
+
+public struct ComposeTurn: Sendable, Codable, Hashable {
+    public enum Role: String, Sendable, Codable, Hashable { case user, assistant }
+    public var role: Role
+    public var text: String
+
+    public init(role: Role, text: String) {
+        self.role = role
+        self.text = text
+    }
+}
+
+public struct ComposeRequest: Sendable, Codable, Hashable {
+    public enum Mode: String, Sendable, Codable, Hashable { case rewrite, translate, edit, ask }
+
+    public var mode: Mode
+    /// Dictation (rewrite/translate), instruction (edit) or question (ask).
+    public var text: String
+    /// Edit: the text to change. Ask: optional context.
+    public var selection: String?
+    public var scene: WritingScene
+    /// BCP-47 target for `.translate`, e.g. "en-US".
+    public var targetLanguage: String?
+    public var app: AppContext?
+    public var vocabulary: [String]
+    /// Ask follow-ups: previous turns, oldest first.
+    public var history: [ComposeTurn]
+
+    public init(mode: Mode, text: String, selection: String? = nil, scene: WritingScene = .general, targetLanguage: String? = nil, app: AppContext? = nil, vocabulary: [String] = [], history: [ComposeTurn] = []) {
+        self.mode = mode
+        self.text = text
+        self.selection = selection
+        self.scene = scene
+        self.targetLanguage = targetLanguage
+        self.app = app
+        self.vocabulary = vocabulary
+        self.history = history
+    }
+}
+
+/// Transforms text with an LLM via the backend (`POST /api/compose`). Implemented by `BackendClient`.
+public protocol Composing: Sendable {
+    /// Streams the output as text DELTAS in order; the stream finishes when complete. Throws `ProsioError`.
+    func compose(_ request: ComposeRequest) -> AsyncThrowingStream<String, Error>
+}
+
+/// Ask-mode answer card state, owned by `DictationController`.
+public struct AnswerState: Sendable, Equatable {
+    public var question: String
+    /// Cumulative answer text (Markdown) so far.
+    public var text: String
+    public var isStreaming: Bool
+    public var error: ProsioError?
+    /// Completed turns of this thread (for display and follow-ups), oldest first.
+    public var turns: [ComposeTurn]
+
+    public init(question: String, text: String = "", isStreaming: Bool = true, error: ProsioError? = nil, turns: [ComposeTurn] = []) {
+        self.question = question
+        self.text = text
+        self.isStreaming = isStreaming
+        self.error = error
+        self.turns = turns
+    }
 }

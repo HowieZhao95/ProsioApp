@@ -49,6 +49,15 @@ private func makeStubbedSession() -> URLSession {
     return URLSession(configuration: config)
 }
 
+/// Polls a non-actor-isolated condition (e.g. `BackendClient.isSignedIn`, loaded off the main
+/// actor in the background) until it's true or `timeout` elapses.
+private func waitUntilTrue(timeout: TimeInterval = 2, _ condition: () -> Bool) async {
+    let deadline = Date().addingTimeInterval(timeout)
+    while !condition() && Date() < deadline {
+        try? await Task.sleep(for: .milliseconds(5))
+    }
+}
+
 private func jsonResponse(_ url: URL, status: Int, body: String) -> (HTTPURLResponse, Data) {
     let response = HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: ["Content-Type": "application/json"])!
     return (response, Data(body.utf8))
@@ -215,10 +224,24 @@ struct BackendClientTests {
         keychain.write(Data("session-token".utf8), service: "svc", account: "session")
         let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
 
+        // The session token is loaded from the Keychain on a background task (never synchronously
+        // at init, so app launch can't block on a Keychain prompt) — poll until it lands.
+        await waitUntilTrue { client.isSignedIn }
         #expect(client.isSignedIn == true)
         client.signOut()
         #expect(client.isSignedIn == false)
         #expect(keychain.read(service: "svc", account: "session") == nil)
+    }
+
+    @Test func isSignedInLoadsAsynchronouslyWithoutBlocking() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        // Constructing the client must never synchronously touch the Keychain — this call
+        // returning at all (rather than hanging) is itself part of the assertion.
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        await waitUntilTrue { client.isSignedIn }
+        #expect(client.isSignedIn == true)
     }
 
     // MARK: - CloudBatchTranscribing
@@ -327,5 +350,131 @@ struct BackendClientTests {
         // Immediately calling again within the throttle window must not fire a second request.
         await client.prewarm()
         #expect(capture.all().count == 1)
+    }
+
+    // MARK: - Composing
+
+    @Test func composeStreamsDeltasAndSendsExpectedRequest() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        let capture = RequestCapture()
+        StubURLProtocol.handler = { request in
+            capture.record(request)
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: ["Content-Type": "text/plain; charset=utf-8"])!
+            return (response, Data("Hello, world!".utf8))
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        let request = ComposeRequest(mode: .rewrite, text: "hi there", scene: .email, vocabulary: ["Prosio"])
+        var collected = ""
+        for try await delta in client.compose(request) {
+            collected += delta
+        }
+        #expect(collected == "Hello, world!")
+
+        let sent = capture.all().first
+        #expect(sent?.url?.path == "/api/compose")
+        #expect(sent?.httpMethod == "POST")
+        #expect(sent?.value(forHTTPHeaderField: "Authorization") == "Bearer session-token")
+
+        let body = try #require(sent.flatMap(bodyData(from:)))
+        let decoded = try JSONDecoder().decode(ComposeRequest.self, from: body)
+        #expect(decoded.mode == .rewrite)
+        #expect(decoded.text == "hi there")
+        #expect(decoded.scene == .email)
+        #expect(decoded.vocabulary == ["Prosio"])
+    }
+
+    @Test func composeErrorStatusMapsBeforeStreaming() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+
+        StubURLProtocol.handler = { request in
+            jsonResponse(request.url!, status: 402, body: #"{"error":{"code":"quota_exceeded","message":"over limit"}}"#)
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        let request = ComposeRequest(mode: .translate, text: "hi", targetLanguage: "en-US")
+        do {
+            for try await _ in client.compose(request) {}
+            Issue.record("expected quotaExceeded to be thrown")
+        } catch let error as ProsioError {
+            #expect(error == .quotaExceeded)
+        } catch {
+            Issue.record("unexpected error type: \(error)")
+        }
+    }
+}
+
+@Suite struct FileBackedKeychainTests {
+
+    @Test func writeThenReadRoundTrips() throws {
+        let fileURL = makeTempFileURL("dev-session.json")
+        defer { try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent()) }
+        let keychain = FileBackedKeychain(fileURL: fileURL)
+
+        #expect(keychain.read(service: "svc", account: "session") == nil)
+
+        keychain.write(Data("tok_abc".utf8), service: "svc", account: "session")
+        let read = keychain.read(service: "svc", account: "session")
+        #expect(read.flatMap { String(data: $0, encoding: .utf8) } == "tok_abc")
+    }
+
+    @Test func writeCreatesFileWithOwnerOnlyPermissions() throws {
+        let fileURL = makeTempFileURL("dev-session.json")
+        defer { try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent()) }
+        let keychain = FileBackedKeychain(fileURL: fileURL)
+
+        keychain.write(Data("tok_abc".utf8), service: "svc", account: "session")
+
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
+        let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+        let permissions = (attributes[.posixPermissions] as? NSNumber)?.intValue
+        #expect(permissions == 0o600)
+    }
+
+    @Test func deleteRemovesOnlyThatEntry() throws {
+        let fileURL = makeTempFileURL("dev-session.json")
+        defer { try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent()) }
+        let keychain = FileBackedKeychain(fileURL: fileURL)
+
+        keychain.write(Data("tok_a".utf8), service: "svc", account: "session")
+        keychain.write(Data("tok_b".utf8), service: "other", account: "session")
+
+        keychain.delete(service: "svc", account: "session")
+
+        #expect(keychain.read(service: "svc", account: "session") == nil)
+        #expect(keychain.read(service: "other", account: "session").flatMap { String(data: $0, encoding: .utf8) } == "tok_b")
+    }
+
+    @Test func overwriteReplacesPreviousValue() throws {
+        let fileURL = makeTempFileURL("dev-session.json")
+        defer { try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent()) }
+        let keychain = FileBackedKeychain(fileURL: fileURL)
+
+        keychain.write(Data("tok_old".utf8), service: "svc", account: "session")
+        keychain.write(Data("tok_new".utf8), service: "svc", account: "session")
+
+        let read = keychain.read(service: "svc", account: "session")
+        #expect(read.flatMap { String(data: $0, encoding: .utf8) } == "tok_new")
+    }
+
+    @Test func missingFileReadsAsNilWithoutCrashing() throws {
+        let fileURL = makeTempFileURL("does-not-exist.json")
+        let keychain = FileBackedKeychain(fileURL: fileURL)
+        #expect(keychain.read(service: "svc", account: "session") == nil)
+    }
+
+    @Test func backendClientUsesFileBackedKeychainInDebugByDefault() async throws {
+        #if DEBUG
+        let fileURL = FileBackedKeychain.defaultFileURL()
+        #expect(fileURL.lastPathComponent == "dev-session.json")
+        #expect(fileURL.path.contains("Prosio"))
+        #else
+        // Release builds keep using the real Keychain — nothing to assert here without touching it.
+        #endif
     }
 }

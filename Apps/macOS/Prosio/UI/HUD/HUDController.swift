@@ -24,6 +24,10 @@ final class HUDController {
 
     private let capsulePanel = HUDPanel()
     private let capsuleHosting: NSHostingView<HUDCapsuleView>
+    /// P1 Ask mode: owned internally (not exposed on `AppEnvironment`) so this class's own frozen
+    /// `init(controller:settings:)` doesn't have to change to get a second panel. Shows itself
+    /// whenever `controller.phase == .answering`; otherwise stays hidden regardless of `state` here.
+    private let answerCard: AnswerCardController
 
     private var state = HUDViewState()
     private var currentScreen: NSScreen?
@@ -41,6 +45,7 @@ final class HUDController {
 
         capsuleHosting = NSHostingView(rootView: HUDCapsuleView(state: HUDViewState(), dockInset: 0, onCopy: {}))
         capsulePanel.contentView = capsuleHosting
+        answerCard = AnswerCardController(controller: controller, settings: settings)
         layoutForScreen()
 
         // Now that all stored properties are set, wire up the self-capturing bits and start observing.
@@ -76,7 +81,11 @@ final class HUDController {
             phase: HUDViewState.Phase(controller.phase),
             previewText: controller.previewText,
             levelHistory: controller.levelHistory,
-            level: controller.level
+            level: controller.level,
+            intent: controller.intent ?? .dictate,
+            translateShortCode: ((controller.intent ?? .dictate) == .dictate && settings.translateEnabled)
+                ? TranslateLanguages.shortCode(for: settings.translateTarget) : nil,
+            composeLabel: controller.composeLabel
         )
         apply(newState)
     }
@@ -103,7 +112,7 @@ final class HUDController {
         switch state.phase {
         case .idle:
             hideImmediately()
-        case .listening, .finalizing, .inserting:
+        case .listening, .finalizing, .composing, .inserting:
             show()
         case .finished(.pasted), .finished(.accessibility):
             show()
@@ -242,6 +251,40 @@ final class HUDController {
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .failed(ProsioError.network("request timed out").hudMessage), previewText: "So let's meet on Wednesday"))
             try? await Task.sleep(for: .seconds(2.5))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .idle))
+            try? await Task.sleep(for: .milliseconds(500))
+
+            // P1 mode chips: Edit, Translate, Ask. (Ask's actual answer card is a separate panel
+            // driven by the real controller — see AnswerCardView's own #Previews for that.)
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .listening, previewText: "make this sound more confident", levelHistory: waveform, level: 0.6, intent: .edit))
+            try? await Task.sleep(for: .seconds(1))
+            self.apply(HUDViewState(phase: .composing, previewText: "", intent: .edit, composeLabel: "Editing…"))
+            try? await Task.sleep(for: .seconds(1))
+            self.apply(HUDViewState(phase: .finished(.pasted), intent: .edit))
+            try? await Task.sleep(for: .seconds(1))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .idle))
+            try? await Task.sleep(for: .milliseconds(500))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .listening, previewText: "这是今天的会议纪要", levelHistory: waveform, level: 0.6, translateShortCode: "EN"))
+            try? await Task.sleep(for: .seconds(1))
+            self.apply(HUDViewState(phase: .composing, previewText: "", translateShortCode: "EN", composeLabel: "Translating…"))
+            try? await Task.sleep(for: .seconds(1))
+            self.apply(HUDViewState(phase: .finished(.pasted), translateShortCode: "EN"))
+            try? await Task.sleep(for: .seconds(1))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .idle))
+            try? await Task.sleep(for: .milliseconds(500))
+
+            if Task.isCancelled { return }
+            self.apply(HUDViewState(phase: .listening, previewText: "what's the capital of Portugal", levelHistory: waveform, level: 0.6, intent: .ask))
+            try? await Task.sleep(for: .seconds(1.2))
 
             if Task.isCancelled { return }
             self.apply(HUDViewState(phase: .idle))

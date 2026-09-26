@@ -84,7 +84,8 @@ final class AppEnvironment {
             // Gateway and server/scripts/route-eval.ts shows a ~0 false-"clean" rate; until then
             // every call would fail over to cloud and only add latency.
             router: nil,
-            prewarmCloud: { await cloudTranscriber.prewarm() }
+            prewarmCloud: { await cloudTranscriber.prewarm() },
+            composer: backend
         )
 
         let backendRef = backend

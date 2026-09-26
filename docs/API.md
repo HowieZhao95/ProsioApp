@@ -43,6 +43,24 @@ Errors: 401, 402 `quota_exceeded`, 400, 413 `payload_too_large`, 502 `upstream_e
 ### `HEAD /api/transcribe`
 No auth. `204`. Used by the client to pre-warm the TLS connection when dictation starts.
 
+## Compose (P1: rewrite / translate / edit / ask)
+
+### `POST /api/compose`
+LLM text transformation. Prompts: docs/PROMPTS.md (verbatim, in `server/lib/prompts.ts`). Auth required.
+Request (matches Swift `ComposeRequest`):
+```json
+{ "mode": "rewrite" | "translate" | "edit" | "ask",
+  "text": "…", "selection": "…" | null, "scene": "general|email|chat|code|document",
+  "targetLanguage": "en-US" | null,
+  "app": { "bundleID": "…", "appName": "…", "windowTitle": "…", "url": "…" } | null,
+  "vocabulary": ["Prosio"], "history": [{ "role": "user"|"assistant", "text": "…" }] }
+```
+Validation: `text` 1–8000 chars; `selection` ≤ 20000 chars (required for `edit`); `targetLanguage` required for `translate`; `history` ≤ 20 turns (ask only).
+Response: **streamed plain text** (`Content-Type: text/plain; charset=utf-8`, chunked) — the output deltas in order. For non-ask modes the server applies output sanitation at the end (strip a wrapping pair of quotes / single wrapping code fence), so non-ask clients should use the complete body; ask clients render deltas live.
+Headers: `Server-Timing` (auth, prompt, ttft, total) where possible, `X-Prosio-Model: <model id>`.
+Model: env `PROSIO_COMPOSE_MODEL` (default chosen by the compose eval — fast, high-quality Gateway model); `PROSIO_ASK_MODEL` may override for ask.
+Errors (before streaming starts): 400/401/402/502 structured as usual. Mid-stream upstream failure: the stream ends early and the client treats a truncated body as `ProsioError.network`.
+
 ## Routing (auto mode)
 
 ### `POST /api/route`

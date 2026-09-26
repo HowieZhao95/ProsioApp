@@ -1,56 +1,74 @@
 import Foundation
 import ProsioCore
 
-/// Pure decision logic for the toggle hotkey, kept free of CGEvent/AppKit plumbing so it can be
-/// unit tested directly. Owned by mac-system agent.
+/// Pure decision logic for the two toggle hotkeys (Dictate, Ask), kept free of CGEvent/AppKit
+/// plumbing so it can be unit tested directly. Owned by mac-system agent.
 ///
-/// Semantics (product decision: plain toggle, no hold-to-talk, no double-tap):
-/// - Press trigger once -> start. Press again -> stop (then the HUD shows a processing/waiting
-///   state until insertion finishes — mac-ui's concern, not ours).
-/// - Only the trigger key DOWN transition is acted on; key-up is ignored entirely, and so is any
-///   duplicate/auto-repeat "down" observed while the physical key is already held (see
-///   `TriggerPhysicalState`, which the caller uses to filter those out before calling in here).
-/// - There is deliberately no persistent state of our own: every decision is a pure function of
-///   `DictationController.phase` at the moment of the key press, read fresh each time. This means
-///   there is nothing for the hotkey to desync *about* — if a rebuilt/reinstalled event tap or a
-///   missed event ever caused confusion before, that entire class of bug is gone by construction.
+/// Semantics: plain toggle for each key, no hold-to-talk, no double-tap. Every decision is a pure
+/// function of `DictationController.phase`/`.intent` read fresh at the moment of the key press —
+/// there is no persistent state of our own, so there's nothing to desync.
+/// - idle/finished/failed -> `.start(intent)` for whichever key was pressed.
+/// - `.answering` (an answer card is up): Ask key -> `.start(.ask)` (a follow-up question in the
+///   same thread); Dictate key -> `.dismissAnswerThenStart(.dictate)` (leave Ask mode, dictate).
+/// - `.listening` with a press of the key that matches the *active* intent -> `.stop`. A press of
+///   the *other* key while listening is `.ignore` (it doesn't belong to the running session).
+/// - `.finalizing`/`.composing`/`.inserting` -> `.ignore` (no queue).
+/// - Esc: `.listening` -> `.cancel`; `.answering` -> `.dismissAnswer`; otherwise `.none`.
 enum HotkeyStateMachine {
     enum Effect: Equatable {
-        case start
-        /// Stop and finalize the current (listening) session.
+        case start(DictationIntent)
+        case dismissAnswerThenStart(DictationIntent)
+        case dismissAnswer
         case stop
-        /// Cancel the current (listening) session without inserting anything.
         case cancel
-        /// The trigger was pressed while a previous session was still finalizing/inserting.
-        /// Deliberately dropped (no queue) — logged by the caller so it's visible in diagnostics.
+        /// A key press that isn't currently actionable (previous session still finishing, or the
+        /// wrong key for the session that's running). Distinct from `.none` purely so the caller
+        /// can log it distinctly for diagnostics.
         case ignore
         case none
     }
 
-    /// The trigger key went down (a genuine new physical press — the caller is responsible for
-    /// filtering out key-up and repeat/duplicate-down events before calling this).
-    static func triggerKeyDown(phase: DictationPhase) -> Effect {
+    /// A trigger key (`intent` says which one: `.dictate` or `.ask`) went down.
+    static func triggerKeyDown(intent: DictationIntent, phase: DictationPhase, activeIntent: DictationIntent?) -> Effect {
         switch phase {
         case .idle, .finished, .failed:
-            return .start
+            return .start(intent)
+        case .answering:
+            return intent == .ask ? .start(intent) : .dismissAnswerThenStart(intent)
         case .listening:
-            return .stop
-        case .finalizing, .inserting:
+            // The dictate key owns both `.dictate` and auto-resolved `.edit` sessions.
+            if let activeIntent, (activeIntent == .ask) == (intent == .ask) {
+                return .stop
+            }
+            return .ignore
+        case .finalizing, .composing, .inserting:
             return .ignore
         }
     }
 
-    /// Esc was pressed. Only cancels while actively listening — there's nothing sensible to do
-    /// mid-finalize/insert, and nothing to do at all outside a session.
+    /// Esc was pressed.
     static func escKeyDown(phase: DictationPhase) -> Effect {
-        phase == .listening ? .cancel : .none
+        switch phase {
+        case .listening: return .cancel
+        case .answering: return .dismissAnswer
+        case .idle, .finalizing, .composing, .inserting, .finished, .failed: return .none
+        }
+    }
+
+    /// Whether the Esc-fallback `NSEvent` monitors (see `HotkeyMonitor`) need to be installed for
+    /// this phase — exactly the phases where `escKeyDown` can produce an effect. Kept as its own
+    /// pure function so the install/remove *decision* is unit-testable even though the actual
+    /// `NSEvent` monitor plumbing isn't.
+    static func needsEscMonitor(phase: DictationPhase) -> Bool {
+        escKeyDown(phase: phase) != .none
     }
 }
 
-/// Tracks whether the trigger key is physically held down, purely from a stream of "the OS says
+/// Tracks whether a trigger key is physically held down, purely from a stream of "the OS says
 /// down"/"the OS says up" observations (`flagsChanged` events), so the caller can act only on a
 /// genuine down transition and ignore auto-repeat/duplicate-down observations while the key is
-/// already held (and ignore key-up entirely, per the current toggle-only hotkey design).
+/// already held (and ignore key-up entirely, per the toggle-only hotkey design). One instance per
+/// physical key (Dictate and Ask each get their own).
 struct TriggerPhysicalState: Equatable {
     private(set) var isDown = false
 

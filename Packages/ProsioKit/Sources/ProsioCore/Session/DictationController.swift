@@ -36,6 +36,16 @@ public final class DictationController {
     public private(set) var context: FocusContext?
     public private(set) var activeEngineID: String?
     public private(set) var trigger: DictationTrigger?
+    /// P1: what this session is for. Resolved at `start()` — explicit if given, else `.edit` when
+    /// text is selected (and not secure input), else `.dictate`.
+    public private(set) var intent: DictationIntent?
+    /// P1: the focused app's writing scene, resolved at `start()` via `SceneResolver`.
+    public private(set) var scene: WritingScene = .general
+    /// P1 Ask mode: the answer card's state (streaming or done). `nil` outside `.answering`
+    /// (and briefly after `insertAnswer()`/`dismissAnswer()`).
+    public private(set) var answer: AnswerState?
+    /// Short label for the HUD while `phase == .composing`, e.g. "Translating…", "Editing…", "Polishing…".
+    public private(set) var composeLabel: String?
 
     public static let levelHistoryLength = 48
 
@@ -62,6 +72,9 @@ public final class DictationController {
     /// Client-side cap on `router.decide(...)` — any error or overrun is treated as "needs cloud"
     /// per contract. `.auto`-with-`router` only. Overridable via `@testable import`.
     var routerDecisionTimeout: Duration = .seconds(0.8)
+    /// How long rewrite/translate/edit compose calls wait before giving up (rewrite falls back to
+    /// the untransformed transcript; translate/edit fail). 12s per spec. Overridable via `@testable import`.
+    var composeTimeout: Duration = .seconds(12)
 
     private let audio: any AudioCapturing
     private let engines: EngineSet
@@ -76,6 +89,9 @@ public final class DictationController {
     /// Fired (best-effort, off the main actor) at the start of every session to warm the cloud
     /// HTTPS connection ahead of when it might actually be needed.
     private let prewarmCloud: (@Sendable () async -> Void)?
+    /// P1: transforms text with an LLM (rewrite/translate/edit/ask). `nil` (default) turns every
+    /// P1 feature off — sessions behave exactly as before (today's fast path).
+    private let composer: (any Composing)?
 
     private var meterTask: Task<Void, Never>?
     /// Consumes the final-determining engine (`local` in `.local` mode, `cloud` otherwise) and
@@ -138,6 +154,9 @@ public final class DictationController {
     private var tInsertionDone: Date?
     private var routeDecisionForDebug: RouteDecision?
     private var routeLatencyMsForDebug: Double?
+    private var composeModeForDebug: String?
+    private var composeLatencyMsForDebug: Double?
+    private var composeOutputForDebug: String?
 
     // MARK: - Routing (`.auto` mode with `router` set)
 
@@ -155,7 +174,8 @@ public final class DictationController {
         dictionary: DictionaryStore,
         settings: AppSettings,
         router: (any RouteDeciding)? = nil,
-        prewarmCloud: (@Sendable () async -> Void)? = nil
+        prewarmCloud: (@Sendable () async -> Void)? = nil,
+        composer: (any Composing)? = nil
     ) {
         self.audio = audio
         self.engines = engines
@@ -166,6 +186,7 @@ public final class DictationController {
         self.settings = settings
         self.router = router
         self.prewarmCloud = prewarmCloud
+        self.composer = composer
     }
 
     /// True while listening/finalizing/inserting.
@@ -177,8 +198,19 @@ public final class DictationController {
     }
 
     /// Opens the mic and starts streaming, then captures focus context. No-op if busy.
-    public func start(trigger: DictationTrigger) {
+    ///
+    /// - Parameter intent: `nil` (default) auto-resolves to `.edit` when text is selected at the
+    ///   focused element (and it's not secure input), else `.dictate`. Pass `.ask` explicitly for
+    ///   the Ask key — auto-resolution never produces `.ask`.
+    public func start(trigger: DictationTrigger, intent requestedIntent: DictationIntent? = nil) {
         guard !isBusy else { return }
+
+        // A visible answer card, starting anything other than another `.ask`, gets dismissed
+        // first. (Auto-resolution never yields `.ask`, so `requestedIntent != .ask` also covers
+        // the `nil` case correctly.)
+        if answer != nil, requestedIntent != .ask {
+            dismissAnswer()
+        }
 
         sessionGeneration += 1
 
@@ -208,6 +240,10 @@ public final class DictationController {
         routeDecisionForDebug = nil
         routeLatencyMsForDebug = nil
         bufferedChunksForReplay = []
+        composeLabel = nil
+        composeModeForDebug = nil
+        composeLatencyMsForDebug = nil
+        composeOutputForDebug = nil
 
         let mode = settings.enginePreference
         activeMode = mode
@@ -227,7 +263,10 @@ public final class DictationController {
         tMicOpen = Date()
         phase = .listening
 
-        context = contextProvider.currentContext()
+        let capturedContext = contextProvider.currentContext()
+        context = capturedContext
+        intent = requestedIntent ?? ((capturedContext.selectedText?.isEmpty == false && !capturedContext.isSecureInput) ? .edit : .dictate)
+        scene = SceneResolver.scene(for: capturedContext, overrides: settings.sceneOverrides)
 
         if let prewarmCloud {
             Task.detached(priority: .utility) {
@@ -518,7 +557,7 @@ public final class DictationController {
 
         if !decision.needsCloud {
             activeEngineID = engines.local.id
-            await insertAndRecord(final: localText, generation: generation)
+            await handleFinalTranscript(localText, generation: generation)
         } else {
             await runCloudReplay(generation: generation, localFallback: localText)
         }
@@ -608,10 +647,10 @@ public final class DictationController {
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmed.isEmpty {
                 activeEngineID = engines.cloud.id
-                await insertAndRecord(final: trimmed, generation: generation)
+                await handleFinalTranscript(trimmed, generation: generation)
             } else if let localFallback {
                 activeEngineID = engines.local.id
-                await insertAndRecord(final: localFallback, generation: generation)
+                await handleFinalTranscript(localFallback, generation: generation)
             } else {
                 handleEmptyFinal()
             }
@@ -619,7 +658,7 @@ public final class DictationController {
         case .failure(let error):
             if let localFallback {
                 activeEngineID = engines.local.id
-                await insertAndRecord(final: localFallback, generation: generation)
+                await handleFinalTranscript(localFallback, generation: generation)
             } else {
                 let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
                 phase = .failed(mapped)
@@ -629,7 +668,7 @@ public final class DictationController {
         case .timeout, .none:
             if let localFallback {
                 activeEngineID = engines.local.id
-                await insertAndRecord(final: localFallback, generation: generation)
+                await handleFinalTranscript(localFallback, generation: generation)
             } else {
                 phase = .failed(.transcriptionFailed("timeout"))
                 finishSession()
@@ -720,7 +759,7 @@ public final class DictationController {
             if trimmed.isEmpty {
                 handleEmptyFinal()
             } else {
-                await insertAndRecord(final: trimmed, generation: generation)
+                await handleFinalTranscript(trimmed, generation: generation)
             }
 
         case .failure(let error):
@@ -729,7 +768,7 @@ public final class DictationController {
 
             if let fallback = usableAutoLocalFallback() {
                 activeEngineID = engines.local.id
-                await insertAndRecord(final: fallback, generation: generation)
+                await handleFinalTranscript(fallback, generation: generation)
             } else {
                 let mapped = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
                 phase = .failed(mapped)
@@ -742,14 +781,14 @@ public final class DictationController {
 
             if let fallback = usableAutoLocalFallback() {
                 activeEngineID = engines.local.id
-                await insertAndRecord(final: fallback, generation: generation)
+                await handleFinalTranscript(fallback, generation: generation)
             } else if activeMode != .cloud {
                 // `.local`: this IS the original single-engine "timeout -> last preview" fallback.
                 // `.auto`: tertiary fallback once local's own final isn't available either —
                 // whatever's currently on screen (a local or cloud partial) beats nothing.
                 let fallback = previewText.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !fallback.isEmpty {
-                    await insertAndRecord(final: fallback, generation: generation)
+                    await handleFinalTranscript(fallback, generation: generation)
                 } else {
                     phase = .failed(.transcriptionFailed("timeout"))
                     finishSession()
@@ -782,7 +821,7 @@ public final class DictationController {
         }
     }
 
-    private func insertAndRecord(final: String, generation: Int) async {
+    private func insertAndRecord(final: String, generation: Int, transcriptForHistory: String? = nil) async {
         phase = .inserting
         let outcome = await inserter.insert(final, into: context)
         tInsertionDone = Date()
@@ -802,7 +841,9 @@ public final class DictationController {
             appName: context?.appName,
             engineID: engineIDUsed,
             durationSeconds: totalAudioDuration,
-            insertion: outcome
+            insertion: outcome,
+            intent: intent,
+            transcript: transcriptForHistory
         )
 
         if settings.historyEnabled {
@@ -813,6 +854,309 @@ public final class DictationController {
         }
 
         finishSession(insertedText: final, outcome: outcome)
+    }
+
+    // MARK: - P1: intent dispatch (rewrite / translate / edit / ask)
+
+    /// Every "we have the final transcript" path (whichever engine/fallback produced it) routes
+    /// through here so compose (rewrite/translate/edit/ask) applies uniformly regardless of source.
+    private func handleFinalTranscript(_ transcript: String, generation: Int) async {
+        switch intent {
+        case .edit:
+            await runEdit(instruction: transcript, generation: generation)
+        case .ask:
+            await runAsk(question: transcript, generation: generation)
+        case .dictate, .none:
+            await runDictate(transcript: transcript, generation: generation)
+        }
+    }
+
+    private func runDictate(transcript: String, generation: Int) async {
+        if let (target, remainder) = TranslationPrefix.parse(transcript),
+           !remainder.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            await runTranslate(text: remainder, target: target, generation: generation, transcriptForHistory: transcript)
+        } else if settings.translateEnabled {
+            await runTranslate(text: transcript, target: settings.translateTarget, generation: generation, transcriptForHistory: transcript)
+        } else if settings.adaptToApp, scene != .general {
+            await runRewrite(transcript: transcript, generation: generation)
+        } else {
+            // Today's fast path: no compose involved, insert exactly what was transcribed.
+            await insertAndRecord(final: transcript, generation: generation)
+        }
+    }
+
+    private func runRewrite(transcript: String, generation: Int) async {
+        guard let composer else {
+            // No composer configured -> P1 off, behave exactly as before.
+            await insertAndRecord(final: transcript, generation: generation)
+            return
+        }
+
+        phase = .composing
+        previewText = transcript
+        composeLabel = "Polishing…"
+        composeModeForDebug = "rewrite"
+
+        let request = ComposeRequest(mode: .rewrite, text: transcript, scene: scene, app: makeAppContext(), vocabulary: dictionary.vocabulary)
+        let result = await collectCompose(composer, request)
+        guard generation == sessionGeneration else { return }
+
+        switch result {
+        case .success(let text):
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            composeOutputForDebug = trimmed
+            let final = trimmed.isEmpty ? transcript : trimmed
+            await insertAndRecord(final: final, generation: generation, transcriptForHistory: transcript)
+        case .failure, .timeout:
+            // Graceful degradation: insert the untransformed transcript rather than fail.
+            await insertAndRecord(final: transcript, generation: generation, transcriptForHistory: transcript)
+        }
+    }
+
+    private func runTranslate(text: String, target: String, generation: Int, transcriptForHistory: String) async {
+        guard let composer else {
+            await failTranslate(transcript: transcriptForHistory, generation: generation, error: .engineUnavailable("compose disabled"))
+            return
+        }
+
+        phase = .composing
+        previewText = transcriptForHistory
+        composeLabel = "Translating…"
+        composeModeForDebug = "translate"
+
+        let request = ComposeRequest(mode: .translate, text: text, scene: scene, targetLanguage: target, app: makeAppContext(), vocabulary: dictionary.vocabulary)
+        let result = await collectCompose(composer, request)
+        guard generation == sessionGeneration else { return }
+
+        switch result {
+        case .success(let translated):
+            let trimmed = translated.trimmingCharacters(in: .whitespacesAndNewlines)
+            composeOutputForDebug = trimmed
+            if trimmed.isEmpty {
+                await failTranslate(transcript: transcriptForHistory, generation: generation, error: .emptyTranscript)
+            } else {
+                await insertAndRecord(final: trimmed, generation: generation, transcriptForHistory: transcriptForHistory)
+            }
+        case .failure(let error):
+            await failTranslate(transcript: transcriptForHistory, generation: generation, error: error)
+        case .timeout:
+            await failTranslate(transcript: transcriptForHistory, generation: generation, error: .transcriptionFailed("translate timeout"))
+        }
+    }
+
+    /// Translate failed (or a composer isn't configured): never insert untranslated text
+    /// silently. Copy the transcript out via the inserter's own clipboard-fallback semantics
+    /// (`into: nil` — it can't paste anywhere specific) and record `.copiedToClipboard` regardless
+    /// of what the inserter itself reports, then fail the session.
+    private func failTranslate(transcript: String, generation: Int, error: ProsioError) async {
+        _ = await inserter.insert(transcript, into: nil)
+        tInsertionDone = Date()
+        guard generation == sessionGeneration else { return }
+
+        phase = .failed(error)
+        previewText = transcript
+
+        let item = HistoryItem(
+            text: transcript,
+            appBundleID: context?.bundleID,
+            appName: context?.appName,
+            engineID: activeEngineID ?? "unknown",
+            durationSeconds: totalAudioDuration,
+            insertion: .copiedToClipboard,
+            intent: intent,
+            transcript: transcript
+        )
+        if settings.historyEnabled {
+            try? history.append(item)
+        }
+        onSessionCompleted?(item)
+
+        finishSession(insertedText: transcript, outcome: .copiedToClipboard)
+    }
+
+    private func runEdit(instruction: String, generation: Int) async {
+        let trimmedInstruction = instruction.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedInstruction.isEmpty else {
+            // Empty instruction -> cancel silently, selection untouched.
+            finishSession()
+            phase = .idle
+            previewText = ""
+            return
+        }
+        guard let composer, let selection = context?.selectedText, !selection.isEmpty else {
+            phase = .failed(.engineUnavailable("edit unavailable"))
+            finishSession()
+            return
+        }
+
+        phase = .composing
+        previewText = trimmedInstruction
+        composeLabel = "Editing…"
+        composeModeForDebug = "edit"
+
+        let request = ComposeRequest(mode: .edit, text: trimmedInstruction, selection: selection, scene: scene, app: makeAppContext(), vocabulary: dictionary.vocabulary)
+        let result = await collectCompose(composer, request)
+        guard generation == sessionGeneration else { return }
+
+        switch result {
+        case .success(let text):
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            composeOutputForDebug = trimmed
+            guard !trimmed.isEmpty else {
+                phase = .failed(.emptyTranscript)
+                finishSession()
+                return
+            }
+            await insertAndRecord(final: trimmed, generation: generation, transcriptForHistory: trimmedInstruction)
+        case .failure(let error):
+            phase = .failed(error)
+            finishSession()
+        case .timeout:
+            phase = .failed(.transcriptionFailed("edit timeout"))
+            finishSession()
+        }
+    }
+
+    private func runAsk(question: String, generation: Int) async {
+        let trimmedQuestion = question.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuestion.isEmpty else {
+            finishSession()
+            phase = .idle
+            previewText = ""
+            return
+        }
+        guard let composer else {
+            phase = .failed(.engineUnavailable("ask unavailable"))
+            finishSession()
+            return
+        }
+
+        // Starting another `.ask` while a card is already showing is a follow-up: keep the turns.
+        let previousTurns = answer?.turns ?? []
+        var liveAnswer = AnswerState(question: trimmedQuestion, text: "", isStreaming: true, error: nil, turns: previousTurns)
+        answer = liveAnswer
+        phase = .answering
+        composeModeForDebug = "ask"
+
+        let request = ComposeRequest(mode: .ask, text: trimmedQuestion, selection: context?.selectedText, scene: scene, app: makeAppContext(), vocabulary: dictionary.vocabulary, history: previousTurns)
+        let startedAt = Date()
+
+        do {
+            for try await delta in composer.compose(request) {
+                guard generation == sessionGeneration else { return }
+                liveAnswer.text += delta
+                answer = liveAnswer
+            }
+            guard generation == sessionGeneration else { return }
+            composeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+
+            let trimmedAnswer = liveAnswer.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmedAnswer.isEmpty {
+                // The stream completed without error but produced nothing usable — surface this
+                // as an error rather than leaving the card silently blank.
+                liveAnswer.isStreaming = false
+                liveAnswer.error = .network("empty answer")
+                answer = liveAnswer
+                composeOutputForDebug = nil
+            } else {
+                liveAnswer.isStreaming = false
+                liveAnswer.turns = previousTurns + [ComposeTurn(role: .user, text: trimmedQuestion), ComposeTurn(role: .assistant, text: liveAnswer.text)]
+                answer = liveAnswer
+                composeOutputForDebug = liveAnswer.text
+            }
+            // Stays in `.answering`: the user dismisses or inserts explicitly.
+        } catch {
+            guard generation == sessionGeneration else { return }
+            composeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+            liveAnswer.isStreaming = false
+            liveAnswer.error = (error as? ProsioError) ?? .transcriptionFailed("\(error)")
+            answer = liveAnswer
+        }
+    }
+
+    /// Dismisses the answer card without inserting anything.
+    public func dismissAnswer() {
+        answer = nil
+        if case .answering = phase {
+            phase = .idle
+            previewText = ""
+            finishSession()
+        }
+    }
+
+    /// Inserts the current answer's text into the focused app.
+    public func insertAnswer() async {
+        guard case .answering = phase, let currentAnswer = answer,
+              !currentAnswer.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let generation = sessionGeneration
+
+        phase = .inserting
+        let outcome = await inserter.insert(currentAnswer.text, into: context)
+        tInsertionDone = Date()
+        guard generation == sessionGeneration else { return }
+
+        phase = .finished(outcome)
+        previewText = currentAnswer.text
+        answer = nil
+
+        let item = HistoryItem(
+            text: currentAnswer.text,
+            appBundleID: context?.bundleID,
+            appName: context?.appName,
+            engineID: activeEngineID ?? "unknown",
+            durationSeconds: totalAudioDuration,
+            insertion: outcome,
+            intent: .ask,
+            transcript: currentAnswer.question
+        )
+        if settings.historyEnabled {
+            try? history.append(item)
+        }
+        if outcome == .pasted || outcome == .accessibility || outcome == .copiedToClipboard {
+            onSessionCompleted?(item)
+        }
+
+        finishSession(insertedText: currentAnswer.text, outcome: outcome)
+    }
+
+    private enum ComposeOutcome {
+        case success(String)
+        case failure(ProsioError)
+        case timeout
+    }
+
+    /// Fully collects `composer.compose(request)`'s deltas, racing it against `composeTimeout`.
+    private func collectCompose(_ composer: any Composing, _ request: ComposeRequest) async -> ComposeOutcome {
+        let startedAt = Date()
+        let timeout = composeTimeout
+
+        let outcome = await withTaskGroup(of: ComposeOutcome?.self) { group -> ComposeOutcome? in
+            group.addTask {
+                do {
+                    var collected = ""
+                    for try await delta in composer.compose(request) {
+                        collected += delta
+                    }
+                    return .success(collected)
+                } catch {
+                    return .failure((error as? ProsioError) ?? .transcriptionFailed("\(error)"))
+                }
+            }
+            group.addTask {
+                try? await Task.sleep(for: timeout)
+                return .timeout
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first ?? nil
+        }
+
+        composeLatencyMsForDebug = Date().timeIntervalSince(startedAt) * 1000
+        return outcome ?? .timeout
+    }
+
+    private func makeAppContext() -> AppContext {
+        AppContext(bundleID: context?.bundleID, appName: context?.appName, windowTitle: context?.windowTitle, url: context?.url?.absoluteString)
     }
 
     private func finishSession(insertedText: String? = nil, outcome: InsertionOutcome? = nil) {
@@ -866,7 +1210,12 @@ public final class DictationController {
             routeNeedsCloud: routeDecisionForDebug?.needsCloud,
             routeCleanProbability: routeDecisionForDebug?.cleanProbability,
             routeReason: routeDecisionForDebug?.reason,
-            routeLatencyMs: routeLatencyMsForDebug
+            routeLatencyMs: routeLatencyMsForDebug,
+            intent: intent?.rawValue,
+            scene: scene.rawValue,
+            composeMode: composeModeForDebug,
+            composeLatencyMs: composeLatencyMsForDebug,
+            composeOutput: composeOutputForDebug
         )
 
         var audioData = Data()
