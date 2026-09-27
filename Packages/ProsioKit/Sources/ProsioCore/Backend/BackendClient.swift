@@ -34,7 +34,7 @@ public struct UsageStatus: Sendable, Codable, Hashable {
 
 /// HTTP client for the Prosio backend (see docs/API.md). Session token stored in Keychain.
 /// PUBLIC API FROZEN — implementation owned by core agent.
-public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
+public final class BackendClient: @unchecked Sendable {
     public let baseURL: URL
 
     private let session: URLSession
@@ -45,10 +45,9 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
     /// `signedInEmail` survives a relaunch without a network round-trip.
     private let emailAccountName = "session-email"
 
-    /// Guards `tokenCache`/`lastPrewarmAt`/the session-token cache; kept as a plain lock (not an
+    /// Guards `lastPrewarmAt` and sign-in notifications; kept as a plain lock (not an
     /// actor) so `isSignedIn` stays usable from synchronous, non-async call sites.
     private let lock = NSLock()
-    private var tokenCache: [String: GatewayToken] = [:]
     private var lastPrewarmAt: Date?
     private var _onSignInStateChange: (@Sendable (Bool) -> Void)?
     /// The last value delivered to the *current* `_onSignInStateChange` closure — `nil` means it
@@ -211,9 +210,6 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
         keychain.delete(service: keychainService, account: accountName)
         keychain.delete(service: keychainService, account: emailAccountName)
         setCachedSession(token: nil, email: nil)
-        lock.lock()
-        tokenCache = [:]
-        lock.unlock()
         notifySignInStateChange()
     }
 
@@ -238,16 +234,6 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
         _lastNotifiedSignInState = value
         lock.unlock()
         callback?(value)
-    }
-
-    public func token(for model: String) async throws -> GatewayToken {
-        if let cached = takeCachedTokenIfFresh(for: model) {
-            schedulePrefetch(for: model)
-            return cached
-        }
-        let fresh = try await performTokenRequest(model: model)
-        schedulePrefetch(for: model)
-        return fresh
     }
 
     public func reportUsage(_ report: UsageReport) async throws {
@@ -279,44 +265,6 @@ public final class BackendClient: GatewayTokenProviding, @unchecked Sendable {
         let request = try await makeRequest(path: "api/dictionary", method: "PUT", body: body, requiresAuth: true)
         let (data, response) = try await performRequest(request)
         try Self.checkResponse(response, data: data)
-    }
-
-    // MARK: - Token prefetch cache
-
-    /// Removes and returns the cached token for `model` if it still has more than 5s of validity
-    /// left (tokens are single-use, so a cache hit is always consumed regardless of freshness).
-    private func takeCachedTokenIfFresh(for model: String) -> GatewayToken? {
-        lock.lock()
-        let cached = tokenCache.removeValue(forKey: model)
-        lock.unlock()
-        guard let cached, cached.expiresAt.timeIntervalSinceNow > 5 else { return nil }
-        return cached
-    }
-
-    private func cacheToken(_ token: GatewayToken, for model: String) {
-        lock.lock()
-        tokenCache[model] = token
-        lock.unlock()
-    }
-
-    /// Kicks off a background fetch to keep the per-model cache warm, called after every
-    /// successful `token(for:)` (cache hit or miss) rather than exposing a public prefetch API.
-    private func schedulePrefetch(for model: String) {
-        Task { [weak self] in
-            guard let self else { return }
-            if let token = try? await self.performTokenRequest(model: model) {
-                self.cacheToken(token, for: model)
-            }
-        }
-    }
-
-    private func performTokenRequest(model: String) async throws -> GatewayToken {
-        struct RequestBody: Encodable { let model: String }
-        let body = try Self.makeEncoder().encode(RequestBody(model: model))
-        let request = try await makeRequest(path: "api/transcribe/token", method: "POST", body: body, requiresAuth: true)
-        let (data, response) = try await performRequest(request)
-        try Self.checkResponse(response, data: data)
-        return try Self.makeDecoder().decode(GatewayToken.self, from: data)
     }
 
     // MARK: - Session token

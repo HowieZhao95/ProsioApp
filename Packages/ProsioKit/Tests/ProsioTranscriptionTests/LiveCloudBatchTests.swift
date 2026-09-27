@@ -19,7 +19,7 @@ struct LiveCloudBatchTests {
         let vocabulary = env["PROSIO_LIVE_VOCAB"].map { $0.split(separator: ",").map(String.init) } ?? []
         let languageHints = env["PROSIO_LIVE_LOCALE"].map { [$0] } ?? []
 
-        let pcm = try LiveGatewayTests.pcmData(fromWAV: Data(contentsOf: wavURL))
+        let pcm = try LiveAudioFixtures.pcmData(fromWAV: Data(contentsOf: wavURL))
         let transcriber = DevBackendCloudBatchTranscribing(baseURL: backend)
         let engine = CloudBatchTranscriptionEngine(transcriber: transcriber)
 

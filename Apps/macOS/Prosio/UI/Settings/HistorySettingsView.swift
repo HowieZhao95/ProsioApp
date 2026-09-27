@@ -78,8 +78,8 @@ struct HistorySettingsView: View {
 #if DEBUG
 #Preview {
     let history = HistoryStore(fileURL: nil)
-    try? history.append(HistoryItem(text: "Let's ship the HUD by Friday", appBundleID: "com.apple.Notes", appName: "Notes", engineID: "gateway.gemini-3.5-transcribe-live", durationSeconds: 4.2, insertion: .pasted))
-    try? history.append(HistoryItem(text: "老王：\n\n- 我下周请三天假，工作已经交接给小李了。\n- 谢谢！", appBundleID: "com.apple.MobileSMS", appName: "Messages", engineID: "gateway.gemini-3.5-transcribe-live", durationSeconds: 3, insertion: .pasted, intent: .write, transcript: "帮我回复老王说下周请三天假"))
+    try? history.append(HistoryItem(text: "Let's ship the HUD by Friday", appBundleID: "com.apple.Notes", appName: "Notes", engineID: "cloud.gemini-3.5-transcribe", durationSeconds: 4.2, insertion: .pasted))
+    try? history.append(HistoryItem(text: "老王：\n\n- 我下周请三天假，工作已经交接给小李了。\n- 谢谢！", appBundleID: "com.apple.MobileSMS", appName: "Messages", engineID: "cloud.gemini-3.5-transcribe", durationSeconds: 3, insertion: .pasted, intent: .write, transcript: "帮我回复老王说下周请三天假"))
     return HistorySettingsView(history: history, settings: AppSettings())
         .frame(width: 520, height: 460)
 }

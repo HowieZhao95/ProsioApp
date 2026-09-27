@@ -1,6 +1,6 @@
 import Foundation
 
-// Small, pure PCM16LE helpers for the Gateway engine. Deliberately not shared with `ProsioAudio`
+// PCM16LE helpers for local speech analysis and batch audio. Deliberately not shared with `ProsioAudio`
 // (wrong dependency direction: ProsioTranscription -> ProsioAudio is not in Package.swift, and
 // ProsioAudio must stay independent of the transcription engines) — the duplication is a handful
 // of lines and both copies are owned by this agent.
@@ -29,21 +29,4 @@ func int16SamplesToLittleEndianData(_ samples: [Int16]) -> Data {
         data.append(UInt8(truncatingIfNeeded: unsigned >> 8))
     }
     return data
-}
-
-extension Data {
-    /// Splits into chunks of at most `maxBytes`, preserving order. Used to keep binary audio
-    /// frames under the Gateway's frame-size limit (envelope rule 7 in
-    /// docs/gateway-ws-protocol.md).
-    func chunked(maxBytes: Int) -> [Data] {
-        guard maxBytes > 0, !isEmpty else { return isEmpty ? [] : [self] }
-        var chunks: [Data] = []
-        var offset = startIndex
-        while offset < endIndex {
-            let end = index(offset, offsetBy: maxBytes, limitedBy: endIndex) ?? endIndex
-            chunks.append(self[offset..<end])
-            offset = end
-        }
-        return chunks
-    }
 }

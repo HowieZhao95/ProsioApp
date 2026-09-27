@@ -11,7 +11,7 @@ export default function Home() {
           <code>POST /api/auth/dev</code>
         </li>
         <li>
-          <code>POST /api/transcribe/token</code>
+          <code>POST /api/transcribe</code>
         </li>
         <li>
           <code>GET|POST /api/usage</code>

@@ -31,8 +31,8 @@ export const evalCasesSchema = z.array(evalCaseSchema);
 
 export type TranscribeMode = "smart" | "verbatim";
 
-/** Which transcription path a case was run through. P0 default is "batch"; "live" (streaming) is kept for comparison behind --live. */
-export type EvalTransport = "batch" | "live";
+/** Cloud batch transcription transport. */
+export type EvalTransport = "batch";
 
 export interface EvalCaseResult {
   id: string;

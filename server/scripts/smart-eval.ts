@@ -1,45 +1,9 @@
 #!/usr/bin/env -S npx tsx
 /**
- * SMART-mode evaluation harness for the Prosio P0 transcription path.
- *
- * Default transport is **batch**: sends each recorded case's whole audio
- * file (eval/audio/<id>.wav, 16kHz mono PCM16 — the only rate Gemini
- * accepts) through the same `transcribeBatch()` helper (lib/gateway.ts)
- * that backs `POST /api/transcribe`, i.e. `experimental_transcribe` +
- * `gateway.transcriptionModel("google/gemini-3.5-transcribe")`. This is the
- * P0 architecture as of 2026-09-26: live-testing found Gateway's streaming
- * transcription (`google/gemini-3.5-transcribe-live`) unreliable (dropped
- * segments, ~3.5s to final), while batch SMART is reliable and ~2-4s. The
- * client shows an on-device live preview meanwhile and calls this batch
- * endpoint for the final, SMART-cleaned text.
- *
- * The old streaming path is kept for comparison behind --live (see
- * scripts/live-smoke.ts for a lower-level one-off streaming probe).
- *
- * Usage (from server/):
- *   npx tsx scripts/smart-eval.ts                  # run every case that has audio, batch transport
- *   npx tsx scripts/smart-eval.ts --case zh-01      # just one case
- *   npx tsx scripts/smart-eval.ts --mode verbatim   # compare against verbatim mode
- *   npx tsx scripts/smart-eval.ts --live            # use the streaming transport instead of batch
- *   npx tsx scripts/smart-eval.ts --dry-run         # validate cases.json + audio files, no API calls
- *   npx tsx scripts/smart-eval.ts --tts             # synthesize missing audio (smoke test only, see below)
- *
- * Requires AI_GATEWAY_API_KEY to actually call the Gateway. Without it,
- * every case fails with a clear "no Gateway key" error and the script still
- * exits 0 — see eval/README.md.
- *
- * === Provider options: confirmed vs inferred ===
- * SMART mode / vocabulary / language hints are passed as
- * `providerOptions.google` = `{ mode: "SMART" | "VERBATIM", customVocabulary:
- * string[], languageCodes: string[], wordTimestamp?, diarization? }`.
- * This shape is CONFIRMED by reading node_modules/@ai-sdk/google's
- * `googleTranscriptionModelOptions` zod schema (it maps onto Google's
- * `AudioTranscriptionConfig`), AND (for the batch transport, `google` key,
- * `mode`/`customVocabulary`) confirmed **live** against a real Gateway on
- * 2026-09-26. The `google` key for the *streaming* transport specifically
- * (--live) remains inferred rather than live-confirmed, since streaming
- * itself turned out unreliable enough that we didn't chase down its exact
- * provider-options wiring further — see GOOGLE_PROVIDER_OPTIONS_KEY below.
+ * SMART-mode evaluation for cloud batch transcription, using the same
+ * transcribeBatch() helper as POST /api/transcribe.
+ * Usage: --case <id>, --mode smart|verbatim, --dry-run, --tts.
+ * Requires AI_GATEWAY_API_KEY for API calls; --dry-run is offline.
  */
 
 import { randomUUID } from "node:crypto";
@@ -51,13 +15,13 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 import { gateway } from "@ai-sdk/gateway";
-import { experimental_generateSpeech as generateSpeech, experimental_streamTranscribe as streamTranscribe } from "ai";
+import { experimental_generateSpeech as generateSpeech } from "ai";
 
 import { characterErrorRate } from "../lib/eval/cer";
 import { runHeuristics, type HeuristicResult } from "../lib/eval/heuristics";
 import { evalCasesSchema, type EvalCase, type EvalCaseResult, type EvalTransport, type TranscribeMode } from "../lib/eval/types";
 import { transcribeBatch } from "../lib/gateway";
-import { chunkPcm16, parseWav, WavParseError } from "../lib/wav";
+import { parseWav, WavParseError } from "../lib/wav";
 
 const execFileAsync = promisify(execFile);
 
@@ -67,11 +31,7 @@ const AUDIO_DIR = join(EVAL_DIR, "audio");
 const RESULTS_DIR = join(EVAL_DIR, "results");
 const CASES_PATH = join(EVAL_DIR, "cases.json");
 
-const LIVE_MODEL_ID = "google/gemini-3.5-transcribe-live"; // --live only; batch transport uses lib/gateway.ts's BATCH_TRANSCRIBE_MODEL.
-const GOOGLE_PROVIDER_OPTIONS_KEY = "google"; // confirmed live for batch; see header comment for --live.
-const CHUNK_MS = 50; // --live pacing only.
-const PER_CASE_TIMEOUT_MS = 30_000;
-const REQUIRED_SAMPLE_RATE = 16000; // Gemini (both batch and live) accepts only 16kHz mono PCM16.
+const REQUIRED_SAMPLE_RATE = 16000; // Gemini batch accepts 16kHz mono PCM16.
 
 // --- CLI args -----------------------------------------------------------
 
@@ -95,8 +55,6 @@ function parseArgs(argv: string[]): Args {
         throw new Error(`--mode must be "smart" or "verbatim", got "${value}"`);
       }
       args.mode = value;
-    } else if (arg === "--live") {
-      args.transport = "live";
     } else if (arg === "--dry-run") {
       args.dryRun = true;
     } else if (arg === "--tts") {
@@ -214,32 +172,6 @@ async function synthesizeAudio(kase: EvalCase): Promise<string | null> {
   }
 }
 
-// --- paced audio streaming --------------------------------------------------
-
-function delay(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-function createPacedAudioStream(chunks: Buffer[], chunkMs: number) {
-  let resolveAudioEndedAt!: (t: number) => void;
-  const audioEndedAt = new Promise<number>((resolve) => {
-    resolveAudioEndedAt = resolve;
-  });
-
-  const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      for (const chunk of chunks) {
-        controller.enqueue(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength));
-        await delay(chunkMs);
-      }
-      controller.close();
-      resolveAudioEndedAt(performance.now());
-    },
-  });
-
-  return { stream, audioEndedAt };
-}
-
 function languageCodesFor(language: EvalCase["language"]): string[] {
   switch (language) {
     case "zh":
@@ -307,103 +239,6 @@ async function runCaseBatch(kase: EvalCase, audioPath: string, mode: TranscribeM
       heuristics: [],
       error: message,
     };
-  }
-}
-
-/** Streaming transport (--live): kept for comparison. See header comment — live-tested unreliable, no longer the P0 default. */
-async function runCaseLive(kase: EvalCase, audioPath: string, mode: TranscribeMode): Promise<EvalCaseResult> {
-  const wav = parseWav(readFileSync(audioPath));
-  const chunks = chunkPcm16(wav.data, wav.sampleRate, wav.channels, CHUNK_MS);
-  const { stream, audioEndedAt } = createPacedAudioStream(chunks, CHUNK_MS);
-
-  const model = gateway.experimental_transcription(LIVE_MODEL_ID);
-  const abortController = new AbortController();
-  const timeout = setTimeout(() => abortController.abort(), PER_CASE_TIMEOUT_MS);
-
-  let finalText = "";
-  let latestPartialText = "";
-  let partialCount = 0;
-  let firstPartialAtMs: number | null = null;
-  const startedAt = performance.now();
-
-  try {
-    const result = streamTranscribe({
-      model,
-      audio: stream,
-      inputAudioFormat: { type: "audio/pcm", rate: wav.sampleRate },
-      abortSignal: abortController.signal,
-      providerOptions: {
-        [GOOGLE_PROVIDER_OPTIONS_KEY]: {
-          mode: mode === "smart" ? "SMART" : "VERBATIM",
-          customVocabulary: kase.vocabulary,
-          languageCodes: languageCodesFor(kase.language),
-        },
-      },
-    });
-
-    // Drain fullStream to completion BEFORE touching any result promise:
-    // per the SDK's own doc comment, accessing a result promise first
-    // consumes the stream internally and makes fullStream unavailable.
-    for await (const part of result.fullStream) {
-      if (part.type === "transcript-partial") {
-        partialCount++;
-        latestPartialText = part.text;
-        if (firstPartialAtMs === null) firstPartialAtMs = performance.now() - startedAt;
-      } else if (part.type === "transcript-delta") {
-        partialCount++;
-        latestPartialText += part.delta;
-        if (firstPartialAtMs === null) firstPartialAtMs = performance.now() - startedAt;
-      } else if (part.type === "transcript-final") {
-        finalText = part.text;
-      } else if (part.type === "error") {
-        throw part.error instanceof Error ? part.error : new Error(String(part.error));
-      }
-    }
-
-    const audioEndAt = await audioEndedAt;
-    const finalAtMs = performance.now();
-    const text = finalText || latestPartialText;
-    const { cer, editDistance } = characterErrorRate(text, kase.expected);
-
-    return {
-      id: kase.id,
-      category: kase.category,
-      language: kase.language,
-      mode,
-      transport: "live",
-      hasAudio: true,
-      text,
-      expected: kase.expected,
-      cer,
-      editDistance,
-      timeToFirstPartialMs: firstPartialAtMs,
-      timeToFinalAfterAudioEndMs: finalText ? finalAtMs - audioEndAt : null,
-      partialCount,
-      requestLatencyMs: null,
-      heuristics: runHeuristics(kase, text),
-    };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      id: kase.id,
-      category: kase.category,
-      language: kase.language,
-      mode,
-      transport: "live",
-      hasAudio: true,
-      text: "",
-      expected: kase.expected,
-      cer: 1,
-      editDistance: -1,
-      timeToFirstPartialMs: firstPartialAtMs,
-      timeToFinalAfterAudioEndMs: null,
-      partialCount,
-      requestLatencyMs: null,
-      heuristics: [],
-      error: message,
-    };
-  } finally {
-    clearTimeout(timeout);
   }
 }
 
@@ -505,7 +340,7 @@ async function main(): Promise<void> {
     );
   }
 
-  console.log(`Transport: ${args.transport}${args.transport === "batch" ? " (P0 default)" : " (streaming, kept for comparison)"}\n`);
+  console.log(`Transport: ${args.transport}\n`);
 
   const results: EvalCaseResult[] = [];
   for (const kase of cases) {
@@ -525,7 +360,7 @@ async function main(): Promise<void> {
     }
 
     process.stdout.write(`Running ${kase.id}... `);
-    const result = args.transport === "live" ? await runCaseLive(kase, audioPath, args.mode) : await runCaseBatch(kase, audioPath, args.mode);
+    const result = await runCaseBatch(kase, audioPath, args.mode);
     const timing = result.requestLatencyMs !== null ? ` (${result.requestLatencyMs.toFixed(0)}ms)` : "";
     console.log(result.error ? `error: ${result.error}` : `CER=${result.cer.toFixed(3)}${timing}`);
     results.push(result);

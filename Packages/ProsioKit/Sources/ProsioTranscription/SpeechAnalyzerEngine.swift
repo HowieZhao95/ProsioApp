@@ -287,7 +287,7 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
             return nil
         }
 
-        // See the equivalent comment in `GatewayTranscriptionEngine`/`AudioCapture`: this block
+        // See the equivalent comment in `AudioCapture`: this block
         // is called synchronously within `convert(to:error:withInputFrom:)`, so boxing non-Sendable
         // captures is a strict-concurrency formality, not a real data race.
         let suppliedBox = UncheckedBox(false)
@@ -308,7 +308,7 @@ public struct SpeechAnalyzerEngine: TranscriptionEngine {
     }
 }
 
-/// See `WebSocketConnection.swift` / `AudioCapture.swift` for the identical pattern elsewhere.
+/// See `AudioCapture.swift` for the identical pattern elsewhere.
 private final class UncheckedBox<T>: @unchecked Sendable {
     var value: T
     init(_ value: T) { self.value = value }

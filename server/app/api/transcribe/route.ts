@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { currentBillingPeriod, getEntitlement } from "@/lib/entitlements";
 import { ApiError, withErrorHandling } from "@/lib/errors";
-import { ALLOWED_TRANSCRIBE_MODELS, mintTranscribeToken, transcribeBatch } from "@/lib/gateway";
+import { warmGatewayConnection as prewarmGateway, transcribeBatch } from "@/lib/gateway";
 import { classifyIntent, type IntentDecision } from "@/lib/intent";
 import { repairListFormatting } from "@/lib/list-repair";
 import { OggOpusParseError, parseOggOpus } from "@/lib/ogg-opus";
@@ -326,7 +326,7 @@ let warmPromise: Promise<void> | null = null;
 
 function warmGatewayConnection(): Promise<void> {
   if (!warmPromise) {
-    warmPromise = mintTranscribeToken(ALLOWED_TRANSCRIBE_MODELS[0])
+    warmPromise = prewarmGateway()
       .then(() => undefined)
       .catch(() => undefined) // best-effort: a real request will surface any real problem with its own 502
       .finally(() => {
@@ -336,22 +336,7 @@ function warmGatewayConnection(): Promise<void> {
   return warmPromise;
 }
 
-/**
- * No auth: lets the client pre-warm the connection to us when dictation
- * starts, AND fires a cheap real Gateway request (getToken — no audio, no
- * model inference) to keep our long-keep-alive connection to the Gateway
- * (see lib/gateway.ts's `gatewayAgent`) actually warm. Fire-and-forget:
- * never blocks the 204.
- *
- * Earlier attempt at this (before the keep-alive agent existed) was A/B'd
- * with full cold-PROCESS restarts and showed no measurable benefit — wrong
- * test: a process restart's variance (module load, first-ever DNS lookup,
- * TCP slow start) swamps anything a HEAD warm-up could fix. Re-tested
- * 2026-09-26 the right way — idle gaps on an already-warm, long-running
- * process, which is what real dictation actually looks like (HEAD at
- * key-down, POST ~1-2s later once recording stops) — see
- * server/README.md's Latency section for the numbers this time.
- */
+/** Warm the client/backend and backend/Gateway HTTPS connections at recording start. */
 export async function HEAD(): Promise<Response> {
   void warmGatewayConnection();
   return new Response(null, { status: 204 });

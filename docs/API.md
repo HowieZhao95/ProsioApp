@@ -18,14 +18,6 @@ Request `{ "email": "a@b.com" }` → `200 { "sessionToken": "…", "user": { "id
 ### `GET /api/health`
 `200 { "ok": true, "version": "0.1.0" }`
 
-## Transcription token
-
-### `POST /api/transcribe/token`
-Request `{ "model": "google/gemini-3.5-transcribe-live" }` (optional; default that model; only allow-listed models accepted).
-Checks entitlement + quota, then calls `gateway.experimental_transcription.getToken({ model })`.
-→ `200 { "token": "…", "url": "wss://…", "model": "google/gemini-3.5-transcribe-live", "expiresAt": "…" }`
-Errors: 401, 402 `quota_exceeded`, 400 model not allowed, 502 gateway failure.
-
 ## Batch transcription (P1.2: single-request cloud pass with routing + intent)
 
 ### `POST /api/transcribe`
@@ -101,7 +93,7 @@ Both endpoints — plus `POST /api/intent` and the combined check — share one 
 ## Usage
 
 ### `POST /api/usage`
-Request `{ "sessionID": "uuid", "engineID": "gateway.gemini-3.5-transcribe-live", "audioSeconds": 12.3, "startedAt": "…" }`
+Request `{ "sessionID": "uuid", "engineID": "cloud.gemini-3.5-transcribe", "audioSeconds": 12.3, "startedAt": "…" }`
 → `204`. Idempotent on `sessionID`.
 
 ### `GET /api/usage`

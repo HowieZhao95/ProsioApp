@@ -7,8 +7,8 @@ import Foundation
 // MARK: - Model IDs
 
 public enum ModelID {
-    /// Cloud streaming transcription via Vercel AI Gateway (SMART mode).
-    public static let cloudTranscribe = "google/gemini-3.5-transcribe-live"
+    /// Cloud batch transcription via Vercel AI Gateway (SMART mode).
+    public static let cloudTranscribe = "google/gemini-3.5-transcribe"
     /// Fast decision/routing model (P1).
     public static let router = "typesafe-ai/jev"
 }
@@ -24,9 +24,7 @@ public struct AudioFormat: Sendable, Hashable {
         self.channelCount = channelCount
     }
 
-    /// Wire format for every engine: 16 kHz, 16-bit signed little-endian, mono. (The only rate
-    /// Gemini Live accepts — the Gateway returns 400 "Unsupported inputAudioFormat" for 24 kHz,
-    /// confirmed live.)
+    /// Audio format: 16 kHz, 16-bit signed little-endian, mono.
     public static let pcm16Mono16k = AudioFormat(sampleRate: 16_000, channelCount: 1)
 }
 
@@ -85,7 +83,7 @@ public enum TranscriptEvent: Sendable, Equatable {
 }
 
 public protocol TranscriptionEngine: Sendable {
-    /// Stable identifier, e.g. "gateway.gemini-3.5-transcribe-live", "apple.speechanalyzer".
+    /// Stable identifier, e.g. "cloud.gemini-3.5-transcribe", "apple.speechanalyzer".
     var id: String { get }
     var isOnDevice: Bool { get }
     /// Consumes `audio` until it finishes, then flushes and yields exactly one `.final`, then finishes.
@@ -190,28 +188,6 @@ extension CloudBatchTranscribing {
 // folded into the single `/api/transcribe` request/response (`CloudTranscript.source`/`.route`,
 // `TranscribeRouteInfo`) — see docs/P1.2-AUDIO-ROUTING.md §3. Nothing else in the codebase
 // referenced these types at removal time.
-
-// MARK: - Gateway token
-
-public struct GatewayToken: Sendable, Codable, Hashable {
-    /// Single-use, short-lived client secret minted by the Prosio backend via AI Gateway `getToken`.
-    public var token: String
-    /// WebSocket URL returned alongside the token.
-    public var url: URL
-    public var model: String
-    public var expiresAt: Date
-
-    public init(token: String, url: URL, model: String, expiresAt: Date) {
-        self.token = token
-        self.url = url
-        self.model = model
-        self.expiresAt = expiresAt
-    }
-}
-
-public protocol GatewayTokenProviding: Sendable {
-    func token(for model: String) async throws -> GatewayToken
-}
 
 // MARK: - Focus context & insertion
 

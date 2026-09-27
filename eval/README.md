@@ -5,15 +5,6 @@ code-switching dictation, by sending recorded test cases through the same
 path the macOS client uses for final text, and scoring the output against a
 hand-written "ideal" transcript.
 
-**Transport (as of 2026-09-26): batch by default.** A live test against the
-real Gateway found streaming transcription (`google/gemini-3.5-transcribe-live`)
-unreliable — dropped segments, ~3.5s to final — while batch
-`google/gemini-3.5-transcribe` with SMART mode is reliable and ~2-4s. P0
-architecture is now: on-device Apple preview while recording, then one batch
-call to `POST /api/transcribe` (this harness calls the same `transcribeBatch()`
-helper directly) for the final, SMART-cleaned text. The old streaming path is
-kept for comparison behind `--live`.
-
 ## Files
 
 - `cases.json` — 30 test cases. Each has:
@@ -28,7 +19,7 @@ kept for comparison behind `--live`.
     jargon), fed to the model as vocabulary bias.
 - `audio/<id>.wav` — your recordings (gitignored — not checked in). **16kHz**
   mono 16-bit PCM WAV, one file per case — this is the only rate Gemini
-  accepts (both batch and streaming).
+  accepts for batch transcription.
 - `results/<timestamp>.json` / `.md` — output of a harness run (gitignored).
 
 ## Recording audio
@@ -68,7 +59,6 @@ npx tsx scripts/smart-eval.ts --dry-run              # validate cases.json + whi
 npx tsx scripts/smart-eval.ts                        # run every case that has audio, batch transport, SMART mode (P0 default)
 npx tsx scripts/smart-eval.ts --case zh-03            # just one case
 npx tsx scripts/smart-eval.ts --mode verbatim         # compare against verbatim mode
-npx tsx scripts/smart-eval.ts --live                  # use the streaming transport instead (comparison only — see above)
 npx tsx scripts/smart-eval.ts --tts                   # synthesize placeholder audio for missing cases (see caveat below)
 ```
 
@@ -90,9 +80,6 @@ table, also printed to stdout). Per case:
   after normalising punctuation/whitespace/case (0 = perfect match).
 - **latency** (batch transport) — wall-clock time of the whole
   `transcribe()` call, i.e. what a client would see from request to response.
-- **TTFP / TTFinal** (`--live` only) — time to first partial transcript from
-  when audio started streaming, and time to the final transcript measured
-  from when the last audio chunk was sent.
 - **heuristics** — category-specific pass/fail checks (e.g. "no filler
   words leaked into the final text", "numbered list formatting present",
   "every personal-dictionary vocabulary term appears verbatim") — see

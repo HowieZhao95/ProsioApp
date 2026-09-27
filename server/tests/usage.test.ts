@@ -32,7 +32,7 @@ describe("/api/usage", () => {
       jsonRequest(
         "/api/usage",
         "POST",
-        { sessionID, engineID: "gateway.gemini-3.5-transcribe-live", audioSeconds: 12.3, startedAt: new Date().toISOString() },
+        { sessionID, engineID: "cloud.gemini-3.5-transcribe", audioSeconds: 12.3, startedAt: new Date().toISOString() },
         user.authHeader
       )
     );
@@ -51,7 +51,7 @@ describe("/api/usage", () => {
   it("POST is idempotent on sessionID", async () => {
     const user = await authedUser();
     const sessionID = crypto.randomUUID();
-    const report = { sessionID, engineID: "gateway.gemini-3.5-transcribe-live", audioSeconds: 10, startedAt: new Date().toISOString() };
+    const report = { sessionID, engineID: "cloud.gemini-3.5-transcribe", audioSeconds: 10, startedAt: new Date().toISOString() };
 
     await POST(jsonRequest("/api/usage", "POST", report, user.authHeader));
     // Same sessionID, different audioSeconds: should NOT be double-counted or overwritten additively.

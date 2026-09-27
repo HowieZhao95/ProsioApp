@@ -1,7 +1,7 @@
 # Prosio P0 骨架实施计划
 
 ## 目标
-Mac 端 P0 可运行骨架：按住/轻点热键 → 录音 → 云端 `google/gemini-3.5-transcribe-live`（SMART）/本地 SpeechAnalyzer → 流光 HUD 实时预览 → 插入光标 → 历史/词典；Vercel 后端签发 Gateway 临时 token；SMART 中英评测脚本。
+Mac 端 P0 可运行骨架：按住/轻点热键 → 录音 → 本地 SpeechAnalyzer 实时预览 + 云端批量 `google/gemini-3.5-transcribe`（SMART） → 流光 HUD 实时预览 → 插入光标 → 历史/词典；Vercel 后端处理批量转写；SMART 中英评测脚本。
 
 ## 仓库结构与所有权（每个 agent 只能改自己拥有的路径）
 
@@ -10,7 +10,7 @@ Mac 端 P0 可运行骨架：按住/轻点热键 → 录音 → 云端 `google/g
 | `Packages/ProsioKit/Sources/ProsioCore/Contracts/**` | architect | **冻结**，不得修改 |
 | `Packages/ProsioKit/Package.swift` | architect | 需要改动请在报告中提出 |
 | `Packages/ProsioKit/Sources/ProsioCore/**`（除 Contracts） + `Tests/ProsioCoreTests/**` | **core** | 状态机、Fallback、存储、设置、BackendClient |
-| `Packages/ProsioKit/Sources/ProsioAudio/**`、`Sources/ProsioTranscription/**`、`Tests/ProsioTranscriptionTests/**`、`docs/gateway-ws-protocol.md` | **speech** | 录音、Gateway WS 引擎、SpeechAnalyzer 引擎 |
+| `Packages/ProsioKit/Sources/ProsioAudio/**`、`Sources/ProsioTranscription/**`、`Tests/ProsioTranscriptionTests/**` | **speech** | 录音、云端批量转写、SpeechAnalyzer 引擎 |
 | `project.yml`、`Apps/macOS/Prosio/App/**`、`System/**`、`Resources/**` | **mac-system** | 组合根、权限、热键、插入、焦点上下文 |
 | `Apps/macOS/Prosio/UI/**` | **mac-ui** | HUD（流光+玻璃胶囊）、菜单栏、设置、引导 |
 | `server/**`、`eval/**` | **server** | Next.js on Vercel、SMART 评测 |
@@ -33,7 +33,7 @@ Mac 端 P0 可运行骨架：按住/轻点热键 → 录音 → 云端 `google/g
 ## 验收标准（architect 执行）
 1. `swift build` + `swift test` 全绿（ProsioKit）。
 2. `xcodebuild` 构建 Prosio.app 成功，无新增 warning 以外的错误。
-3. `server`：`npm run typecheck`、`npm test`、`npm run build` 全绿；本地 `npm run dev` 后 `/api/health`、`/api/auth/dev`、`/api/transcribe/token`（无 key 时返回 502 结构化错误）、`/api/usage`、`/api/dictionary` 行为符合 `docs/API.md`。
+3. `server`：`npm run typecheck`、`npm test`、`npm run build` 全绿；本地 `npm run dev` 后 `/api/health`、`/api/auth/dev`、`/api/transcribe`（无 key 时返回 502 结构化错误）、`/api/usage`、`/api/dictionary` 行为符合 `docs/API.md`。
 4. 代码审查：只改了自己拥有的路径；冻结签名未变；无 TODO(core/speech/mac-system/mac-ui/server) 残留（刻意留给 P1 的用 `TODO(P1)`）。
 5. 运行 App：菜单栏出现；DEBUG 菜单「HUD Showcase」能展示 listening/finalizing/finished/failed 各状态的流光与胶囊；截图检查。
 6. 各 agent 报告中的「未验证项」汇总成风险清单交给用户。

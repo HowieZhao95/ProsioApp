@@ -14,9 +14,7 @@ cp .env.example .env.local   # then fill in secrets
 Env vars (see `.env.example`):
 
 - `AI_GATEWAY_API_KEY` — Vercel AI Gateway key. Required for
-  `POST /api/transcribe/token` to actually succeed. Without it, that one
-  endpoint returns a structured `502 upstream_error`; every other endpoint
-  works fine.
+  cloud transcription and model calls to succeed.
 - `PROSIO_JWT_SECRET` — HS256 secret for session JWTs. Required.
 - `PROSIO_DEV_AUTH` — set to `1` to enable `POST /api/auth/dev` (dev-only
   email → sessionToken sign-in, no real auth). Leave unset in production;
@@ -45,9 +43,7 @@ TOKEN=$(curl -s -X POST localhost:3000/api/auth/dev \
   -H 'content-type: application/json' -d '{"email":"you@example.com"}' \
   | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>console.log(JSON.parse(d).sessionToken))')
 
-curl -s -X POST localhost:3000/api/transcribe/token \
-  -H "authorization: Bearer $TOKEN" -H 'content-type: application/json' -d '{}'
-# -> 502 upstream_error if AI_GATEWAY_API_KEY isn't set, 200 { token, url, model, expiresAt } once it is.
+curl -s localhost:3000/api/usage -H "authorization: Bearer $TOKEN"
 ```
 
 ## Architecture
@@ -66,9 +62,8 @@ curl -s -X POST localhost:3000/api/transcribe/token \
     Type-checked but **not exercised** by the test suite (no live database in
     this environment) — see "What's unverified" below.
   - `index.ts` — `getStore()` picks the implementation based on `DATABASE_URL`.
-- `lib/gateway.ts` — `mintTranscribeToken` (streaming token, `/api/transcribe/token`)
-  and `transcribeBatch` (`experimental_transcribe` + `gateway.transcriptionModel`,
-  `/api/transcribe`'s P0 batch path). Both wrap the same module-level `gateway`
+- `lib/gateway.ts` — `transcribeBatch` (`experimental_transcribe` + `gateway.transcriptionModel`,
+  `/api/transcribe`'s P0 batch path). Uses the same module-level `gateway`
   singleton from `@ai-sdk/gateway`, so its underlying HTTP keep-alive
   connections are reused across requests in a warm process — see the
   Latency section below. Every Gateway call in the test suite is mocked;
@@ -716,12 +711,7 @@ P0 architecture (as of 2026-09-26, see `docs/API.md` § Batch transcription):
 the client records on-device, shows an on-device live preview, then sends
 the complete recording to `POST /api/transcribe`, which forwards it to
 Gateway batch `google/gemini-3.5-transcribe` (SMART) and returns the final
-text. `POST /api/transcribe/token` (mint a client secret for the Gateway
-*streaming* WebSocket) still exists and still works, but streaming was
-live-tested and found unreliable (dropped segments); it's not the P0 path.
-Neither path has this backend hold a persistent audio stream open end to
-end — the batch path is one bounded request/response with the whole
-recording, not a proxy.
+text. The backend handles one bounded request/response with the whole recording.
 
 ### Latency
 
@@ -756,7 +746,7 @@ latency, in the order they were found:
      server-side timeout) still showed a consistent, un-noisy ~1s penalty
      with this fix alone.
    - **After** additionally having `HEAD /api/transcribe` fire a
-     fire-and-forget, deduped warm-up request (`getToken`, no audio/model
+     fire-and-forget, deduped warm-up request (historically `getToken`, no audio/model
      inference) 1.5s before the client's real POST: the 120s-idle penalty
      disappeared (see table below) — the reconnect cost moves onto the
      HEAD, which the client already sends at key-down and the user never
@@ -816,3 +806,5 @@ Schema lives in `lib/store/schema.ts` (drizzle). Generate/run migrations with
 checked in yet since there's no database to point it at in this environment —
 add one pointing `schema` at `lib/store/schema.ts` and `dbCredentials.url` at
 `DATABASE_URL` before running `drizzle-kit push`/`generate`).
+
+The retired streaming token warm-up was replaced with a plain HTTPS HEAD to the Gateway origin on 2026-09-27. The measurements above describe the earlier implementation; latency of this replacement has not been measured live.

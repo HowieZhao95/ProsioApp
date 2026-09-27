@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { transcribeMock, evaluateMock, generateTextMock } = vi.hoisted(() => ({
+const { transcribeMock, evaluateMock, generateTextMock, gatewayFetchMock } = vi.hoisted(() => ({
+  gatewayFetchMock: vi.fn().mockResolvedValue(new Response(null, { status: 204 })),
   transcribeMock: vi.fn(),
   evaluateMock: vi.fn(),
   generateTextMock: vi.fn(),
@@ -29,6 +30,12 @@ vi.mock("@ai-sdk/gateway", () => ({
       evaluationModel: vi.fn((id: string) => ({ modelId: id })),
     }),
 }));
+
+// Keep connection prewarming tests offline.
+vi.mock("undici", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("undici")>();
+  return { ...actual, fetch: gatewayFetchMock };
+});
 
 import { HEAD, POST } from "@/app/api/transcribe/route";
 import { resetJevCircuitBreakerForTests } from "@/lib/jev";
@@ -599,5 +606,9 @@ describe("HEAD /api/transcribe", () => {
   it("204s with no auth", async () => {
     const res = await HEAD();
     expect(res.status).toBe(204);
+    expect(gatewayFetchMock).toHaveBeenCalledWith(
+      "https://ai-gateway.vercel.sh",
+      expect.objectContaining({ method: "HEAD" })
+    );
   });
 });
