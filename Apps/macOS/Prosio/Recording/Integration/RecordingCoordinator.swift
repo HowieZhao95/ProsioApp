@@ -1,0 +1,536 @@
+import AppKit
+import AVFoundation
+import CoreGraphics
+import Observation
+import SwiftUI
+
+/// Owns a single recording workflow. Platform callbacks are scoped to the session that
+/// installed them, so a late device/writer event cannot mutate another recording.
+@Observable
+final class RecordingCoordinator {
+    let store: RecordingStore
+    private let permissions: PermissionsManager
+    @ObservationIgnored private let makeEngine: () -> any RecordingEngineControlling
+    @ObservationIgnored private var engine: (any RecordingEngineControlling)?
+    @ObservationIgnored private var preparationTask: Task<Void, Never>?
+    @ObservationIgnored private var window: NSWindow?
+    @ObservationIgnored private var windowDelegate: RecordingWindowDelegate?
+    @ObservationIgnored private var controlPanel: NSPanel?
+    @ObservationIgnored private var stopRequested = false
+    @ObservationIgnored private var fatalReason: String?
+    @ObservationIgnored private var exportTask: Task<URL, Error>?
+    private var elapsedOrigin: TimeInterval?
+    private var pauseOrigin: TimeInterval?
+    private var pausedDuration: TimeInterval = 0
+    @ObservationIgnored private var regionSelector: RecordingRegionSelector?
+    @ObservationIgnored var canBegin: () -> Bool = { true }
+    @ObservationIgnored var onActivity: (Bool) -> Void = { _ in }
+    private(set) var activeSession: RecordingSessionManifest?
+    private(set) var phase: RecordingPhase = .ready
+    private(set) var countdown: Int?
+    private(set) var message: String?
+    private(set) var sourceAvailability: [String: Bool] = [:]
+    private(set) var inventory: RecordingSourceInventory?
+    private(set) var loadingSources = false
+    private(set) var exporting = false
+    private(set) var exportMessage: String?
+    private(set) var permissionRecovery: RecordingPermissionRecovery?
+    var selectedSessionID: UUID?
+    var screenMode = "display"
+    var displayID: UInt32 = 0
+    var windowID: UInt32 = 0
+    var region: RecordingRegion?
+    var cameraOneID = ""
+    var cameraTwoID = ""
+    var microphoneID = ""
+    var includeMicrophone = true
+    var includeSystemAudio = true
+    var showsCursor = true
+
+    var isBusy: Bool {
+        switch phase {
+        case .preparing, .recording, .paused, .finalizing: true
+        default: false
+        }
+    }
+
+    var isCapturing: Bool { phase == .recording || phase == .paused }
+    var elapsedSeconds: TimeInterval {
+        guard let elapsedOrigin else { return 0 }
+        return max(0, (pauseOrigin ?? ProcessInfo.processInfo.systemUptime) - elapsedOrigin - pausedDuration)
+    }
+    var selectedSession: RecordingSessionManifest? {
+        store.sessions.first { $0.id == selectedSessionID }
+    }
+
+    init(root: URL, permissions: PermissionsManager,
+         makeEngine: @escaping () -> any RecordingEngineControlling = { RecordingEngine() },
+         inventory: RecordingSourceInventory? = nil) {
+        store = RecordingStore(root: root)
+        self.permissions = permissions
+        self.makeEngine = makeEngine
+        self.inventory = inventory
+        restorePreferences()
+    }
+
+    func recoverSavedSessions() async {
+        for session in store.sessions {
+            guard activeSession?.id != session.id else { continue }
+            let recovered = await RecordingRecovery.recover(session, in: store.directory(for: session.id))
+            guard activeSession?.id != session.id else { continue }
+            if recovered != session {
+                do { try store.save(recovered) }
+                catch { message = "恢复清单保存失败，原片仍保留：\(error.localizedDescription)" }
+            }
+        }
+    }
+
+    func refreshSources() async {
+        guard !loadingSources, !isBusy else { return }
+        loadingSources = true
+        defer { loadingSources = false }
+        do {
+            inventory = try await RecordingEngine.discoverSources()
+            if displayID == 0 { displayID = inventory?.displays.first?.id ?? 0 }
+            if windowID == 0 { windowID = inventory?.windows.first?.id ?? 0 }
+            if microphoneID.isEmpty { microphoneID = inventory?.microphones.first?.id ?? "" }
+            message = nil
+            permissionRecovery = nil
+        } catch {
+            message = "无法取得录制来源：\(error.localizedDescription)"
+            permissions.refresh()
+            permissionRecovery = CGPreflightScreenCaptureAccess() ? nil : .screen
+        }
+    }
+
+    func showWindow(sessionID: UUID? = nil) {
+        if let sessionID { selectedSessionID = sessionID }
+        if window == nil {
+            let view = RecordingWorkspaceView(coordinator: self)
+            let panel = NSWindow(contentViewController: NSHostingController(rootView: view))
+            panel.title = "屏幕录制"
+            panel.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+            panel.setContentSize(NSSize(width: 900, height: 640))
+            panel.minSize = NSSize(width: 760, height: 560)
+            panel.isReleasedWhenClosed = false
+            let delegate = RecordingWindowDelegate { [weak self] in self?.cancelPreparation() }
+            windowDelegate = delegate
+            panel.delegate = delegate
+            panel.center()
+            window = panel
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
+        Task { await refreshSources() }
+    }
+
+    func configuration() throws -> RecordingConfiguration {
+        guard let inventory else { throw RecordingWorkflowError.message("请先刷新录制来源。") }
+        let target: RecordingScreenTarget
+        switch screenMode {
+        case "window":
+            guard inventory.windows.contains(where: { $0.id == windowID }) else {
+                throw RecordingWorkflowError.message("所选窗口已关闭，请重新选择。")
+            }
+            target = .window(windowID)
+        case "region":
+            guard inventory.displays.contains(where: { $0.id == displayID }), let region else {
+                throw RecordingWorkflowError.message("请在所选显示器上框选录制区域。")
+            }
+            target = .region(displayID: displayID, rect: region)
+        default:
+            guard inventory.displays.contains(where: { $0.id == displayID }) else {
+                throw RecordingWorkflowError.message("所选显示器不可用，请重新选择。")
+            }
+            target = .display(displayID)
+        }
+        let cameraIDs = [cameraOneID, cameraTwoID].filter { !$0.isEmpty }
+        guard Set(cameraIDs).count == cameraIDs.count else {
+            throw RecordingWorkflowError.message("两个机位需要选择不同的摄像头。")
+        }
+        let cameras = try cameraIDs.map { id in
+            guard let source = inventory.cameras.first(where: { $0.id == id }) else {
+                throw RecordingWorkflowError.message("所选摄像头不可用，请刷新来源或关闭这个机位。")
+            }
+            return source
+        }
+        let mic: RecordingSource?
+        if includeMicrophone {
+            guard let source = inventory.microphones.first(where: { $0.id == microphoneID }) else {
+                throw RecordingWorkflowError.message("所选麦克风不可用，请重新选择或关闭麦克风。")
+            }
+            mic = source
+        } else { mic = nil }
+        return RecordingConfiguration(screenTarget: target, cameras: cameras, microphone: mic,
+                                      capturesSystemAudio: includeSystemAudio, showsCursor: showsCursor)
+    }
+
+    func begin() {
+        guard !isBusy, preparationTask == nil else { return }
+        do {
+            let configuration = try configuration()
+            guard canBegin() else {
+                throw RecordingWorkflowError.message("请先结束语音输入、截图或录音转写，再开始录屏。")
+            }
+            preparationTask = Task { await start(configuration: configuration) }
+        } catch { message = error.localizedDescription }
+    }
+
+    /// Callable with an injected engine for lifecycle acceptance; no UI or inventory needed.
+    func start(configuration: RecordingConfiguration, countdownSeconds: Int = 3,
+               requestPermissions: Bool = true) async {
+        guard !isBusy, canBegin() else { return }
+        phase = .preparing
+        stopRequested = false
+        fatalReason = nil
+        onActivity(true)
+        message = nil
+        permissionRecovery = nil
+        exportMessage = nil
+        var created: RecordingSessionManifest?
+        do {
+            if requestPermissions { try await authorize(configuration) }
+            try Task.checkCancellation()
+            for remaining in stride(from: countdownSeconds, through: 1, by: -1) {
+                countdown = remaining
+                try await Task.sleep(for: .seconds(1))
+            }
+            countdown = nil
+            try Task.checkCancellation()
+            let session = try store.create(configuration: configuration)
+            created = session
+            activeSession = session
+            selectedSessionID = session.id
+            sourceAvailability = Dictionary(uniqueKeysWithValues: session.sources.map { ($0.id, true) })
+            let engine = makeEngine()
+            self.engine = engine
+            let sessionID = session.id
+            engine.onSegment = { [weak self] segment in self?.append(segment, sessionID: sessionID) }
+            engine.onWarning = { [weak self] warning in self?.warn(warning, sessionID: sessionID) }
+            engine.onSourceStatus = { [weak self] sourceID, available in
+                guard self?.activeSession?.id == sessionID else { return }
+                self?.sourceAvailability[sourceID] = available
+            }
+            engine.onFailure = { [weak self] reason in
+                guard self?.activeSession?.id == sessionID else { return }
+                self?.fatalReason = reason
+                self?.warn(reason, sessionID: sessionID)
+                Task { await self?.stop() }
+            }
+            try await engine.start(configuration: configuration, directory: store.directory(for: sessionID))
+            try Task.checkCancellation()
+            phase = .recording
+            elapsedOrigin = ProcessInfo.processInfo.systemUptime
+            pausedDuration = 0
+            pauseOrigin = nil
+            try updateActive { $0.phase = .recording }
+            persistPreferences()
+            if requestPermissions { showControlPanel() }
+        } catch {
+            // Keep callbacks attached until writers finish so any completed raw file is retained.
+            try? await engine?.stop()
+            if activeSession == nil { activeSession = created }
+            if activeSession != nil {
+                try? updateActive {
+                    $0.phase = $0.segments.isEmpty ? .failed : .interrupted
+                    $0.endedAt = .now
+                    if !(error is CancellationError) { $0.warnings.append(error.localizedDescription) }
+                }
+            }
+            phase = .failed
+            message = error is CancellationError ? "已取消准备录制。" : error.localizedDescription
+            releaseEngine()
+        }
+        countdown = nil
+        preparationTask = nil
+    }
+
+    func cancelPreparation() {
+        guard phase == .preparing else { return }
+        preparationTask?.cancel()
+    }
+
+    func togglePause() async {
+        guard let engine, phase == .recording || phase == .paused else { return }
+        let wasPaused = phase == .paused
+        // Serialize buttons while a segment is being finalized.
+        phase = .finalizing
+        do {
+            if wasPaused { try await engine.resume() } else { try await engine.pause() }
+            if wasPaused {
+                if let pauseOrigin { pausedDuration += ProcessInfo.processInfo.systemUptime - pauseOrigin }
+                pauseOrigin = nil
+            } else { pauseOrigin = ProcessInfo.processInfo.systemUptime }
+            phase = wasPaused ? .recording : .paused
+            try updateActive { $0.phase = phase }
+            if stopRequested { await stop() }
+        } catch {
+            message = "无法切换录制状态：\(error.localizedDescription)"
+            phase = wasPaused ? .paused : .recording
+            await stop()
+        }
+    }
+
+    func stop() async {
+        guard let engine else { return }
+        if phase == .finalizing { stopRequested = true; return }
+        phase = .finalizing
+        countdown = nil
+        do {
+            // A manifest write failure must never bypass shutting down live capture devices.
+            do { try updateActive { $0.phase = .finalizing } }
+            catch { fatalReason = "录制清单保存失败：\(error.localizedDescription)" }
+            try await engine.stop()
+            try updateActive {
+                $0.endedAt = .now
+                $0.phase = fatalReason != nil ? .interrupted : $0.segments.isEmpty ? .failed : .ready
+            }
+            phase = activeSession?.phase ?? .failed
+            message = phase == .ready ? "录制已保存，可预览或交给剪辑软件。"
+                : fatalReason.map { "录制已中断，已完成原片保留。\($0)" }
+                ?? "没有取得可播放片段，请检查录制来源。"
+        } catch {
+            try? updateActive {
+                $0.phase = .interrupted
+                $0.endedAt = .now
+                $0.warnings.append(error.localizedDescription)
+            }
+            phase = .interrupted
+            message = "录制已结束；已完成原片保留。\(error.localizedDescription)"
+        }
+        releaseEngine()
+        if window != nil {
+            NSApp.activate(ignoringOtherApps: true)
+            window?.makeKeyAndOrderFront(nil)
+        }
+    }
+
+    func flushForTermination() async {
+        preparationTask?.cancel()
+        if let preparationTask { await preparationTask.value }
+        if isCapturing { await stop() }
+        // A pause/stop operation already in flight must finish before the application exits.
+        while phase == .finalizing { try? await Task.sleep(for: .milliseconds(50)) }
+        if isCapturing { await stop() }
+    }
+
+    private func authorize(_ configuration: RecordingConfiguration) async throws {
+        permissions.refresh()
+        if !CGPreflightScreenCaptureAccess() {
+            _ = CGRequestScreenCaptureAccess()
+            guard CGPreflightScreenCaptureAccess() else {
+                permissionRecovery = .screen
+                throw RecordingWorkflowError.message("请在系统设置中允许 Prosio 录制屏幕，再重新开始。")
+            }
+        }
+        if configuration.microphone != nil, permissions.statuses[.microphone] != .granted {
+            await permissions.request(.microphone)
+            guard permissions.statuses[.microphone] == .granted else {
+                permissionRecovery = .microphone
+                throw RecordingWorkflowError.message("请允许麦克风访问，或关闭麦克风后开始录屏。")
+            }
+        }
+        if !configuration.cameras.isEmpty {
+            var allowed = AVCaptureDevice.authorizationStatus(for: .video) == .authorized
+            if !allowed { allowed = await AVCaptureDevice.requestAccess(for: .video) }
+            guard allowed else {
+                permissionRecovery = .camera
+                throw RecordingWorkflowError.message("请允许摄像头访问，或关闭机位后开始录屏。")
+            }
+        }
+    }
+
+    func openPermissions() {
+        switch permissionRecovery {
+        case .microphone: permissions.openSystemSettings(for: .microphone)
+        case .camera:
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera") {
+                NSWorkspace.shared.open(url)
+            }
+        default:
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+    }
+
+    func selectRegion() {
+        guard !isBusy else { return }
+        guard let screen = NSScreen.screens.first(where: {
+            ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value == displayID
+        }) else { message = "所选显示器不可用，请重新选择。"; return }
+        window?.orderOut(nil)
+        let selector = RecordingRegionSelector(screen: screen) { [weak self] rect in
+            guard let self else { return }
+            if let rect {
+                region = RecordingRegion(x: rect.minX, y: screen.frame.height - rect.maxY,
+                                         width: rect.width, height: rect.height)
+            }
+            regionSelector = nil
+            window?.makeKeyAndOrderFront(nil)
+        }
+        regionSelector = selector
+        selector.begin()
+    }
+
+    func reveal(_ session: RecordingSessionManifest) {
+        NSWorkspace.shared.open(store.directory(for: session.id))
+    }
+
+    func export(_ session: RecordingSessionManifest, editor: RecordingEditor) async {
+        guard !exporting, !session.segments.isEmpty else { return }
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        panel.prompt = "导出到此处"
+        panel.message = "将在所选文件夹中保存独立原片与\(editor.title)交接文件。"
+        guard await panel.begin() == .OK, let destination = panel.url else { return }
+        exporting = true
+        exportMessage = nil
+        defer { exporting = false }
+        do {
+            let sourceDirectory = store.directory(for: session.id)
+            let task = Task {
+                try await RecordingProjectExporter().export(
+                    session: session, sourceDirectory: sourceDirectory,
+                    destination: destination.appendingPathComponent("录制-\(session.id.uuidString.prefix(8))-\(UUID().uuidString.prefix(6))", isDirectory: true), editor: editor)
+            }
+            exportTask = task
+            defer { exportTask = nil }
+            let output = try await task.value
+            exportMessage = "交接文件已保存。请在\(editor.title)中导入并检查机位和音频。"
+            NSWorkspace.shared.activateFileViewerSelecting([output])
+        } catch is CancellationError { exportMessage = "导出已取消，原片仍保留。" }
+        catch { exportMessage = "导出未完成，可重试：\(error.localizedDescription)" }
+    }
+
+    func cancelExport() { exportTask?.cancel() }
+
+    private func append(_ segment: RecordingSegment, sessionID: UUID) {
+        guard activeSession?.id == sessionID else { return }
+        do {
+            try updateActive {
+                guard !$0.segments.contains(where: { $0.id == segment.id }) else { return }
+                $0.segments.append(segment)
+            }
+        } catch {
+            message = "无法保存录制清单：\(error.localizedDescription)"
+            Task { await self.stop() }
+        }
+    }
+
+    private func warn(_ warning: String, sessionID: UUID) {
+        guard activeSession?.id == sessionID else { return }
+        message = warning
+        try? updateActive {
+            if !$0.warnings.contains(warning) { $0.warnings.append(warning) }
+        }
+    }
+
+    private func updateActive(_ update: (inout RecordingSessionManifest) -> Void) throws {
+        guard var session = activeSession else { return }
+        update(&session)
+        // Publish the current media state even if persistence fails, so a later retry
+        // doesn't lose a finalized segment from memory.
+        activeSession = session
+        try store.save(session)
+    }
+
+    private func releaseEngine() {
+        controlPanel?.orderOut(nil)
+        controlPanel = nil
+        engine?.onSegment = nil
+        engine?.onWarning = nil
+        engine?.onSourceStatus = nil
+        engine?.onFailure = nil
+        engine = nil
+        activeSession = nil
+        sourceAvailability = [:]
+        elapsedOrigin = nil
+        pauseOrigin = nil
+        onActivity(false)
+    }
+
+    private func showControlPanel() {
+        window?.orderOut(nil)
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 380, height: 106),
+                            styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        panel.level = .floating
+        panel.isMovableByWindowBackground = true
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = true
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.contentView = NSHostingView(rootView:
+            RecordingControlView(coordinator: self, compact: true)
+                .padding(10).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16)))
+        if let screen = NSScreen.main {
+            panel.setFrameOrigin(NSPoint(x: screen.visibleFrame.maxX - 400, y: screen.visibleFrame.minY + 24))
+        }
+        controlPanel = panel
+        panel.orderFrontRegardless()
+    }
+
+    private func restorePreferences() {
+        let defaults = UserDefaults.standard
+        guard let data = defaults.data(forKey: "recordingPreferences"),
+              let prefs = try? JSONDecoder().decode(RecordingPreferences.self, from: data) else { return }
+        displayID = prefs.displayID
+        cameraOneID = prefs.cameraOneID
+        cameraTwoID = prefs.cameraTwoID
+        microphoneID = prefs.microphoneID
+        includeMicrophone = prefs.includeMicrophone
+        includeSystemAudio = prefs.includeSystemAudio
+        showsCursor = prefs.showsCursor
+        screenMode = prefs.screenMode ?? "display"
+        windowID = prefs.windowID ?? 0
+        region = prefs.region
+    }
+
+    private func persistPreferences() {
+        let prefs = RecordingPreferences(displayID: displayID, cameraOneID: cameraOneID,
+                                         cameraTwoID: cameraTwoID, microphoneID: microphoneID,
+                                         includeMicrophone: includeMicrophone,
+                                         includeSystemAudio: includeSystemAudio, showsCursor: showsCursor,
+                                         screenMode: screenMode, windowID: windowID, region: region)
+        if let data = try? JSONEncoder().encode(prefs) {
+            UserDefaults.standard.set(data, forKey: "recordingPreferences")
+        }
+    }
+}
+
+nonisolated private struct RecordingPreferences: Codable {
+    var displayID: UInt32
+    var cameraOneID: String
+    var cameraTwoID: String
+    var microphoneID: String
+    var includeMicrophone: Bool
+    var includeSystemAudio: Bool
+    var showsCursor: Bool
+    var screenMode: String?
+    var windowID: UInt32?
+    var region: RecordingRegion?
+}
+
+nonisolated enum RecordingPermissionRecovery {
+    case screen, microphone, camera
+    var title: String {
+        switch self {
+        case .screen: "屏幕录制权限设置…"
+        case .microphone: "麦克风权限设置…"
+        case .camera: "摄像头权限设置…"
+        }
+    }
+}
+
+nonisolated enum RecordingWorkflowError: LocalizedError {
+    case message(String)
+    var errorDescription: String? { if case .message(let message) = self { message } else { nil } }
+}
+
+private final class RecordingWindowDelegate: NSObject, NSWindowDelegate {
+    let onClose: () -> Void
+    init(onClose: @escaping () -> Void) { self.onClose = onClose }
+    func windowWillClose(_ notification: Notification) { onClose() }
+}

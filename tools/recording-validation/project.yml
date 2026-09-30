@@ -1,0 +1,33 @@
+name: RecordingValidation
+options:
+  deploymentTarget:
+    macOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    GENERATE_INFOPLIST_FILE: YES
+    CODE_SIGNING_ALLOWED: NO
+targets:
+  RecordingValidationTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: ../../Apps/macOS/Prosio/Recording
+      - path: ../../Apps/macOS/Prosio/UI/Recording
+      - path: ../../Apps/macOS/Prosio/System/PermissionsManager.swift
+      - path: ../../Apps/macOS/Prosio/System/ProsioLog.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingStoreTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingPlatformTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingExportTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingRecoveryTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingCoordinatorTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingNativeViewTests.swift
+schemes:
+  RecordingValidation:
+    build:
+      targets:
+        RecordingValidationTests: [test]
+    test:
+      targets:
+        - RecordingValidationTests

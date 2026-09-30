@@ -143,6 +143,7 @@ final class RecordingStore {
 
                     let missingSegments = manifest.segments.filter { !isNonemptyMediaFile($0, inside: entry) }
                     if !missingSegments.isEmpty {
+                        manifest.phase = .interrupted
                         let missingIDs = Set(missingSegments.map(\.id))
                         manifest.segments.removeAll { missingIDs.contains($0.id) }
                         manifest.warnings.append("\(missingSegments.count) 个片段文件缺失或为空，已从可播放素材列表移除；原始文件未删除。")
