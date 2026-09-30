@@ -363,6 +363,11 @@ final class RecordingCoordinator {
 
     func selectRegion() {
         guard !isBusy else { return }
+        guard canBegin() else {
+            permissionRecovery = nil
+            message = "请先结束语音输入、截图或录音转写，再选择录屏区域。"
+            return
+        }
         guard let screen = NSScreen.screens.first(where: {
             ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value == displayID
         }) else { message = "所选显示器不可用，请重新选择。"; return }

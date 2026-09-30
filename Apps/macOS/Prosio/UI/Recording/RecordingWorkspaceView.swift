@@ -160,13 +160,14 @@ struct RecordingWorkspaceView: View {
             }
           }
                 HStack {
-                    Text("均衡画质 · 30 fps · 原片保存在本机")
+                    Text(coordinator.canBegin() ? "均衡画质 · 30 fps · 原片保存在本机"
+                         : "结束语音输入、截图或录音转写后即可开始。")
                         .font(.caption).foregroundStyle(.secondary)
                     Spacer()
                     Button("开始录制") { coordinator.begin() }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
-                        .disabled(coordinator.isBusy || coordinator.inventory == nil || coordinator.loadingSources)
+                        .disabled(coordinator.isBusy || coordinator.inventory == nil || coordinator.loadingSources || !coordinator.canBegin())
                 }
         }
         .disabled(coordinator.isBusy)
