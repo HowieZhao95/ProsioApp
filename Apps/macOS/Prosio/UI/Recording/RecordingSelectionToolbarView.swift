@@ -134,6 +134,7 @@ struct RecordingCompactControlView: View {
             }
             Menu {
                 Button(coordinator.previewsHidden ? "显示摄像头预览" : "隐藏摄像头预览") { coordinator.togglePreviewVisibility() }
+                    .disabled(coordinator.selectedCameraSources.isEmpty)
             } label: { Image(systemName: "ellipsis") }.menuStyle(.borderlessButton).frame(width: 18)
         }
         .buttonStyle(.plain).padding(.horizontal, 16).padding(.vertical, 15)
@@ -143,10 +144,20 @@ struct RecordingCompactControlView: View {
     }
 }
 
+enum RecordingCameraPreviewStyle {
+    static let cornerRadius: CGFloat = 14
+    static let shadowPadding: CGFloat = 18
+    static let contentSize = CGSize(width: 224, height: 144)
+    static let panelSize = CGSize(width: contentSize.width + shadowPadding * 2,
+                                  height: contentSize.height + shadowPadding * 2)
+}
+
 struct RecordingCameraPreviewCard: View {
     @Bindable var coordinator: RecordingCoordinator
     let source: RecordingSource
     @State private var hovered = false
+    @State private var dragPointerStart: NSPoint?
+    @State private var dragWindowStart: NSPoint?
     var body: some View {
         ZStack(alignment: .topTrailing) {
             ZStack {
@@ -170,9 +181,28 @@ struct RecordingCameraPreviewCard: View {
                     .help(coordinator.isCapturing ? "隐藏预览，原片继续录制" : "关闭这个摄像头")
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.45), lineWidth: 0.7))
+        .frame(width: RecordingCameraPreviewStyle.contentSize.width, height: RecordingCameraPreviewStyle.contentSize.height)
+        .clipShape(RoundedRectangle(cornerRadius: RecordingCameraPreviewStyle.cornerRadius))
+        .overlay(RoundedRectangle(cornerRadius: RecordingCameraPreviewStyle.cornerRadius).stroke(.white.opacity(0.30), lineWidth: 0.5))
         .onHover { hovered = $0 }
+        .gesture(DragGesture(minimumDistance: 3)
+            .onChanged { value in
+                // Screen coordinates stay stable while the hosting window follows the pointer.
+                let pointer = NSEvent.mouseLocation
+                if dragPointerStart == nil {
+                    dragPointerStart = NSPoint(x: pointer.x - value.translation.width,
+                                               y: pointer.y + value.translation.height)
+                    dragWindowStart = coordinator.cameraPreviewOrigin(for: source.id)
+                }
+                if let start = dragPointerStart, let origin = dragWindowStart {
+                    coordinator.moveCameraPreview(source.id, to: NSPoint(
+                        x: origin.x + pointer.x - start.x,
+                        y: origin.y + pointer.y - start.y))
+                }
+            }
+            .onEnded { _ in dragPointerStart = nil; dragWindowStart = nil })
+        .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
+        .padding(RecordingCameraPreviewStyle.shadowPadding)
     }
 }
 
@@ -185,9 +215,12 @@ private struct RecordingCameraLayerView: NSViewRepresentable {
 }
 private final class RecordingCameraLayerHost: NSView {
     let preview = AVCaptureVideoPreviewLayer()
+    override var mouseDownCanMoveWindow: Bool { true }
     override init(frame: NSRect) {
         super.init(frame: frame)
         wantsLayer = true
+        layer?.cornerRadius = RecordingCameraPreviewStyle.cornerRadius
+        layer?.masksToBounds = true
         preview.videoGravity = .resizeAspectFill
         layer?.addSublayer(preview)
     }

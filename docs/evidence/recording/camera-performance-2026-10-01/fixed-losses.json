@@ -1,0 +1,17 @@
+{
+  "countsBySourceAndReason" : {
+    "camera-2" : {
+      "encoderBackpressure" : 1
+    }
+  },
+  "originHostMicroseconds" : 623777616263,
+  "recentLosses" : [
+    {
+      "durationMicroseconds" : 33333,
+      "hostStartMicroseconds" : 623777982929,
+      "kind" : "camera",
+      "reason" : "encoderBackpressure",
+      "sourceID" : "camera-2"
+    }
+  ]
+}

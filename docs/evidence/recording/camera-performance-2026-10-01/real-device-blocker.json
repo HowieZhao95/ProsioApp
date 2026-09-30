@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-10-01T06:29:58.761217+08:00",
+  "tool": "/tmp/prosio-recording-device-validation.RnzAHG/build/Build/Products/Release/RecordingDeviceValidation.app",
+  "guiPermissions": {
+    "screen": "not authorized",
+    "camera": "not requested",
+    "microphone": "not requested"
+  },
+  "availableCameraMenu": [
+    "FaceTime高清相机",
+    "iPhone 连续互通相机"
+  ],
+  "availableMicrophoneMenu": [
+    "MacBook Pro麦克风",
+    "iPhone 麦克风",
+    "ESHOW录音"
+  ],
+  "preparedConfiguration": {
+    "camera1": "FaceTime高清相机",
+    "camera2": "iPhone 连续互通相机",
+    "microphone": "MacBook Pro麦克风",
+    "systemAudio": true,
+    "durationSeconds": 120
+  },
+  "realCaptureCompleted": false,
+  "permissionGrantRequiresHumanAction": true,
+  "priorFailure": "Earlier tool startupFailure before first sample; current refreshed tool is idle, no capture started.",
+  "limitations": "Devices were enumerated and configured; no camera/mic capture, real mouth-sync or Continuity stability is proven."
+}

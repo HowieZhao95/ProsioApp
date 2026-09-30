@@ -59,7 +59,7 @@ final class RecordingCoordinator {
     private(set) var completionAvailable = false
     @ObservationIgnored private var selectionGeneration = UUID()
     @ObservationIgnored private var immersiveRecording = false
-    @ObservationIgnored private var hiddenPreviews = Set<String>()
+    private var hiddenPreviews = Set<String>()
     @ObservationIgnored private var lastPanelScreenID: UInt32?
     private(set) var selectionActive = false
     private(set) var selectionTargetReady = false
@@ -366,11 +366,16 @@ final class RecordingCoordinator {
         }
         for source in sources {
             if cameraPanels[source.id] == nil {
-                let panel = makeOverlayPanel(size: CGSize(width: 224, height: 158))
+                let panel = makeOverlayPanel(size: RecordingCameraPreviewStyle.panelSize)
+                panel.title = "摄像头预览 · \(source.name)"
+                panel.hasShadow = false // The rounded card draws one consistent shadow inside its padding.
                 panel.isMovableByWindowBackground = true
                 panel.contentView = NSHostingView(rootView: RecordingCameraPreviewCard(coordinator: self, source: source))
                 cameraPanels[source.id] = panel
-                positionCameraPanels(on: desktopSelection?.currentScreen ?? pointerScreen())
+                if let screen = desktopSelection?.currentScreen ?? pointerScreen(),
+                   let index = sources.firstIndex(where: { $0.id == source.id }) {
+                    positionCameraPanel(panel, index: index, on: screen)
+                }
             }
             cameraPanels[source.id]?.level = isBusy ? .floating : NSWindow.Level(rawValue: RecordingDesktopSelectionController.overlayLevel.rawValue + 1)
             if !permissionPresentations.isEmpty || hiddenPreviews.contains(source.id) { cameraPanels[source.id]?.orderOut(nil) }
@@ -380,9 +385,16 @@ final class RecordingCoordinator {
     private func positionCameraPanels(on screen: NSScreen?) {
         guard let screen else { return }
         for (index, source) in selectedCameraSources.enumerated() {
-            cameraPanels[source.id]?.setFrameOrigin(NSPoint(x: screen.visibleFrame.maxX - 248,
-                y: screen.visibleFrame.maxY - 184 - CGFloat(index) * 174))
+            if let panel = cameraPanels[source.id] { positionCameraPanel(panel, index: index, on: screen) }
         }
+    }
+    func cameraPreviewOrigin(for id: String) -> NSPoint? { cameraPanels[id]?.frame.origin }
+    func moveCameraPreview(_ id: String, to origin: NSPoint) {
+        cameraPanels[id]?.setFrameOrigin(origin)
+    }
+    private func positionCameraPanel(_ panel: NSPanel, index: Int, on screen: NSScreen) {
+        panel.setFrameOrigin(NSPoint(x: screen.visibleFrame.maxX - panel.frame.width - 18,
+            y: screen.visibleFrame.maxY - panel.frame.height - 18 - CGFloat(index) * (panel.frame.height + 12)))
     }
     private func closeCameraPanels() {
         previewRefreshTask?.cancel(); previewRefreshTask = nil

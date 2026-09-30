@@ -1,0 +1,35 @@
+{
+  "blocksOtherCapture": true,
+  "cameraWindows": [
+    {
+      "height": 180,
+      "title": "摄像头预览 · 合成机位 1",
+      "visible": true,
+      "width": 260,
+      "x": 1322,
+      "y": 772
+    }
+  ],
+  "closingSelection": false,
+  "completionAvailable": false,
+  "displayID": 1,
+  "elapsed": 0,
+  "events": [
+    "reservation:true"
+  ],
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "ready",
+  "physicalCapturesStarted": false,
+  "previewStarted": 1,
+  "previewStopped": 0,
+  "screenMode": "display",
+  "selectedCameras": [
+    "ui-camera-1"
+  ],
+  "selectionActive": true,
+  "selectionReady": true,
+  "sessions": 5,
+  "systemAudio": true,
+  "windowID": 20479
+}

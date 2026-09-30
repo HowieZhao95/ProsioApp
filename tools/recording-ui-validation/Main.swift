@@ -101,6 +101,10 @@ import SwiftUI
             "systemAudio": coordinator.includeSystemAudio, "elapsed": coordinator.elapsedSeconds,
             "sessions": coordinator.store.sessions.count, "events": events, "previewStarted": previewBackend.startCount,
             "previewStopped": previewBackend.stopCount, "permissionsRequested": false, "physicalCapturesStarted": false]
+        state["cameraWindows"] = NSApp.windows.filter { $0.title.hasPrefix("摄像头预览 · ") }.map {
+            ["title": $0.title, "visible": $0.isVisible, "x": $0.frame.minX, "y": $0.frame.minY,
+             "width": $0.frame.width, "height": $0.frame.height] as [String: Any]
+        }
         if let region = coordinator.region { state["region"] = ["x": region.x, "y": region.y, "width": region.width, "height": region.height] }
         if let message = coordinator.message { state["message"] = message }
         if let data = try? JSONSerialization.data(withJSONObject: state, options: [.prettyPrinted, .sortedKeys]) { try? data.write(to: output.appendingPathComponent("state.json"), options: .atomic) }

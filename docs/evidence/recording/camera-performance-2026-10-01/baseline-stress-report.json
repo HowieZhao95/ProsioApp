@@ -1,0 +1,1068 @@
+{
+  "actualElapsedSeconds" : 300.16987675,
+  "audioBuffersPerSource" : 30000,
+  "completed" : true,
+  "durationSeconds" : 300,
+  "failures" : [
+
+  ],
+  "fixtureSkippedFrames" : 104,
+  "fps" : 30,
+  "height" : 1080,
+  "maximumSchedulingLagSeconds" : 2.008143,
+  "mode" : "synthetic H264\/AAC; no screen\/camera\/microphone access",
+  "segmentSeconds" : 60,
+  "segments" : [
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "070F16A6-A2B5-4030-BFA9-717A3B5D2999",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/070F16A6-A2B5-4030-BFA9-717A3B5D2999.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 0,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "E268A6A8-7DEB-4F65-B915-CF27EE299CBE",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/E268A6A8-7DEB-4F65-B915-CF27EE299CBE.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 0,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "92004664-8222-484E-ACB5-D649174E2BBF",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/92004664-8222-484E-ACB5-D649174E2BBF.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 0,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "B5576E1F-0283-42E2-B8EE-169E88B15C68",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/B5576E1F-0283-42E2-B8EE-169E88B15C68.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 0
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "8C611A1A-6B5F-482A-B075-8C7F030F0DD2",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/8C611A1A-6B5F-482A-B075-8C7F030F0DD2.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 0
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "5B7CA7F6-4086-43FC-BA35-1AC1FA08BFE5",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/5B7CA7F6-4086-43FC-BA35-1AC1FA08BFE5.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 60000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "F46BA3EC-00AE-48C4-BF92-3AF3732ED422",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/F46BA3EC-00AE-48C4-BF92-3AF3732ED422.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 60000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "A15DB71B-A867-471C-8C60-5A27F9ACDD21",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/A15DB71B-A867-471C-8C60-5A27F9ACDD21.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 60000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 59980000,
+      "id" : "72D912C8-144E-4CA8-94DA-3E150850D3EB",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/72D912C8-144E-4CA8-94DA-3E150850D3EB.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 60000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 59970000,
+      "id" : "D12C56CC-A0D9-47C6-836B-B22BF55CDFB7",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/D12C56CC-A0D9-47C6-836B-B22BF55CDFB7.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 60000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "E145E2C5-96BF-4F14-AF70-148384B13CDF",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/E145E2C5-96BF-4F14-AF70-148384B13CDF.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 120000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "826EAD21-F41F-4FA8-AFE0-8382CFBD11B0",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/826EAD21-F41F-4FA8-AFE0-8382CFBD11B0.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 120000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "4D37FBA0-38B9-44B7-AB3A-671370EBBBDA",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/4D37FBA0-38B9-44B7-AB3A-671370EBBBDA.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 120000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "96B48B18-EA7B-4F5E-8DC4-38D86DF854C5",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/96B48B18-EA7B-4F5E-8DC4-38D86DF854C5.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 120000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "3450692D-4DA2-47F2-AC2C-73AF47941CE0",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/3450692D-4DA2-47F2-AC2C-73AF47941CE0.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 120000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "D6EE9FAF-30A9-48FE-8C3F-D81EC44049D1",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/D6EE9FAF-30A9-48FE-8C3F-D81EC44049D1.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 180000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "77E87EA9-3161-436E-8AAA-1BDEF67AC2C6",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/77E87EA9-3161-436E-8AAA-1BDEF67AC2C6.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 180000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "57E50B16-8632-46A6-B541-BAFB3277E858",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/57E50B16-8632-46A6-B541-BAFB3277E858.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 180000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "6E2FC709-DB11-4A56-9B81-FF3E97809C90",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/6E2FC709-DB11-4A56-9B81-FF3E97809C90.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 180000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "EECCB333-CE37-4F3F-A44F-100D2B1AE790",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/EECCB333-CE37-4F3F-A44F-100D2B1AE790.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 180000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "7CD4A626-21F7-49C7-B01B-833DF7693D1C",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/7CD4A626-21F7-49C7-B01B-833DF7693D1C.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 240000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "FA3393F8-3ADE-4037-B320-F162130CCA78",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/FA3393F8-3ADE-4037-B320-F162130CCA78.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 240000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "3C6048D4-B388-4404-9676-4E96367EB0D5",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/3C6048D4-B388-4404-9676-4E96367EB0D5.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 240000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "EF518425-A2A9-4EE2-8D90-38EB8DF2B0FE",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/EF518425-A2A9-4EE2-8D90-38EB8DF2B0FE.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 240000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "3D848963-8AEF-4F1A-A9F7-27BC17CCE758",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/3D848963-8AEF-4F1A-A9F7-27BC17CCE758.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 240000000
+    }
+  ],
+  "snapshots" : [
+    {
+      "diskBytes" : 0,
+      "elapsedSeconds" : 1.9454651250000001,
+      "residentBytes" : 61931520,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 0,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 3,
+        "writtenSamples" : 5
+      }
+    },
+    {
+      "diskBytes" : 20980300,
+      "elapsedSeconds" : 5.0053935,
+      "residentBytes" : 102318080,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 1338
+      }
+    },
+    {
+      "diskBytes" : 50145730,
+      "elapsedSeconds" : 10.004606584,
+      "residentBytes" : 86933504,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 2788
+      }
+    },
+    {
+      "diskBytes" : 65240284,
+      "elapsedSeconds" : 15.002640417,
+      "residentBytes" : 80101376,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 4238
+      }
+    },
+    {
+      "diskBytes" : 83409937,
+      "elapsedSeconds" : 20.004705792,
+      "residentBytes" : 84426752,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 5688
+      }
+    },
+    {
+      "diskBytes" : 96724478,
+      "elapsedSeconds" : 25.004689125,
+      "residentBytes" : 78495744,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 7138
+      }
+    },
+    {
+      "diskBytes" : 113934069,
+      "elapsedSeconds" : 30.006568209,
+      "residentBytes" : 78610432,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 8588
+      }
+    },
+    {
+      "diskBytes" : 129573910,
+      "elapsedSeconds" : 35.005322625,
+      "residentBytes" : 83034112,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 10038
+      }
+    },
+    {
+      "diskBytes" : 142332761,
+      "elapsedSeconds" : 40.005487042,
+      "residentBytes" : 78643200,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 11488
+      }
+    },
+    {
+      "diskBytes" : 158635755,
+      "elapsedSeconds" : 45.005438209,
+      "residentBytes" : 79134720,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 12938
+      }
+    },
+    {
+      "diskBytes" : 175887246,
+      "elapsedSeconds" : 50.005486292,
+      "residentBytes" : 83099648,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 14388
+      }
+    },
+    {
+      "diskBytes" : 186968152,
+      "elapsedSeconds" : 55.005466459,
+      "residentBytes" : 77234176,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 15838
+      }
+    },
+    {
+      "diskBytes" : 203864538,
+      "elapsedSeconds" : 60.002998959,
+      "residentBytes" : 79364096,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 0,
+        "peakQueuedEvents" : 6,
+        "writtenSamples" : 17288
+      }
+    },
+    {
+      "diskBytes" : 228485110,
+      "elapsedSeconds" : 65.004124125,
+      "residentBytes" : 94011392,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 18738
+      }
+    },
+    {
+      "diskBytes" : 255305855,
+      "elapsedSeconds" : 70.001710042,
+      "residentBytes" : 90669056,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 20188
+      }
+    },
+    {
+      "diskBytes" : 270000307,
+      "elapsedSeconds" : 75.003763834,
+      "residentBytes" : 84377600,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 21638
+      }
+    },
+    {
+      "diskBytes" : 289986755,
+      "elapsedSeconds" : 80.004655125,
+      "residentBytes" : 84590592,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 23088
+      }
+    },
+    {
+      "diskBytes" : 306342860,
+      "elapsedSeconds" : 85.264005917,
+      "residentBytes" : 83279872,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 24538
+      }
+    },
+    {
+      "diskBytes" : 319030082,
+      "elapsedSeconds" : 90.003385542,
+      "residentBytes" : 79593472,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 25988
+      }
+    },
+    {
+      "diskBytes" : 334993262,
+      "elapsedSeconds" : 95.005117459,
+      "residentBytes" : 82690048,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 27438
+      }
+    },
+    {
+      "diskBytes" : 348195591,
+      "elapsedSeconds" : 100.003213375,
+      "residentBytes" : 79544320,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 15,
+        "writtenSamples" : 28888
+      }
+    },
+    {
+      "diskBytes" : 364974909,
+      "elapsedSeconds" : 105.003163542,
+      "residentBytes" : 103546880,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 30331
+      }
+    },
+    {
+      "diskBytes" : 380921835,
+      "elapsedSeconds" : 110.002575625,
+      "residentBytes" : 83148800,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 31781
+      }
+    },
+    {
+      "diskBytes" : 392948408,
+      "elapsedSeconds" : 115.004676334,
+      "residentBytes" : 78544896,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 33231
+      }
+    },
+    {
+      "diskBytes" : 409013881,
+      "elapsedSeconds" : 120.002461042,
+      "residentBytes" : 79446016,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 5,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 34681
+      }
+    },
+    {
+      "diskBytes" : 433789546,
+      "elapsedSeconds" : 125.004083584,
+      "residentBytes" : 79904768,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 36131
+      }
+    },
+    {
+      "diskBytes" : 460641625,
+      "elapsedSeconds" : 130.002857959,
+      "residentBytes" : 84197376,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 37581
+      }
+    },
+    {
+      "diskBytes" : 475445103,
+      "elapsedSeconds" : 135.002247459,
+      "residentBytes" : 79134720,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 39031
+      }
+    },
+    {
+      "diskBytes" : 495475610,
+      "elapsedSeconds" : 140.002423042,
+      "residentBytes" : 78069760,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 40481
+      }
+    },
+    {
+      "diskBytes" : 511777893,
+      "elapsedSeconds" : 145.004371167,
+      "residentBytes" : 82706432,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 41931
+      }
+    },
+    {
+      "diskBytes" : 524405579,
+      "elapsedSeconds" : 150.00449025,
+      "residentBytes" : 78577664,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 43381
+      }
+    },
+    {
+      "diskBytes" : 540477200,
+      "elapsedSeconds" : 155.003082125,
+      "residentBytes" : 83640320,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 44831
+      }
+    },
+    {
+      "diskBytes" : 553735096,
+      "elapsedSeconds" : 160.003946417,
+      "residentBytes" : 78479360,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 46281
+      }
+    },
+    {
+      "diskBytes" : 570294149,
+      "elapsedSeconds" : 165.004354584,
+      "residentBytes" : 79020032,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 47731
+      }
+    },
+    {
+      "diskBytes" : 586043978,
+      "elapsedSeconds" : 170.004508834,
+      "residentBytes" : 82444288,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 49181
+      }
+    },
+    {
+      "diskBytes" : 597146978,
+      "elapsedSeconds" : 175.003956375,
+      "residentBytes" : 78135296,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 50631
+      }
+    },
+    {
+      "diskBytes" : 614675912,
+      "elapsedSeconds" : 180.002663625,
+      "residentBytes" : 79200256,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 10,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 52081
+      }
+    },
+    {
+      "diskBytes" : 639698601,
+      "elapsedSeconds" : 185.004063125,
+      "residentBytes" : 83312640,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 53531
+      }
+    },
+    {
+      "diskBytes" : 666539301,
+      "elapsedSeconds" : 190.004414667,
+      "residentBytes" : 88883200,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 54981
+      }
+    },
+    {
+      "diskBytes" : 681228082,
+      "elapsedSeconds" : 195.004461125,
+      "residentBytes" : 78331904,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 56431
+      }
+    },
+    {
+      "diskBytes" : 700982214,
+      "elapsedSeconds" : 200.03541425,
+      "residentBytes" : 85000192,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 57881
+      }
+    },
+    {
+      "diskBytes" : 717666467,
+      "elapsedSeconds" : 205.009899125,
+      "residentBytes" : 79593472,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 59331
+      }
+    },
+    {
+      "diskBytes" : 730375663,
+      "elapsedSeconds" : 210.006031334,
+      "residentBytes" : 73842688,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 60781
+      }
+    },
+    {
+      "diskBytes" : 747179828,
+      "elapsedSeconds" : 215.010341959,
+      "residentBytes" : 74088448,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 62231
+      }
+    },
+    {
+      "diskBytes" : 759913702,
+      "elapsedSeconds" : 220.002399542,
+      "residentBytes" : 73646080,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 63681
+      }
+    },
+    {
+      "diskBytes" : 776929263,
+      "elapsedSeconds" : 225.002452417,
+      "residentBytes" : 73531392,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 65131
+      }
+    },
+    {
+      "diskBytes" : 792447476,
+      "elapsedSeconds" : 230.002508542,
+      "residentBytes" : 77152256,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 66581
+      }
+    },
+    {
+      "diskBytes" : 805117138,
+      "elapsedSeconds" : 235.0037175,
+      "residentBytes" : 73334784,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 68031
+      }
+    },
+    {
+      "diskBytes" : 821557063,
+      "elapsedSeconds" : 240.002249209,
+      "residentBytes" : 82673664,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 15,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 69481
+      }
+    },
+    {
+      "diskBytes" : 846487776,
+      "elapsedSeconds" : 245.011085209,
+      "residentBytes" : 82165760,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 70931
+      }
+    },
+    {
+      "diskBytes" : 873337006,
+      "elapsedSeconds" : 250.002243459,
+      "residentBytes" : 83984384,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 72381
+      }
+    },
+    {
+      "diskBytes" : 887996403,
+      "elapsedSeconds" : 255.003584625,
+      "residentBytes" : 78495744,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 73831
+      }
+    },
+    {
+      "diskBytes" : 907643477,
+      "elapsedSeconds" : 260.003882542,
+      "residentBytes" : 78495744,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 75281
+      }
+    },
+    {
+      "diskBytes" : 924238697,
+      "elapsedSeconds" : 265.004015334,
+      "residentBytes" : 83116032,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 76731
+      }
+    },
+    {
+      "diskBytes" : 937011070,
+      "elapsedSeconds" : 270.002622875,
+      "residentBytes" : 78200832,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 78181
+      }
+    },
+    {
+      "diskBytes" : 953625463,
+      "elapsedSeconds" : 275.00475175,
+      "residentBytes" : 83148800,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 79631
+      }
+    },
+    {
+      "diskBytes" : 966382662,
+      "elapsedSeconds" : 280.004019667,
+      "residentBytes" : 78004224,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 81081
+      }
+    },
+    {
+      "diskBytes" : 983433225,
+      "elapsedSeconds" : 285.004593375,
+      "residentBytes" : 78921728,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 82531
+      }
+    },
+    {
+      "diskBytes" : 998883413,
+      "elapsedSeconds" : 290.004560417,
+      "residentBytes" : 82280448,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 83981
+      }
+    },
+    {
+      "diskBytes" : 1011574689,
+      "elapsedSeconds" : 295.014840459,
+      "residentBytes" : 78282752,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 20,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 85431
+      }
+    },
+    {
+      "diskBytes" : 1028264148,
+      "elapsedSeconds" : 300.13695425,
+      "residentBytes" : 55951360,
+      "statistics" : {
+        "droppedAdmissionEvents" : 7,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 13,
+        "finalizedSegments" : 25,
+        "peakQueuedEvents" : 16,
+        "writtenSamples" : 86876
+      }
+    }
+  ],
+  "videoFramesPerSource" : 9000,
+  "warnings" : [
+    "Synthetic camera 1 写入繁忙，部分帧被跳过。",
+    "媒体写入暂时跟不上采集速度，已跳过部分帧；请降低来源数量或画面尺寸。"
+  ],
+  "width" : 1920
+}

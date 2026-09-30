@@ -1,0 +1,37 @@
+{
+  "configurations": {
+    "Debug": {
+      "xctest": 54,
+      "swiftTesting": 204,
+      "total": 258,
+      "failed": 0,
+      "result": "TEST SUCCEEDED",
+      "log": "/tmp/prosio-recording-final-debug-20261001.log"
+    },
+    "Release": {
+      "xctest": 54,
+      "swiftTesting": 204,
+      "total": 258,
+      "failed": 0,
+      "result": "TEST SUCCEEDED",
+      "log": "/tmp/prosio-recording-final-release-20261001.log"
+    }
+  },
+  "AACDecodedMarkers": {
+    "expectedTimelineSeconds": 0.4,
+    "decodedTimelineSeconds": 0.4000625,
+    "errorMicroseconds": 62.5,
+    "scenarios": [
+      "admission loss 20ms",
+      "encoder rejection 20ms",
+      "natural PTS gap 20ms",
+      "pause/resume with stale sample"
+    ]
+  },
+  "XMLGap": {
+    "firstAudioDurationSeconds": 0.1,
+    "nextAudioOffsetSeconds": 0.12,
+    "gapSeconds": 0.02
+  },
+  "limits": "synthetic markers, not real-device mouth-sync"
+}

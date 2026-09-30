@@ -1,0 +1,389 @@
+{
+  "runnerExitCode": 0,
+  "command": [
+    "tools/recording-stress/run.sh",
+    "--duration",
+    "300",
+    "--width",
+    "1920",
+    "--height",
+    "1080",
+    "--fps",
+    "30",
+    "--segment",
+    "60",
+    "--output",
+    "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-20261001.6d65b608/media-run"
+  ],
+  "samplingSeconds": 5,
+  "samples": [
+    {
+      "wallSecondsIncludingBuild": 15.038539041066542,
+      "cpuPercent": 29.8,
+      "rssBytes": 122257408,
+      "processCPUTime": "0:01.09"
+    },
+    {
+      "wallSecondsIncludingBuild": 20.051705999998376,
+      "cpuPercent": 29.5,
+      "rssBytes": 130301952,
+      "processCPUTime": "0:02.56"
+    },
+    {
+      "wallSecondsIncludingBuild": 25.075487541034818,
+      "cpuPercent": 28.5,
+      "rssBytes": 122486784,
+      "processCPUTime": "0:04.03"
+    },
+    {
+      "wallSecondsIncludingBuild": 30.089515874977224,
+      "cpuPercent": 27.2,
+      "rssBytes": 122519552,
+      "processCPUTime": "0:05.51"
+    },
+    {
+      "wallSecondsIncludingBuild": 35.10643975005951,
+      "cpuPercent": 26.5,
+      "rssBytes": 127139840,
+      "processCPUTime": "0:06.98"
+    },
+    {
+      "wallSecondsIncludingBuild": 40.120351125020534,
+      "cpuPercent": 25.7,
+      "rssBytes": 119914496,
+      "processCPUTime": "0:08.32"
+    },
+    {
+      "wallSecondsIncludingBuild": 45.13417225005105,
+      "cpuPercent": 27.7,
+      "rssBytes": 120111104,
+      "processCPUTime": "0:09.68"
+    },
+    {
+      "wallSecondsIncludingBuild": 50.14842379104812,
+      "cpuPercent": 29.3,
+      "rssBytes": 99516416,
+      "processCPUTime": "0:11.16"
+    },
+    {
+      "wallSecondsIncludingBuild": 55.16718245798256,
+      "cpuPercent": 27.2,
+      "rssBytes": 95371264,
+      "processCPUTime": "0:12.60"
+    },
+    {
+      "wallSecondsIncludingBuild": 60.178501458023675,
+      "cpuPercent": 29.4,
+      "rssBytes": 95289344,
+      "processCPUTime": "0:14.01"
+    },
+    {
+      "wallSecondsIncludingBuild": 65.19372087495867,
+      "cpuPercent": 29.8,
+      "rssBytes": 99762176,
+      "processCPUTime": "0:15.32"
+    },
+    {
+      "wallSecondsIncludingBuild": 70.20732133300044,
+      "cpuPercent": 29.0,
+      "rssBytes": 95322112,
+      "processCPUTime": "0:16.80"
+    },
+    {
+      "wallSecondsIncludingBuild": 75.22330049995799,
+      "cpuPercent": 24.0,
+      "rssBytes": 119062528,
+      "processCPUTime": "0:18.20"
+    },
+    {
+      "wallSecondsIncludingBuild": 80.23449283302762,
+      "cpuPercent": 28.7,
+      "rssBytes": 126107648,
+      "processCPUTime": "0:19.69"
+    },
+    {
+      "wallSecondsIncludingBuild": 85.24679337500129,
+      "cpuPercent": 26.4,
+      "rssBytes": 120111104,
+      "processCPUTime": "0:21.13"
+    },
+    {
+      "wallSecondsIncludingBuild": 90.26799133303575,
+      "cpuPercent": 29.5,
+      "rssBytes": 118538240,
+      "processCPUTime": "0:22.66"
+    },
+    {
+      "wallSecondsIncludingBuild": 95.28025912505109,
+      "cpuPercent": 28.3,
+      "rssBytes": 123125760,
+      "processCPUTime": "0:24.13"
+    },
+    {
+      "wallSecondsIncludingBuild": 100.29823645798024,
+      "cpuPercent": 29.7,
+      "rssBytes": 118571008,
+      "processCPUTime": "0:25.60"
+    },
+    {
+      "wallSecondsIncludingBuild": 105.31696670805104,
+      "cpuPercent": 23.0,
+      "rssBytes": 118718464,
+      "processCPUTime": "0:26.99"
+    },
+    {
+      "wallSecondsIncludingBuild": 110.33174637507182,
+      "cpuPercent": 28.2,
+      "rssBytes": 104841216,
+      "processCPUTime": "0:28.49"
+    },
+    {
+      "wallSecondsIncludingBuild": 115.34871108306106,
+      "cpuPercent": 28.5,
+      "rssBytes": 100810752,
+      "processCPUTime": "0:29.95"
+    },
+    {
+      "wallSecondsIncludingBuild": 120.36307408299763,
+      "cpuPercent": 28.9,
+      "rssBytes": 100876288,
+      "processCPUTime": "0:31.45"
+    },
+    {
+      "wallSecondsIncludingBuild": 125.3794407909736,
+      "cpuPercent": 30.0,
+      "rssBytes": 105349120,
+      "processCPUTime": "0:32.88"
+    },
+    {
+      "wallSecondsIncludingBuild": 130.3929145829752,
+      "cpuPercent": 29.4,
+      "rssBytes": 100237312,
+      "processCPUTime": "0:34.38"
+    },
+    {
+      "wallSecondsIncludingBuild": 135.40933079097886,
+      "cpuPercent": 28.3,
+      "rssBytes": 110034944,
+      "processCPUTime": "0:35.88"
+    },
+    {
+      "wallSecondsIncludingBuild": 140.4238598330412,
+      "cpuPercent": 28.2,
+      "rssBytes": 109953024,
+      "processCPUTime": "0:37.41"
+    },
+    {
+      "wallSecondsIncludingBuild": 145.43774691596627,
+      "cpuPercent": 29.7,
+      "rssBytes": 114556928,
+      "processCPUTime": "0:38.93"
+    },
+    {
+      "wallSecondsIncludingBuild": 150.4529371659737,
+      "cpuPercent": 28.0,
+      "rssBytes": 109838336,
+      "processCPUTime": "0:40.41"
+    },
+    {
+      "wallSecondsIncludingBuild": 155.4667596250074,
+      "cpuPercent": 29.1,
+      "rssBytes": 109641728,
+      "processCPUTime": "0:41.91"
+    },
+    {
+      "wallSecondsIncludingBuild": 160.48019954096526,
+      "cpuPercent": 25.7,
+      "rssBytes": 114114560,
+      "processCPUTime": "0:43.37"
+    },
+    {
+      "wallSecondsIncludingBuild": 165.4899270000169,
+      "cpuPercent": 25.6,
+      "rssBytes": 109821952,
+      "processCPUTime": "0:44.82"
+    },
+    {
+      "wallSecondsIncludingBuild": 170.5004808329977,
+      "cpuPercent": 28.6,
+      "rssBytes": 105365504,
+      "processCPUTime": "0:46.29"
+    },
+    {
+      "wallSecondsIncludingBuild": 175.51144279097207,
+      "cpuPercent": 28.4,
+      "rssBytes": 101367808,
+      "processCPUTime": "0:47.78"
+    },
+    {
+      "wallSecondsIncludingBuild": 180.52639566606376,
+      "cpuPercent": 27.8,
+      "rssBytes": 101335040,
+      "processCPUTime": "0:49.25"
+    },
+    {
+      "wallSecondsIncludingBuild": 185.53846025001258,
+      "cpuPercent": 28.8,
+      "rssBytes": 105840640,
+      "processCPUTime": "0:50.72"
+    },
+    {
+      "wallSecondsIncludingBuild": 190.55475004098844,
+      "cpuPercent": 27.8,
+      "rssBytes": 101335040,
+      "processCPUTime": "0:52.17"
+    },
+    {
+      "wallSecondsIncludingBuild": 195.56672200001776,
+      "cpuPercent": 29.0,
+      "rssBytes": 110297088,
+      "processCPUTime": "0:53.65"
+    },
+    {
+      "wallSecondsIncludingBuild": 200.5801187909674,
+      "cpuPercent": 27.0,
+      "rssBytes": 110002176,
+      "processCPUTime": "0:55.18"
+    },
+    {
+      "wallSecondsIncludingBuild": 205.5940470410278,
+      "cpuPercent": 31.3,
+      "rssBytes": 115228672,
+      "processCPUTime": "0:56.67"
+    },
+    {
+      "wallSecondsIncludingBuild": 210.6094084159704,
+      "cpuPercent": 26.4,
+      "rssBytes": 109805568,
+      "processCPUTime": "0:58.13"
+    },
+    {
+      "wallSecondsIncludingBuild": 215.62349204102065,
+      "cpuPercent": 29.5,
+      "rssBytes": 109707264,
+      "processCPUTime": "0:59.61"
+    },
+    {
+      "wallSecondsIncludingBuild": 220.63684329099488,
+      "cpuPercent": 27.2,
+      "rssBytes": 114163712,
+      "processCPUTime": "1:01.09"
+    },
+    {
+      "wallSecondsIncludingBuild": 225.65073170803953,
+      "cpuPercent": 28.6,
+      "rssBytes": 100270080,
+      "processCPUTime": "1:02.48"
+    },
+    {
+      "wallSecondsIncludingBuild": 230.66598050005268,
+      "cpuPercent": 28.4,
+      "rssBytes": 100106240,
+      "processCPUTime": "1:03.99"
+    },
+    {
+      "wallSecondsIncludingBuild": 235.68277020798996,
+      "cpuPercent": 30.3,
+      "rssBytes": 104824832,
+      "processCPUTime": "1:05.50"
+    },
+    {
+      "wallSecondsIncludingBuild": 240.6938302910421,
+      "cpuPercent": 27.0,
+      "rssBytes": 100270080,
+      "processCPUTime": "1:07.01"
+    },
+    {
+      "wallSecondsIncludingBuild": 245.70642987499014,
+      "cpuPercent": 29.3,
+      "rssBytes": 103792640,
+      "processCPUTime": "1:08.54"
+    },
+    {
+      "wallSecondsIncludingBuild": 250.71642779104877,
+      "cpuPercent": 26.6,
+      "rssBytes": 99254272,
+      "processCPUTime": "1:10.04"
+    },
+    {
+      "wallSecondsIncludingBuild": 255.72754424996674,
+      "cpuPercent": 27.6,
+      "rssBytes": 109821952,
+      "processCPUTime": "1:11.54"
+    },
+    {
+      "wallSecondsIncludingBuild": 260.73980524996296,
+      "cpuPercent": 31.4,
+      "rssBytes": 109412352,
+      "processCPUTime": "1:13.06"
+    },
+    {
+      "wallSecondsIncludingBuild": 265.75850891601294,
+      "cpuPercent": 27.3,
+      "rssBytes": 114622464,
+      "processCPUTime": "1:14.43"
+    },
+    {
+      "wallSecondsIncludingBuild": 270.77799545798916,
+      "cpuPercent": 25.3,
+      "rssBytes": 109068288,
+      "processCPUTime": "1:15.81"
+    },
+    {
+      "wallSecondsIncludingBuild": 275.8011928329943,
+      "cpuPercent": 27.5,
+      "rssBytes": 108855296,
+      "processCPUTime": "1:17.22"
+    },
+    {
+      "wallSecondsIncludingBuild": 280.81583179102745,
+      "cpuPercent": 29.9,
+      "rssBytes": 113426432,
+      "processCPUTime": "1:18.70"
+    },
+    {
+      "wallSecondsIncludingBuild": 285.83149670797866,
+      "cpuPercent": 26.2,
+      "rssBytes": 100564992,
+      "processCPUTime": "1:20.11"
+    },
+    {
+      "wallSecondsIncludingBuild": 290.84114308306016,
+      "cpuPercent": 26.6,
+      "rssBytes": 100417536,
+      "processCPUTime": "1:21.57"
+    },
+    {
+      "wallSecondsIncludingBuild": 295.85410487500485,
+      "cpuPercent": 27.7,
+      "rssBytes": 105152512,
+      "processCPUTime": "1:23.01"
+    },
+    {
+      "wallSecondsIncludingBuild": 300.8719247500412,
+      "cpuPercent": 29.8,
+      "rssBytes": 100581376,
+      "processCPUTime": "1:24.48"
+    },
+    {
+      "wallSecondsIncludingBuild": 305.8878753329627,
+      "cpuPercent": 26.9,
+      "rssBytes": 100679680,
+      "processCPUTime": "1:25.87"
+    },
+    {
+      "wallSecondsIncludingBuild": 310.9070683750324,
+      "cpuPercent": 29.3,
+      "rssBytes": 104316928,
+      "processCPUTime": "1:27.30"
+    }
+  ],
+  "peakRSSBytes": 130301952,
+  "peakCPUPercent": 31.4,
+  "meanCPUPercent": 28.105,
+  "syntheticOnly": true,
+  "includesPhysicalCaptureOrPreview": false,
+  "otherUIAndBuildWorkMayOverlap": false,
+  "mediaRoot": "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-20261001.6d65b608/media-run",
+  "samplingLimit": "ps CPU is a sampled estimate; not a device or UI responsiveness benchmark"
+}

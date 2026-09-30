@@ -1,0 +1,107 @@
+{
+  "scope": "production camera preview UI and synthetic encoder performance; real capture remains blocked",
+  "baseline": {
+    "actualElapsedSeconds": 300.16987675,
+    "video": "3 x 1920x1080 @30fps",
+    "audio": "2 x 48kHz stereo",
+    "segments": 25,
+    "writerStatistics": {
+      "droppedAdmissionEvents": 7,
+      "droppedCaptureFrames": 0,
+      "droppedEncoderSamples": 13,
+      "finalizedSegments": 25,
+      "peakQueuedEvents": 16,
+      "writtenSamples": 86876
+    },
+    "fixtureSkippedFrames": 104,
+    "maximumSchedulingLagSeconds": 2.008143,
+    "sampledPeakRSSBytes": 132759552,
+    "sampledPeakCPUPercent": 45.9,
+    "sampledMeanCPUPercent": 20.46333333333333,
+    "concurrentUIAndBuild": true
+  },
+  "realDeviceStatus": "updated GUI tool screen permission absent; camera/microphone not requested; built-in camera + one iPhone + built-in mic + system audio configured, no capture started",
+  "previewRawPolicy": "rounded shadow draggable preview uses existing capture session; raw sources saved separately",
+  "uiEvidence": {
+    "beforeDrag": [
+      1402,
+      822
+    ],
+    "afterDrag": [
+      1322,
+      772
+    ],
+    "addingCamera2PreservesCamera1": [
+      1322,
+      772
+    ],
+    "duringRecordingAfterDrag": [
+      1392,
+      742
+    ],
+    "hiddenBothStillRecording": true,
+    "restorePreservesPosition": true,
+    "offOnCamera2WindowCount": 2,
+    "style": "light/dark offscreen render; not real camera pixels",
+    "hideShowLabelUpdatePass": true
+  },
+  "unverified": [
+    "real mouth-sync",
+    "real screen/camera/mic/system audio concurrent capture",
+    "physical disconnect/recovery",
+    "two-hour physical capture/thermal pressure",
+    "actual FCP/Resolve/Premiere/Jianying import"
+  ],
+  "fixed": {
+    "actualElapsedSeconds": 300.087606625,
+    "video": "3 x 1920x1080 @30fps",
+    "audio": "2 x 48kHz stereo",
+    "segments": 25,
+    "writerStatistics": {
+      "droppedAdmissionEvents": 0,
+      "droppedCaptureFrames": 0,
+      "droppedEncoderSamples": 1,
+      "finalizedSegments": 25,
+      "lossCountsBySourceAndReason": {
+        "camera-2": {
+          "encoderBackpressure": 1
+        }
+      },
+      "peakQueuedEvents": 8,
+      "recentLosses": [
+        {
+          "durationMicroseconds": 33333,
+          "hostStartMicroseconds": 623777982929,
+          "kind": "camera",
+          "reason": "encoderBackpressure",
+          "sourceID": "camera-2"
+        }
+      ],
+      "writtenSamples": 86999
+    },
+    "fixtureSkippedFrames": 0,
+    "maximumSchedulingLagSeconds": 0.25320604199999996,
+    "sampledPeakRSSBytes": 130301952,
+    "sampledPeakCPUPercent": 31.4,
+    "sampledMeanCPUPercent": 28.105,
+    "concurrentValidationBuild": false,
+    "metadataAndDecodeStatus": "25/25 metadata and full-decode passed",
+    "writerSHA256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97",
+    "decodedVideoFrames": {
+      "screen": 9000,
+      "camera-1": 9000,
+      "camera-2": 8999
+    },
+    "decodedAudioSampleFrames": {
+      "systemAudio": 14402240,
+      "microphone": 14402240
+    },
+    "validAudioSampleFrames": {
+      "systemAudio": 14400000,
+      "microphone": 14400000
+    },
+    "audioDecodePaddingFramesPerSource": 2240
+  },
+  "testResult": "Debug and Release 258/258 each",
+  "status": "accessible tests complete; full real-device acceptance blocked by GUI capture permissions"
+}

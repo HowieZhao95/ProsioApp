@@ -8,6 +8,18 @@ import Testing
 @MainActor
 struct RecordingNativeViewTests {
     @Test
+    func cameraCardRendersRoundedContentAndShadowWithoutClippingAtPanelSize() async throws {
+        _ = NSApplication.shared
+        let harness = try RecordingImmersiveViewHarness()
+        defer { harness.cleanup() }
+        let source = try #require(harness.coordinator.inventory?.cameras.first)
+        for (name, theme) in [("camera-card-light", NSAppearance.Name.aqua), ("camera-card-dark", .darkAqua)] {
+            try await render(RecordingCameraPreviewCard(coordinator: harness.coordinator, source: source),
+                             theme: theme, size: RecordingCameraPreviewStyle.panelSize, name: name)
+        }
+    }
+
+    @Test
     func savedMaterialPlayerRendersNativeAVKitViewWithoutMetadataCrash() async throws {
         _ = NSApplication.shared
         try await render(RecordingPlayerView(player: AVPlayer()), theme: .aqua,

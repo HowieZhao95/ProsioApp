@@ -1,0 +1,196 @@
+{
+  "scope": "all frames and audio samples of synthetic finalized stress media decoded by ffmpeg",
+  "realDeviceSyncProven": false,
+  "completed": true,
+  "decodedCount": 25,
+  "segmentCount": 25,
+  "failures": [],
+  "seconds": 68.37289545801468,
+  "segments": [
+    {
+      "sourceID": "screen",
+      "path": "media/2FFAFFF3-1CD0-4042-BC18-DBA51ABE003A.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-1",
+      "path": "media/00C1AFC5-05C2-4575-9A92-4BEA4AA41B12.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-2",
+      "path": "media/81104BD1-4AA5-445D-B3D3-F997EF17A1A6.mov",
+      "videoFrames": 1799,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "systemAudio",
+      "path": "media/4A5CEC49-F76B-43C3-8233-802B48B87B88.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "microphone",
+      "path": "media/4E0ADC00-F3CD-4D16-8CA0-68D85C690CC5.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "screen",
+      "path": "media/429C2CF5-5834-4A06-8DB4-48365B2F7CB5.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-1",
+      "path": "media/5B9D8E28-63DA-49FF-B509-79DB71F73083.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-2",
+      "path": "media/EDB59C84-793E-432A-BD04-C570DF890948.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "microphone",
+      "path": "media/FE75AEF3-5BC5-4BC2-8793-74F69021EEF6.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "systemAudio",
+      "path": "media/A3B64D0A-E8D6-4B9A-9FC2-F7274B0C1D8E.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "screen",
+      "path": "media/D777E37E-4A72-4114-8F36-AF8A72746FCA.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-1",
+      "path": "media/F041C0E0-04CF-4815-905C-84AB40512C65.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-2",
+      "path": "media/FB45DF56-5E86-4C44-89FF-47A5929AE480.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "microphone",
+      "path": "media/73597497-A769-4961-B6E9-3486F1BFCE37.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "systemAudio",
+      "path": "media/32CD70C1-6A44-4552-A843-678614648D5F.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "screen",
+      "path": "media/4534960F-EFAC-44DC-BC99-842AC148179E.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-1",
+      "path": "media/15F1880F-4549-4F89-A432-95F888571E6D.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-2",
+      "path": "media/9AA1B640-8235-43C3-9785-0A9CDC476BBD.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "microphone",
+      "path": "media/231894C7-B585-4A12-884B-A52BF6D3ECB7.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "systemAudio",
+      "path": "media/3C04FBBD-F6DA-467D-A1B3-37FD530701A2.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "microphone",
+      "path": "media/7CAD803E-08E3-462D-8F17-B4D5FB795F3C.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "screen",
+      "path": "media/1F8D1B6D-F4C8-4420-B213-A9B8393D3914.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "systemAudio",
+      "path": "media/5E69B47C-4988-4826-A162-24E890E055E3.m4a",
+      "audioSampleFrames": 2880448,
+      "sampleRate": 48000,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-2",
+      "path": "media/EDD18790-0846-4702-9794-CB7B7A88292C.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "sourceID": "camera-1",
+      "path": "media/579E4343-517E-436D-BA2D-1CB45A33020F.mov",
+      "videoFrames": 1800,
+      "exitCode": 0,
+      "errors": ""
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "blocksOtherCapture": false,
+  "cameraWindows": [],
+  "closingSelection": false,
+  "completionAvailable": true,
+  "displayID": 1,
+  "elapsed": 0,
+  "events": [
+    "reservation:true",
+    "reservation:true",
+    "syntheticAuthorization: no permission requested",
+    "start: SYNTHETIC fixture only; no inputs, device capture or permissions; directory=/tmp/prosio-recording-complete-ui/sessions/1C1BCD85-45BF-4AE5-A761-4967F84C4410",
+    "pause: SYNTHETIC UI state only; no capture",
+    "resume: SYNTHETIC UI state only; no capture",
+    "stop: generating 2 seconds of SYNTHETIC 640x360 video / 48k stereo audio using production writer",
+    "segment: SYNTHETIC source=systemAudio path=media/DA01DE96-4DB0-41A9-91E2-3D8F8E557EC7.m4a startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=ui-microphone path=media/2C4CEB89-E3F4-4023-870E-DEABBE536CCF.m4a startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=ui-camera-2 path=media/458840F7-12EE-45DD-B71D-0E1E6E8A8194.mov startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=screen path=media/835535AD-1071-4DEF-9E2F-CF7A772AB568.mov startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=ui-camera-1 path=media/490E3E8A-7609-4403-9CB6-EFF39626814F.mov startUs=0 durationUs=2000000",
+    "writer.stats: written=580 segments=5 admissionDrops=0 encoderDrops=0",
+    "stop.completed: all SYNTHETIC files finished; not evidence of real capture or AV sync",
+    "reservation:false"
+  ],
+  "message": "录制已保存，可预览或交给剪辑软件。",
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "ready",
+  "physicalCapturesStarted": false,
+  "previewStarted": 3,
+  "previewStopped": 3,
+  "screenMode": "display",
+  "selectedCameras": [
+    "ui-camera-1",
+    "ui-camera-2"
+  ],
+  "selectionActive": false,
+  "selectionReady": false,
+  "sessions": 6,
+  "systemAudio": true,
+  "windowID": 20479
+}

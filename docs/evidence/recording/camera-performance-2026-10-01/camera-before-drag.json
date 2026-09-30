@@ -1,0 +1,35 @@
+{
+  "blocksOtherCapture": true,
+  "cameraWindows": [
+    {
+      "height": 180,
+      "title": "\u6444\u50cf\u5934\u9884\u89c8 \u00b7 \u5408\u6210\u673a\u4f4d 1",
+      "visible": true,
+      "width": 260,
+      "x": 1402,
+      "y": 822
+    }
+  ],
+  "closingSelection": false,
+  "completionAvailable": false,
+  "displayID": 1,
+  "elapsed": 0,
+  "events": [
+    "reservation:true"
+  ],
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "ready",
+  "physicalCapturesStarted": false,
+  "previewStarted": 1,
+  "previewStopped": 0,
+  "screenMode": "display",
+  "selectedCameras": [
+    "ui-camera-1"
+  ],
+  "selectionActive": true,
+  "selectionReady": true,
+  "sessions": 5,
+  "systemAudio": true,
+  "windowID": 20479
+}

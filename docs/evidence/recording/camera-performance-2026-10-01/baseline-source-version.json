@@ -1,0 +1,8 @@
+{
+  "head": "af238231a1220c8e622858ecbcfab8f410d42cc6",
+  "context": "stress started and completed before writer edits; same HEAD writer/stress source",
+  "sha256": {
+    "Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift": "ba32e72f3162426303339757e9ce66822d362d953a91919bd8184ab8ab472244",
+    "tools/recording-stress/RecordingStress.swift": "424a54bc872aeef2e497c9b814b5af9d9c62a3dc07ef14fbf86202876c251995"
+  }
+}

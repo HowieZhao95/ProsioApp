@@ -1,0 +1,7 @@
+{
+  "initialMenu": "隐藏摄像头预览",
+  "afterHidingMenu": "显示摄像头预览",
+  "nativeAXConfirmed": true,
+  "recordingContinues": true,
+  "testUsesSyntheticCapture": true
+}

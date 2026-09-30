@@ -1,0 +1,47 @@
+{
+  "blocksOtherCapture": true,
+  "cameraWindows": [
+    {
+      "height": 180,
+      "title": "摄像头预览 · 合成机位 1",
+      "visible": false,
+      "width": 260,
+      "x": 1392,
+      "y": 742
+    },
+    {
+      "height": 180,
+      "title": "摄像头预览 · 合成机位 2",
+      "visible": false,
+      "width": 260,
+      "x": 1402,
+      "y": 630
+    }
+  ],
+  "closingSelection": false,
+  "completionAvailable": false,
+  "displayID": 1,
+  "elapsed": 240.98607179161627,
+  "events": [
+    "reservation:true",
+    "reservation:true",
+    "syntheticAuthorization: no permission requested",
+    "start: SYNTHETIC fixture only; no inputs, device capture or permissions; directory=/tmp/prosio-recording-complete-ui/sessions/1C1BCD85-45BF-4AE5-A761-4967F84C4410"
+  ],
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "recording",
+  "physicalCapturesStarted": false,
+  "previewStarted": 3,
+  "previewStopped": 3,
+  "screenMode": "display",
+  "selectedCameras": [
+    "ui-camera-1",
+    "ui-camera-2"
+  ],
+  "selectionActive": false,
+  "selectionReady": false,
+  "sessions": 6,
+  "systemAudio": true,
+  "windowID": 20479
+}

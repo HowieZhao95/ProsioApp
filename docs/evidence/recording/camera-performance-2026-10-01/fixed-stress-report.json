@@ -1,0 +1,1914 @@
+{
+  "actualElapsedSeconds" : 300.087606625,
+  "audioBuffersPerSource" : 30000,
+  "completed" : true,
+  "durationSeconds" : 300,
+  "failures" : [
+
+  ],
+  "fixtureSkippedFrames" : 0,
+  "fps" : 30,
+  "height" : 1080,
+  "maximumSchedulingLagSeconds" : 0.25320604199999996,
+  "mode" : "synthetic H264\/AAC; no screen\/camera\/microphone access",
+  "segmentSeconds" : 60,
+  "segments" : [
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "2FFAFFF3-1CD0-4042-BC18-DBA51ABE003A",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/2FFAFFF3-1CD0-4042-BC18-DBA51ABE003A.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 0,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "00C1AFC5-05C2-4575-9A92-4BEA4AA41B12",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/00C1AFC5-05C2-4575-9A92-4BEA4AA41B12.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 0,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "81104BD1-4AA5-445D-B3D3-F997EF17A1A6",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/81104BD1-4AA5-445D-B3D3-F997EF17A1A6.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 0,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "4A5CEC49-F76B-43C3-8233-802B48B87B88",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/4A5CEC49-F76B-43C3-8233-802B48B87B88.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 0
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "4E0ADC00-F3CD-4D16-8CA0-68D85C690CC5",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/4E0ADC00-F3CD-4D16-8CA0-68D85C690CC5.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 0
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "429C2CF5-5834-4A06-8DB4-48365B2F7CB5",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/429C2CF5-5834-4A06-8DB4-48365B2F7CB5.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 60000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "5B9D8E28-63DA-49FF-B509-79DB71F73083",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/5B9D8E28-63DA-49FF-B509-79DB71F73083.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 60000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "EDB59C84-793E-432A-BD04-C570DF890948",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/EDB59C84-793E-432A-BD04-C570DF890948.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 60000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "FE75AEF3-5BC5-4BC2-8793-74F69021EEF6",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/FE75AEF3-5BC5-4BC2-8793-74F69021EEF6.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 60000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "A3B64D0A-E8D6-4B9A-9FC2-F7274B0C1D8E",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/A3B64D0A-E8D6-4B9A-9FC2-F7274B0C1D8E.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 60000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "D777E37E-4A72-4114-8F36-AF8A72746FCA",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/D777E37E-4A72-4114-8F36-AF8A72746FCA.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 120000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "F041C0E0-04CF-4815-905C-84AB40512C65",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/F041C0E0-04CF-4815-905C-84AB40512C65.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 120000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "FB45DF56-5E86-4C44-89FF-47A5929AE480",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/FB45DF56-5E86-4C44-89FF-47A5929AE480.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 120000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "73597497-A769-4961-B6E9-3486F1BFCE37",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/73597497-A769-4961-B6E9-3486F1BFCE37.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 120000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "32CD70C1-6A44-4552-A843-678614648D5F",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/32CD70C1-6A44-4552-A843-678614648D5F.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 120000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "4534960F-EFAC-44DC-BC99-842AC148179E",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/4534960F-EFAC-44DC-BC99-842AC148179E.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 180000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "15F1880F-4549-4F89-A432-95F888571E6D",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/15F1880F-4549-4F89-A432-95F888571E6D.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 180000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "9AA1B640-8235-43C3-9785-0A9CDC476BBD",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/9AA1B640-8235-43C3-9785-0A9CDC476BBD.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 180000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "231894C7-B585-4A12-884B-A52BF6D3ECB7",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/231894C7-B585-4A12-884B-A52BF6D3ECB7.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 180000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "3C04FBBD-F6DA-467D-A1B3-37FD530701A2",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/3C04FBBD-F6DA-467D-A1B3-37FD530701A2.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 180000000
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "7CAD803E-08E3-462D-8F17-B4D5FB795F3C",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/7CAD803E-08E3-462D-8F17-B4D5FB795F3C.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "microphone",
+      "timelineStartMicroseconds" : 240000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "1F8D1B6D-F4C8-4420-B213-A9B8393D3914",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/1F8D1B6D-F4C8-4420-B213-A9B8393D3914.mov",
+      "sourceID" : "screen",
+      "timelineStartMicroseconds" : 240000000,
+      "width" : 1920
+    },
+    {
+      "channelCount" : 2,
+      "durationMicroseconds" : 60000000,
+      "id" : "5E69B47C-4988-4826-A162-24E890E055E3",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/5E69B47C-4988-4826-A162-24E890E055E3.m4a",
+      "sampleRate" : 48000,
+      "sourceID" : "systemAudio",
+      "timelineStartMicroseconds" : 240000000
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "EDD18790-0846-4702-9794-CB7B7A88292C",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/EDD18790-0846-4702-9794-CB7B7A88292C.mov",
+      "sourceID" : "camera-2",
+      "timelineStartMicroseconds" : 240000000,
+      "width" : 1920
+    },
+    {
+      "durationMicroseconds" : 60000000,
+      "height" : 1080,
+      "id" : "579E4343-517E-436D-BA2D-1CB45A33020F",
+      "mediaStartMicroseconds" : 0,
+      "relativePath" : "media\/579E4343-517E-436D-BA2D-1CB45A33020F.mov",
+      "sourceID" : "camera-1",
+      "timelineStartMicroseconds" : 240000000,
+      "width" : 1920
+    }
+  ],
+  "snapshots" : [
+    {
+      "diskBytes" : 0,
+      "elapsedSeconds" : 0.078811292,
+      "residentBytes" : 76677120,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 0,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+
+        ],
+        "writtenSamples" : 5
+      }
+    },
+    {
+      "diskBytes" : 24568015,
+      "elapsedSeconds" : 5.00545125,
+      "residentBytes" : 122470400,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 1454
+      }
+    },
+    {
+      "diskBytes" : 52372827,
+      "elapsedSeconds" : 10.004877042,
+      "residentBytes" : 128581632,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 2904
+      }
+    },
+    {
+      "diskBytes" : 66869132,
+      "elapsedSeconds" : 15.004511292,
+      "residentBytes" : 122454016,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 4354
+      }
+    },
+    {
+      "diskBytes" : 85661246,
+      "elapsedSeconds" : 20.005122375,
+      "residentBytes" : 122437632,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 5804
+      }
+    },
+    {
+      "diskBytes" : 103077300,
+      "elapsedSeconds" : 25.005678667,
+      "residentBytes" : 127336448,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 7254
+      }
+    },
+    {
+      "diskBytes" : 116039407,
+      "elapsedSeconds" : 30.003990625,
+      "residentBytes" : 119963648,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 8704
+      }
+    },
+    {
+      "diskBytes" : 133218503,
+      "elapsedSeconds" : 35.004694,
+      "residentBytes" : 95272960,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 10154
+      }
+    },
+    {
+      "diskBytes" : 145512739,
+      "elapsedSeconds" : 40.003585375,
+      "residentBytes" : 95191040,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 11604
+      }
+    },
+    {
+      "diskBytes" : 162442615,
+      "elapsedSeconds" : 45.0049085,
+      "residentBytes" : 95338496,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 13054
+      }
+    },
+    {
+      "diskBytes" : 178128014,
+      "elapsedSeconds" : 50.004072958,
+      "residentBytes" : 99139584,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 14504
+      }
+    },
+    {
+      "diskBytes" : 190855894,
+      "elapsedSeconds" : 55.004287667,
+      "residentBytes" : 95207424,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 15954
+      }
+    },
+    {
+      "diskBytes" : 206705134,
+      "elapsedSeconds" : 60.003554958,
+      "residentBytes" : 95305728,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 0,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 5,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 17404
+      }
+    },
+    {
+      "diskBytes" : 232131285,
+      "elapsedSeconds" : 65.003825417,
+      "residentBytes" : 118915072,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 18854
+      }
+    },
+    {
+      "diskBytes" : 259541591,
+      "elapsedSeconds" : 70.004004167,
+      "residentBytes" : 124928000,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 20304
+      }
+    },
+    {
+      "diskBytes" : 273873599,
+      "elapsedSeconds" : 75.005104,
+      "residentBytes" : 118734848,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 21754
+      }
+    },
+    {
+      "diskBytes" : 292310676,
+      "elapsedSeconds" : 80.004116708,
+      "residentBytes" : 118538240,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 23204
+      }
+    },
+    {
+      "diskBytes" : 309511180,
+      "elapsedSeconds" : 85.002554417,
+      "residentBytes" : 123404288,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 24654
+      }
+    },
+    {
+      "diskBytes" : 322775511,
+      "elapsedSeconds" : 90.003334792,
+      "residentBytes" : 118538240,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 26104
+      }
+    },
+    {
+      "diskBytes" : 340111478,
+      "elapsedSeconds" : 95.005100958,
+      "residentBytes" : 122699776,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 27554
+      }
+    },
+    {
+      "diskBytes" : 351907663,
+      "elapsedSeconds" : 100.003719958,
+      "residentBytes" : 100646912,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 29004
+      }
+    },
+    {
+      "diskBytes" : 368454627,
+      "elapsedSeconds" : 105.004347583,
+      "residentBytes" : 100990976,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 30454
+      }
+    },
+    {
+      "diskBytes" : 384681193,
+      "elapsedSeconds" : 110.004034167,
+      "residentBytes" : 104677376,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 31904
+      }
+    },
+    {
+      "diskBytes" : 397332300,
+      "elapsedSeconds" : 115.005123625,
+      "residentBytes" : 100663296,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 33354
+      }
+    },
+    {
+      "diskBytes" : 413160286,
+      "elapsedSeconds" : 120.003898208,
+      "residentBytes" : 100122624,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 5,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 7,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 34804
+      }
+    },
+    {
+      "diskBytes" : 438085566,
+      "elapsedSeconds" : 125.005239333,
+      "residentBytes" : 109936640,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 36254
+      }
+    },
+    {
+      "diskBytes" : 465566815,
+      "elapsedSeconds" : 130.004068542,
+      "residentBytes" : 116047872,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 37704
+      }
+    },
+    {
+      "diskBytes" : 480114877,
+      "elapsedSeconds" : 135.00389025,
+      "residentBytes" : 109854720,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 39154
+      }
+    },
+    {
+      "diskBytes" : 498466897,
+      "elapsedSeconds" : 140.004095875,
+      "residentBytes" : 109772800,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 40604
+      }
+    },
+    {
+      "diskBytes" : 515632723,
+      "elapsedSeconds" : 145.004283792,
+      "residentBytes" : 114769920,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 42054
+      }
+    },
+    {
+      "diskBytes" : 528795490,
+      "elapsedSeconds" : 150.003996083,
+      "residentBytes" : 109756416,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 43504
+      }
+    },
+    {
+      "diskBytes" : 546210354,
+      "elapsedSeconds" : 155.00441375,
+      "residentBytes" : 111280128,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 44954
+      }
+    },
+    {
+      "diskBytes" : 558268867,
+      "elapsedSeconds" : 160.002796833,
+      "residentBytes" : 101269504,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 46404
+      }
+    },
+    {
+      "diskBytes" : 574430892,
+      "elapsedSeconds" : 165.003968292,
+      "residentBytes" : 101498880,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 47854
+      }
+    },
+    {
+      "diskBytes" : 590458021,
+      "elapsedSeconds" : 170.003719667,
+      "residentBytes" : 105185280,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 49304
+      }
+    },
+    {
+      "diskBytes" : 603220153,
+      "elapsedSeconds" : 175.004466208,
+      "residentBytes" : 101203968,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 50754
+      }
+    },
+    {
+      "diskBytes" : 618511780,
+      "elapsedSeconds" : 180.002567583,
+      "residentBytes" : 101285888,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 10,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 52204
+      }
+    },
+    {
+      "diskBytes" : 643357415,
+      "elapsedSeconds" : 185.004131833,
+      "residentBytes" : 110149632,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 53654
+      }
+    },
+    {
+      "diskBytes" : 670217597,
+      "elapsedSeconds" : 190.004002375,
+      "residentBytes" : 115474432,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 55104
+      }
+    },
+    {
+      "diskBytes" : 685063292,
+      "elapsedSeconds" : 195.004389167,
+      "residentBytes" : 109936640,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 56554
+      }
+    },
+    {
+      "diskBytes" : 703824989,
+      "elapsedSeconds" : 200.004143333,
+      "residentBytes" : 109789184,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 58004
+      }
+    },
+    {
+      "diskBytes" : 721062932,
+      "elapsedSeconds" : 205.004003833,
+      "residentBytes" : 114606080,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 59454
+      }
+    },
+    {
+      "diskBytes" : 734089458,
+      "elapsedSeconds" : 210.002675667,
+      "residentBytes" : 109903872,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 60904
+      }
+    },
+    {
+      "diskBytes" : 751360895,
+      "elapsedSeconds" : 215.00369775,
+      "residentBytes" : 105021440,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 62354
+      }
+    },
+    {
+      "diskBytes" : 763605148,
+      "elapsedSeconds" : 220.002874583,
+      "residentBytes" : 100188160,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 63804
+      }
+    },
+    {
+      "diskBytes" : 780642700,
+      "elapsedSeconds" : 225.004246875,
+      "residentBytes" : 100499456,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 65254
+      }
+    },
+    {
+      "diskBytes" : 797257250,
+      "elapsedSeconds" : 230.004134875,
+      "residentBytes" : 104873984,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 66704
+      }
+    },
+    {
+      "diskBytes" : 810354051,
+      "elapsedSeconds" : 235.004846208,
+      "residentBytes" : 99074048,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 68154
+      }
+    },
+    {
+      "diskBytes" : 825644854,
+      "elapsedSeconds" : 240.0039435,
+      "residentBytes" : 99450880,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 15,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 69604
+      }
+    },
+    {
+      "diskBytes" : 850551647,
+      "elapsedSeconds" : 245.004141417,
+      "residentBytes" : 109543424,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 71054
+      }
+    },
+    {
+      "diskBytes" : 877441163,
+      "elapsedSeconds" : 250.004760958,
+      "residentBytes" : 114655232,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 72504
+      }
+    },
+    {
+      "diskBytes" : 892174931,
+      "elapsedSeconds" : 255.0053835,
+      "residentBytes" : 109232128,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 73954
+      }
+    },
+    {
+      "diskBytes" : 910537953,
+      "elapsedSeconds" : 260.005590167,
+      "residentBytes" : 109002752,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 75404
+      }
+    },
+    {
+      "diskBytes" : 927799707,
+      "elapsedSeconds" : 265.00437425,
+      "residentBytes" : 113901568,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 76854
+      }
+    },
+    {
+      "diskBytes" : 940817422,
+      "elapsedSeconds" : 270.005255583,
+      "residentBytes" : 100646912,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 78304
+      }
+    },
+    {
+      "diskBytes" : 957786944,
+      "elapsedSeconds" : 275.005442875,
+      "residentBytes" : 105283584,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 79754
+      }
+    },
+    {
+      "diskBytes" : 969778063,
+      "elapsedSeconds" : 280.003960208,
+      "residentBytes" : 100433920,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 81204
+      }
+    },
+    {
+      "diskBytes" : 986869532,
+      "elapsedSeconds" : 285.003382625,
+      "residentBytes" : 100646912,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 82654
+      }
+    },
+    {
+      "diskBytes" : 1003217977,
+      "elapsedSeconds" : 290.0030975,
+      "residentBytes" : 105070592,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 84104
+      }
+    },
+    {
+      "diskBytes" : 1016158355,
+      "elapsedSeconds" : 295.004866417,
+      "residentBytes" : 100466688,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 20,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 85554
+      }
+    },
+    {
+      "diskBytes" : 1031732647,
+      "elapsedSeconds" : 300.050455542,
+      "residentBytes" : 75251712,
+      "statistics" : {
+        "droppedAdmissionEvents" : 0,
+        "droppedCaptureFrames" : 0,
+        "droppedEncoderSamples" : 1,
+        "finalizedSegments" : 25,
+        "lossCountsBySourceAndReason" : {
+          "camera-2" : {
+            "encoderBackpressure" : 1
+          }
+        },
+        "peakQueuedEvents" : 8,
+        "recentLosses" : [
+          {
+            "durationMicroseconds" : 33333,
+            "hostStartMicroseconds" : 623777982929,
+            "kind" : "camera",
+            "reason" : "encoderBackpressure",
+            "sourceID" : "camera-2"
+          }
+        ],
+        "writtenSamples" : 86999
+      }
+    }
+  ],
+  "videoFramesPerSource" : 9000,
+  "warnings" : [
+    "来源“Synthetic camera 2”写入繁忙，部分采样丢失。已记录丢失，其他来源继续写盘。",
+    "Synthetic camera 2 写入繁忙，部分帧被跳过。"
+  ],
+  "width" : 1920
+}

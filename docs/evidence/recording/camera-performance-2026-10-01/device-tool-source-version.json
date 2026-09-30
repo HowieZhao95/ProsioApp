@@ -1,0 +1,22 @@
+{
+  "builtAtUTC": "2026-09-30T22:26:55.918738+00:00",
+  "revision": "af238231a1220c8e622858ecbcfab8f410d42cc6",
+  "sourceSHA256": {
+    "Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift": "aad8cf91f46020054b4f4dba1c054c26ea6a44c6137bffd2db85246b06d62ca6",
+    "Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift": "cc1bf95b7eaa2034b01fd3dab6142a6d26f5f89473a7ec9ed8f79605876a4e6f",
+    "Apps/macOS/Prosio/Recording/Platform/RecordingCameraPreviewController.swift": "be27756e9839f3971074def84924c0adeb2c7cdf6ac08be793cc61ee69efba6b",
+    "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift": "f5b91495d5bab24abb9be2d9a6a0f9cf57530b31ad2ccadc9d18b7bf9f5a93ec",
+    "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift": "aed35b1f2bfb2f4f222f76c99b18ae14bc2a9f54450d153f00fc5bbf4d40ac86",
+    "Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift": "fc7d517be458d28f2d5da5ffb73cab5daef9985cc1ceaa63309d0a1caaf31707",
+    "Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97",
+    "Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift": "1cbc93b72f382444e58c3bbda41744844702def6731c152c9c4dd6f66406499e",
+    "Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift": "5ced0b1177aa68cd9a919a5f15a5b6b34fdc27e46564057f4dd506d3acfd5254",
+    "tools/recording-device-validation/Fixture/FixtureMain.swift": "544f8a6e51b05d2262f12e6e89be55f2ee37b9ff9db9efbe720ea85fe33131ca",
+    "tools/recording-device-validation/Main/DeviceValidationModel.swift": "c1c347a32aa65c345095e8cf65bbd9b6c7462a9a2dd2b93157ef73cbe7d09665",
+    "tools/recording-device-validation/Main/ValidationReport.swift": "445f6af610d0c0a34524d3fa9847106059c2a5c967ab19d448ce2c03fecb8cad",
+    "tools/recording-device-validation/Main/ValidationUI.swift": "7727062c9497b1573a6bcdcda2a75d208e87ad11eee4faedd9a50773036a8c78",
+    "tools/recording-device-validation/Shared/ValidationFixtureHandshake.swift": "63bd9d8e8fe8731ee595c68d34486a4f0e4d681e3684b7a6cbdf01318e5ae4f5",
+    "tools/recording-device-validation/Tests/ValidationReportTests.swift": "710b0b7b4f6442a2912f99d4ed05b9f7495eb35756b39a30515bc671c656c56a"
+  },
+  "workingTreeDirty": true
+}

@@ -19,6 +19,8 @@ tools/recording-ui-validation/run.sh
 
 默认交互证据输出到 `/tmp/prosio-recording-complete-ui/state.json` 和 `events.jsonl`，素材保存到其中的 `sessions`。启动前可设置 `PROSIO_UI_VALIDATION_OUTPUT` 选择其他目录，`PROSIO_UI_FIXTURE_BINARY` 指定 fixture 可执行文件。解码检查输出到 `/tmp/prosio-recording-complete-ui-media/report.json`，每次素材使用新目录。
 
+`state.json` 的 `cameraWindows` 记录每个预览的窗口位置、尺寸与可见状态，可用于比较真实鼠标拖动前后、添加第二路机位和隐藏／恢复预览后的状态。260×180 的窗口包含 224×144 圆角画面及阴影留白；样式图片通过生产卡片的离屏渲染验证，不能用空预览证明真实设备采集。
+
 「测试窗口」菜单只聚焦已经存在的生产浮层，方便原生自动化在桌面浮层、工具栏、预览和保存提示之间切换；不会代替点击、拖动或录制操作。生产控制浮层禁止共享窗口画面，因此自动化截图可能显示透明背景；菜单与按钮应通过 AX 状态核验。真实桌面选择边框可直接截图观察。
 
 ## 手动交互清单
