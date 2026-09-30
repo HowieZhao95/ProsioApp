@@ -1,0 +1,36 @@
+{
+  "scope": "full committed integration app suites, with current Recording module/UI/tests copied in; unrelated shared drafts excluded; hostless tests, no hardware capture",
+  "results": [
+    {
+      "configuration": "debug",
+      "xctestPassed": 58,
+      "swiftTestingPassed": 207,
+      "swiftTestingSuites": 30,
+      "totalPassed": 265,
+      "failed": 0,
+      "logPath": "/tmp/prosio-recording-finalization-debug-20261001.log",
+      "logSHA256": "459c28df40917feeb5e8e2532d3df743086ac3941e3631dcf530727dd34ba757"
+    },
+    {
+      "configuration": "release",
+      "xctestPassed": 58,
+      "swiftTestingPassed": 207,
+      "swiftTestingSuites": 30,
+      "totalPassed": 265,
+      "failed": 0,
+      "logPath": "/tmp/prosio-recording-finalization-release-20261001.log",
+      "logSHA256": "1f99044d0855cfd334801f8c75cab87b7e168747c7e26b8f909e9142bed13b93"
+    }
+  ],
+  "sourceFileCount": 35,
+  "allSourceHashesStillMatch": true,
+  "recordingLifecycleFinal": {
+    "debugPassed": 19,
+    "releasePassed": 19,
+    "normalAndFailedStopWaitersSeeWarningsBeforeReturn": true,
+    "pauseWritten": 0,
+    "resumeWritten": 1,
+    "actualDecodedVideoFrames": 1,
+    "videoSegmentMicroseconds": 33333
+  }
+}

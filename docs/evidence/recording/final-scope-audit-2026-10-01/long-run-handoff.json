@@ -16,5 +16,21 @@
     "loss counts by source/reason",
     "media audit",
     "audio valid lengths and timeline gaps"
-  ]
+  ],
+  "concurrentValidationWork": [
+    {
+      "startedAt": "2026-10-01T06:56:52.993065+08:00",
+      "work": "export-specific regression build/test of audio-gap AAC -> composition -> trimmed mixed MP4",
+      "scope": "small synthetic sources; no hardware capture",
+      "interpretation": "run is continued under some build/test background load, not a controlled idle benchmark; override sampler otherUIAndBuildWorkMayOverlap=false when interpreting results"
+    },
+    {
+      "work": "Engine stop warning mailbox lifecycle and native completion UI regression builds/tests; followed by complete Debug/Release checks",
+      "scope": "synthetic devices and media only; no privacy grants or hardware capture",
+      "interpretation": "background validation work overlaps this continuing run; not an idle benchmark",
+      "knownRootUIRunStart": "2026-10-01T07:10:08+08:00",
+      "exactCombinedWorkStartRecorded": false
+    }
+  ],
+  "beforeNextRealDeviceCapture": "Rebuild only the independently identified device validation tool from latest Recording sources (Engine warning mailbox is newer than its current build), verify hashes/signature and current GUI privacy state; do not replace/relaunch installed Prosio or bypass TCC."
 }

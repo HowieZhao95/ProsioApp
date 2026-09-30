@@ -84,6 +84,7 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
     private var failedAttempts = Set<UUID>()
     private var screen: (any RecordingCaptureSource)?
     private var writer: RecordingMediaWriter?
+    private var warningMailbox: RecordingWarningMailbox?
     private var devices: [String: any RecordingCaptureSource] = [:]
     private var configuration: RecordingConfiguration?
     private var startupTask: Task<Void, any Error>?
@@ -122,6 +123,8 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
 
     private func startSession(_ configuration: RecordingConfiguration, directory: URL, token: UUID) async throws {
         try requireActive(token)
+        let warnings = RecordingWarningMailbox()
+        warningMailbox = warnings
         let media = try RecordingMediaWriter(directory: directory, configuration: configuration,
             origin: CMClockGetTime(CMClockGetHostTimeClock()), onSegment: { [weak self] segment in
                 await MainActor.run {
@@ -129,9 +132,9 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
                     self?.onSegment?(segment)
                 }
             }, onWarning: { [weak self] message in
+                guard warnings.enqueue(message) else { return }
                 Task { @MainActor in
-                    guard self?.generation == token, self?.active == true else { return }
-                    self?.onWarning?(message)
+                    self?.deliverWarnings(warnings, token: token)
                 }
             }, onFailure: { [weak self] message in
                 Task { @MainActor in
@@ -187,7 +190,7 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
 
     func stop() async throws {
         if let stoppingTask { try await stoppingTask.value; return }
-        guard generation != nil else { return }
+        guard let token = generation else { return }
         active = false
         screen?.deactivate()
         startupTask?.cancel()
@@ -196,7 +199,11 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
         for operation in sourceOperations.values { operation.cancel() }
         let setup = startupTask
         let operations = Array(sourceOperations.values)
+        let warnings = warningMailbox
         let task = Task { @MainActor in
+            // Final media callbacks can warn after active becomes false. Flush even when stop
+            // throws, before this task resolves any concurrent stop waiter.
+            defer { if let warnings { self.deliverWarnings(warnings, token: token, close: true) } }
             // Await setup ownership before inspecting sources: no in-flight camera is omitted.
             _ = await setup?.result
             for operation in operations { await operation.value }
@@ -208,6 +215,7 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
         let result = await task.result
         screen = nil
         writer = nil
+        warningMailbox = nil
         devices.removeAll()
         sourceOperations.removeAll()
         sourceGenerations.removeAll()
@@ -220,6 +228,11 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
         startupTask = nil
         stoppingTask = nil
         try result.get()
+    }
+
+    private func deliverWarnings(_ mailbox: RecordingWarningMailbox, token: UUID, close: Bool = false) {
+        guard generation == token else { return }
+        for message in mailbox.drain(close: close) { onWarning?(message) }
     }
 
     private func requireActive(_ token: UUID) throws {
@@ -363,5 +376,46 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
                 }
             }
         }
+    }
+}
+
+/// Retains messages, never media. At most one live delivery task is queued per session.
+/// Overflow remains visible as a count; detailed sample-loss evidence is kept by the writer.
+nonisolated final class RecordingWarningMailbox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var messages: [String] = []
+    private var pending = Set<String>()
+    private var overflow = 0
+    private var deliveryScheduled = false
+    private var closed = false
+    private let limit = 64
+
+    /// True only when the caller needs to schedule a MainActor delivery.
+    func enqueue(_ message: String) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !closed, !pending.contains(message) else { return false }
+        if messages.count < limit {
+            messages.append(message)
+            pending.insert(message)
+        } else { overflow += 1 }
+        guard !deliveryScheduled else { return false }
+        deliveryScheduled = true
+        return true
+    }
+
+    func drain(close: Bool = false) -> [String] {
+        lock.lock()
+        defer { lock.unlock() }
+        if close { closed = true }
+        var result = messages
+        if overflow > 0 {
+            result.append("媒体告警集中出现，另有 \(overflow) 条告警未逐条展开。")
+        }
+        messages.removeAll(keepingCapacity: true)
+        pending.removeAll(keepingCapacity: true)
+        overflow = 0
+        deliveryScheduled = false
+        return result
     }
 }

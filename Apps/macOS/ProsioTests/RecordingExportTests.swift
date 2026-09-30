@@ -145,6 +145,105 @@ struct RecordingExportTests {
         #expect(FileManager.default.fileExists(atPath: root.appendingPathComponent("video.mov").path))
     }
 
+    @Test func writerAACDropSurvivesIndependentCompositionMixedMP4TrimAndHandoff() async throws {
+        let root = temporaryRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let collected = RecordingExportWriterCollection()
+        let microphone = RecordingSource(id: "microphone", kind: .microphone, name: "麦克风")
+        let system = RecordingSource(id: "systemAudio", kind: .systemAudio, name: "系统声音")
+        let screen = RecordingSource(id: "screen", kind: .screen, name: "屏幕")
+        let writer = try RecordingMediaWriter(directory: root,
+            configuration: RecordingConfiguration(screenTarget: .display(1), microphone: microphone), origin: .zero,
+            onSegment: { collected.add($0) }, onWarning: { _ in }, onFailure: { collected.fail($0) },
+            testingInputReadiness: { sourceID, pts in
+                let time = CMTimeConvertScale(pts, timescale: 1_000_000, method: .roundHalfAwayFromZero).value
+                return sourceID != "microphone" || time < 100_000 || time >= 120_000
+            })
+        var frame = 0
+        for tick in 0..<120 {
+            let time = CMTime(value: Int64(tick), timescale: 100)
+            writer.append(try writerPCM(at: time, markerStart: 0.4, frequency: 1_000), sourceID: microphone.id, kind: .microphone)
+            writer.append(try writerPCM(at: time, markerStart: 0.8, frequency: 2_000), sourceID: system.id, kind: .systemAudio)
+            while CMTime(value: Int64(frame), timescale: 30) <= time {
+                writer.append(try writerVideo(at: CMTime(value: Int64(frame), timescale: 30)), sourceID: screen.id, kind: .screen)
+                frame += 1
+            }
+            await withCheckedContinuation { continuation in writer.queue.async { continuation.resume() } }
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        try await writer.stop()
+        let segments = collected.segments.sorted {
+            $0.sourceID == $1.sourceID ? $0.timelineStartMicroseconds < $1.timelineStartMicroseconds : $0.sourceID < $1.sourceID
+        }
+        #expect(collected.failures.isEmpty)
+        let stats = await writer.statistics()
+        #expect(stats.droppedAdmissionEvents == 0)
+        #expect(stats.droppedEncoderSamples == 2)
+        #expect(stats.finalizedSegments == 4)
+        let micSegments = segments.filter { $0.sourceID == microphone.id }
+        #expect(micSegments.map(\.timelineStartMicroseconds) == [0, 120_000])
+        #expect(micSegments.map(\.durationMicroseconds) == [100_000, 1_080_000])
+        #expect(segments.filter { $0.sourceID == system.id }.count == 1)
+        let session = RecordingSessionManifest(title: "AAC 丢帧混音裁剪回归", phase: .ready,
+                                              sources: [screen, microphone, system], segments: segments)
+        let originals = try segments.map { try Data(contentsOf: root.appendingPathComponent($0.relativePath)) }
+
+        let micOriginal = AVURLAsset(url: root.appendingPathComponent(try #require(micSegments.last).relativePath))
+        let rawTrack = try #require(try await micOriginal.loadTracks(withMediaType: .audio).first)
+        let rawMarkers = try await decodedMarkers(in: micOriginal, track: rawTrack, windows: [0.20...0.36])
+        let rawMicTime = try #require(rawMarkers.first) + 0.12
+        #expect(abs(rawMicTime - 0.4) < 0.003)
+
+        let composition = try await RecordingVideoExporter.composition(session: session, sourceDirectory: root, videoSourceID: screen.id)
+        let audio = composition.tracks.filter { $0.mediaType == .audio }
+        #expect(audio.count == 2)
+        let micTrack = try #require(audio.first)
+        let systemTrack = try #require(audio.last)
+        let micMapping = try #require(micTrack.segments)
+        #expect(micMapping.filter { !$0.isEmpty }.count == 2)
+        let holes = micMapping.filter(\.isEmpty)
+        #expect(holes.count == 1)
+        let hole = try #require(holes.first)
+        #expect(abs(hole.timeMapping.target.start.seconds - 0.1) < 0.000_001)
+        #expect(abs(hole.timeMapping.target.duration.seconds - 0.02) < 0.000_001)
+        #expect(try #require(systemTrack.segments).filter(\.isEmpty).isEmpty)
+        let compositionMic = try #require(try await decodedMarkers(in: composition, track: micTrack, windows: [0.30...0.49]).first)
+        let compositionSystem = try #require(try await decodedMarkers(in: composition, track: systemTrack, windows: [0.70...0.89]).first)
+        #expect(abs(compositionMic - 0.4) < 0.003)
+        #expect(abs(compositionSystem - 0.8) < 0.003)
+
+        let movieURL = root.appendingPathComponent("mixed-trimmed.mp4")
+        _ = try await RecordingVideoExporter.exportMP4(session: session, sourceDirectory: root, videoSourceID: screen.id,
+                                                       destination: movieURL, trimStart: 0.2, trimEnd: 1.1)
+        let movie = AVURLAsset(url: movieURL)
+        #expect(abs(try await movie.load(.duration).seconds - 0.9) < 0.005)
+        let mixedTracks = try await movie.loadTracks(withMediaType: .audio)
+        #expect(mixedTracks.count == 1)
+        let mixed = try await decodedMarkers(in: movie, track: try #require(mixedTracks.first), windows: [0.10...0.29, 0.50...0.69])
+        let trimmedMic = try #require(mixed.first)
+        let trimmedSystem = try #require(mixed.last)
+        #expect(abs(trimmedMic - 0.2) < 0.003, "A compacted 20 ms drop would put the decoded mic marker near 0.18 s")
+        #expect(abs(trimmedSystem - 0.6) < 0.003, "The second independently recorded source must be audible in the actual mixed output")
+        print("AAC_EXPORT_MARKER rawMicSeconds=\(rawMicTime) compositionMicSeconds=\(compositionMic) compositionSystemSeconds=\(compositionSystem) trimmedMicSeconds=\(trimmedMic) trimmedSystemSeconds=\(trimmedSystem) micErrorMicroseconds=\((trimmedMic - 0.2) * 1_000_000) systemErrorMicroseconds=\((trimmedSystem - 0.6) * 1_000_000)")
+
+        let package = root.appendingPathComponent("handoff")
+        let xmlURL = try await RecordingProjectExporter().export(session: session, sourceDirectory: root, destination: package, editor: .finalCutPro)
+        let xml = try XMLDocument(contentsOf: xmlURL)
+        #expect(try xml.nodes(forXPath: "//mc-clip/asset-clip[@audioRole='dialogue']").count == 2)
+        #expect(try xml.nodes(forXPath: "//mc-clip/asset-clip[@audioRole='effects']").count == 1)
+        #expect(try xml.nodes(forXPath: "//mc-clip/asset-clip[@audioRole='dialogue']/@offset").contains {
+            $0.stringValue == RecordingProjectExporter.micros(120_000)
+        })
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        let packaged = try decoder.decode(RecordingSessionManifest.self, from: Data(contentsOf: package.appendingPathComponent("recording.json")))
+        #expect(packaged.segments.map(\.timelineStartMicroseconds) == segments.map(\.timelineStartMicroseconds))
+        for (index, segment) in segments.enumerated() {
+            #expect(try Data(contentsOf: root.appendingPathComponent(segment.relativePath)) == originals[index])
+            #expect(try Data(contentsOf: package.appendingPathComponent(packaged.segments[index].relativePath)) == originals[index])
+        }
+    }
+
     @Test func pathTraversalSymlinksOverlapAndMissingMediaAreRejected() async throws {
         let root = temporaryRoot()
         defer { try? FileManager.default.removeItem(at: root) }
@@ -229,6 +328,88 @@ struct RecordingExportTests {
 
     private func temporaryRoot() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("prosio-export-\(UUID())") }
 
+    /// Decode the full track and identify each nonoverlapping marker window in PCM, including sample PTS.
+    private func decodedMarkers(in asset: AVAsset, track: AVAssetTrack, windows: [ClosedRange<Double>]) async throws -> [Double] {
+        let reader = try AVAssetReader(asset: asset)
+        let output = AVAssetReaderTrackOutput(track: track, outputSettings: [
+            AVFormatIDKey: kAudioFormatLinearPCM, AVSampleRateKey: 48_000, AVNumberOfChannelsKey: 2,
+            AVLinearPCMIsFloatKey: true, AVLinearPCMBitDepthKey: 32, AVLinearPCMIsNonInterleaved: false])
+        reader.add(output)
+        #expect(reader.startReading())
+        defer { reader.cancelReading() }
+        var markers = [Double?](repeating: nil, count: windows.count)
+        var decodedFrames = 0
+        while let sample = output.copyNextSampleBuffer() {
+            let format = try #require(CMSampleBufferGetFormatDescription(sample))
+            let description = try #require(CMAudioFormatDescriptionGetStreamBasicDescription(format)).pointee
+            #expect(description.mChannelsPerFrame == 2)
+            #expect(description.mSampleRate == 48_000)
+            let block = try #require(CMSampleBufferGetDataBuffer(sample))
+            var values = [Float](repeating: 0, count: CMBlockBufferGetDataLength(block) / MemoryLayout<Float>.size)
+            let status = values.withUnsafeMutableBytes { bytes in
+                CMBlockBufferCopyDataBytes(block, atOffset: 0, dataLength: bytes.count, destination: bytes.baseAddress!)
+            }
+            #expect(status == noErr)
+            let frames = values.count / 2
+            decodedFrames += frames
+            for frame in 0..<frames where max(abs(values[frame * 2]), abs(values[frame * 2 + 1])) > 0.1 {
+                let time = CMSampleBufferGetPresentationTimeStamp(sample).seconds + Double(frame) / description.mSampleRate
+                for index in windows.indices where markers[index] == nil && windows[index].contains(time) { markers[index] = time }
+            }
+        }
+        #expect(reader.status == .completed, "PCM decode must finish, not merely find a playable audio track: \(reader.error?.localizedDescription ?? "")")
+        #expect(decodedFrames > 0)
+        return try markers.map { try #require($0, "Expected an audible decoded marker in each requested time window") }
+    }
+
+    private func writerPCM(at time: CMTime, markerStart: Double, frequency: Double) throws -> CMSampleBuffer {
+        var description = AudioStreamBasicDescription(mSampleRate: 48_000, mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked, mBytesPerPacket: 8, mFramesPerPacket: 1,
+            mBytesPerFrame: 8, mChannelsPerFrame: 2, mBitsPerChannel: 32, mReserved: 0)
+        var format: CMAudioFormatDescription?
+        #expect(CMAudioFormatDescriptionCreate(allocator: kCFAllocatorDefault, asbd: &description, layoutSize: 0, layout: nil,
+            magicCookieSize: 0, magicCookie: nil, extensions: nil, formatDescriptionOut: &format) == noErr)
+        var block: CMBlockBuffer?
+        #expect(CMBlockBufferCreateWithMemoryBlock(allocator: kCFAllocatorDefault, memoryBlock: nil, blockLength: 480 * 8,
+            blockAllocator: kCFAllocatorDefault, customBlockSource: nil, offsetToData: 0, dataLength: 480 * 8,
+            flags: 0, blockBufferOut: &block) == noErr)
+        let storage = try #require(block)
+        let values = (0..<480).flatMap { index -> [Float] in
+            let seconds = time.seconds + Double(index) / 48_000
+            let value: Float = seconds >= markerStart && seconds < markerStart + 0.08 ? Float(sin(2 * .pi * frequency * seconds) * 0.6) : 0
+            return [value, value]
+        }
+        #expect(values.withUnsafeBytes {
+            CMBlockBufferReplaceDataBytes(with: $0.baseAddress!, blockBuffer: storage, offsetIntoDestination: 0, dataLength: $0.count)
+        } == noErr)
+        var timing = CMSampleTimingInfo(duration: CMTime(value: 1, timescale: 48_000), presentationTimeStamp: time, decodeTimeStamp: .invalid)
+        var size = 8
+        var sample: CMSampleBuffer?
+        let audioFormat = try #require(format)
+        #expect(CMSampleBufferCreateReady(allocator: kCFAllocatorDefault, dataBuffer: storage, formatDescription: audioFormat,
+            sampleCount: 480, sampleTimingEntryCount: 1, sampleTimingArray: &timing, sampleSizeEntryCount: 1,
+            sampleSizeArray: &size, sampleBufferOut: &sample) == noErr)
+        return try #require(sample)
+    }
+
+    private func writerVideo(at time: CMTime) throws -> CMSampleBuffer {
+        var pixel: CVPixelBuffer?
+        #expect(CVPixelBufferCreate(kCFAllocatorDefault, 64, 64, kCVPixelFormatType_32BGRA,
+            [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary, &pixel) == kCVReturnSuccess)
+        let buffer = try #require(pixel)
+        CVPixelBufferLockBaseAddress(buffer, [])
+        if let base = CVPixelBufferGetBaseAddress(buffer) { memset(base, 128, CVPixelBufferGetDataSize(buffer)) }
+        CVPixelBufferUnlockBaseAddress(buffer, [])
+        var format: CMVideoFormatDescription?
+        #expect(CMVideoFormatDescriptionCreateForImageBuffer(allocator: kCFAllocatorDefault, imageBuffer: buffer, formatDescriptionOut: &format) == noErr)
+        var timing = CMSampleTimingInfo(duration: CMTime(value: 1, timescale: 30), presentationTimeStamp: time, decodeTimeStamp: .invalid)
+        var sample: CMSampleBuffer?
+        let videoFormat = try #require(format)
+        #expect(CMSampleBufferCreateReadyWithImageBuffer(allocator: kCFAllocatorDefault, imageBuffer: buffer,
+            formatDescription: videoFormat, sampleTiming: &timing, sampleBufferOut: &sample) == noErr)
+        return try #require(sample)
+    }
+
     private func fixture(in root: URL) async throws -> RecordingSessionManifest {
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         try await writeVideo(to: root.appendingPathComponent("video.mov"))
@@ -283,4 +464,14 @@ struct RecordingExportTests {
         await writer.finishWriting()
         #expect(writer.status == .completed)
     }
+}
+
+nonisolated private final class RecordingExportWriterCollection: @unchecked Sendable {
+    private let lock = NSLock()
+    private var saved: [RecordingSegment] = []
+    private var errors: [String] = []
+    var segments: [RecordingSegment] { lock.lock(); defer { lock.unlock() }; return saved }
+    var failures: [String] { lock.lock(); defer { lock.unlock() }; return errors }
+    func add(_ segment: RecordingSegment) { lock.lock(); defer { lock.unlock() }; saved.append(segment) }
+    func fail(_ message: String) { lock.lock(); defer { lock.unlock() }; errors.append(message) }
 }

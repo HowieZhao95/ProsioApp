@@ -3,6 +3,138 @@ import CoreMedia
 import XCTest
 
 nonisolated final class RecordingEngineLifecycleTests: XCTestCase {
+    @MainActor func testStopDeliversQueuedAudioGapWarningBeforeReturning() async throws {
+        try await checkStopWarningDelivery(failsFinalization: false)
+    }
+
+    @MainActor func testFailedStopStillDeliversQueuedAudioGapWarning() async throws {
+        try await checkStopWarningDelivery(failsFinalization: true)
+    }
+
+    @MainActor func testStoppedWriterWarningsCannotReachNextSession() async throws {
+        let fixture = try makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.directory) }
+        var warnings: [String] = []
+        fixture.engine.onWarning = { warnings.append($0) }
+        try await fixture.engine.start(configuration: fixture.configuration, directory: fixture.directory)
+        let previous = try XCTUnwrap(fixture.backend.writer)
+        try await fixture.engine.stop()
+        try await fixture.engine.start(configuration: fixture.configuration, directory: fixture.directory)
+        let gate = await blockWriterQueue(previous)
+        for _ in 0..<16 { previous.advanceScreen(at: .zero) }
+        previous.append(try frameNow(), sourceID: "screen", kind: .screen) // Old writer emits actual admission warnings.
+        gate.signal()
+        let stats = await previous.statistics()
+        await settle()
+        XCTAssertEqual(stats.droppedAdmissionEvents, 1)
+        XCTAssertTrue(warnings.isEmpty, "An old writer must not warn in the next recording.")
+        try await fixture.engine.stop()
+    }
+
+    nonisolated func testWarningMailboxBoundsMessagesCoalescesDeliveryAndCloses() {
+        let mailbox = RecordingWarningMailbox()
+        XCTAssertTrue(mailbox.enqueue("warning-0"))
+        XCTAssertFalse(mailbox.enqueue("warning-0"))
+        for index in 1..<1_000 { XCTAssertFalse(mailbox.enqueue("warning-\(index)")) }
+        let delivered = mailbox.drain(close: true)
+        XCTAssertEqual(delivered.count, 65)
+        XCTAssertEqual(Set(delivered).count, delivered.count)
+        XCTAssertTrue(delivered.last?.contains("936") == true)
+        XCTAssertFalse(mailbox.enqueue("late warning"))
+        XCTAssertTrue(mailbox.drain().isEmpty)
+    }
+
+    @MainActor private func checkStopWarningDelivery(failsFinalization: Bool) async throws {
+        let fixture = try makeFixture(microphone: true)
+        defer { try? FileManager.default.removeItem(at: fixture.directory) }
+        var warnings: [String] = []
+        var fatalCallbacks: [String] = []
+        fixture.engine.onWarning = { warnings.append($0) }
+        fixture.engine.onFailure = { fatalCallbacks.append($0) }
+        try await fixture.engine.start(configuration: fixture.configuration, directory: fixture.directory)
+        let writer = try XCTUnwrap(fixture.backend.writer)
+        let microphone = try XCTUnwrap(fixture.configuration.microphone)
+        let base = CMClockGetTime(CMClockGetHostTimeClock())
+        writer.append(try audio(at: base), sourceID: microphone.id, kind: .microphone)
+        await withCheckedContinuation { continuation in writer.queue.async { continuation.resume() } }
+        let firstStats = await writer.statistics()
+        XCTAssertEqual(firstStats.writtenSamples, 1)
+        warnings.removeAll()
+        let queueGate = await blockWriterQueue(writer)
+        writer.append(try audio(at: base + CMTime(value: 3, timescale: 100)), sourceID: microphone.id, kind: .microphone)
+        let sourceGate = LifecycleGate()
+        let screen = try XCTUnwrap(fixture.backend.screens.first)
+        screen.stopGate = sourceGate
+        var returned = false
+        let stop = Task { () -> (Result<Void, any Error>, Bool) in
+            let result: Result<Void, any Error>
+            do { try await fixture.engine.stop(); result = .success(()) }
+            catch { result = .failure(error) }
+            returned = true
+            return (result, warnings.contains { $0.contains("音频出现间隙") })
+        }
+        await waitUntil { screen.stopCount == 1 }
+        XCTAssertFalse(returned) // active is already false, but final queued media has not drained.
+        var joinEntered = false
+        let joinedStop = Task {
+            joinEntered = true
+            do { try await fixture.engine.stop() } catch {}
+            return warnings.contains { $0.contains("音频出现间隙") }
+        }
+        await waitUntil { joinEntered }
+        queueGate.signal()
+        let drainedStats = await writer.statistics()
+        XCTAssertEqual(drainedStats.recentLosses?.first { $0.reason == .timestampGap }?.durationMicroseconds, 20_000)
+        if failsFinalization {
+            // Only private synthetic media is removed: force the real writer's awaited stop to fail.
+            try FileManager.default.removeItem(at: fixture.directory.appendingPathComponent("media"))
+        }
+        sourceGate.release()
+        let (result, firstWaiterSawWarning) = await stop.value
+        let joinedWaiterSawWarning = await joinedStop.value
+        switch result {
+        case .success: XCTAssertFalse(failsFinalization)
+        case .failure: XCTAssertTrue(failsFinalization)
+        }
+        XCTAssertTrue(warnings.contains { $0.contains("音频出现间隙") }, "Finalizing warnings must arrive before stop returns.")
+        XCTAssertTrue(firstWaiterSawWarning)
+        XCTAssertTrue(joinedWaiterSawWarning, "Every concurrent stop waiter must observe delivered warnings.")
+        XCTAssertEqual(warnings.filter { $0.contains("音频出现间隙") }.count, 1)
+        XCTAssertTrue(fatalCallbacks.isEmpty, "The active-only fatal callback semantics must remain unchanged.")
+    }
+
+    @MainActor private func blockWriterQueue(_ writer: RecordingMediaWriter) async -> DispatchSemaphore {
+        let gate = DispatchSemaphore(value: 0)
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            writer.queue.async { continuation.resume(); _ = gate.wait(timeout: .now() + 5) }
+        }
+        return gate
+    }
+
+    nonisolated private func audio(at timestamp: CMTime) throws -> CMSampleBuffer {
+        var description = AudioStreamBasicDescription(mSampleRate: 48_000, mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked, mBytesPerPacket: 8,
+            mFramesPerPacket: 1, mBytesPerFrame: 8, mChannelsPerFrame: 2, mBitsPerChannel: 32, mReserved: 0)
+        var format: CMAudioFormatDescription?
+        XCTAssertEqual(CMAudioFormatDescriptionCreate(allocator: kCFAllocatorDefault, asbd: &description,
+            layoutSize: 0, layout: nil, magicCookieSize: 0, magicCookie: nil, extensions: nil, formatDescriptionOut: &format), noErr)
+        var block: CMBlockBuffer?
+        XCTAssertEqual(CMBlockBufferCreateWithMemoryBlock(allocator: kCFAllocatorDefault, memoryBlock: nil,
+            blockLength: 480 * 8, blockAllocator: kCFAllocatorDefault, customBlockSource: nil,
+            offsetToData: 0, dataLength: 480 * 8, flags: 0, blockBufferOut: &block), noErr)
+        let storage = try XCTUnwrap(block)
+        XCTAssertEqual(CMBlockBufferFillDataBytes(with: 0, blockBuffer: storage,
+            offsetIntoDestination: 0, dataLength: 480 * 8), noErr)
+        var timing = CMSampleTimingInfo(duration: CMTime(value: 1, timescale: 48_000),
+            presentationTimeStamp: timestamp, decodeTimeStamp: .invalid)
+        var sampleSize = 8
+        var sample: CMSampleBuffer?
+        XCTAssertEqual(CMSampleBufferCreateReady(allocator: kCFAllocatorDefault, dataBuffer: storage,
+            formatDescription: try XCTUnwrap(format), sampleCount: 480, sampleTimingEntryCount: 1,
+            sampleTimingArray: &timing, sampleSizeEntryCount: 1, sampleSizeArray: &sampleSize, sampleBufferOut: &sample), noErr)
+        return try XCTUnwrap(sample)
+    }
+
     @MainActor func testStopAwaitsScreenPreparationAndPreventsLateStart() async throws {
         let fixture = try makeFixture()
         defer { try? FileManager.default.removeItem(at: fixture.directory) }
@@ -166,24 +298,44 @@ nonisolated final class RecordingEngineLifecycleTests: XCTestCase {
         let writer = try XCTUnwrap(fixture.backend.writer)
         let queueGate = DispatchSemaphore(value: 0)
         writer.queue.async { _ = queueGate.wait(timeout: .now() + 5) }
-        let firstPause = Task { try await fixture.engine.pause() }
-        await settle()
-        let resume = Task { try await fixture.engine.resume() }
-        await settle()
-        let lastPause = Task { try await fixture.engine.pause() }
-        await settle()
+        var firstPauseEntered = false
+        let firstPause = Task { firstPauseEntered = true; try await fixture.engine.pause() }
+        await waitUntil { firstPauseEntered }
+        var resumeEntered = false
+        let resume = Task { resumeEntered = true; try await fixture.engine.resume() }
+        await waitUntil { resumeEntered }
+        var lastPauseEntered = false
+        let lastPause = Task { lastPauseEntered = true; try await fixture.engine.pause() }
+        await waitUntil { lastPauseEntered }
         queueGate.signal()
         try await firstPause.value
         try await resume.value
         try await lastPause.value
         writer.append(try frameNow(), sourceID: "screen", kind: .screen)
         await withCheckedContinuation { continuation in writer.queue.async { continuation.resume() } }
+        let pausedStats = await writer.statistics()
+        XCTAssertEqual(pausedStats.writtenSamples, 0, "The last concurrent intent must reject paused samples.")
         try await fixture.engine.resume()
         writer.append(try frameNow(), sourceID: "screen", kind: .screen)
         await withCheckedContinuation { continuation in writer.queue.async { continuation.resume() } }
+        let resumedStats = await writer.statistics()
+        XCTAssertEqual(resumedStats.writtenSamples, 1)
         try await fixture.engine.stop()
+        print("PAUSE_LIFECYCLE pausedWritten=\(pausedStats.writtenSamples) resumedWritten=\(resumedStats.writtenSamples) durations=\(segments.map(\.durationMicroseconds))")
         XCTAssertEqual(segments.count, 1)
         XCTAssertLessThanOrEqual(segments.first?.durationMicroseconds ?? .max, 34_000)
+        let segment = try XCTUnwrap(segments.first)
+        let asset = AVURLAsset(url: fixture.directory.appendingPathComponent(segment.relativePath))
+        let reader = try AVAssetReader(asset: asset)
+        let tracks = try await asset.loadTracks(withMediaType: .video)
+        let output = AVAssetReaderTrackOutput(track: try XCTUnwrap(tracks.first),
+            outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA])
+        reader.add(output)
+        XCTAssertTrue(reader.startReading())
+        var decodedFrames = 0
+        while let sample = output.copyNextSampleBuffer() { decodedFrames += CMSampleBufferGetNumSamples(sample) }
+        XCTAssertEqual(reader.status, .completed)
+        XCTAssertEqual(decodedFrames, 1, "Only the resumed frame may reach the actual encoded video.")
     }
 
     @MainActor func testRuntimeScreenLossKeepsDevicesRunningAndRecoversOriginalTargetWithGap() async throws {
@@ -429,6 +581,7 @@ nonisolated final class RecordingEngineLifecycleTests: XCTestCase {
     let callbacks: RecordingCaptureCallbacks
     let source: RecordingSource?
     let startGate: LifecycleGate?
+    var stopGate: LifecycleGate?
     var throwsOnStart = false
     var emitsFailureOnStart = false
     var startCount = 0
@@ -444,7 +597,7 @@ nonisolated final class RecordingEngineLifecycleTests: XCTestCase {
         if emitsFailureOnStart { callbacks.failed("Injected screen delegate startup failure") }
         running = true
     }
-    func stop() async { stopCount += 1; running = false }
+    func stop() async { stopCount += 1; await stopGate?.wait(); running = false }
 }
 
 @MainActor private final class LifecycleBackend: RecordingCaptureBackend {

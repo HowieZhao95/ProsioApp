@@ -81,6 +81,25 @@ struct RecordingNativeViewTests {
         await stop.value
     }
 
+    @Test
+    func completionWithSourceWarningRendersInCompactLightAndDarkToast() async throws {
+        _ = NSApplication.shared
+        let harness = try RecordingImmersiveViewHarness()
+        defer { harness.cleanup() }
+        harness.engine.emitWarningAndSegmentOnStop = true
+        await harness.coordinator.start(
+            configuration: RecordingConfiguration(screenTarget: .display(9001), capturesSystemAudio: false),
+            countdownSeconds: 0, requestPermissions: false)
+        await harness.coordinator.stop()
+        #expect(harness.coordinator.phase == .ready)
+        #expect(harness.coordinator.selectedSession?.warnings.count == 1)
+        #expect(harness.coordinator.message?.contains("提示") == true)
+        for (name, theme) in [("completion-warning-light", NSAppearance.Name.aqua), ("completion-warning-dark", .darkAqua)] {
+            try await render(RecordingCompletionView(coordinator: harness.coordinator),
+                             theme: theme, size: CGSize(width: 370, height: 64), name: name)
+        }
+    }
+
     private func render<V: View>(_ view: V, theme: NSAppearance.Name, size: CGSize, name: String) async throws {
         let themed = view.environment(\.colorScheme, theme == .darkAqua ? .dark : .light)
             .frame(width: size.width, height: size.height)
@@ -164,6 +183,7 @@ private final class RecordingImmersiveViewEngine: RecordingEngineControlling {
     var onSourceStatus: ((String, Bool) -> Void)?
     var onFailure: ((String) -> Void)?
     var holdStop = false
+    var emitWarningAndSegmentOnStop = false
     private var stopContinuation: CheckedContinuation<Void, Never>?
     private var stopWaiters: [CheckedContinuation<Void, Never>] = []
     private var stopHasEntered = false
@@ -178,6 +198,12 @@ private final class RecordingImmersiveViewEngine: RecordingEngineControlling {
         stopWaiters.removeAll()
         waiters.forEach { $0.resume() }
         if holdStop { await withCheckedContinuation { stopContinuation = $0 } }
+        if emitWarningAndSegmentOnStop {
+            // View-only fixture; this segment is not claimed to contain playable media.
+            onSegment?(RecordingSegment(sourceID: "screen", relativePath: "view-fixture.mov",
+                timelineStartMicroseconds: 0, durationMicroseconds: 1_000_000))
+            onWarning?("摄像头有一帧未写入。")
+        }
     }
 
     func waitUntilStopEntered() async {

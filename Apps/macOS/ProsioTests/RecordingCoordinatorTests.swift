@@ -68,6 +68,29 @@ struct RecordingCoordinatorTests {
     }
 
     @Test
+    func warningDuringStopPersistsBeforeReadyAndRemainsVisibleAfterReload() async throws {
+        let harness = try Harness()
+        defer { harness.cleanup() }
+        let engine = harness.engines.next
+        engine.emitOnStop = true
+        engine.warningOnStop = "麦克风录制有一段缺口，原时间位置已保留。"
+        await harness.coordinator.start(configuration: configuration(), countdownSeconds: 0, requestPermissions: false)
+        let sessionID = try #require(harness.coordinator.activeSession?.id)
+        await harness.coordinator.stop()
+
+        #expect(harness.coordinator.phase == .ready)
+        #expect(harness.coordinator.message?.contains("提示") == true)
+        let manifestURL = harness.coordinator.store.directory(for: sessionID).appendingPathComponent("manifest.json")
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let saved = try decoder.decode(RecordingSessionManifest.self, from: Data(contentsOf: manifestURL))
+        #expect(saved.phase == .ready)
+        #expect(saved.segments.count == 1)
+        #expect(saved.warnings == [try #require(engine.warningOnStop)])
+        #expect(harness.coordinator.selectedSession?.warnings == saved.warnings)
+    }
+
+    @Test
     @MainActor
     func testConcurrentStopRequestsShareOneUnderlyingFinalization() async throws {
         let harness = try Harness()
@@ -282,6 +305,7 @@ private final class FakeRecordingEngine: RecordingEngineControlling {
     var holdStop = false
     var emitOnStart = false
     var emitOnStop = false
+    var warningOnStop: String?
     var startError: FakeEngineError?
     private(set) var directory: URL?
     private var stopContinuation: CheckedContinuation<Void, Never>?
@@ -305,6 +329,7 @@ private final class FakeRecordingEngine: RecordingEngineControlling {
             await withCheckedContinuation { stopContinuation = $0 }
         }
         if emitOnStop { _ = try makeSegment(sourceID: "screen") }
+        if let warningOnStop { onWarning?(warningOnStop) }
     }
 
     func releaseStop() {

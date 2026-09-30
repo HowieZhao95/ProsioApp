@@ -663,7 +663,10 @@ final class RecordingCoordinator {
                 $0.phase = fatalReason != nil ? .interrupted : $0.segments.isEmpty ? .failed : .ready
             }
             phase = activeSession?.phase ?? .failed
-            message = phase == .ready ? "录制已保存，可预览或交给剪辑软件。"
+            message = phase == .ready
+                ? (activeSession?.warnings.isEmpty == false
+                   ? "录制已保存，部分来源有提示，请在素材中查看。"
+                   : "录制已保存，可预览或交给剪辑软件。")
                 : fatalReason.map { "录制已中断，已完成原片保留。\($0)" }
                 ?? "没有取得可播放片段，请检查录制来源。"
         } catch {

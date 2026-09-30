@@ -1,0 +1,217 @@
+{
+  "scope": "recording-only current changes copied onto committed integration, excluding unrelated shared drafts",
+  "fileCount": 35,
+  "allMatch": true,
+  "files": [
+    {
+      "path": "Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift",
+      "workspaceSHA256": "aad8cf91f46020054b4f4dba1c054c26ea6a44c6137bffd2db85246b06d62ca6",
+      "testSnapshotSHA256": "aad8cf91f46020054b4f4dba1c054c26ea6a44c6137bffd2db85246b06d62ca6",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingEditorHandoff.swift",
+      "workspaceSHA256": "20f4d176c7b79308ece317afad0c1dc8a6e623f2925af8c46c7d44570ed442fe",
+      "testSnapshotSHA256": "20f4d176c7b79308ece317afad0c1dc8a6e623f2925af8c46c7d44570ed442fe",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingExportSupport.swift",
+      "workspaceSHA256": "8a56f12708da3de9ce8f242b8d9f3088b3211bf9f273e3423523250cb32f16e0",
+      "testSnapshotSHA256": "8a56f12708da3de9ce8f242b8d9f3088b3211bf9f273e3423523250cb32f16e0",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingJianyingAdapter.swift",
+      "workspaceSHA256": "4a15ef1d7a19b27146cb17db3e11001c6607755f69ac71e82e1660a8fd4cd133",
+      "testSnapshotSHA256": "4a15ef1d7a19b27146cb17db3e11001c6607755f69ac71e82e1660a8fd4cd133",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingPremiereMulticamAdapter.swift",
+      "workspaceSHA256": "f4d0df7a1372697f245b4767e287db462efbc3238297370279ecfd87ffd3b6ed",
+      "testSnapshotSHA256": "f4d0df7a1372697f245b4767e287db462efbc3238297370279ecfd87ffd3b6ed",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingProjectExporter.swift",
+      "workspaceSHA256": "b9310c49e0ddbf4b89a5dbb3e10705f163e81a66a432ff291ec9b212ace19f17",
+      "testSnapshotSHA256": "b9310c49e0ddbf4b89a5dbb3e10705f163e81a66a432ff291ec9b212ace19f17",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingVideoExporter.swift",
+      "workspaceSHA256": "46fc504238086027c7f444f550e38c58202cd165437263da8430193eeef8bae1",
+      "testSnapshotSHA256": "46fc504238086027c7f444f550e38c58202cd165437263da8430193eeef8bae1",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift",
+      "workspaceSHA256": "4ccfbca80ccbe1e923e08c24caa03734d6f085146e7b17c77d2c48920a96612a",
+      "testSnapshotSHA256": "4ccfbca80ccbe1e923e08c24caa03734d6f085146e7b17c77d2c48920a96612a",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift",
+      "workspaceSHA256": "cc1bf95b7eaa2034b01fd3dab6142a6d26f5f89473a7ec9ed8f79605876a4e6f",
+      "testSnapshotSHA256": "cc1bf95b7eaa2034b01fd3dab6142a6d26f5f89473a7ec9ed8f79605876a4e6f",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Integration/RecordingRecovery.swift",
+      "workspaceSHA256": "d5112c2185594d3da8c8fad1b6f3abc6a2513b14b3ae88fa8142505b80c2db9a",
+      "testSnapshotSHA256": "d5112c2185594d3da8c8fad1b6f3abc6a2513b14b3ae88fa8142505b80c2db9a",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingCameraPreviewController.swift",
+      "workspaceSHA256": "be27756e9839f3971074def84924c0adeb2c7cdf6ac08be793cc61ee69efba6b",
+      "testSnapshotSHA256": "be27756e9839f3971074def84924c0adeb2c7cdf6ac08be793cc61ee69efba6b",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift",
+      "workspaceSHA256": "f5b91495d5bab24abb9be2d9a6a0f9cf57530b31ad2ccadc9d18b7bf9f5a93ec",
+      "testSnapshotSHA256": "f5b91495d5bab24abb9be2d9a6a0f9cf57530b31ad2ccadc9d18b7bf9f5a93ec",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift",
+      "workspaceSHA256": "aed35b1f2bfb2f4f222f76c99b18ae14bc2a9f54450d153f00fc5bbf4d40ac86",
+      "testSnapshotSHA256": "aed35b1f2bfb2f4f222f76c99b18ae14bc2a9f54450d153f00fc5bbf4d40ac86",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift",
+      "workspaceSHA256": "3bef0e4570cfb23f844edb84a3c64b1fbaf2796cd330d1dc72cf82c127cd930c",
+      "testSnapshotSHA256": "3bef0e4570cfb23f844edb84a3c64b1fbaf2796cd330d1dc72cf82c127cd930c",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift",
+      "workspaceSHA256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97",
+      "testSnapshotSHA256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift",
+      "workspaceSHA256": "1cbc93b72f382444e58c3bbda41744844702def6731c152c9c4dd6f66406499e",
+      "testSnapshotSHA256": "1cbc93b72f382444e58c3bbda41744844702def6731c152c9c4dd6f66406499e",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift",
+      "workspaceSHA256": "5ced0b1177aa68cd9a919a5f15a5b6b34fdc27e46564057f4dd506d3acfd5254",
+      "testSnapshotSHA256": "5ced0b1177aa68cd9a919a5f15a5b6b34fdc27e46564057f4dd506d3acfd5254",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingDesktopSelectionController.swift",
+      "workspaceSHA256": "b1a72c532162b9e9e167b3d182421f12c63b0cb73138cb174f02dcbca378a1da",
+      "testSnapshotSHA256": "b1a72c532162b9e9e167b3d182421f12c63b0cb73138cb174f02dcbca378a1da",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingPreviewController.swift",
+      "workspaceSHA256": "024adac18eb202d98e6f95ce8dd3450378cbcff1d0f9de99c4b1524abd983b8f",
+      "testSnapshotSHA256": "024adac18eb202d98e6f95ce8dd3450378cbcff1d0f9de99c4b1524abd983b8f",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingRegionSelector.swift",
+      "workspaceSHA256": "593155eed9fc2e3a15aadfb50b5e20b6c4283bbecc30c618404c1c5d6eabf28a",
+      "testSnapshotSHA256": "593155eed9fc2e3a15aadfb50b5e20b6c4283bbecc30c618404c1c5d6eabf28a",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingSelectionToolbarView.swift",
+      "workspaceSHA256": "16f7b4b280a2a915283c3f021bbc786557a9cffb60e755d33bccbefb9d86885a",
+      "testSnapshotSHA256": "16f7b4b280a2a915283c3f021bbc786557a9cffb60e755d33bccbefb9d86885a",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift",
+      "workspaceSHA256": "4752622c6f0aafc0230b3f9c89363c85a7a01b7e934c7dcc5e5e984cdc435efd",
+      "testSnapshotSHA256": "4752622c6f0aafc0230b3f9c89363c85a7a01b7e934c7dcc5e5e984cdc435efd",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingCameraPreviewTests.swift",
+      "workspaceSHA256": "9473b8e0adc4ecf96d1ae139fa82576e48002d4552917ce3ad489884b0ab9b6c",
+      "testSnapshotSHA256": "9473b8e0adc4ecf96d1ae139fa82576e48002d4552917ce3ad489884b0ab9b6c",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingCoordinatorTests.swift",
+      "workspaceSHA256": "c44e7d963e77d7de21d668cdcef03b1c54ae2ecbe9f3b6ec1dee70e5d3b14d42",
+      "testSnapshotSHA256": "c44e7d963e77d7de21d668cdcef03b1c54ae2ecbe9f3b6ec1dee70e5d3b14d42",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingDesktopSelectionTests.swift",
+      "workspaceSHA256": "3e0be0111b8a38c41c7201d7c3b1aeb2ccc8cdc11069d63dccd19027105e0686",
+      "testSnapshotSHA256": "3e0be0111b8a38c41c7201d7c3b1aeb2ccc8cdc11069d63dccd19027105e0686",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift",
+      "workspaceSHA256": "514d674f8561a516d8f9cb439da3b6f8724816918993c3c45621b51964422a38",
+      "testSnapshotSHA256": "514d674f8561a516d8f9cb439da3b6f8724816918993c3c45621b51964422a38",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift",
+      "workspaceSHA256": "6ad1991b3f8413223e67f4eb5e662f597a359cf63ed495b787c97bbe7e70d484",
+      "testSnapshotSHA256": "6ad1991b3f8413223e67f4eb5e662f597a359cf63ed495b787c97bbe7e70d484",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingExportTests.swift",
+      "workspaceSHA256": "57aac1f5f3335ce409a9ef3bd079603be6de928e2ea3908749d3aba87606f5f6",
+      "testSnapshotSHA256": "57aac1f5f3335ce409a9ef3bd079603be6de928e2ea3908749d3aba87606f5f6",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingImmersiveWorkflowTests.swift",
+      "workspaceSHA256": "ca02f44c8a688a885695069454d9bb58a3603679026675b80e03799950e937c6",
+      "testSnapshotSHA256": "ca02f44c8a688a885695069454d9bb58a3603679026675b80e03799950e937c6",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingNativeViewTests.swift",
+      "workspaceSHA256": "87ab44c7fe2eb853bec6ac951ea40d8735f686c797235cb497989f3be4fbe38d",
+      "testSnapshotSHA256": "87ab44c7fe2eb853bec6ac951ea40d8735f686c797235cb497989f3be4fbe38d",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingPlatformTests.swift",
+      "workspaceSHA256": "ecfd56d3b4462245c698dce70c141bc1290b18a82983fe7908c984f0a570cfc2",
+      "testSnapshotSHA256": "ecfd56d3b4462245c698dce70c141bc1290b18a82983fe7908c984f0a570cfc2",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingPreviewTests.swift",
+      "workspaceSHA256": "ee375911bf8a852530e8e9ae22bddd0140355f25c0733a32bef5c0dcf1a3111a",
+      "testSnapshotSHA256": "ee375911bf8a852530e8e9ae22bddd0140355f25c0733a32bef5c0dcf1a3111a",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingRecoveryTests.swift",
+      "workspaceSHA256": "5861daee492d3c2b458d0ace2be06e2ad0215bb85bbd46e8d0a7553124f8d8f5",
+      "testSnapshotSHA256": "5861daee492d3c2b458d0ace2be06e2ad0215bb85bbd46e8d0a7553124f8d8f5",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingStoreTests.swift",
+      "workspaceSHA256": "0c3388c4f462643001c457937c46f6aff6ef5af2de60d113e514d65df2c42050",
+      "testSnapshotSHA256": "0c3388c4f462643001c457937c46f6aff6ef5af2de60d113e514d65df2c42050",
+      "matches": true
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingTerminationTests.swift",
+      "workspaceSHA256": "bed77a08ce9d63efee84bd52e7f9af8e874e27e01cd0d3d48af3af616015f01c",
+      "testSnapshotSHA256": "bed77a08ce9d63efee84bd52e7f9af8e874e27e01cd0d3d48af3af616015f01c",
+      "matches": true
+    }
+  ]
+}

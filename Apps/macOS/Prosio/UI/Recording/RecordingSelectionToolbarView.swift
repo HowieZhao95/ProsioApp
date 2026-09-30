@@ -230,10 +230,21 @@ private final class RecordingCameraLayerHost: NSView {
 
 struct RecordingCompletionView: View {
     @Bindable var coordinator: RecordingCoordinator
+    private var needsReview: Bool {
+        coordinator.phase != .ready || coordinator.selectedSession?.warnings.isEmpty == false
+    }
+    private var completionText: String {
+        if coordinator.selectedSession?.segments.isEmpty == true { return "未取得可播放片段" }
+        if coordinator.phase == .ready {
+            return needsReview ? "录制已保存，请查看提示" : "录制已保存"
+        }
+        return "录制已结束，原片已保留"
+    }
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: coordinator.phase == .ready ? "checkmark.circle.fill" : "exclamationmark.circle").foregroundStyle(coordinator.phase == .ready ? Color.green : .orange)
-            Text(coordinator.selectedSession?.segments.isEmpty == true ? "未取得可播放片段" : coordinator.phase == .ready ? "录制已保存" : "录制已结束，原片已保留").help(coordinator.message ?? "").font(.system(size: 12, weight: .medium))
+            Image(systemName: needsReview ? "exclamationmark.circle" : "checkmark.circle.fill")
+                .foregroundStyle(needsReview ? Color.orange : .green)
+            Text(completionText).help(coordinator.message ?? "").font(.system(size: 12, weight: .medium))
             Button("查看素材") { coordinator.closeCompletion(); coordinator.showWindow(sessionID: coordinator.selectedSessionID) }
                 .buttonStyle(.plain).foregroundStyle(.tint)
             Button(action: coordinator.closeCompletion) { Image(systemName: "xmark").font(.system(size: 10)) }.buttonStyle(.plain)

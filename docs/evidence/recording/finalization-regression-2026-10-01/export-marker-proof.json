@@ -1,0 +1,32 @@
+{
+  "scope": "actual synthetic production Writer AAC -> composition -> mixed trimmed MP4 -> FCP package; no device capture or real editor import",
+  "exportSuite": {
+    "passed": 8,
+    "log": "/tmp/prosio-writer-export-regression/export-suite.log"
+  },
+  "targetedFinalRun": {
+    "passed": 1,
+    "log": "/tmp/prosio-writer-export-regression/new-regression-final.log"
+  },
+  "injectedAudioGapMicroseconds": 20000,
+  "markersSeconds": {
+    "rawMicrophoneTimeline": 0.4000416666666667,
+    "compositionMicrophone": 0.4000416666666667,
+    "compositionSystem": 0.8000208333333333,
+    "trimmedMixedMicrophone": 0.2000625,
+    "trimmedMixedSystem": 0.6000416666666667
+  },
+  "verification": [
+    "actual full PCM decode, not only playable metadata",
+    "two independent composition audio tracks",
+    "one mixed MP4 audio track contains both markers",
+    "20ms empty microphone composition segment at0.1s",
+    "FCP microphone offset0.12s",
+    "all four originals preserved and copied byte-identically"
+  ],
+  "rootFocusedUIAndCoordinatorTests": {
+    "passed": 14,
+    "log": "/tmp/prosio-recording-close-warning-ui-20261001.log"
+  },
+  "writerSHA256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97"
+}
