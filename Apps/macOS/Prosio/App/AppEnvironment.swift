@@ -33,6 +33,7 @@ final class AppEnvironment {
     let backend: BackendClient
     let capture: CaptureCoordinator
     let meeting: MeetingCoordinator
+    let recording: RecordingCoordinator
     let permissions: PermissionsManager
     let focus: FocusContextProvider
     let inserter: TextInserter
@@ -67,6 +68,7 @@ final class AppEnvironment {
         permissions = PermissionsManager()
         capture = CaptureCoordinator(permissions: permissions, rootURL: support.appending(path: "Captures", directoryHint: .isDirectory))
         meeting = MeetingCoordinator(root: support.appending(path: "Meetings", directoryHint: .isDirectory), permissions: permissions, backend: backend, settings: settings)
+        recording = RecordingCoordinator(root: support.appending(path: "Recordings", directoryHint: .isDirectory), permissions: permissions)
         focus = FocusContextProvider()
         inserter = TextInserter(settings: settings)
 
@@ -111,6 +113,7 @@ final class AppEnvironment {
     }
 
     func launch() {
+        Task { await recording.recoverSavedSessions() }
         // The stored session token loads asynchronously; reading `isSignedIn` at init is too early.
         backend.onSignInStateChange = { [weak self] signedIn in
             Task { @MainActor in
@@ -126,15 +129,31 @@ final class AppEnvironment {
             try? await SpeechAnalyzerEngine.prepareAssets(for: locale)
         }
         // Build the audio graph up front (mic stays off) so the first press starts recording fast.
-        audioCapture.prewarm()
+        if permissions.statuses[.microphone] == .granted {
+            audioCapture.prewarm()
+        }
         hud = HUDController(controller: controller, settings: settings)
         capture.canBegin = { [weak self] in
             guard let self else { return false }
+            guard !self.recording.isBusy, self.meeting.activeID == nil,
+                  !self.meeting.starting, !self.meeting.finishingRecording else { return false }
+            switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
+        }
+        recording.canBegin = { [weak self] in
+            guard let self, !self.capture.isBusy, self.meeting.activeID == nil,
+                  !self.meeting.starting, !self.meeting.finishingRecording else { return false }
+            switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
+        }
+        meeting.canBegin = { [weak self] in
+            guard let self, !self.capture.isBusy, !self.recording.isBusy else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         hotkey = HotkeyMonitor(settings: settings, controller: controller)
+        recording.onActivity = { [weak self] active in self?.hotkey?.isRecordingSuspended = active }
         meeting.onRecordingActivity = { [weak self] active in self?.hotkey?.isMeetingSuspended = active }
-        capture.onSelectionActivity = { [weak self] active in self?.hotkey?.isCaptureSuspended = active }
+        capture.onSelectionActivity = { [weak self] active in
+            self?.hotkey?.isCaptureSuspended = active
+        }
         let captureHotkey = CaptureHotkey { [weak self] in self?.capture.start(.region) }
         capture.hotkey = captureHotkey
         captureHotkey.onShortcutChange = { [weak self] in self?.hotkey?.resetCaptureOptionGesture() }
@@ -153,9 +172,7 @@ final class AppEnvironment {
         captureHotkey.start()
 
         permissions.refresh()
-        if !permissions.allRequiredGranted {
-            showOnboarding()
-        }
+        // Each feature requests permissions when the user starts it; voice exposes onboarding.
     }
 
     var optionCaptureAvailability: HotkeyRouting.OptionCaptureAvailability {

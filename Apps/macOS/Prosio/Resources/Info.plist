@@ -24,8 +24,12 @@
 	<string>public.app-category.productivity</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Prosio records the cameras you select only when you start screen recording.</string>
+	<key>NSCameraUseContinuityCameraDeviceType</key>
+	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Prosio uses your microphone for voice input and only records meeting audio while you start a meeting recording.</string>
+	<string>Prosio uses your microphone when you start voice input, meeting recording, or screen recording.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Prosio uses on-device speech recognition when you are offline or in private mode.</string>
 </dict>

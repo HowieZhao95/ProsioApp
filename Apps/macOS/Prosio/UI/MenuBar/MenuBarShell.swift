@@ -2,13 +2,14 @@ import AppKit
 import SwiftUI
 
 enum MenuBarPane: Hashable, CaseIterable {
-    case voice, capture, meeting
+    case voice, capture, meeting, recording
 
     var title: String {
         switch self {
         case .voice: "语音输入"
         case .capture: "屏幕截图"
-        case .meeting: "会议转写"
+        case .meeting: "录音转写"
+        case .recording: "屏幕录制"
         }
     }
 }
@@ -45,7 +46,7 @@ struct MenuBarShell<Content: View, Footer: View>: View {
                     let selected = selectedPane == pane
                     Button { selectedPane = pane } label: {
                         Text(pane.title)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(selected ? Color.primary : Color.secondary)
                             .frame(maxWidth: .infinity)
                             .frame(height: 30)

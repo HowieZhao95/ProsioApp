@@ -56,6 +56,9 @@ final class HotkeyMonitor {
     var isMeetingSuspended = false {
         didSet { triggerPhysicalState.reset() }
     }
+    var isRecordingSuspended = false {
+        didSet { triggerPhysicalState.reset(); captureOptionState.reset() }
+    }
     func resetCaptureOptionGesture() { captureOptionState.reset() }
 
     /// Every modifier bit we care about when deciding "no other modifiers held" (so a real
@@ -460,7 +463,7 @@ final class HotkeyMonitor {
     }
 
     private func handleFlagsChanged(keycode: Int64, flags: CGEventFlags) {
-        guard !isMeetingSuspended else { return }
+        guard !isMeetingSuspended, !isRecordingSuspended else { return }
         let key = settings.triggerKey
         guard keycode == Self.keycode(for: key) else { return }
 
@@ -501,7 +504,7 @@ final class HotkeyMonitor {
     /// the CGEventTap callback's call frame — even though it's already on the main thread — risks
     /// the system flagging the tap as unresponsive and disabling it.
     private func applyEffect(_ effect: HotkeyStateMachine.Effect) {
-        guard !isMeetingSuspended else { return }
+        guard !isMeetingSuspended, !isRecordingSuspended else { return }
         guard HotkeyRouting.canApplyVoiceEffect(isStarted: isStarted, isCaptureSuspended: isCaptureSuspended) else { return }
         switch effect {
         case .start:

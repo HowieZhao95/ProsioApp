@@ -19,6 +19,7 @@ struct MenuBarContentView: View {
                 case .voice: voicePane
                 case .capture: capturePane
                 case .meeting: meetingPane
+                case .recording: recordingPane
                 }
             }
         } footer: {
@@ -45,6 +46,9 @@ struct MenuBarContentView: View {
     }
 
     private var voiceCardTitle: String {
+        if environment.recording.isBusy { return "屏幕录制进行中" }
+        if environment.meeting.starting { return "正在准备录音转写" }
+        if environment.meeting.finishingRecording { return "正在保存录音" }
         if environment.meeting.activeID != nil { return "会议录音中" }
         return switch environment.controller.phase {
         case .listening: "正在聆听"
@@ -55,6 +59,8 @@ struct MenuBarContentView: View {
     }
 
     private var voiceCardDetail: String {
+        if environment.recording.isBusy { return "结束屏幕录制后可继续使用语音输入。" }
+        if environment.meeting.starting || environment.meeting.finishingRecording { return "录音准备和保存期间，语音输入会暂停。" }
         if environment.meeting.activeID != nil { return "结束会议录音后可继续使用语音输入。" }
         let trigger = voiceTriggerName
         if isListening { return "再按 \(trigger) 结束语音输入，按 Esc 取消本次。" }
@@ -165,7 +171,7 @@ struct MenuBarContentView: View {
                     .frame(height: 31)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(voiceBusy || environment.capture.isBusy)
+            .disabled(voiceBusy || environment.capture.isBusy || environment.recording.isBusy)
             .accessibilityHint(voiceBusy ? "结束语音后可截图" : "框选屏幕并原地标注")
             if let hotkey = environment.capture.hotkey {
                 HStack(spacing: 4) {
@@ -295,6 +301,58 @@ struct MenuBarContentView: View {
         environment.capture.start(.region)
     }
 
+    private var recordingPane: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            if environment.recording.isBusy {
+                RecordingControlView(coordinator: environment.recording, compact: true)
+            } else {
+                MenuBarFeatureCard(
+                    title: "画面与声音，分别保存。",
+                    detail: "屏幕、最多两个机位与独立音频，录完直接进入剪辑。"
+                )
+                Button {
+                    dismiss()
+                    environment.recording.showWindow()
+                } label: {
+                    Label("设置并开始录制…", systemImage: "record.circle")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(voiceBusy || environment.capture.isBusy || environment.meeting.activeID != nil || environment.meeting.starting || environment.meeting.finishingRecording)
+            }
+            if let message = environment.recording.message, !environment.recording.isBusy {
+                Text(message).font(.caption).foregroundStyle(.secondary)
+            }
+            Divider()
+            HStack {
+                Text("最近录制").font(.system(size: 12, weight: .semibold)).foregroundStyle(.secondary)
+                Spacer()
+                Button("查看全部") { dismiss(); environment.recording.showWindow() }
+                    .buttonStyle(.link)
+            }
+            if environment.recording.store.sessions.isEmpty {
+                Text("还没有录屏素材").font(.caption).foregroundStyle(.secondary)
+            }
+            ForEach(environment.recording.store.sessions.prefix(3)) { session in
+                Button {
+                    dismiss()
+                    environment.recording.showWindow(sessionID: session.id)
+                } label: {
+                    HStack {
+                        Image(systemName: "video").foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(session.title).font(.system(size: 12, weight: .medium))
+                            Text(session.phase.displayName).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                    }
+                }.buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 14)
+    }
+
     private var meetingPane: some View {
         VStack(alignment: .leading, spacing: 12) {
             MenuBarFeatureCard(
@@ -308,7 +366,7 @@ struct MenuBarContentView: View {
             } else {
                 Button("开始会议录音") { Task { await environment.meeting.start() } }
                     .buttonStyle(.borderedProminent)
-                    .disabled(environment.meeting.processing || environment.meeting.starting || voiceBusy)
+                    .disabled(environment.meeting.processing || environment.meeting.starting || voiceBusy || environment.recording.isBusy || environment.capture.isBusy)
             }
             if environment.meeting.processing { ProgressView("正在生成本地文字与说话人…") }
             if environment.meeting.starting { ProgressView("正在准备实时字幕…") }
@@ -398,6 +456,10 @@ struct MenuBarContentView: View {
                             Text("点击截图或使用当前快捷键，在冻结画面上框选并标注。复制或保存后返回原应用。")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
+                        } else if selectedPane == .recording {
+                            Text("屏幕录制").font(.system(size: 13, weight: .semibold))
+                            Text("选择屏幕与最多两个机位，麦克风和系统声音独立保存。结束后可预览、裁剪导出，或将原片与项目交给剪辑软件。")
+                                .font(.system(size: 12)).foregroundStyle(.secondary)
                         } else {
                             Text("会议转写")
                                 .font(.system(size: 13, weight: .semibold))

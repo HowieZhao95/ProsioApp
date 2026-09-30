@@ -37,13 +37,16 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
-        NSMicrophoneUsageDescription: Prosio uses your microphone for voice input and only records meeting audio while you start a meeting recording.
+        NSMicrophoneUsageDescription: Prosio uses your microphone when you start voice input, meeting recording, or screen recording.
+        NSCameraUsageDescription: Prosio records the cameras you select only when you start screen recording.
+        NSCameraUseContinuityCameraDeviceType: true
         NSSpeechRecognitionUsageDescription: Prosio uses on-device speech recognition when you are offline or in private mode.
     entitlements:
       path: Apps/macOS/Prosio/Resources/Prosio.entitlements
       properties:
         com.apple.security.app-sandbox: false
         com.apple.security.device.audio-input: true
+        com.apple.security.device.camera: true
         # Under the hardened runtime, library validation rejects the ProsioTests.xctest bundle
         # dlopen'd into the running Prosio.app at test time — self-signed certs without a real
         # Team ID are treated as mismatched even when both the app and the test bundle use the

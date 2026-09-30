@@ -20,11 +20,13 @@ final class MeetingCoordinator {
     private(set) var liveSystemText = ""
     private(set) var processing = false
     private(set) var starting = false
+    private(set) var finishingRecording = false
     var cloudEnabled: Bool {
         didSet { UserDefaults.standard.set(cloudEnabled, forKey: "meetingCloudEnabled") }
     }
     @ObservationIgnored private var libraryWindow: NSWindow?
     @ObservationIgnored var onRecordingActivity: ((Bool) -> Void)?
+    @ObservationIgnored var canBegin: () -> Bool = { true }
 
     init(root: URL, permissions: PermissionsManager, backend: BackendClient, settings: AppSettings) {
         store = MeetingStore(root: root)
@@ -36,8 +38,13 @@ final class MeetingCoordinator {
 
     func start() async {
         guard activeID == nil, !processing, !starting else { return }
+        guard canBegin() else { message = "请先结束语音输入、截图或屏幕录制。"; return }
         starting = true
-        defer { starting = false }
+        onRecordingActivity?(true)
+        defer {
+            starting = false
+            if activeID == nil { onRecordingActivity?(false) }
+        }
         permissions.refresh()
         if permissions.statuses[.microphone] != .granted {
             await permissions.request(.microphone)
@@ -77,7 +84,6 @@ final class MeetingCoordinator {
                 liveMic = mic
                 liveSystem = system
                 activeID = record.id
-                onRecordingActivity?(true)
                 liveMicrophoneText = ""
                 liveSystemText = ""
                 let screenWarning = permissions.screenCaptureGranted ? nil : "仅录麦克风；开启屏幕录制权限可录入参会者声音。"
@@ -99,11 +105,13 @@ final class MeetingCoordinator {
               var record = store.records.first(where: { $0.id == activeID }) else { return }
         self.activeID = nil
         self.recorder = nil
+        finishingRecording = true
         processing = true
         record.endedAt = .now
         record.phase = .processing
         do {
             let files = try await recorder.stop()
+            finishingRecording = false
             onRecordingActivity?(false)
             liveMic?.finish()
             liveSystem?.finish()
@@ -131,6 +139,7 @@ final class MeetingCoordinator {
                 Task { await self.enhanceWithCloud(id: record.id, files: files) }
             }
         } catch {
+            finishingRecording = false
             onRecordingActivity?(false)
             record.phase = .failed
             record.error = error.localizedDescription
@@ -143,6 +152,9 @@ final class MeetingCoordinator {
     /// App termination waits only for the audio writers, not the potentially long
     /// Apple/FluidAudio pass. The saved tracks can be processed after relaunch.
     func flushForTermination() async {
+        // A concurrent stop clears activeID before its writer has finished. Let that owner
+        // publish the saved tracks before exiting; startup must likewise finish its rollback.
+        while starting || finishingRecording { try? await Task.sleep(for: .milliseconds(50)) }
         guard let activeID, let recorder,
               var record = store.records.first(where: { $0.id == activeID }) else { return }
         self.activeID = nil
