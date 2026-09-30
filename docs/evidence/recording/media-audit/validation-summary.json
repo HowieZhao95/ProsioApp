@@ -1,0 +1,219 @@
+{
+  "date": "2026-09-30",
+  "scope": "AVFoundation finalized-media metadata; not full decode or physical capture/editor acceptance",
+  "smokeReport": "smoke.json",
+  "workerChecks": [
+    {
+      "case": "progress",
+      "rawOutput": "/tmp/prosio-media-audit-progress.json",
+      "outputSHA256": "150c92de62925399d47aef55301c8adc32a7c851e8dff3c35223784c6ee6ef48",
+      "inputCompleted": false,
+      "snapshotIsPartial": true,
+      "segmentCount": 425,
+      "passedCount": 425,
+      "failedCount": 0,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 0,
+      "failureIssues": [],
+      "timelineIssues": []
+    },
+    {
+      "case": "gap-output",
+      "rawOutput": "/tmp/prosio-media-audit-gap-output.json",
+      "outputSHA256": "0b151ee89768dd3e1a60f53275080be8929fbe44fe8eef4b72ba47fcc671f806",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 30,
+      "passedCount": 30,
+      "failedCount": 0,
+      "noCompletedMedia": false,
+      "informationalGapCount": 1,
+      "timelineErrorCount": 0,
+      "failureIssues": [],
+      "timelineIssues": [
+        {
+          "sourceID": "camera-1",
+          "issues": [
+            {
+              "deltaMicroseconds": 1000000,
+              "kind": "gap",
+              "nextSegmentID": "428D71E9-361C-4D69-8BC0-284C9AC89D7C",
+              "previousSegmentID": "FB5F9942-60C0-48F0-B42D-128214A4A973"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "overlap-output",
+      "rawOutput": "/tmp/prosio-media-audit-overlap-output.json",
+      "outputSHA256": "630a867c0c2708f418ee1c20d331055d3a66fbd04d61698d5487a31e5d74ba51",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 30,
+      "passedCount": 30,
+      "failedCount": 0,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 1,
+      "failureIssues": [],
+      "timelineIssues": [
+        {
+          "sourceID": "camera-1",
+          "issues": [
+            {
+              "deltaMicroseconds": -1000000,
+              "kind": "overlap",
+              "nextSegmentID": "428D71E9-361C-4D69-8BC0-284C9AC89D7C",
+              "previousSegmentID": "FB5F9942-60C0-48F0-B42D-128214A4A973"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "missing-output",
+      "rawOutput": "/tmp/prosio-media-audit-missing-output.json",
+      "outputSHA256": "20490b66b96e55f2c3960a08511b490b30622981bc0d3aa8b587fcd64a33ebee",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 30,
+      "passedCount": 29,
+      "failedCount": 1,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 0,
+      "failureIssues": [
+        {
+          "sourceID": "screen",
+          "path": "media/definitely-missing.mov",
+          "issues": [
+            "missing, empty, or non-regular media file"
+          ]
+        }
+      ],
+      "timelineIssues": []
+    },
+    {
+      "case": "traversal-output",
+      "rawOutput": "/tmp/prosio-media-audit-traversal-output.json",
+      "outputSHA256": "a6121c112a8ef738dbd796ab3352eec8fdaadbe852fc5b3d7b921c2462c668a9",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 30,
+      "passedCount": 29,
+      "failedCount": 1,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 0,
+      "failureIssues": [
+        {
+          "sourceID": "screen",
+          "path": "../outside.mov",
+          "issues": [
+            "unsafe relative path or symlink escapes media root"
+          ]
+        }
+      ],
+      "timelineIssues": []
+    },
+    {
+      "case": "symlink-output",
+      "rawOutput": "/tmp/prosio-media-audit-symlink-output.json",
+      "outputSHA256": "61575ef8a1e3c90218501a9e5e43af831f24aff54840778015a9e0523633399d",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 1,
+      "passedCount": 0,
+      "failedCount": 1,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 0,
+      "failureIssues": [
+        {
+          "sourceID": "screen",
+          "path": "media/escape.mov",
+          "issues": [
+            "unsafe relative path or symlink escapes media root"
+          ]
+        }
+      ],
+      "timelineIssues": []
+    },
+    {
+      "case": "overflow-output",
+      "rawOutput": "/tmp/prosio-media-audit-overflow-output.json",
+      "outputSHA256": "a0dc9aeb38c9fdfe63bfc9ff15903c24219773bb5687083f2968d0bdb9788280",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 30,
+      "passedCount": 29,
+      "failedCount": 1,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 1,
+      "failureIssues": [
+        {
+          "sourceID": "screen",
+          "path": "media/4FA5B14A-C04B-433F-9956-F072DD1C0C57.mov",
+          "issues": [
+            "declared time range overflows Int64"
+          ]
+        }
+      ],
+      "timelineIssues": [
+        {
+          "sourceID": "screen",
+          "issues": [
+            {
+              "deltaMicroseconds": 0,
+              "kind": "invalidRange",
+              "previousSegmentID": "4FA5B14A-C04B-433F-9956-F072DD1C0C57"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "empty-output",
+      "rawOutput": "/tmp/prosio-media-audit-empty-output.json",
+      "outputSHA256": "9b10a48ac8848bee6004544a05bf6b9cfd219067a42a690964bb1647ffd153dc",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 0,
+      "passedCount": 0,
+      "failedCount": 0,
+      "noCompletedMedia": true,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 0,
+      "failureIssues": [],
+      "timelineIssues": []
+    },
+    {
+      "case": "corrupt-output",
+      "rawOutput": "/tmp/prosio-media-audit-corrupt-output.json",
+      "outputSHA256": "d77cd25d8fef387d672ab7ffeccc6a629bfc31665f8ac7199dee83b95a1c92c5",
+      "inputCompleted": true,
+      "snapshotIsPartial": false,
+      "segmentCount": 1,
+      "passedCount": 0,
+      "failedCount": 1,
+      "noCompletedMedia": false,
+      "informationalGapCount": 0,
+      "timelineErrorCount": 0,
+      "failureIssues": [
+        {
+          "sourceID": "screen",
+          "path": "media/not-a-movie.mov",
+          "issues": [
+            "AVFoundation reports the finalized asset as not playable"
+          ]
+        }
+      ],
+      "timelineIssues": []
+    }
+  ],
+  "productionWriterChanged": false,
+  "stressProcessRestarted": false
+}
