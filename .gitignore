@@ -13,3 +13,4 @@ node_modules/
 eval/audio/*.wav
 eval/results/
 .build-*/
+.vendor/

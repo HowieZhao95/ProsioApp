@@ -31,6 +31,8 @@ final class AppEnvironment {
     let dictionary: DictionaryStore
     let history: HistoryStore
     let backend: BackendClient
+    let capture: CaptureCoordinator
+    let meeting: MeetingCoordinator
     let permissions: PermissionsManager
     let focus: FocusContextProvider
     let inserter: TextInserter
@@ -63,6 +65,8 @@ final class AppEnvironment {
         isSignedIn = backend.isSignedIn
         signedInEmail = backend.signedInEmail
         permissions = PermissionsManager()
+        capture = CaptureCoordinator(permissions: permissions, rootURL: support.appending(path: "Captures", directoryHint: .isDirectory))
+        meeting = MeetingCoordinator(root: support.appending(path: "Meetings", directoryHint: .isDirectory), permissions: permissions, backend: backend, settings: settings)
         focus = FocusContextProvider()
         inserter = TextInserter(settings: settings)
 
@@ -124,13 +128,43 @@ final class AppEnvironment {
         // Build the audio graph up front (mic stays off) so the first press starts recording fast.
         audioCapture.prewarm()
         hud = HUDController(controller: controller, settings: settings)
+        capture.canBegin = { [weak self] in
+            guard let self else { return false }
+            switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
+        }
         hotkey = HotkeyMonitor(settings: settings, controller: controller)
+        meeting.onRecordingActivity = { [weak self] active in self?.hotkey?.isMeetingSuspended = active }
+        capture.onSelectionActivity = { [weak self] active in self?.hotkey?.isCaptureSuspended = active }
+        let captureHotkey = CaptureHotkey { [weak self] in self?.capture.start(.region) }
+        capture.hotkey = captureHotkey
+        captureHotkey.onShortcutChange = { [weak self] in self?.hotkey?.resetCaptureOptionGesture() }
+        hotkey?.isOptionCaptureSelected = { [weak self] in self?.capture.hotkey?.shortcut == .optionEitherSide }
+        hotkey?.isOptionCaptureBusy = { [weak self] in
+            guard let self else { return true }
+            return self.capture.isBusy || !self.capture.canBegin()
+        }
+        hotkey?.onOptionCaptureTap = { [weak self] in
+            guard let self else { return }
+            let wasBusy = self.capture.isBusy
+            self.capture.start(.region)
+            ProsioLog.hotkey.notice("option capture.start returned busyBefore=\(wasBusy, privacy: .public) busyAfter=\(self.capture.isBusy, privacy: .public) screenPermission=\(self.permissions.screenCaptureGranted, privacy: .public) messagePresent=\(self.capture.message != nil, privacy: .public)")
+        }
         hotkey?.start()
+        captureHotkey.start()
 
         permissions.refresh()
         if !permissions.allRequiredGranted {
             showOnboarding()
         }
+    }
+
+    var optionCaptureAvailability: HotkeyRouting.OptionCaptureAvailability {
+        HotkeyRouting.optionCaptureAvailability(
+            voiceUsesRightOption: settings.triggerKey == .rightOption,
+            accessibilityGranted: permissions.statuses[.accessibility] == .granted,
+            inputMonitoringGranted: permissions.statuses[.inputMonitoring] == .granted,
+            tapHealthy: hotkey?.isTapHealthy == true
+        )
     }
 
     // MARK: - API for UI (signatures frozen; bodies owned by mac-system)
@@ -251,6 +285,7 @@ final class AppEnvironment {
     #endif
 
     func shutdown() {
+        capture.shutdown()
         hotkey?.stop()
         controller.cancel()
     }

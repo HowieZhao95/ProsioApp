@@ -18,6 +18,7 @@ struct ProsioApp: App {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let environment = AppEnvironment()
+    private var finishingMeeting = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // `ProsioTests` launches `Prosio` itself as its XCTest host process. That host must never
@@ -41,6 +42,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         environment.shutdown()
+    }
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard environment.meeting.activeID != nil else { return .terminateNow }
+        guard !finishingMeeting else { return .terminateLater }
+        finishingMeeting = true
+        Task { @MainActor in
+            await environment.meeting.flushForTermination()
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
     }
 
     private static func otherRunningInstance() -> NSRunningApplication? {

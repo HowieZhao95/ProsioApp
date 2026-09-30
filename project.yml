@@ -27,6 +27,8 @@ targets:
         product: ProsioAudio
       - package: ProsioKit
         product: ProsioTranscription
+      - package: ProsioKit
+        product: ProsioMeeting
     info:
       path: Apps/macOS/Prosio/Resources/Info.plist
       properties:
@@ -35,7 +37,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
-        NSMicrophoneUsageDescription: Prosio listens only while you hold the dictation key, to turn your speech into text.
+        NSMicrophoneUsageDescription: Prosio uses your microphone for voice input and only records meeting audio while you start a meeting recording.
         NSSpeechRecognitionUsageDescription: Prosio uses on-device speech recognition when you are offline or in private mode.
     entitlements:
       path: Apps/macOS/Prosio/Resources/Prosio.entitlements
@@ -77,8 +79,22 @@ targets:
     sources:
       - path: Apps/macOS/ProsioTests
       - path: Apps/macOS/Prosio/System/HotkeyStateMachine.swift
+      - path: Apps/macOS/Prosio/System/HotkeyRouting.swift
       - path: Apps/macOS/Prosio/System/FocusContextProvider.swift
       - path: Apps/macOS/Prosio/System/ProsioLog.swift
+      - path: Apps/macOS/Prosio/Capture/Domain
+      - path: Apps/macOS/Prosio/Capture/Platform
+      - path: Apps/macOS/Prosio/Capture/Screenshot
+      - path: Apps/macOS/Prosio/Capture/Interaction
+      - path: Apps/macOS/Prosio/Capture/Snapping
+      - path: Apps/macOS/Prosio/Capture/Editing
+      - path: Apps/macOS/Prosio/Capture/Integration/CaptureEditingSession.swift
+      - path: Apps/macOS/Prosio/UI/Editor
+      - path: Apps/macOS/Prosio/Capture/Storage
+      - path: Apps/macOS/Prosio/Meeting/MeetingStore.swift
+      - path: Apps/macOS/Prosio/Recording
+      - path: Apps/macOS/Prosio/UI/Recording
+      - path: Apps/macOS/Prosio/System/PermissionsManager.swift
     dependencies:
       - package: ProsioKit
         product: ProsioCore
@@ -103,3 +119,11 @@ schemes:
         - ProsioTests
     run:
       config: Debug
+  ProsioValidation:
+    build:
+      targets:
+        ProsioTests: [test]
+    test:
+      config: Debug
+      targets:
+        - ProsioTests

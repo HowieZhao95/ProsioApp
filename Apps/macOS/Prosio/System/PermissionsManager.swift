@@ -16,6 +16,7 @@ enum PermissionStatus: Hashable {
 /// Checks and requests TCC permissions. Owned by mac-system agent. API FROZEN.
 @Observable
 final class PermissionsManager {
+    private(set) var screenCaptureGranted = false
     private(set) var statuses: [PermissionKind: PermissionStatus] = [:]
     // `deinit` runs nonisolated even on a main-actor-isolated class, so this can't be a normal
     // (isolated) stored property if we want to clean it up there.
@@ -47,6 +48,7 @@ final class PermissionsManager {
     }
 
     func refresh() {
+        screenCaptureGranted = CGPreflightScreenCaptureAccess()
         set(.microphone, Self.microphoneStatus())
         set(.accessibility, AXIsProcessTrusted() ? .granted : .denied)
         set(.inputMonitoring, Self.inputMonitoringStatus())
@@ -82,6 +84,15 @@ final class PermissionsManager {
         refresh()
     }
 
+    /// User-initiated recovery for the standalone right-Option screenshot shortcut.
+    /// Request first so Prosio appears in the system list; if denied, open that pane.
+    func recoverInputMonitoring() async {
+        await request(.inputMonitoring)
+        if statuses[.inputMonitoring] != .granted {
+            openSystemSettings(for: .inputMonitoring)
+        }
+    }
+
     /// Opens the matching pane in System Settings.
     func openSystemSettings(for kind: PermissionKind) {
         let suffix: String
@@ -92,6 +103,16 @@ final class PermissionsManager {
         case .speechRecognition: suffix = "Privacy_SpeechRecognition"
         }
         guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(suffix)") else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    // Capture is independent of the microphone and Accessibility permissions used by voice.
+    func requestScreenCapture() {
+        _ = CGRequestScreenCaptureAccess()
+        refresh()
+    }
+    func openScreenCaptureSettings() {
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") else { return }
         NSWorkspace.shared.open(url)
     }
 

@@ -10,6 +10,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     let environment: AppEnvironment
     @Bindable private var settings: AppSettings
+    @AppStorage("prosio.capture.theme") private var captureTheme = "system"
 
     init(environment: AppEnvironment) {
         self.environment = environment
@@ -21,7 +22,10 @@ struct GeneralSettingsView: View {
             PermissionBanner(permissions: environment.permissions)
 
             Section("Shortcut") {
-                Picker("Dictation key", selection: $settings.triggerKey) {
+                Picker("Dictation key", selection: Binding(
+                    get: { settings.triggerKey },
+                    set: { settings.triggerKey = $0; environment.hotkey?.resetCaptureOptionGesture() }
+                )) {
                     ForEach(TriggerKey.allCases, id: \.self) { key in
                         Text(key.displayName).tag(key)
                     }
@@ -29,6 +33,49 @@ struct GeneralSettingsView: View {
                 Text("Press once to start, again to finish.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if let hotkey = environment.capture.hotkey {
+                    Picker("截图快捷键", selection: Binding(
+                        get: { hotkey.shortcut },
+                        set: { hotkey.shortcut = $0 }
+                    )) {
+                        ForEach(CaptureHotkey.Shortcut.allCases) { shortcut in
+                            Text(shortcut == .off ? "关闭" : shortcut.label).tag(shortcut)
+                        }
+                    }
+                    if hotkey.conflictMessage != nil {
+                        Text("截图快捷键不可用，请选择其他组合。")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
+                    if hotkey.shortcut == .optionEitherSide {
+                        switch environment.optionCaptureAvailability {
+                        case .ready:
+                            Text("单独轻按并释放任一侧 Option 截图；组合按键和长按不会触发。")
+                                .font(.caption).foregroundStyle(.secondary)
+                        case .voiceKeyConflict:
+                            Text("语音已使用右 Option；请更改语音键或截图快捷键，避免冲突。")
+                                .font(.caption).foregroundStyle(.orange)
+                        case .needsAccessibility:
+                            Button("授予辅助功能权限…") { environment.permissions.openSystemSettings(for: .accessibility) }
+                        case .needsInputMonitoring:
+                            Button("授予输入监控权限…") {
+                                Task { await environment.permissions.recoverInputMonitoring() }
+                            }
+                        case .tapUnavailable:
+                            Text("键盘监听暂不可用；请检查权限后返回 Prosio。")
+                                .font(.caption).foregroundStyle(.orange)
+                            Button("打开辅助功能设置…") { environment.permissions.openSystemSettings(for: .accessibility) }
+                        }
+                    }
+                }
+            }
+
+            Section("Screenshot") {
+                Picker("Appearance", selection: $captureTheme) {
+                    Text("System").tag("system")
+                    Text("Light").tag("light")
+                    Text("Dark").tag("dark")
+                }
             }
 
             Section("I speak") {

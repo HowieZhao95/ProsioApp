@@ -794,3 +794,129 @@ private final class SessionTokenCache: @unchecked Sendable {
         lock.unlock()
     }
 }
+
+// MARK: - Meeting cloud transcription
+
+public struct MeetingCloudToken: Codable, Sendable {
+    public let text: String
+    public let start_ms: Double?
+    public let end_ms: Double?
+    public let speaker: String?
+    public let language: String?
+}
+
+public struct MeetingCloudTranscript: Codable, Sendable {
+    public let text: String
+    public let tokens: [MeetingCloudToken]
+}
+
+extension BackendClient {
+    private struct MeetingJobResponse: Decodable {
+        let jobID: UUID?
+        let status: String
+        let partSize: Int?
+        let transcript: MeetingCloudTranscript?
+        let errorCode: String?
+    }
+    private struct MeetingPartURL: Decodable { let url: URL }
+    private struct MeetingUploadPart: Encodable {
+        let ETag: String
+        let PartNumber: Int
+    }
+
+    /// Uploads a single mixed M4A via signed S3 parts. The long-term Soniox key stays on the
+    /// server; the same meeting UUID makes retries idempotent at the quota boundary.
+    public func submitMeeting(id: UUID, file: URL, durationSeconds: Double,
+                              languageHints: [String]) async throws -> MeetingCloudTranscript {
+        let bytes = try file.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+        guard bytes > 0 else { throw ProsioError.network("meeting audio is empty") }
+        struct StartBody: Encodable {
+            let meetingID: UUID
+            let durationSeconds: Double
+            let bytes: Int
+            let languageHints: [String]
+        }
+        let start = try await meetingRequest("api/meetings/jobs", method: "POST",
+                                             body: StartBody(meetingID: id, durationSeconds: durationSeconds,
+                                                             bytes: bytes, languageHints: languageHints))
+        let state = try Self.makeDecoder().decode(MeetingJobResponse.self, from: start)
+        if state.status == "uploading" {
+            guard let partSize = state.partSize, partSize >= 5 * 1024 * 1024 else {
+                throw ProsioError.network("invalid meeting upload part size")
+            }
+            try await uploadMeetingParts(id: id, file: file, bytes: bytes, partSize: partSize)
+        } else if state.status == "completed" {
+            return try await pollMeeting(id: id)
+        } else if state.status != "submitted" {
+            throw ProsioError.network("meeting cloud status: \(state.status)")
+        }
+        return try await pollMeeting(id: id)
+    }
+
+    public func pollMeeting(id: UUID) async throws -> MeetingCloudTranscript {
+        let deadline = Date().addingTimeInterval(2 * 60 * 60)
+        while Date() < deadline {
+            try Task.checkCancellation()
+            let data = try await meetingRequest("api/meetings/jobs/\(id.uuidString)", method: "GET", body: Optional<String>.none)
+            let state = try Self.makeDecoder().decode(MeetingJobResponse.self, from: data)
+            if state.status == "completed", let transcript = state.transcript { return transcript }
+            if state.status == "failed" || state.status == "cancelled" {
+                throw ProsioError.network("meeting cloud \(state.errorCode ?? state.status)")
+            }
+            try await Task.sleep(for: .seconds(4))
+        }
+        throw ProsioError.network("meeting cloud is still processing; check again later")
+    }
+
+    private func uploadMeetingParts(id: UUID, file: URL, bytes: Int, partSize: Int) async throws {
+        let source = try FileHandle(forReadingFrom: file)
+        defer { try? source.close() }
+        let count = (bytes + partSize - 1) / partSize
+        var parts: [MeetingUploadPart] = []
+        for number in 1...count {
+            try Task.checkCancellation()
+            guard let chunk = try source.read(upToCount: partSize), !chunk.isEmpty else {
+                throw ProsioError.network("meeting audio ended before expected size")
+            }
+            let temporary = FileManager.default.temporaryDirectory.appending(path: "prosio-meeting-part-\(UUID())")
+            try chunk.write(to: temporary, options: .atomic)
+            defer { try? FileManager.default.removeItem(at: temporary) }
+            var lastError: Error?
+            for attempt in 0..<3 {
+                do {
+                    struct PartBody: Encodable { let partNumber: Int }
+                    let payload = try await meetingRequest("api/meetings/jobs/\(id.uuidString)/parts", method: "POST",
+                                                           body: PartBody(partNumber: number))
+                    let signed = try Self.makeDecoder().decode(MeetingPartURL.self, from: payload)
+                    var request = URLRequest(url: signed.url)
+                    request.httpMethod = "PUT"
+                    request.timeoutInterval = 120
+                    let (_, response) = try await session.upload(for: request, fromFile: temporary)
+                    guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+                          let tag = http.value(forHTTPHeaderField: "ETag") else {
+                        throw ProsioError.network("meeting upload part \(number) failed")
+                    }
+                    parts.append(MeetingUploadPart(ETag: tag, PartNumber: number))
+                    lastError = nil
+                    break
+                } catch {
+                    lastError = error
+                    if attempt < 2 { try await Task.sleep(for: .seconds(Double(attempt + 1))) }
+                }
+            }
+            if let lastError { throw lastError }
+        }
+        struct CompleteBody: Encodable { let parts: [MeetingUploadPart] }
+        _ = try await meetingRequest("api/meetings/jobs/\(id.uuidString)/complete", method: "POST",
+                                     body: CompleteBody(parts: parts))
+    }
+
+    private func meetingRequest<Body: Encodable>(_ path: String, method: String, body: Body?) async throws -> Data {
+        let payload = try body.map { try Self.makeEncoder().encode($0) }
+        let request = try await makeRequest(path: path, method: method, body: payload,
+                                            requiresAuth: true, timeout: 30)
+        let (data, response) = try await performRequest(request)
+        try Self.checkResponse(response, data: data)
+        return data
+    }
+}

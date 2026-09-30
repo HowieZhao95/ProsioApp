@@ -25,7 +25,7 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Prosio listens only while you hold the dictation key, to turn your speech into text.</string>
+	<string>Prosio uses your microphone for voice input and only records meeting audio while you start a meeting recording.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Prosio uses on-device speech recognition when you are offline or in private mode.</string>
 </dict>

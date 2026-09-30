@@ -516,6 +516,49 @@ struct BackendClientTests {
             Issue.record("unexpected error type: \(error)")
         }
     }
+    @Test func meetingUploadUsesSignedPartAndReceivesSonioxVersion() async throws {
+        let id = UUID()
+        let file = FileManager.default.temporaryDirectory.appending(path: "meeting-client-\(UUID()).m4a")
+        try Data([1, 2, 3, 4, 5]).write(to: file)
+        defer { try? FileManager.default.removeItem(at: file) }
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "meeting-test", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(),
+                                   keychainService: "meeting-test", keychain: keychain)
+        let capture = RequestCapture()
+        StubURLProtocol.handler = { request in
+            capture.record(request)
+            switch (request.httpMethod, request.url?.path) {
+            case ("POST", "/api/meetings/jobs"):
+                return jsonResponse(request.url!, status: 200,
+                                    body: #"{"status":"uploading","partSize":8388608}"#)
+            case ("POST", "/api/meetings/jobs/\(id.uuidString)/parts"):
+                return jsonResponse(request.url!, status: 200,
+                                    body: #"{"url":"https://storage.prosio.test/upload"}"#)
+            case ("PUT", "/upload"):
+                return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil,
+                                        headerFields: ["ETag": "\"part-1\""])!, Data())
+            case ("POST", "/api/meetings/jobs/\(id.uuidString)/complete"):
+                return jsonResponse(request.url!, status: 200, body: #"{"status":"submitted"}"#)
+            case ("GET", "/api/meetings/jobs/\(id.uuidString)"):
+                return jsonResponse(request.url!, status: 200,
+                                    body: #"{"status":"completed","transcript":{"text":"hello","tokens":[{"text":"hello","start_ms":0,"end_ms":500,"speaker":"1"}]}}"#)
+            default:
+                throw URLError(.badURL)
+            }
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        let result = try await client.submitMeeting(id: id, file: file, durationSeconds: 1,
+                                                     languageHints: ["en-US"])
+        #expect(result.text == "hello")
+        #expect(result.tokens.first?.speaker == "1")
+        let requests = capture.all()
+        #expect(requests.count == 5)
+        #expect(requests[0].value(forHTTPHeaderField: "Authorization") == "Bearer session-token")
+        #expect(requests[2].value(forHTTPHeaderField: "Authorization") == nil)
+        #expect(bodyData(from: requests[3]).flatMap { String(data: $0, encoding: .utf8) }?.contains("part-1") == true)
+    }
 }
 
 @Suite struct FileBackedKeychainTests {

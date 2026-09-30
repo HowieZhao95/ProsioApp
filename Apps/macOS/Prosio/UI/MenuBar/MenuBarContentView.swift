@@ -2,127 +2,131 @@ import AppKit
 import ProsioCore
 import SwiftUI
 
-/// Menu bar popover. Owned by mac-ui agent. INIT SIGNATURE FROZEN.
-///
-/// Native, calm macOS 26 style, ~320pt wide, SF Symbols only (mode badges are the one exception —
-/// they mirror the capsule's own emoji chips so the two stay visually consistent). Strings are
-/// plain literals so they're picked up by `Resources/Localizable.xcstrings` (en + zh-Hans)
-/// automatically — no explicit table/bundle needed.
+/// Menu bar popover. INIT SIGNATURE FROZEN.
+/// Voice and screenshot have separate panes; capture begins directly in region selection.
 struct MenuBarContentView: View {
     let environment: AppEnvironment
 
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.openSettings) private var openSettings
+    @State private var selectedPane: MenuBarPane = .voice
+    @State private var showingHelp = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            Divider()
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    permissionsBanner
-                    hotkeyStatusLine
-                    HowToUseSection(triggerKeySymbol: environment.settings.triggerKey.shortSymbol)
-                        .environment(\.howToUseDefaultExpanded, environment.history.items.count < 10)
-                    Divider().padding(.leading, 14)
-                    TranslateRow(
-                        enabled: Binding(
-                            get: { environment.settings.translateEnabled },
-                            set: { environment.settings.translateEnabled = $0 }
-                        ),
-                        target: Binding(
-                            get: { environment.settings.translateTarget },
-                            set: { environment.settings.translateTarget = $0 }
-                        )
-                    )
-                    AccountRow(isSignedIn: environment.isSignedIn)
-                    Divider().padding(.leading, 14)
-                    RecentHistorySection(
-                        items: Array(environment.history.items.prefix(8)),
-                        hasMore: environment.history.items.count > 8,
-                        onCopy: { copy($0) },
-                        onCopyTranscript: { copy($0, useTranscript: true) },
-                        onDelete: { try? environment.history.delete(id: $0.id) },
-                        onClearAll: { try? environment.history.clear() },
-                        onShowAll: {
-                            NotificationCenter.default.post(name: .prosioOpenSettingsHistoryTab, object: nil)
-                            openSettings()
-                        }
-                    )
+        MenuBarShell(selectedPane: $selectedPane) { pane in
+            Group {
+                switch pane {
+                case .voice: voicePane
+                case .capture: capturePane
+                case .meeting: meetingPane
                 }
             }
-            Divider()
+        } footer: {
             footer
         }
-        .frame(width: 320)
-        // The header/footer are OUTSIDE the ScrollView so they're always visible; this caps the
-        // WHOLE popover (not just the scrolling middle) to the screen's actual available height —
-        // without it, on a screen with little vertical room (e.g. a fullscreen app active, popover
-        // anchored near y=0) AppKit can end up clipping from the top, hiding the header entirely
-        // rather than just scrolling the middle section as intended.
-        .frame(maxHeight: maxPopoverHeight)
     }
 
-    private var maxPopoverHeight: CGFloat {
-        let screenHeight = NSScreen.main?.visibleFrame.height ?? 560
-        return min(560, screenHeight - 40)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "waveform")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(.secondary)
-            Text("Prosio")
-                .font(.system(size: 13, weight: .semibold))
-            Spacer()
-            StatusPill(state: pillState)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-    }
-
-    private var pillState: MenuBarPillState {
-        if !environment.permissions.allRequiredGranted { return .permissionsNeeded }
+    private var voiceBusy: Bool {
         switch environment.controller.phase {
-        case .listening: return .listening
-        case .finalizing, .composing, .inserting: return .working
-        case .answering: return .answerReady
-        default: return .ready
+        case .idle, .finished, .failed: false
+        default: true
         }
     }
 
-    @ViewBuilder
-    private var permissionsBanner: some View {
-        if !environment.permissions.allRequiredGranted {
-            Button("Grant permissions…") { environment.showOnboarding() }
-                .buttonStyle(.link)
-                .font(.system(size: 11))
-                .padding(.horizontal, 14)
-                .padding(.top, 2)
+    private var isListening: Bool { environment.controller.phase == .listening }
+
+    private var voiceTriggerName: String {
+        switch environment.settings.triggerKey {
+        case .fn: "Fn（🌐）"
+        case .rightOption: "右 Option（⌥）"
+        case .rightCommand: "右 Command（⌘）"
+        case .rightControl: "右 Control（⌃）"
         }
     }
 
-    // MARK: - Hotkey status (mac-system: HotkeyStatus)
+    private var voiceCardTitle: String {
+        if environment.meeting.activeID != nil { return "会议录音中" }
+        return switch environment.controller.phase {
+        case .listening: "正在聆听"
+        case .finalizing, .composing, .inserting: "正在处理语音"
+        case .answering: "语音回答已就绪"
+        default: "说出来，直接写入。"
+        }
+    }
+
+    private var voiceCardDetail: String {
+        if environment.meeting.activeID != nil { return "结束会议录音后可继续使用语音输入。" }
+        let trigger = voiceTriggerName
+        if isListening { return "再按 \(trigger) 结束语音输入，按 Esc 取消本次。" }
+        if voiceBusy { return "当前语音任务尚未结束，结束后即可截图。" }
+        return "按 \(trigger) 开始说话，再按一次结束；文字会返回正在使用的应用。"
+    }
+
+    private var voicePane: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("语音输入")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 8)
+            MenuBarFeatureCard(title: voiceCardTitle, detail: voiceCardDetail, active: isListening)
+            if !environment.permissions.allRequiredGranted {
+                Button("授予语音所需权限…") { environment.showOnboarding() }
+                    .buttonStyle(.link)
+                    .font(.system(size: 12))
+                    .padding(.top, 11)
+            }
+            voiceHotkeyStatus
+            Divider().padding(.vertical, 14)
+            Text("语音偏好")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+            TranslateRow(
+                enabled: Binding(
+                    get: { environment.settings.translateEnabled },
+                    set: { environment.settings.translateEnabled = $0 }
+                ),
+                target: Binding(
+                    get: { environment.settings.translateTarget },
+                    set: { environment.settings.translateTarget = $0 }
+                )
+            )
+            .padding(.horizontal, -14)
+            AccountRow(isSignedIn: environment.isSignedIn)
+                .padding(.horizontal, -14)
+            Divider().padding(.vertical, 8)
+            RecentHistorySection(
+                items: Array(environment.history.items.prefix(3)),
+                hasMore: true,
+                onCopy: { copy($0) },
+                onCopyTranscript: { copy($0, useTranscript: true) },
+                onDelete: { try? environment.history.delete(id: $0.id) },
+                onClearAll: { try? environment.history.clear() },
+                onShowAll: {
+                    NotificationCenter.default.post(name: .prosioOpenSettingsHistoryTab, object: nil)
+                    openSettings()
+                }
+            )
+            .padding(.horizontal, -14)
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 14)
+    }
 
     @ViewBuilder
-    private var hotkeyStatusLine: some View {
+    private var voiceHotkeyStatus: some View {
         switch environment.hotkeyStatus {
-        case .ready:
-            EmptyView()
+        case .ready: EmptyView()
         case .missingAccessibility:
-            statusLine("Accessibility is off — the hotkey can't work.", buttonTitle: "Open Settings") {
+            statusLine("辅助功能权限未开启，语音快捷键暂不可用。", buttonTitle: "打开设置") {
                 environment.permissions.openSystemSettings(for: .accessibility)
             }
         case .tapDisabled:
-            Text("Hotkey temporarily disabled — recovering…")
+            Text("语音快捷键暂不可用，正在恢复…")
                 .font(.system(size: 11))
                 .foregroundStyle(.orange)
-                .padding(.horizontal, 14)
-                .padding(.top, 2)
+                .padding(.top, 8)
         case .fnKeyConflict:
-            statusLine("\u{1F310} is set to start macOS Dictation, not Prosio.", buttonTitle: "Open Keyboard Settings") {
+            statusLine("Fn 正由系统听写使用。", buttonTitle: "键盘设置") {
                 if let url = URL(string: "x-apple.systempreferences:com.apple.preference.keyboard") {
                     NSWorkspace.shared.open(url)
                 }
@@ -132,18 +136,242 @@ struct MenuBarContentView: View {
 
     private func statusLine(_ message: String, buttonTitle: String, action: @escaping () -> Void) -> some View {
         HStack(spacing: 6) {
-            Text(message)
-                .font(.system(size: 11))
-                .foregroundStyle(.orange)
-            Button(buttonTitle, action: action)
-                .buttonStyle(.link)
-                .font(.system(size: 11))
+            Text(message).foregroundStyle(.orange)
+            Button(buttonTitle, action: action).buttonStyle(.link)
         }
-        .padding(.horizontal, 14)
-        .padding(.top, 2)
+        .font(.system(size: 11))
+        .padding(.top, 8)
     }
 
-    // MARK: - Actions
+    private var capturePane: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if voiceBusy {
+                MenuBarVoiceBusyBanner(isListening: isListening)
+                    .padding(.bottom, 14)
+            }
+            Text("屏幕截图")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 8)
+            MenuBarFeatureCard(
+                title: "框选，标注，完成。",
+                detail: "在冻结画面上直接标注，复制或保存后返回原应用。"
+            )
+            Divider().padding(.vertical, 14)
+            Button { startCapture() } label: {
+                Label("截图", systemImage: "viewfinder")
+                    .font(.system(size: 14, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 31)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(voiceBusy || environment.capture.isBusy)
+            .accessibilityHint(voiceBusy ? "结束语音后可截图" : "框选屏幕并原地标注")
+            if let hotkey = environment.capture.hotkey {
+                HStack(spacing: 4) {
+                    Text("快捷键：\(hotkey.shortcut == .off ? "已关闭" : hotkey.shortcut.label)")
+                    Text("· 在设置中修改")
+                }
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .padding(.top, 10)
+                if environment.settings.triggerKey == .rightControl,
+                   hotkey.shortcut == .controlShift2 || hotkey.shortcut == .controlShift3 {
+                    Text("截图使用左 Control；右 Control 用于语音。")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 5)
+                }
+                if hotkey.conflictMessage != nil {
+                    Text("截图快捷键不可用，请在设置中更换。")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.orange)
+                        .padding(.top, 5)
+                }
+                if hotkey.shortcut == .optionEitherSide {
+                    optionCaptureStatus
+                        .font(.system(size: 11))
+                        .padding(.top, 5)
+                }
+            }
+            if environment.capture.isBusy {
+                Button("取消截图") { environment.capture.cancel() }
+                    .buttonStyle(.link)
+                    .font(.system(size: 12))
+                    .padding(.top, 8)
+            }
+            if let message = environment.capture.message {
+                Text(message)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 7)
+            }
+            if !environment.permissions.screenCaptureGranted {
+                Button("打开屏幕录制权限设置…") { environment.permissions.openScreenCaptureSettings() }
+                    .buttonStyle(.link)
+                    .font(.system(size: 12))
+                    .padding(.top, 8)
+            }
+            Divider().padding(.vertical, 14)
+            HStack {
+                Text("最近截图")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("查看全部") { environment.capture.showLibrary() }
+                    .buttonStyle(.link)
+                    .font(.system(size: 11))
+            }
+            if environment.capture.store.assets.isEmpty {
+                Text("还没有截图")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 11)
+            } else {
+                ForEach(environment.capture.store.assets.prefix(2)) { asset in
+                    Button {
+                        dismiss()
+                        environment.capture.openEditor(asset)
+                    } label: {
+                        HStack(spacing: 9) {
+                            Image(systemName: "photo")
+                                .foregroundStyle(.secondary)
+                                .frame(width: 24)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(asset.sourceName).lineLimit(1)
+                                Text(asset.createdAt, style: .relative)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer(minLength: 0)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 10))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .font(.system(size: 12))
+                        .padding(.vertical, 7)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(voiceBusy || environment.capture.isBusy)
+                }
+            }
+            if !environment.capture.drafts.assets.isEmpty {
+                Button("恢复未完成截图（\(environment.capture.drafts.assets.count)）") {
+                    environment.capture.showLibrary()
+                }
+                .buttonStyle(.link)
+                .font(.system(size: 11))
+                .padding(.top, 7)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 14)
+    }
+
+    @ViewBuilder
+    private var optionCaptureStatus: some View {
+        switch environment.optionCaptureAvailability {
+        case .ready: EmptyView()
+        case .voiceKeyConflict:
+            Text("语音已使用右 Option；请在设置中更改其中一个快捷键。")
+                .foregroundStyle(.orange)
+        case .needsAccessibility:
+            Button("授予辅助功能权限…") { environment.permissions.openSystemSettings(for: .accessibility) }
+                .buttonStyle(.link)
+        case .needsInputMonitoring:
+            Button("授予输入监控权限…") {
+                Task { await environment.permissions.recoverInputMonitoring() }
+            }
+                .buttonStyle(.link)
+        case .tapUnavailable:
+            Button("键盘监听暂不可用 · 检查辅助功能权限…") { environment.permissions.openSystemSettings(for: .accessibility) }
+                .buttonStyle(.link)
+        }
+    }
+
+    private func startCapture() {
+        dismiss()
+        environment.capture.start(.region)
+    }
+
+    private var meetingPane: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            MenuBarFeatureCard(
+                title: environment.meeting.activeID == nil ? "记录整场会议" : "正在录制会议",
+                detail: "本机保存麦克风和系统声音；结束后生成文字及说话人标签。",
+                active: environment.meeting.activeID != nil
+            )
+            if environment.meeting.activeID != nil {
+                Button("结束录音并转写") { Task { await environment.meeting.stop() } }
+                    .buttonStyle(.borderedProminent)
+            } else {
+                Button("开始会议录音") { Task { await environment.meeting.start() } }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(environment.meeting.processing || environment.meeting.starting || voiceBusy)
+            }
+            if environment.meeting.processing { ProgressView("正在生成本地文字与说话人…") }
+            if environment.meeting.starting { ProgressView("正在准备实时字幕…") }
+            if environment.meeting.activeID != nil {
+                if !environment.meeting.liveSystemText.isEmpty {
+                    Text("系统声音：\(environment.meeting.liveSystemText.suffix(180))")
+                        .font(.system(size: 12)).lineLimit(4)
+                }
+                if !environment.meeting.liveMicrophoneText.isEmpty {
+                    Text("麦克风：\(environment.meeting.liveMicrophoneText.suffix(180))")
+                        .font(.system(size: 12)).lineLimit(4)
+                }
+            }
+            if let message = environment.meeting.message {
+                Text(message).font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            Toggle("结束后上传 Soniox 增强", isOn: Binding(
+                get: { environment.meeting.cloudEnabled },
+                set: { environment.meeting.cloudEnabled = $0 }
+            ))
+            .font(.system(size: 12))
+            .disabled(!environment.isSignedIn)
+            Text("关闭时仅在本机处理；云端失败也保留本地稿。")
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+            if !environment.permissions.screenCaptureGranted {
+                Button("开启屏幕录制权限以录入系统声音…") {
+                    environment.permissions.requestScreenCapture()
+                    environment.permissions.openScreenCaptureSettings()
+                }
+                .buttonStyle(.link)
+                .font(.system(size: 11))
+            }
+            Divider()
+            HStack {
+                Text("最近会议").font(.system(size: 12, weight: .semibold))
+                Spacer()
+                Button("查看全部") { dismiss(); environment.meeting.showLibrary() }
+                    .buttonStyle(.link)
+            }
+            if environment.meeting.store.records.isEmpty {
+                Text("还没有会议录音").font(.system(size: 12)).foregroundStyle(.secondary)
+            }
+            ForEach(environment.meeting.store.records.prefix(3)) { record in
+                Button {
+                    dismiss()
+                    environment.meeting.showLibrary()
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(record.title).font(.system(size: 12, weight: .medium))
+                            Text(record.phase == .ready ? "本地文字已就绪" : record.phase == .recording ? "录音中" : record.phase == .processing ? "处理中" : "录音或转写中断")
+                                .font(.system(size: 11)).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(.tertiary)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 14)
+    }
 
     private func copy(_ item: HistoryItem, useTranscript: Bool = false) {
         let text = (useTranscript ? item.transcript : nil) ?? item.text
@@ -152,105 +380,50 @@ struct MenuBarContentView: View {
         pasteboard.setString(text, forType: .string)
     }
 
-    // MARK: - Footer
-
     private var footer: some View {
-        HStack(spacing: 14) {
-            SettingsLink {
-                Text("Settings…")
-            }
-            .buttonStyle(.plain)
-            .keyboardShortcut(",", modifiers: .command)
-
-            #if DEBUG
-            Menu("Debug") {
-                Button("HUD Showcase") { environment.hud?.showcase() }
+        HStack(spacing: 12) {
+            SettingsLink { Text("设置…") }
+                .buttonStyle(.plain)
+                .keyboardShortcut(",", modifiers: .command)
+            Button("帮助") { showingHelp = true }
+                .buttonStyle(.plain)
+                .popover(isPresented: $showingHelp) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        if selectedPane == .voice {
+                            HowToUseSection(triggerKeySymbol: voiceTriggerName)
+                                .environment(\.howToUseDefaultExpanded, true)
+                        } else if selectedPane == .capture {
+                            Text("屏幕截图")
+                                .font(.system(size: 13, weight: .semibold))
+                            Text("点击截图或使用当前快捷键，在冻结画面上框选并标注。复制或保存后返回原应用。")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text("会议转写")
+                                .font(.system(size: 13, weight: .semibold))
+                            Text("开始录音后保持 Prosio 运行。结束后会在本机生成文字和说话人标签。")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(12)
+                    .frame(width: 280, alignment: .leading)
+                }
+            Spacer()
+            Menu {
+                #if DEBUG
+                Button("HUD 演示") { environment.hud?.showcase() }
+                Divider()
+                #endif
+                Button("退出 Prosio") { NSApp.terminate(nil) }
+                    .keyboardShortcut("q", modifiers: .command)
+            } label: {
+                Label("更多", systemImage: "ellipsis")
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
-            #endif
-
-            Spacer()
-
-            Button("Quit Prosio") { NSApp.terminate(nil) }
-                .buttonStyle(.plain)
-                .keyboardShortcut("q", modifiers: .command)
         }
         .font(.system(size: 12))
-        .padding(12)
-    }
-}
-
-// MARK: - Status pill
-
-enum MenuBarPillState: Equatable {
-    case ready
-    case listening
-    case working
-    case answerReady
-    case permissionsNeeded
-}
-
-/// Header status pill. Only `.listening` (and `.permissionsNeeded`) carry a strong tint — the
-/// previous design tinted the whole "busy" range (listening/finalizing/inserting) red, which read
-/// as alarming even while just quietly finalizing; now the red only ever shows while the mic is
-/// actually open.
-struct StatusPill: View {
-    var state: MenuBarPillState
-
-    var body: some View {
-        Group {
-            switch state {
-            case .ready:
-                Text("Ready")
-                    .foregroundStyle(.secondary)
-            case .listening:
-                tinted(Text("Listening…"), color: .red)
-            case .working:
-                ShimmerLabel(text: "Working…")
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Color.secondary.opacity(0.12), in: Capsule())
-            case .answerReady:
-                tinted(Text("Answer ready"), color: .accentColor)
-            case .permissionsNeeded:
-                tinted(Text("Permissions needed"), color: .orange)
-            }
-        }
-        .font(.system(size: 11, weight: .semibold))
-    }
-
-    private func tinted(_ text: Text, color: Color) -> some View {
-        text
-            .foregroundStyle(color)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(color.opacity(0.15), in: Capsule())
-    }
-}
-
-/// Small shimmer sweep for the "Working…" pill — same lightweight technique as the capsule's
-/// `ShimmerText` (a moving gradient masked to the text), kept local since this one's tiny (11pt)
-/// and doesn't need the capsule's truncation/width handling.
-private struct ShimmerLabel: View {
-    var text: String
-    @State private var animate = false
-
-    var body: some View {
-        Text(text)
-            .foregroundStyle(.secondary)
-            .overlay(
-                GeometryReader { geo in
-                    LinearGradient(colors: [.clear, Color.primary.opacity(0.5), .clear], startPoint: .leading, endPoint: .trailing)
-                        .frame(width: geo.size.width * 0.5)
-                        .offset(x: animate ? geo.size.width * 1.25 : -geo.size.width * 0.75)
-                        .animation(.linear(duration: 1.1).repeatForever(autoreverses: false), value: animate)
-                }
-                .mask(Text(text))
-                .allowsHitTesting(false)
-            )
-            .onAppear { animate = true }
-            .onDisappear { animate = false }
     }
 }
 
@@ -269,16 +442,16 @@ private struct HowToUseSection: View {
     var body: some View {
         DisclosureGroup(isExpanded: expandedBinding) {
             VStack(alignment: .leading, spacing: 10) {
-                HowToRow(icon: "keyboard", title: "Dictate", example: "Press \(triggerKeySymbol), speak, press \(triggerKeySymbol) again")
-                HowToRow(icon: "pencil", title: "Edit", example: "Select text, then say how to change it")
-                HowToRow(icon: "sparkles", title: "Ask", example: "“提问，…” or just ask a question")
-                HowToRow(icon: "globe", title: "Translate", example: "“翻译成英文：…”")
-                HowToRow(icon: "square.and.pencil", title: "Write", example: "“帮我回复他说明天可以…”")
+                HowToRow(icon: "keyboard", title: "听写", example: "按 \(triggerKeySymbol) 开始说话，再按一次结束")
+                HowToRow(icon: "pencil", title: "改写", example: "选中文字，再说出修改要求")
+                HowToRow(icon: "sparkles", title: "提问", example: "说“提问，…”或直接提出问题")
+                HowToRow(icon: "globe", title: "翻译", example: "说“翻译成英文：…”")
+                HowToRow(icon: "square.and.pencil", title: "代写", example: "说“帮我回复他说明天可以…”")
             }
             .padding(.top, 8)
             .padding(.bottom, 4)
         } label: {
-            Text("How to use")
+            Text("使用方法")
                 .font(.system(size: 12, weight: .semibold))
         }
         .padding(.horizontal, 14)
@@ -347,7 +520,7 @@ private struct TranslateRow: View {
                 .font(.system(size: 12))
                 .foregroundStyle(.secondary)
                 .frame(width: 16)
-            Text("Translate to")
+            Text("翻译为")
                 .font(.system(size: 12))
             Picker("", selection: $target) {
                 ForEach(TranslateLanguages.all) { language in
@@ -364,7 +537,7 @@ private struct TranslateRow: View {
                 .labelsHidden()
                 .toggleStyle(.switch)
                 .controlSize(.small)
-                .accessibilityLabel("Translate while dictating")
+                .accessibilityLabel("语音输入时翻译")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
@@ -385,12 +558,12 @@ struct AccountRow: View {
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .frame(width: 16)
-                Text("Sign in to enable cloud polishing")
+                Text("登录以启用云端润色")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()
                 SettingsLink {
-                    Text("Sign in")
+                    Text("登录")
                 }
                 .buttonStyle(.link)
                 .font(.system(size: 12))
@@ -417,12 +590,12 @@ struct RecentHistorySection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("Recent")
+                Text("最近语音记录")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
                 if !items.isEmpty {
-                    Button("Clear") { confirmClearAll = true }
+                    Button("清空") { confirmClearAll = true }
                         .buttonStyle(.link)
                         .font(.system(size: 11))
                 }
@@ -432,7 +605,7 @@ struct RecentHistorySection: View {
             .padding(.bottom, 4)
 
             if items.isEmpty {
-                Text("No dictations yet")
+                Text("还没有语音记录")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 14)
@@ -444,7 +617,7 @@ struct RecentHistorySection: View {
                     }
                 }
                 if hasMore {
-                    Button("Show all…", action: onShowAll)
+                    Button("查看全部…", action: onShowAll)
                         .buttonStyle(.link)
                         .font(.system(size: 11))
                         .padding(.horizontal, 14)
@@ -453,9 +626,9 @@ struct RecentHistorySection: View {
             }
         }
         .padding(.bottom, 4)
-        .confirmationDialog("Clear all recent dictations?", isPresented: $confirmClearAll, titleVisibility: .visible) {
-            Button("Clear All", role: .destructive, action: onClearAll)
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog("清空最近语音记录？", isPresented: $confirmClearAll, titleVisibility: .visible) {
+            Button("全部清空", role: .destructive, action: onClearAll)
+            Button("取消", role: .cancel) {}
         }
     }
 }
@@ -469,107 +642,49 @@ extension Notification.Name {
 }
 
 #if DEBUG
-#Preview("Live") {
-    MenuBarContentView(environment: AppEnvironment())
-}
-
-// MARK: - Scenario previews (parameter-driven subviews, no AppEnvironment needed)
-
-private func previewItem(_ text: String, app: String?, bundleID: String? = "com.apple.mail", minutesAgo: Double = 4, intent: DictationIntent? = nil, transcript: String? = nil) -> HistoryItem {
-    HistoryItem(
-        createdAt: .now.addingTimeInterval(-minutesAgo * 60),
-        text: text,
-        appBundleID: bundleID,
-        appName: app,
-        engineID: "gateway.gemini-3.5-transcribe",
-        durationSeconds: 4,
-        insertion: .pasted,
-        intent: intent,
-        transcript: transcript
-    )
-}
-
-private struct PopoverPreviewShell<Content: View>: View {
-    var pill: MenuBarPillState
-    var isSignedIn: Bool
-    @ViewBuilder var content: Content
+/// A pure preview of the shared native shell. It never constructs AppEnvironment.
+private struct MenuBarPreviewScenario: View {
+    @State var selectedPane: MenuBarPane
+    let listening: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 8) {
-                Image(systemName: "waveform").font(.system(size: 14, weight: .semibold)).foregroundStyle(.secondary)
-                Text("Prosio").font(.system(size: 13, weight: .semibold))
-                Spacer()
-                StatusPill(state: pill)
+        MenuBarShell(selectedPane: $selectedPane) { pane in
+            VStack(alignment: .leading, spacing: 12) {
+                if pane == .capture, listening {
+                    MenuBarVoiceBusyBanner(isListening: true)
+                }
+                if pane == .voice {
+                    MenuBarFeatureCard(
+                        title: listening ? "正在聆听" : "说出来，直接写入。",
+                        detail: listening ? "再次按 Fn 结束语音输入。" : "按 Fn 开始说话，再按一次结束。",
+                        active: listening
+                    )
+                } else {
+                    MenuBarFeatureCard(title: "框选，标注，完成。", detail: "在冻结画面上直接标注，复制或保存后返回原应用。")
+                    Button("截图") {}
+                        .buttonStyle(.borderedProminent)
+                        .disabled(listening)
+                    Text(listening ? "结束语音后可截图" : "快捷键：⌃⇧2 · 在设置中修改")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            Divider()
-            HowToUseSectionPreviewWrapper()
-            Divider().padding(.leading, 14)
-            TranslateRowPreviewWrapper()
-            AccountRow(isSignedIn: isSignedIn)
-            Divider().padding(.leading, 14)
-            content
-            Divider()
-            HStack(spacing: 14) {
-                Text("Settings…").font(.system(size: 12))
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
+        } footer: {
+            HStack {
+                Text("设置…")
+                Text("帮助")
                 Spacer()
-                Text("Quit Prosio").font(.system(size: 12))
+                Text("更多")
             }
-            .padding(12)
+            .font(.system(size: 12))
         }
-        .frame(width: 320)
     }
 }
 
-private struct HowToUseSectionPreviewWrapper: View {
-    var body: some View { HowToUseSection(triggerKeySymbol: "🌐").environment(\.howToUseDefaultExpanded, true) }
-}
-
-private struct TranslateRowPreviewWrapper: View {
-    @State private var enabled = true
-    @State private var target = "en-US"
-    var body: some View { TranslateRow(enabled: $enabled, target: $target) }
-}
-
-#Preview("Idle, signed in") {
-    PopoverPreviewShell(pill: .ready, isSignedIn: true) {
-        RecentHistorySection(
-            items: [
-                // Regression check: a Markdown-list write reply should flatten to one real line,
-                // not "老王：" followed by visible blank space.
-                previewItem("老王：\n\n- 我下周请三天假，工作已经交接给小李了。\n- 谢谢！", app: "Messages", bundleID: "com.apple.MobileSMS", intent: .write, transcript: "帮我回复老王说下周请三天假，工作交接给小李了"),
-                previewItem("Let's meet Thursday at 3pm instead", app: "Notes", bundleID: "com.apple.Notes", minutesAgo: 20),
-                previewItem("Sounds good, see you then!", app: "Messages", bundleID: "com.apple.MobileSMS", minutesAgo: 40, intent: .edit, transcript: "make this sound more casual"),
-                // No bundle ID at all — icon + name both correctly absent, not a blank icon.
-                previewItem("just a note to self", app: nil, bundleID: nil, minutesAgo: 90),
-            ],
-            hasMore: false,
-            onCopy: { _ in }, onCopyTranscript: { _ in }, onDelete: { _ in }, onClearAll: {}, onShowAll: {}
-        )
-    }
-}
-
-#Preview("Listening") {
-    PopoverPreviewShell(pill: .listening, isSignedIn: true) {
-        RecentHistorySection(items: [], hasMore: false, onCopy: { _ in }, onCopyTranscript: { _ in }, onDelete: { _ in }, onClearAll: {}, onShowAll: {})
-    }
-}
-
-#Preview("Not signed in") {
-    PopoverPreviewShell(pill: .ready, isSignedIn: false) {
-        RecentHistorySection(
-            items: [previewItem("帮我翻成日语：明天见", app: "Notes", bundleID: "com.apple.Notes", intent: .write, transcript: "帮我回复他说明天可以，但会晚半小时到")],
-            hasMore: false,
-            onCopy: { _ in }, onCopyTranscript: { _ in }, onDelete: { _ in }, onClearAll: {}, onShowAll: {}
-        )
-    }
-}
-
-#Preview("Empty history") {
-    PopoverPreviewShell(pill: .ready, isSignedIn: true) {
-        RecentHistorySection(items: [], hasMore: false, onCopy: { _ in }, onCopyTranscript: { _ in }, onDelete: { _ in }, onClearAll: {}, onShowAll: {})
-    }
-}
+#Preview("语音 · 待机") { MenuBarPreviewScenario(selectedPane: .voice, listening: false) }
+#Preview("语音 · 聆听") { MenuBarPreviewScenario(selectedPane: .voice, listening: true) }
+#Preview("截图 · 待机") { MenuBarPreviewScenario(selectedPane: .capture, listening: false) }
+#Preview("截图 · 语音进行中") { MenuBarPreviewScenario(selectedPane: .capture, listening: true) }
 #endif

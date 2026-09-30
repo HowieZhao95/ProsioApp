@@ -20,11 +20,16 @@ final class HotkeyMonitor {
 
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
+    private var inputMonitoringGrantedAtTapInstall = false
     /// Tracks physical down/up purely to filter out auto-repeat/duplicate-down observations and
     /// to ignore key-up entirely — see `TriggerPhysicalState`'s doc comment. `HotkeyStateMachine`
     /// itself has no persistent state (every decision reads `controller.phase` fresh), so there's
     /// nothing else to keep in sync here.
     private var triggerPhysicalState = TriggerPhysicalState()
+    private var captureOptionState = CaptureOptionTapState()
+    @ObservationIgnored var isOptionCaptureSelected: () -> Bool = { false }
+    @ObservationIgnored var isOptionCaptureBusy: () -> Bool = { true }
+    @ObservationIgnored var onOptionCaptureTap: () -> Void = {}
     @ObservationIgnored private var activationObserver: NSObjectProtocol?
     @ObservationIgnored private var watchdogTimer: Timer?
     /// Fallback Esc handling: on this machine's config (Input Monitoring denied, Accessibility
@@ -45,6 +50,13 @@ final class HotkeyMonitor {
     /// needs no permission and only ever sees events sent to our own app.
     @ObservationIgnored private var escLocalMonitor: Any?
     private var isStarted = false
+    var isCaptureSuspended = false {
+        didSet { triggerPhysicalState.reset(); captureOptionState.reset(); updateEscMonitors() }
+    }
+    var isMeetingSuspended = false {
+        didSet { triggerPhysicalState.reset() }
+    }
+    func resetCaptureOptionGesture() { captureOptionState.reset() }
 
     /// Every modifier bit we care about when deciding "no other modifiers held" (so a real
     /// shortcut combo like Cmd+fn isn't mistaken for a trigger press).
@@ -84,7 +96,7 @@ final class HotkeyMonitor {
         ) { [weak self] _ in
             // `queue: .main` guarantees this runs on the main thread/MainActor's executor.
             MainActor.assumeIsolated {
-                self?.installTap()
+                self?.refreshTapForInputMonitoring()
             }
         }
 
@@ -102,6 +114,7 @@ final class HotkeyMonitor {
 
     func stop() {
         isStarted = false
+        captureOptionState.reset()
         if let activationObserver {
             NotificationCenter.default.removeObserver(activationObserver)
         }
@@ -132,7 +145,7 @@ final class HotkeyMonitor {
     }
 
     private func updateEscMonitors() {
-        if HotkeyStateMachine.needsEscMonitor(phase: controller.phase) {
+        if !isCaptureSuspended && HotkeyStateMachine.needsEscMonitor(phase: controller.phase) {
             registerEscHotKeyIfNeeded()
         } else {
             unregisterEscHotKey()
@@ -200,6 +213,7 @@ final class HotkeyMonitor {
     /// hotkey fires. We only ever register one hotkey, so any invocation is unambiguously ours —
     /// no need to read back and check the `EventHotKeyID`.
     fileprivate func handleEscHotKeyPressed() {
+        guard !isCaptureSuspended else { return }
         let phase = controller.phase
         let effect = HotkeyStateMachine.escKeyDown(phase: phase)
         if effect != .none {
@@ -227,6 +241,7 @@ final class HotkeyMonitor {
     /// getting silently disabled without a `tapDisabledBy*` callback reaching us. (There's no
     /// hotkey-state staleness to check anymore — `HotkeyStateMachine` has no persistent state.)
     private func watchdogTick() {
+        refreshTapForInputMonitoring()
         if eventTap == nil {
             if AXIsProcessTrusted() {
                 ProsioLog.hotkey.info("watchdog: Accessibility now granted, installing tap")
@@ -241,11 +256,24 @@ final class HotkeyMonitor {
         }
     }
 
+    private func refreshTapForInputMonitoring() {
+        if eventTap != nil, CGPreflightListenEventAccess() != inputMonitoringGrantedAtTapInstall {
+            removeTap()
+        }
+        if eventTap == nil, AXIsProcessTrusted() { installTap() }
+    }
+
     // MARK: - Tap lifecycle
 
     private func installTap() {
         guard eventTap == nil else { return }
-        let mask: CGEventMask = (1 << CGEventType.flagsChanged.rawValue) | (1 << CGEventType.keyDown.rawValue)
+        let observedTypes: [CGEventType] = [
+            .flagsChanged, .keyDown, .keyUp,
+            .leftMouseDown, .leftMouseUp, .leftMouseDragged,
+            .rightMouseDown, .rightMouseUp, .rightMouseDragged,
+            .otherMouseDown, .otherMouseUp, .otherMouseDragged, .scrollWheel
+        ]
+        let mask = observedTypes.reduce(CGEventMask(0)) { $0 | (1 << $1.rawValue) }
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
             place: .headInsertEventTap,
@@ -264,6 +292,7 @@ final class HotkeyMonitor {
             return
         }
         eventTap = tap
+        inputMonitoringGrantedAtTapInstall = CGPreflightListenEventAccess()
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
         runLoopSource = source
         if let source {
@@ -272,7 +301,9 @@ final class HotkeyMonitor {
         CGEvent.tapEnable(tap: tap, enable: true)
         isTapHealthy = true
         triggerPhysicalState.reset()
+        captureOptionState.reset()
         ProsioLog.hotkey.info("tap installed")
+        ProsioLog.hotkey.notice("option diagnostic tap installed ax=\(AXIsProcessTrusted(), privacy: .public) im=\(CGPreflightListenEventAccess(), privacy: .public) healthy=\(self.isTapHealthy, privacy: .public)")
     }
 
     private func removeTap() {
@@ -286,6 +317,7 @@ final class HotkeyMonitor {
         runLoopSource = nil
         isTapHealthy = false
         triggerPhysicalState.reset()
+        captureOptionState.reset()
     }
 
     fileprivate func handleTapDisabled(reason: String) {
@@ -304,6 +336,7 @@ final class HotkeyMonitor {
         CGEvent.tapEnable(tap: tap, enable: true)
         isTapHealthy = CGEvent.tapIsEnabled(tap: tap)
         triggerPhysicalState.reset()
+        captureOptionState.reset()
         ProsioLog.hotkey.info("tap re-enable result: healthy=\(self.isTapHealthy, privacy: .public), accessibilityGranted=\(accessibilityGranted, privacy: .public)")
     }
 
@@ -311,19 +344,123 @@ final class HotkeyMonitor {
 
     /// Decides what effect (if any) an event produces, purely via the state machine — cheap and
     /// non-blocking. Does NOT call into `DictationController` itself; see `scheduleEffect`.
-    fileprivate func decideEffect(type: CGEventType, keycode: Int64, flagsRaw: UInt64) {
+    fileprivate func decideEffect(type: CGEventType, keycode: Int64, flagsRaw: UInt64, timestamp: TimeInterval) {
+        if type == .flagsChanged, keycode == 58 || keycode == 61 {
+            ProsioLog.hotkey.notice("option flag event keycode=\(keycode, privacy: .public) deviceBits=\(flagsRaw & 0xff, privacy: .public) suspended=\(self.isCaptureSuspended, privacy: .public)")
+        }
+        guard !isCaptureSuspended else { return }
         let flags = CGEventFlags(rawValue: flagsRaw)
         switch type {
         case .flagsChanged:
+            handleOptionFlagsChanged(keycode: keycode, flagsRaw: flagsRaw, flags: flags, timestamp: timestamp)
             handleFlagsChanged(keycode: keycode, flags: flags)
         case .keyDown:
+            if captureOptionState.isPending { ProsioLog.hotkey.notice("option gesture interrupted by key event") }
+            _ = captureOptionState.observe(event: .interruption, at: timestamp, eligible: false)
             handleKeyDown(keycode: keycode)
+        case .keyUp, .leftMouseDown, .leftMouseUp, .leftMouseDragged,
+             .rightMouseDown, .rightMouseUp, .rightMouseDragged,
+             .otherMouseDown, .otherMouseUp, .otherMouseDragged, .scrollWheel:
+            if captureOptionState.isPending {
+                ProsioLog.hotkey.notice("option gesture interrupted by input event type=\(type.rawValue, privacy: .public)")
+            }
+            _ = captureOptionState.observe(event: .interruption, at: timestamp, eligible: false)
         default:
             break
         }
     }
 
+    private func handleOptionFlagsChanged(keycode: Int64, flagsRaw: UInt64, flags: CGEventFlags, timestamp: TimeInterval) {
+        let event = HotkeyRouting.optionFlagEvent(keycode: keycode, flagsRaw: flagsRaw)
+        guard keycode == 58 || keycode == 61 else {
+            if captureOptionState.isPending {
+                ProsioLog.hotkey.notice("option gesture interrupted by modifier keycode=\(keycode, privacy: .public)")
+            }
+            _ = captureOptionState.observe(event: event, at: timestamp, eligible: false)
+            return
+        }
+        let otherModifiers = flags.intersection([.maskShift, .maskControl, .maskCommand, .maskSecondaryFn])
+        // At either side's transition the current event's device bits identify whether the
+        // opposite Option is held. CGEventSource.keyState misreports Option during release.
+        let oppositeOptionDown = HotkeyRouting.oppositeOptionIsDown(keycode: keycode, flagsRaw: flagsRaw)
+        let physical = Self.physicalBlockers()
+        let selected = isOptionCaptureSelected()
+        let busy = isOptionCaptureBusy()
+        let ax = AXIsProcessTrusted()
+        let im = CGPreflightListenEventAccess()
+        let availability = HotkeyRouting.optionCaptureAvailability(
+            voiceUsesRightOption: settings.triggerKey == .rightOption,
+            accessibilityGranted: ax, inputMonitoringGranted: im, tapHealthy: isTapHealthy)
+        let eligible = isStarted && !isCaptureSuspended && selected && !busy && availability == .ready
+            && otherModifiers.isEmpty
+            && !oppositeOptionDown
+            && !physical.hasAny
+        let elapsedMS = Int(((captureOptionState.elapsed(at: timestamp) ?? -1) * 1000).rounded())
+        let fired = captureOptionState.observe(event: event, at: timestamp, eligible: eligible)
+        ProsioLog.hotkey.notice("option decision keycode=\(keycode, privacy: .public) event=\(String(describing: event), privacy: .public) elapsedMS=\(elapsedMS, privacy: .public) started=\(self.isStarted, privacy: .public) suspended=\(self.isCaptureSuspended, privacy: .public) selected=\(selected, privacy: .public) busy=\(busy, privacy: .public) phase=\(self.voicePhaseName, privacy: .public) ax=\(ax, privacy: .public) im=\(im, privacy: .public) tapHealthy=\(self.isTapHealthy, privacy: .public) availability=\(String(describing: availability), privacy: .public) otherModifiers=\(!otherModifiers.isEmpty, privacy: .public) oppositeOption=\(oppositeOptionDown, privacy: .public) keyBlock=\(physical.keycode, privacy: .public) mouseBlock=\(physical.mouseRaw, privacy: .public) eligible=\(eligible, privacy: .public) fire=\(fired, privacy: .public)")
+        guard fired else { return }
+        // The callback may be queued behind a settings/voice/capture change; gate again.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            let allowed = self.optionCaptureEligible()
+            ProsioLog.hotkey.notice("option queued dispatch allowed=\(allowed, privacy: .public) selected=\(self.isOptionCaptureSelected(), privacy: .public) busy=\(self.isOptionCaptureBusy(), privacy: .public)")
+            guard allowed else { return }
+            self.onOptionCaptureTap()
+        }
+    }
+
+    private var voicePhaseName: String {
+        switch controller.phase {
+        case .idle: "idle"
+        case .listening: "listening"
+        case .finalizing: "finalizing"
+        case .composing: "composing"
+        case .inserting: "inserting"
+        case .answering: "answering"
+        case .finished: "finished"
+        case .failed: "failed"
+        }
+    }
+
+    private func optionCaptureEligible() -> Bool {
+        guard isStarted, !isCaptureSuspended, isOptionCaptureSelected(), !isOptionCaptureBusy() else { return false }
+        return HotkeyRouting.optionCaptureAvailability(
+            voiceUsesRightOption: settings.triggerKey == .rightOption,
+            accessibilityGranted: AXIsProcessTrusted(),
+            inputMonitoringGranted: CGPreflightListenEventAccess(),
+            tapHealthy: isTapHealthy
+        ) == .ready
+    }
+
+    /// Physical-state backstop for an already-held key/button before Option went down.
+    /// The event tap also invalidates a tap on every key or mouse transition while held.
+    private struct PhysicalBlockers {
+        var keycode = -1
+        var mouseRaw = -1
+        var hasAny: Bool { keycode >= 0 || mouseRaw >= 0 }
+    }
+
+    private static func physicalBlockers() -> PhysicalBlockers {
+        var result = PhysicalBlockers()
+        let modifierKeys: Set<CGKeyCode> = [54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+        for key in CGKeyCode(0)...CGKeyCode(127) where !modifierKeys.contains(key) {
+            if CGEventSource.keyState(.combinedSessionState, key: key) {
+                result.keycode = Int(key)
+                break
+            }
+        }
+        for raw in 0..<32 {
+            guard let button = CGMouseButton(rawValue: UInt32(raw)) else { continue }
+            if CGEventSource.buttonState(.combinedSessionState, button: button) {
+                result.mouseRaw = raw
+                break
+            }
+        }
+        return result
+    }
+
     private func handleFlagsChanged(keycode: Int64, flags: CGEventFlags) {
+        guard !isMeetingSuspended else { return }
         let key = settings.triggerKey
         guard keycode == Self.keycode(for: key) else { return }
 
@@ -364,6 +501,8 @@ final class HotkeyMonitor {
     /// the CGEventTap callback's call frame — even though it's already on the main thread — risks
     /// the system flagging the tap as unresponsive and disabling it.
     private func applyEffect(_ effect: HotkeyStateMachine.Effect) {
+        guard !isMeetingSuspended else { return }
+        guard HotkeyRouting.canApplyVoiceEffect(isStarted: isStarted, isCaptureSuspended: isCaptureSuspended) else { return }
         switch effect {
         case .start:
             // Intent is always nil now: core auto-resolves dictate/edit from selection, and
@@ -440,13 +579,14 @@ private nonisolated func hotkeyEventTapCallback(
 
     let keycode = event.getIntegerValueField(.keyboardEventKeycode)
     let flagsRaw = event.flags.rawValue
+    let timestamp = TimeInterval(event.timestamp) / 1_000_000_000
 
     // Synchronous, same-thread dispatch when we're already on the main thread (the normal case:
     // the tap's run loop source lives on the main run loop) removes scheduling latency. This only
     // decides the effect (pure state-machine logic reading `controller.phase`); it never blocks
     // — see `decideEffect`.
     runOnMainActor {
-        monitor.decideEffect(type: type, keycode: keycode, flagsRaw: flagsRaw)
+        monitor.decideEffect(type: type, keycode: keycode, flagsRaw: flagsRaw, timestamp: timestamp)
     }
 
     // Active tap: returning the event unmodified passes it through unchanged.
@@ -461,7 +601,11 @@ private nonisolated func escHotKeyEventHandler(
     eventRef: EventRef?,
     userData: UnsafeMutableRawPointer?
 ) -> OSStatus {
-    guard let userData else { return OSStatus(eventNotHandledErr) }
+    guard let userData, let eventRef else { return OSStatus(eventNotHandledErr) }
+    var hotkeyID = EventHotKeyID()
+    guard GetEventParameter(eventRef, EventParamName(kEventParamDirectObject), EventParamType(typeEventHotKeyID), nil,
+                            MemoryLayout<EventHotKeyID>.size, nil, &hotkeyID) == noErr,
+          HotkeyRouting.isVoiceEscape(signature: hotkeyID.signature, id: hotkeyID.id) else { return OSStatus(eventNotHandledErr) }
     let monitor = Unmanaged<HotkeyMonitor>.fromOpaque(userData).takeUnretainedValue()
     runOnMainActor {
         monitor.handleEscHotKeyPressed()
