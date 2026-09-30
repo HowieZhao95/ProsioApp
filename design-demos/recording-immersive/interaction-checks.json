@@ -1,0 +1,74 @@
+[
+  {
+    "variant": "a",
+    "checks": [
+      "twoCameraLimit",
+      "immediatePreview",
+      "independentAudio",
+      "windowHover",
+      "windowClickLock",
+      "regionStartGate",
+      "regionDrag",
+      "previewDrag",
+      "compactRecordingHud",
+      "hiddenPreviewKeepsSource",
+      "pauseClock",
+      "completionInventory"
+    ],
+    "region": {
+      "x": 240,
+      "y": 205,
+      "w": 400,
+      "h": 260
+    },
+    "errors": []
+  },
+  {
+    "variant": "b",
+    "checks": [
+      "twoCameraLimit",
+      "immediatePreview",
+      "independentAudio",
+      "windowHover",
+      "windowClickLock",
+      "regionStartGate",
+      "regionDrag",
+      "previewDrag",
+      "compactRecordingHud",
+      "hiddenPreviewKeepsSource",
+      "pauseClock",
+      "completionInventory"
+    ],
+    "region": {
+      "x": 240,
+      "y": 205,
+      "w": 400,
+      "h": 260
+    },
+    "errors": []
+  },
+  {
+    "variant": "c",
+    "checks": [
+      "twoCameraLimit",
+      "immediatePreview",
+      "independentAudio",
+      "windowHover",
+      "windowClickLock",
+      "regionStartGate",
+      "regionDrag",
+      "previewDrag",
+      "compactRecordingHud",
+      "hiddenPreviewKeepsSource",
+      "pauseClock",
+      "completionInventory"
+    ],
+    "region": {
+      "x": 240,
+      "y": 205,
+      "w": 400,
+      "h": 260
+    },
+    "errors": []
+  }
+]

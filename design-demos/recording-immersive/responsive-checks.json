@@ -1,0 +1,41 @@
+{
+  "keyboardCountdownCancelled": true,
+  "responsive": [
+    {
+      "variant": "a",
+      "width": 1024,
+      "height": 768,
+      "toolbar": {
+        "x": 257,
+        "y": 632,
+        "right": 767,
+        "bottom": 690
+      },
+      "overflow": false
+    },
+    {
+      "variant": "b",
+      "width": 1024,
+      "height": 768,
+      "toolbar": {
+        "x": 61.4375,
+        "y": 594,
+        "right": 563.4375,
+        "bottom": 652
+      },
+      "overflow": false
+    },
+    {
+      "variant": "c",
+      "width": 1024,
+      "height": 768,
+      "toolbar": {
+        "x": 247,
+        "y": 633,
+        "right": 777,
+        "bottom": 693
+      },
+      "overflow": false
+    }
+  ]
+}
