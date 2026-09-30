@@ -135,7 +135,7 @@ final class AppEnvironment {
         hud = HUDController(controller: controller, settings: settings)
         capture.canBegin = { [weak self] in
             guard let self else { return false }
-            guard !self.recording.isBusy, self.meeting.activeID == nil,
+            guard !self.recording.blocksOtherCapture, self.meeting.activeID == nil,
                   !self.meeting.starting, !self.meeting.finishingRecording else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
@@ -145,7 +145,7 @@ final class AppEnvironment {
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         meeting.canBegin = { [weak self] in
-            guard let self, !self.capture.isBusy, !self.recording.isBusy else { return false }
+            guard let self, !self.capture.isBusy, !self.recording.blocksOtherCapture else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         hotkey = HotkeyMonitor(settings: settings, controller: controller)

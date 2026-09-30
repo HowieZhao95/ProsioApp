@@ -10,8 +10,7 @@ struct RecordingWorkspaceView: View {
         HSplitView {
             VStack(alignment: .leading, spacing: 14) {
                 Button {
-                    coordinator.selectedSessionID = nil
-                    Task { await coordinator.refreshSources() }
+                    coordinator.showSelection()
                 } label: {
                     Label("新建录制", systemImage: "plus")
                         .frame(maxWidth: .infinity)
@@ -58,7 +57,13 @@ struct RecordingWorkspaceView: View {
                     RecordingSessionDetailView(coordinator: coordinator, session: session)
                         .id(session.id)
                 } else {
-                    setup
+                    ContentUnavailableView {
+                        Label("还没有录制素材", systemImage: "film.stack")
+                    } description: {
+                        Text("在桌面上选好画面，即可开始录制。")
+                    } actions: {
+                        Button("开始录制…", action: coordinator.showSelection).buttonStyle(.borderedProminent)
+                    }
                 }
             }
             .padding(24)
@@ -66,135 +71,6 @@ struct RecordingWorkspaceView: View {
         }
     }
 
-    private var setup: some View {
-        VStack(alignment: .leading, spacing: 16) {
-          ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("把画面与声音，一起记下来。")
-                        .font(.system(size: 22, weight: .semibold))
-                    Text("屏幕与最多两个机位分别保存，结束后可直接交给剪辑软件。")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                }
-                if coordinator.loadingSources {
-                    ProgressView("正在读取录制来源…")
-                }
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("屏幕画面").font(.system(size: 13, weight: .semibold))
-                            Spacer()
-                            Button("刷新来源") { Task { await coordinator.refreshSources() } }
-                                .buttonStyle(.link)
-                                .disabled(coordinator.loadingSources)
-                        }
-                        Picker("范围", selection: $coordinator.screenMode) {
-                            Text("显示器").tag("display")
-                            Text("窗口").tag("window")
-                            Text("区域").tag("region")
-                        }.pickerStyle(.segmented)
-                        if coordinator.screenMode == "window" {
-                            Picker("窗口", selection: $coordinator.windowID) {
-                                ForEach(coordinator.inventory?.windows ?? [], id: \.id) { choice in
-                                    Text(choice.name).tag(choice.id)
-                                }
-                                if !(coordinator.inventory?.windows.contains(where: { $0.id == coordinator.windowID }) ?? false) {
-                                    Text(coordinator.windowID == 0 ? "未发现可录制窗口" : "所选窗口已关闭")
-                                        .tag(coordinator.windowID)
-                                }
-                            }
-                        } else {
-                            Picker("显示器", selection: $coordinator.displayID) {
-                                ForEach(coordinator.inventory?.displays ?? [], id: \.id) { choice in
-                                    Text(choice.name).tag(choice.id)
-                                }
-                                if !(coordinator.inventory?.displays.contains(where: { $0.id == coordinator.displayID }) ?? false) {
-                                    Text(coordinator.displayID == 0 ? "未发现可用显示器" : "所选显示器不可用")
-                                        .tag(coordinator.displayID)
-                                }
-                            }
-                            .onChange(of: coordinator.displayID) { coordinator.region = nil }
-                            if coordinator.screenMode == "region" {
-                                HStack {
-                                    Button(coordinator.region == nil ? "框选区域…" : "重新框选…") {
-                                        coordinator.selectRegion()
-                                    }
-                                    if let region = coordinator.region {
-                                        Text("\(Int(region.width)) × \(Int(region.height)) 点")
-                                            .font(.caption).foregroundStyle(.secondary)
-                                    }
-                                }
-                            }
-                        }
-                        Toggle("显示鼠标指针", isOn: $coordinator.showsCursor).font(.caption)
-                    }
-                    .padding(8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("摄像机位").font(.system(size: 13, weight: .semibold))
-                        cameraPicker("机位一", selection: $coordinator.cameraOneID)
-                        cameraPicker("机位二", selection: $coordinator.cameraTwoID)
-                        Text("支持内置、USB、兼容采集卡；其中一路可使用 iPhone 连续互通相机。")
-                            .font(.caption).foregroundStyle(.secondary)
-                    }
-                    .padding(8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("声音").font(.system(size: 13, weight: .semibold))
-                        Toggle("麦克风", isOn: $coordinator.includeMicrophone)
-                        if coordinator.includeMicrophone {
-                            Picker("来源", selection: $coordinator.microphoneID) {
-                                ForEach(coordinator.inventory?.microphones ?? [], id: \.id) { source in
-                                    Text(source.name).tag(source.id)
-                                }
-                                if !(coordinator.inventory?.microphones.contains(where: { $0.id == coordinator.microphoneID }) ?? false) {
-                                    Text(coordinator.microphoneID.isEmpty ? "未发现麦克风" : "所选麦克风不可用")
-                                        .tag(coordinator.microphoneID)
-                                }
-                            }
-                        }
-                        Toggle("系统声音", isOn: $coordinator.includeSystemAudio)
-                        Text("两个声音来源独立保存，可在剪辑时分别调整。")
-                            .font(.caption).foregroundStyle(.secondary)
-                    }.padding(8).frame(maxWidth: .infinity, alignment: .leading)
-                }
-                if let message = coordinator.message {
-                    Text(message).font(.callout).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if let recovery = coordinator.permissionRecovery {
-                        Button(recovery.title) { coordinator.openPermissions() }.buttonStyle(.link)
-                    }
-                }
-            }
-          }
-                HStack {
-                    Text(coordinator.canBegin() ? "均衡画质 · 30 fps · 原片保存在本机"
-                         : "结束语音输入、截图或录音转写后即可开始。")
-                        .font(.caption).foregroundStyle(.secondary)
-                    Spacer()
-                    Button("开始录制") { coordinator.begin() }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .disabled(coordinator.isBusy || coordinator.inventory == nil || coordinator.loadingSources || !coordinator.canBegin())
-                }
-        }
-        .disabled(coordinator.isBusy)
-    }
-
-    private func cameraPicker(_ title: String, selection: Binding<String>) -> some View {
-        Picker(title, selection: selection) {
-            Text("不使用").tag("")
-            ForEach(coordinator.inventory?.cameras ?? []) { source in Text(source.name).tag(source.id) }
-            if !selection.wrappedValue.isEmpty,
-               !(coordinator.inventory?.cameras.contains(where: { $0.id == selection.wrappedValue }) ?? false) {
-                Text("所选摄像头不可用").tag(selection.wrappedValue)
-            }
-        }
-    }
 }
 
 struct RecordingControlView: View {

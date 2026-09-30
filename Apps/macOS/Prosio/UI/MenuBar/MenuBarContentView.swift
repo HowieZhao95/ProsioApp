@@ -46,6 +46,7 @@ struct MenuBarContentView: View {
     }
 
     private var voiceCardTitle: String {
+        if environment.recording.selectionActive { return "正在准备屏幕录制" }
         if environment.recording.isBusy { return "屏幕录制进行中" }
         if environment.meeting.starting { return "正在准备录音转写" }
         if environment.meeting.finishingRecording { return "正在保存录音" }
@@ -59,7 +60,7 @@ struct MenuBarContentView: View {
     }
 
     private var voiceCardDetail: String {
-        if environment.recording.isBusy { return "结束屏幕录制后可继续使用语音输入。" }
+        if environment.recording.blocksOtherCapture { return "退出录制准备或结束录制后可继续使用语音输入。" }
         if environment.meeting.starting || environment.meeting.finishingRecording { return "录音准备和保存期间，语音输入会暂停。" }
         if environment.meeting.activeID != nil { return "结束会议录音后可继续使用语音输入。" }
         let trigger = voiceTriggerName
@@ -171,7 +172,7 @@ struct MenuBarContentView: View {
                     .frame(height: 31)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(voiceBusy || environment.capture.isBusy || environment.recording.isBusy)
+            .disabled(voiceBusy || environment.capture.isBusy || environment.recording.blocksOtherCapture)
             .accessibilityHint(voiceBusy ? "结束语音后可截图" : "框选屏幕并原地标注")
             if let hotkey = environment.capture.hotkey {
                 HStack(spacing: 4) {
@@ -312,9 +313,9 @@ struct MenuBarContentView: View {
                 )
                 Button {
                     dismiss()
-                    environment.recording.showWindow()
+                    environment.recording.showSelection()
                 } label: {
-                    Label("设置并开始录制…", systemImage: "record.circle")
+                    Label("开始录制…", systemImage: "record.circle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -366,7 +367,7 @@ struct MenuBarContentView: View {
             } else {
                 Button("开始会议录音") { Task { await environment.meeting.start() } }
                     .buttonStyle(.borderedProminent)
-                    .disabled(environment.meeting.processing || environment.meeting.starting || voiceBusy || environment.recording.isBusy || environment.capture.isBusy)
+                    .disabled(environment.meeting.processing || environment.meeting.starting || voiceBusy || environment.recording.blocksOtherCapture || environment.capture.isBusy)
             }
             if environment.meeting.processing { ProgressView("正在生成本地文字与说话人…") }
             if environment.meeting.starting { ProgressView("正在准备实时字幕…") }

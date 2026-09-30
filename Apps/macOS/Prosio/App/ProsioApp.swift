@@ -45,7 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard environment.meeting.activeID != nil || environment.meeting.starting || environment.meeting.finishingRecording || environment.recording.isBusy else { return .terminateNow }
+        guard environment.meeting.activeID != nil || environment.meeting.starting || environment.meeting.finishingRecording || environment.recording.blocksOtherCapture else { return .terminateNow }
         guard !finishingMedia else { return .terminateLater }
         finishingMedia = true
         Task { @MainActor in

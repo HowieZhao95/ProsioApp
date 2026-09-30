@@ -1,0 +1,555 @@
+2026-09-30 19:37:00.335 appintentsmetadataprocessor[2264:9668192] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-09-30 19:37:01.427 appintentsmetadataprocessor[2270:9668331] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+Test Suite 'All tests' started at 2026-09-30 19:37:05.613.
+Test Suite 'ProsioTests.xctest' started at 2026-09-30 19:37:05.614.
+Test Suite 'RecordingCameraPreviewTests' started at 2026-09-30 19:37:05.614.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testCancellingUpdateAwaitsSourceRelease]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testCancellingUpdateAwaitsSourceRelease]' passed (0.006 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testChangingSelectionWaitsForOldSetupBeforeNewDeviceStarts]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testChangingSelectionWaitsForOldSetupBeforeNewDeviceStarts]' passed (0.002 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testDeniedPermissionDoesNotCreateSource]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testDeniedPermissionDoesNotCreateSource]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testDisconnectedSourceReconnectsSameDeviceAndStaleCallbackCannotHideNewSession]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testDisconnectedSourceReconnectsSameDeviceAndStaleCallbackCannotHideNewSession]' passed (0.018 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testDiscoveryAndEmptySelectionNeverAuthorizeOrCreateSessions]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testDiscoveryAndEmptySelectionNeverAuthorizeOrCreateSessions]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testLimitAndDuplicatePhysicalDeviceRejectedBeforePermission]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testLimitAndDuplicatePhysicalDeviceRejectedBeforePermission]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testRecordingEngineExposesExactExistingCameraSessionOnly]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testRecordingEngineExposesExactExistingCameraSessionOnly]' passed (0.028 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testRevokedPermissionDoesNotPromptDuringRetry]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testRevokedPermissionDoesNotPromptDuringRetry]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testStoppedSetupReturningDeviceErrorStillReportsCancellation]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testStoppedSetupReturningDeviceErrorStillReportsCancellation]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testStopWaitsForInFlightSetupAndOldCallbackCannotReviveIt]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testStopWaitsForInFlightSetupAndOldCallbackCannotReviveIt]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testStopWaitsForReconnectSetup]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testStopWaitsForReconnectSetup]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testTemporaryMicrophoneFilterRetainsNormalUSBAndVirtualDevices]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testTemporaryMicrophoneFilterRetainsNormalUSBAndVirtualDevices]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testTwoSessionsAreRetainedAndStopReleasesBoth]' started.
+Test Case '-[ProsioTests.RecordingCameraPreviewTests testTwoSessionsAreRetainedAndStopReleasesBoth]' passed (0.001 seconds).
+Test Suite 'RecordingCameraPreviewTests' passed at 2026-09-30 19:37:05.680.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.062 (0.066) seconds
+Test Suite 'RecordingEngineLifecycleTests' started at 2026-09-30 19:37:05.680.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' passed (0.310 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' passed (0.016 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testFreshScreenReceiverCannotReuseOldStreamFrameBeforeOwnComplete]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testFreshScreenReceiverCannotReuseOldStreamFrameBeforeOwnComplete]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' passed (0.014 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' passed (0.016 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testOldScreenCallbacksCannotReviveFailedOrReplacedAttempt]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testOldScreenCallbacksCannotReviveFailedOrReplacedAttempt]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testRuntimeScreenLossKeepsDevicesRunningAndRecoversOriginalTargetWithGap]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testRuntimeScreenLossKeepsDevicesRunningAndRecoversOriginalTargetWithGap]' passed (0.077 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testScreenPermissionAndUnavailableTargetRetriesStayIsolatedAndNeverSubstitute]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testScreenPermissionAndUnavailableTargetRetriesStayIsolatedAndNeverSubstitute]' passed (0.011 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testScreenStartupDelegateFailureRollsBackDevices]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testScreenStartupDelegateFailureRollsBackDevices]' passed (0.008 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectPreparation]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectPreparation]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectStart]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectStart]' passed (0.009 seconds).
+Test Suite 'RecordingEngineLifecycleTests' passed at 2026-09-30 19:37:06.200.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.516 (0.520) seconds
+Test Suite 'RecordingPlatformTests' started at 2026-09-30 19:37:06.200.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (0.387 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.066 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (0.269 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.124 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.178 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.019 seconds).
+Test Suite 'RecordingPlatformTests' passed at 2026-09-30 19:37:07.246.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.044 (1.046) seconds
+Test Suite 'RecordingRecoveryTests' started at 2026-09-30 19:37:07.246.
+Test Case '-[ProsioTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' passed (0.065 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' passed (0.063 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' passed (0.066 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' passed (0.063 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' passed (0.063 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' passed (0.065 seconds).
+Test Suite 'RecordingRecoveryTests' passed at 2026-09-30 19:37:07.633.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.385 (0.387) seconds
+Test Suite 'ProsioTests.xctest' passed at 2026-09-30 19:37:07.634.
+	 Executed 41 tests, with 0 failures (0 unexpected) in 2.008 (2.020) seconds
+Test Suite 'All tests' passed at 2026-09-30 19:37:07.634.
+	 Executed 41 tests, with 0 failures (0 unexpected) in 2.008 (2.021) seconds
+◇ Test run started.
+◇ Suite "AXCoordinateConverter" started.
+◇ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" started.
+✔ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" passed after 0.001 seconds.
+◇ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" started.
+✔ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" passed after 0.001 seconds.
+◇ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" started.
+✔ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" passed after 0.001 seconds.
+◇ Test "Round-tripping the flip twice with the same height returns the original rect" started.
+✔ Test "Round-tripping the flip twice with the same height returns the original rect" passed after 0.001 seconds.
+✔ Suite "AXCoordinateConverter" passed after 0.005 seconds.
+◇ Suite "Capture editable persistence" started.
+◇ Test "Restriction writes only crop source pixels and translates related geometry without UI selection" started.
+✔ Test "Restriction writes only crop source pixels and translates related geometry without UI selection" passed after 0.014 seconds.
+◇ Test "V2 fresh reopen retains editable geometry and exact flattened output while discarding full desktop" started.
+✔ Test "V2 fresh reopen retains editable geometry and exact flattened output while discarding full desktop" passed after 0.022 seconds.
+◇ Test "Completed history restores the full frozen screen, original crop, and every annotation" started.
+✔ Test "Completed history restores the full frozen screen, original crop, and every annotation" passed after 0.004 seconds.
+◇ Test "Legacy v1 PNG opens as editable whole-image document without inventing annotations" started.
+✔ Test "Legacy v1 PNG opens as editable whole-image document without inventing annotations" passed after 0.002 seconds.
+◇ Test "Document metadata write failure leaves earlier history and current editing unchanged" started.
+✔ Test "Document metadata write failure leaves earlier history and current editing unchanged" passed after 0.005 seconds.
+◇ Test "V2 cancellation after flattened PNG leaves no new source or history item" started.
+✔ Test "V2 cancellation after flattened PNG leaves no new source or history item" passed after 0.010 seconds.
+◇ Test "Damaged v2 editable metadata is preserved and excluded with a recovery warning" started.
+✔ Test "Damaged v2 editable metadata is preserved and excluded with a recovery warning" passed after 0.005 seconds.
+◇ Test "Saving a crop that intersects only rectangle stroke preserves the visible border on reopen" started.
+✔ Test "Saving a crop that intersects only rectangle stroke preserves the visible border on reopen" passed after 0.004 seconds.
+◇ Test "Mismatched source dimensions and inconsistent editable crop are rejected rather than reopening a different image" started.
+✔ Test "Mismatched source dimensions and inconsistent editable crop are rejected rather than reopening a different image" passed after 0.007 seconds.
+◇ Test "Failed external output rolls back only its newly persisted history asset" started.
+✔ Test "Failed external output rolls back only its newly persisted history asset" passed after 0.005 seconds.
+◇ Test "Successful external output retains precisely the committed asset passed to it" started.
+✔ Test "Successful external output retains precisely the committed asset passed to it" passed after 0.003 seconds.
+◇ Test "The 51st successful output evicts the oldest complete history directory" started.
+✔ Test "The 51st successful output evicts the oldest complete history directory" passed after 0.106 seconds.
+✔ Suite "Capture editable persistence" passed after 0.194 seconds.
+◇ Suite "Capture output state" started.
+◇ Test "Duplicate output is rejected and cancelled save or failure remains editable for retry" started.
+✔ Test "Duplicate output is rejected and cancelled save or failure remains editable for retry" passed after 0.001 seconds.
+◇ Test "Late output completion cannot resurrect a cancelled editing session" started.
+✔ Test "Late output completion cannot resurrect a cancelled editing session" passed after 0.001 seconds.
+✔ Suite "Capture output state" passed after 0.001 seconds.
+◇ Suite "Capture editor commands" started.
+◇ Test "Resizing and moving crop keeps annotation geometry anchored to source pixels" started.
+✔ Test "Resizing and moving crop keeps annotation geometry anchored to source pixels" passed after 0.001 seconds.
+◇ Test "Undo redo preserves update/delete and a new edit abandons the redo branch" started.
+✔ Test "Undo redo preserves update/delete and a new edit abandons the redo branch" passed after 0.001 seconds.
+◇ Test "Selection alone creates no content undo step and deleting clears selected IDs" started.
+✔ Test "Selection alone creates no content undo step and deleting clears selected IDs" passed after 0.001 seconds.
+◇ Test "All annotation geometry kinds translate by the same crop-origin delta" started.
+✔ Test "All annotation geometry kinds translate by the same crop-origin delta" passed after 0.001 seconds.
+✔ Suite "Capture editor commands" passed after 0.001 seconds.
+◇ Suite "Capture editor pixels" started.
+◇ Test "Straight lines have no arrowhead; capped annotation lines render a perpendicular tick at each endpoint" started.
+✔ Test "Straight lines have no arrowhead; capped annotation lines render a perpendicular tick at each endpoint" passed after 0.001 seconds.
+◇ Test "Unified filled rectangles match legacy highlight pixels and opacity survives storage with backward compatibility" started.
+✔ Test "Unified filled rectangles match legacy highlight pixels and opacity survives storage with backward compatibility" passed after 0.001 seconds.
+◇ Test "Mosaic and blur strengths below four produce distinct pixels instead of sharing a hard minimum" started.
+✔ Test "Mosaic and blur strengths below four produce distinct pixels instead of sharing a hard minimum" passed after 0.052 seconds.
+◇ Test "Crop exports exact pixel dimensions and the top-left source orientation" started.
+✔ Test "Crop exports exact pixel dimensions and the top-left source orientation" passed after 0.001 seconds.
+◇ Test "Selected handles and UI state do not enter the rendered image" started.
+✔ Test "Selected handles and UI state do not enter the rendered image" passed after 0.001 seconds.
+◇ Test "Solid redaction follows source pixels when crop changes and leaves outside pixels intact" started.
+✔ Test "Solid redaction follows source pixels when crop changes and leaves outside pixels intact" passed after 0.001 seconds.
+◇ Test "Invalid or out-of-source crops fail instead of silently exporting another region" started.
+✔ Test "Invalid or out-of-source crops fail instead of silently exporting another region" passed after 0.001 seconds.
+◇ Test "Blur and mosaic operate on already composited annotations without altering outside pixels" started.
+✔ Test "Blur and mosaic operate on already composited annotations without altering outside pixels" passed after 0.004 seconds.
+✔ Suite "Capture editor pixels" passed after 0.063 seconds.
+◇ Suite "Capture text and output key routing" started.
+◇ Test "Text editing owns Return and Cmd-C, while Cmd-Return commits text without output" started.
+✔ Test "Text editing owns Return and Cmd-C, while Cmd-Return commits text without output" passed after 0.001 seconds.
+◇ Test "Outside text editing Return and Cmd-C copy, save and undo retain their distinct actions" started.
+✔ Test "Outside text editing Return and Cmd-C copy, save and undo retain their distinct actions" passed after 0.001 seconds.
+◇ Test "Output in progress does not dispatch another key action or commit text" started.
+✔ Test "Output in progress does not dispatch another key action or commit text" passed after 0.001 seconds.
+✔ Suite "Capture text and output key routing" passed after 0.001 seconds.
+◇ Suite "Capture geometry" started.
+◇ Test "AppKit points map through each screen's distinct capture and overlay frames" started.
+✔ Test "AppKit points map through each screen's distinct capture and overlay frames" passed after 0.001 seconds.
+◇ Test "Retina preview crops use top-left pixels and invert only AppKit source y" started.
+✔ Test "Retina preview crops use top-left pixels and invert only AppKit source y" passed after 0.001 seconds.
+◇ Test "Fractional scaling expands outwards to preserve selected edge pixels" started.
+✔ Test "Fractional scaling expands outwards to preserve selected edge pixels" passed after 0.001 seconds.
+◇ Test "Reverse drags standardize before scaling" started.
+✔ Test "Reverse drags standardize before scaling" passed after 0.001 seconds.
+◇ Test "Local rect conversion preserves negative display origin and normalizes drag" started.
+✔ Test "Local rect conversion preserves negative display origin and normalizes drag" passed after 0.001 seconds.
+◇ Test "Invalid display dimensions and scale have finite safe defaults" started.
+✔ Test "Invalid display dimensions and scale have finite safe defaults" passed after 0.001 seconds.
+◇ Test "Intersecting display resolution chooses max scale and outside region uses fallback" started.
+✔ Test "Intersecting display resolution chooses max scale and outside region uses fallback" passed after 0.001 seconds.
+✔ Suite "Capture geometry" passed after 0.001 seconds.
+◇ Suite "Capture interaction geometry" started.
+◇ Test "Toolbar remains inside safe screen bounds at four corners, tiny and full-screen selections" started.
+✔ Test "Toolbar remains inside safe screen bounds at four corners, tiny and full-screen selections" passed after 0.001 seconds.
+◇ Test "Oversized toolbar explicitly requests compact controls rather than claiming unclipped content" started.
+✔ Test "Oversized toolbar explicitly requests compact controls rather than claiming unclipped content" passed after 0.001 seconds.
+◇ Test "Toolbar side is retained when still fitting and flips above near bottom edge" started.
+✔ Test "Toolbar side is retained when still fitting and flips above near bottom edge" passed after 0.001 seconds.
+◇ Test "Each resize handle clamps to viewport and minimum size while preserving opposite edges" started.
+✔ Test "Each resize handle clamps to viewport and minimum size while preserving opposite edges" passed after 0.001 seconds.
+✔ Suite "Capture interaction geometry" passed after 0.005 seconds.
+◇ Suite "Capture snap candidates" started.
+◇ Test "Hover selects the smallest visible frozen boundary and ignores viewport and stale detections" started.
+✔ Test "Hover selects the smallest visible frozen boundary and ignores viewport and stale detections" passed after 0.001 seconds.
+◇ Test "Only current-snapshot finite confident unique candidates survive filtering" started.
+✔ Test "Only current-snapshot finite confident unique candidates survive filtering" passed after 0.001 seconds.
+◇ Test "Entering within eight points locks, fourteen retains, eighteen releases and fresh state does not lock" started.
+✔ Test "Entering within eight points locks, fourteen retains, eighteen releases and fresh state does not lock" passed after 0.005 seconds.
+◇ Test "Resize snapping moves only dragged edge and never violates minimum size" started.
+✔ Test "Resize snapping moves only dragged edge and never violates minimum size" passed after 0.001 seconds.
+◇ Test "A hidden window edge cannot attract move snapping, while its exposed edge can" started.
+✔ Test "A hidden window edge cannot attract move snapping, while its exposed edge can" passed after 0.001 seconds.
+◇ Test "An AX content boundary does not hover or snap through a covering window" started.
+✔ Test "An AX content boundary does not hover or snap through a covering window" passed after 0.001 seconds.
+◇ Test "Partly visible rear windows remain candidates; own app, translucent and offscreen windows do not" started.
+✔ Test "Partly visible rear windows remain candidates; own app, translucent and offscreen windows do not" passed after 0.001 seconds.
+◇ Test "Global windows are scoped to each display's local coordinates, including negative origins and scale" started.
+✔ Test "Global windows are scoped to each display's local coordinates, including negative origins and scale" passed after 0.001 seconds.
+◇ Test "A fully covered rear window is not offered as a candidate" started.
+✔ Test "A fully covered rear window is not offered as a candidate" passed after 0.001 seconds.
+✔ Suite "Capture snap candidates" passed after 0.011 seconds.
+◇ Suite "Capture content detector boundaries" started.
+◇ Test "Vision bottom-left normalized panel maps into offset top-left screen points" started.
+✔ Test "Vision bottom-left normalized panel maps into offset top-left screen points" passed after 0.001 seconds.
+◇ Test "Cancelled optional detector exits before expensive image analysis" started.
+✔ Test "Cancelled optional detector exits before expensive image analysis" passed after 0.001 seconds.
+◇ Test "A controlled synthetic bordered panel produces a matching snapshot-bound candidate" started.
+✔ Test "A controlled synthetic bordered panel produces a matching snapshot-bound candidate" passed after 0.020 seconds.
+✔ Suite "Capture content detector boundaries" passed after 0.021 seconds.
+◇ Suite "Capture accessibility boundary fallback" started.
+◇ Test "Native sidebars, split panes and compact toolbars are eligible without a hit-test point" started.
+✔ Test "Native sidebars, split panes and compact toolbars are eligible without a hit-test point" passed after 0.001 seconds.
+◇ Test "Only visible finite content within ancestor bounds can become an AX candidate" started.
+✔ Test "Only visible finite content within ancestor bounds can become an AX candidate" passed after 0.001 seconds.
+◇ Test "Hit-test fallback inherits every parent clip and rejects hidden ancestry" started.
+✔ Test "Hit-test fallback inherits every parent clip and rejects hidden ancestry" passed after 0.001 seconds.
+◇ Test "AX windows must correspond to their frozen Quartz windows, not nested sheets" started.
+✔ Test "AX windows must correspond to their frozen Quartz windows, not nested sheets" passed after 0.001 seconds.
+◇ Test "Native AX traversal stays bounded, skips leaves and stops on cancellation" started.
+✔ Test "Native AX traversal stays bounded, skips leaves and stops on cancellation" passed after 0.001 seconds.
+◇ Test "Unavailable, empty or cancelled AX input returns no candidates without a system query" started.
+✔ Test "Unavailable, empty or cancelled AX input returns no candidates without a system query" passed after 0.001 seconds.
+✔ Suite "Capture accessibility boundary fallback" passed after 0.001 seconds.
+◇ Suite "Capture pixel loupe" started.
+◇ Test "Frozen source sampling keeps asymmetric top-left orientation and unpremultiplies alpha" started.
+✔ Test "Frozen source sampling keeps asymmetric top-left orientation and unpremultiplies alpha" passed after 0.001 seconds.
+◇ Test "View points map to exact Retina source pixels at negative origins and image edges" started.
+✔ Test "View points map to exact Retina source pixels at negative origins and image edges" passed after 0.001 seconds.
+◇ Test "HEX and RGB text use sampled channel values rather than display color names" started.
+✔ Test "HEX and RGB text use sampled channel values rather than display color names" passed after 0.001 seconds.
+◇ Test "Loupe popup stays on screen and avoids the toolbar when an open quadrant exists" started.
+✔ Test "Loupe popup stays on screen and avoids the toolbar when an open quadrant exists" passed after 0.001 seconds.
+◇ Test "Bare C copies only a visible color; Cmd-C, text and other modifiers retain their actions" started.
+✔ Test "Bare C copies only a visible color; Cmd-C, text and other modifiers retain their actions" passed after 0.001 seconds.
+◇ Test "Shift tap changes format once, while long hold, mixed modifiers, interruption or text entry do not" started.
+✔ Test "Shift tap changes format once, while long hold, mixed modifiers, interruption or text entry do not" passed after 0.001 seconds.
+✔ Suite "Capture pixel loupe" passed after 0.007 seconds.
+◇ Suite "Capture native canvas with synthetic frozen pixels" started.
+◇ Test "Moving an arrow replaces its old pixels immediately, follows each event and commits one undo step" started.
+✔ Test "Moving an arrow replaces its old pixels immediately, follows each event and commits one undo step" passed after 4.464 seconds.
+◇ Test "Moving filled annotations preserves layering and blur/pixelation in the live pixels" started.
+✔ Test "Moving filled annotations preserves layering and blur/pixelation in the live pixels" passed after 0.614 seconds.
+◇ Test "Arrow, straight line and capped line endpoints resize independently and win over crop handles" started.
+✔ Test "Arrow, straight line and capped line endpoints resize independently and win over crop handles" passed after 0.253 seconds.
+◇ Test "Unified shape properties edit existing geometry, remember each tool, and group slider changes into one undo" started.
+✔ Test "Unified shape properties edit existing geometry, remember each tool, and group slider changes into one undo" passed after 2.037 seconds.
+◇ Test "Text input is transparent, fits committed multiline text and grows again when re-edited" started.
+✔ Test "Text input is transparent, fits committed multiline text and grows again when re-edited" passed after 3.705 seconds.
+◇ Test "Mosaic and blur default to four and independently clamp strength to one through ten" started.
+✔ Test "Mosaic and blur default to four and independently clamp strength to one through ten" passed after 0.106 seconds.
+◇ Test "Native initial drag snaps to frozen window candidates and commits source-pixel crop without a confirmation" started.
+✔ Test "Native initial drag snaps to frozen window candidates and commits source-pixel crop without a confirmation" passed after 0.047 seconds.
+◇ Test "Native hover previews frozen window and content-block boundaries before any selection" started.
+✔ Test "Native hover previews frozen window and content-block boundaries before any selection" passed after 0.110 seconds.
+◇ Test "Entering before any drag previews the complete bright candidate frame" started.
+✔ Test "Entering before any drag previews the complete bright candidate frame" passed after 0.055 seconds.
+◇ Test "Native pixel loupe previews the frozen source before selecting" started.
+✔ Test "Native pixel loupe previews the frozen source before selecting" passed after 0.060 seconds.
+◇ Test "Native loupe keeps colors local to the frozen image across copy, Shift, drag and editing" started.
+✔ Test "Native loupe keeps colors local to the frozen image across copy, Shift, drag and editing" passed after 0.378 seconds.
+◇ Test "Native click selects the small content block and exposes the editing toolbar" started.
+✔ Test "Native click selects the small content block and exposes the editing toolbar" passed after 0.263 seconds.
+◇ Test "Two real clicks copy the chosen candidate or full display once and finish" started.
+✔ Test "Two real clicks copy the chosen candidate or full display once and finish" passed after 0.616 seconds.
+◇ Test "Native drag shows guides before release and commits snapped source pixels" started.
+✔ Test "Native drag shows guides before release and commits snapped source pixels" passed after 0.043 seconds.
+◇ Test "Small pointer jitter clicks a candidate, while deliberate drag makes a free rectangle" started.
+✔ Test "Small pointer jitter clicks a candidate, while deliberate drag makes a free rectangle" passed after 0.060 seconds.
+◇ Test "Async candidate append refreshes a stationary pointer; stale results do not replace it" started.
+✔ Test "Async candidate append refreshes a stationary pointer; stale results do not replace it" passed after 0.032 seconds.
+◇ Test "Without a candidate, single click selects the display while a fresh drag draws freely" started.
+✔ Test "Without a candidate, single click selects the display while a fresh drag draws freely" passed after 0.063 seconds.
+◇ Test "History fit-to-window reselect maps the drawn image rectangle back to original pixels" started.
+✔ Test "History fit-to-window reselect maps the drawn image rectangle back to original pixels" passed after 0.052 seconds.
+◇ Test "All eight native handles resize before active drawing tool hit-testing" started.
+✔ Test "All eight native handles resize before active drawing tool hit-testing" passed after 0.191 seconds.
+◇ Test "Native light dark and narrow canvases preserve frozen pixels and record explicitly synthetic screenshots" started.
+✔ Test "Native light dark and narrow canvases preserve frozen pixels and record explicitly synthetic screenshots" passed after 2.161 seconds.
+◇ Test "Annotation colors appear contextually, remain visible at screen edges, and affect the next stroke" started.
+✔ Test "Annotation colors appear contextually, remain visible at screen edges, and affect the next stroke" passed after 1.101 seconds.
+◇ Test "Left and right replay saved screenshots and restore the in-progress capture" started.
+✔ Test "Left and right replay saved screenshots and restore the in-progress capture" passed after 0.386 seconds.
+◇ Test "Native session rejects duplicate output, preserves edits while busy, and permits retry after save cancellation" started.
+✔ Test "Native session rejects duplicate output, preserves edits while busy, and permits retry after save cancellation" passed after 0.047 seconds.
+◇ Test "Late native output completion cannot finish a force-cancelled session twice" started.
+✔ Test "Late native output completion cannot finish a force-cancelled session twice" passed after 0.059 seconds.
+◇ Test "Native text Return inserts a line and Cmd-Return commits it without triggering screenshot output" started.
+✔ Test "Native text Return inserts a line and Cmd-Return commits it without triggering screenshot output" passed after 0.059 seconds.
+◇ Test "History text re-edit keeps stored source-pixel style and scales the native font to fitted image" started.
+✔ Test "History text re-edit keeps stored source-pixel style and scales the native font to fitted image" passed after 0.052 seconds.
+✔ Suite "Capture native canvas with synthetic frozen pixels" passed after 17.029 seconds.
+◇ Suite "Either Option capture tap" started.
+◇ Test "Only a short release after a right Option press fires once" started.
+✔ Test "Only a short release after a right Option press fires once" passed after 0.001 seconds.
+◇ Test "Left Option independently fires only on a short release" started.
+✔ Test "Left Option independently fires only on a short release" passed after 0.001 seconds.
+◇ Test "Long holds and reversed timestamps cannot be mistaken for a tap" started.
+✔ Test "Long holds and reversed timestamps cannot be mistaken for a tap" passed after 0.001 seconds.
+◇ Test "A repeated down does not restart the allowed time window" started.
+✔ Test "A repeated down does not restart the allowed time window" passed after 0.001 seconds.
+◇ Test "A repeated down while capture becomes busy revokes this press" started.
+✔ Test "A repeated down while capture becomes busy revokes this press" passed after 0.001 seconds.
+◇ Test "Each Option keycode uses its own device bit" started.
+✔ Test "Each Option keycode uses its own device bit" passed after 0.001 seconds.
+◇ Test "Right Option release with no left device bit remains eligible" started.
+✔ Test "Right Option release with no left device bit remains eligible" passed after 0.001 seconds.
+◇ Test "A real left Option bit on right release blocks capture" started.
+✔ Test "A real left Option bit on right release blocks capture" passed after 0.001 seconds.
+◇ Test "A real right Option bit on left release blocks capture" started.
+✔ Test "A real right Option bit on left release blocks capture" passed after 0.001 seconds.
+◇ Test "Crossing Option presses cancel in both directions until a fresh press" started.
+✔ Test "Crossing Option presses cancel in both directions until a fresh press" passed after 0.001 seconds.
+◇ Test "Both Option bits present at the first observation cannot start a tap" started.
+✔ Test "Both Option bits present at the first observation cannot start a tap" passed after 0.001 seconds.
+◇ Test "Left Option pressed during right Option cancels even if released before right" started.
+✔ Test "Left Option pressed during right Option cancels even if released before right" passed after 0.001 seconds.
+◇ Test "An interruption or reset cancels the current press and allows a later one" started.
+✔ Test "An interruption or reset cancels the current press and allows a later one" passed after 0.001 seconds.
+◇ Test "Permission, voice conflict, and capture busy gating must hold at both edges" started.
+✔ Test "Permission, voice conflict, and capture busy gating must hold at both edges" passed after 0.001 seconds.
+◇ Test "Right Option is unavailable during voice conflict or missing tap permissions" started.
+✔ Test "Right Option is unavailable during voice conflict or missing tap permissions" passed after 0.001 seconds.
+◇ Test "An absent shortcut gets right Option, but prior choices stay intact" started.
+✔ Test "An absent shortcut gets right Option, but prior choices stay intact" passed after 0.001 seconds.
+✔ Suite "Either Option capture tap" passed after 0.012 seconds.
+◇ Suite "Pinned screenshot window" started.
+◇ Test "Pinned image stays floating, moves freely, resizes proportionally, and closes independently" started.
+✔ Test "Pinned image stays floating, moves freely, resizes proportionally, and closes independently" passed after 0.040 seconds.
+✔ Suite "Pinned screenshot window" passed after 0.040 seconds.
+◇ Suite "Capture request planning" started.
+◇ Test "Single-display region uses display-local points and scaled output pixels" started.
+✔ Test "Single-display region uses display-local points and scaled output pixels" passed after 0.001 seconds.
+◇ Test "Regions outside or across display edges are rejected without silently clipping" started.
+✔ Test "Regions outside or across display edges are rejected without silently clipping" passed after 0.001 seconds.
+◇ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" started.
+✔ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" passed after 0.001 seconds.
+◇ Test "Disconnected display aborts before submitting screenshot request" started.
+✔ Test "Disconnected display aborts before submitting screenshot request" passed after 0.001 seconds.
+◇ Test "Window targets do not switch to an unrelated reused window ID" started.
+✔ Test "Window targets do not switch to an unrelated reused window ID" passed after 0.001 seconds.
+✔ Suite "Capture request planning" passed after 0.001 seconds.
+◇ Suite "Capture and voice hotkey ownership" started.
+◇ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" started.
+✔ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" passed after 0.001 seconds.
+◇ Test "Neither handler claims an unknown ID or foreign signature" started.
+✔ Test "Neither handler claims an unknown ID or foreign signature" passed after 0.001 seconds.
+◇ Test "A queued voice effect must recheck capture suspension before applying" started.
+✔ Test "A queued voice effect must recheck capture suspension before applying" passed after 0.001 seconds.
+✔ Suite "Capture and voice hotkey ownership" passed after 0.001 seconds.
+◇ Suite "Capture asset persistence" started.
+◇ Test "Fresh store restores stable identity and actual PNG dimensions and color" started.
+✔ Test "Fresh store restores stable identity and actual PNG dimensions and color" passed after 0.008 seconds.
+◇ Test "Reopening sorts by capture time and deleting one leaves the other intact" started.
+✔ Test "Reopening sorts by capture time and deleting one leaves the other intact" passed after 0.004 seconds.
+◇ Test "A file at storage root makes save fail without a successful-looking asset" started.
+✔ Test "A file at storage root makes save fail without a successful-looking asset" passed after 0.002 seconds.
+◇ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" started.
+✔ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" passed after 0.003 seconds.
+◇ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" started.
+✔ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" passed after 0.001 seconds.
+◇ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" started.
+✔ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" passed after 0.002 seconds.
+◇ Test "A cancelled caller cannot publish a new persisted asset" started.
+✔ Test "A cancelled caller cannot publish a new persisted asset" passed after 0.001 seconds.
+◇ Test "Damaged PNG content is excluded from recent assets with an explicit warning" started.
+✔ Test "Damaged PNG content is excluded from recent assets with an explicit warning" passed after 0.003 seconds.
+◇ Test "PNG header alone is not mistaken for a complete recoverable screenshot" started.
+2026-09-30 19:37:25.073159+0800 xctest[2286:9668629] [xctest] handle_error:268: PNG read error
+✔ Test "PNG header alone is not mistaken for a complete recoverable screenshot" passed after 0.003 seconds.
+◇ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" started.
+✔ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" passed after 0.007 seconds.
+◇ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" started.
+✔ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" passed after 0.003 seconds.
+✔ Suite "Capture asset persistence" passed after 0.039 seconds.
+◇ Suite "HotkeyStateMachine" started.
+◇ Test "idle -> start" started.
+✔ Test "idle -> start" passed after 0.001 seconds.
+◇ Test "finished -> start (a fresh press after completion starts a new session)" started.
+✔ Test "finished -> start (a fresh press after completion starts a new session)" passed after 0.001 seconds.
+◇ Test "failed -> start (a fresh press after a failure starts a new session)" started.
+✔ Test "failed -> start (a fresh press after a failure starts a new session)" passed after 0.001 seconds.
+◇ Test "listening -> stop" started.
+✔ Test "listening -> stop" passed after 0.001 seconds.
+◇ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" started.
+✔ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" passed after 0.001 seconds.
+◇ Test "finalizing/composing/inserting -> ignore (no queue)" started.
+✔ Test "finalizing/composing/inserting -> ignore (no queue)" passed after 0.001 seconds.
+◇ Test "esc while listening -> cancel" started.
+✔ Test "esc while listening -> cancel" passed after 0.001 seconds.
+◇ Test "esc while answering -> dismissAnswer" started.
+✔ Test "esc while answering -> dismissAnswer" passed after 0.001 seconds.
+◇ Test "esc elsewhere is a no-op" started.
+✔ Test "esc elsewhere is a no-op" passed after 0.001 seconds.
+◇ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" started.
+✔ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" passed after 0.001 seconds.
+✔ Suite "HotkeyStateMachine" passed after 0.003 seconds.
+◇ Suite "TriggerPhysicalState" started.
+◇ Test "First observed down is not a repeat" started.
+✔ Test "First observed down is not a repeat" passed after 0.001 seconds.
+◇ Test "A normal down-then-up sequence is never a repeat" started.
+✔ Test "A normal down-then-up sequence is never a repeat" passed after 0.004 seconds.
+◇ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" started.
+✔ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" passed after 0.001 seconds.
+◇ Test "Two consecutive 'up' observations report a repeat" started.
+✔ Test "Two consecutive 'up' observations report a repeat" passed after 0.001 seconds.
+◇ Test "Reset returns to the not-down baseline" started.
+✔ Test "Reset returns to the not-down baseline" passed after 0.001 seconds.
+✔ Suite "TriggerPhysicalState" passed after 0.005 seconds.
+◇ Suite "Meeting persistence" started.
+◇ Test interruptedMeetingCanBeFoundAndRecovered() started.
+✔ Test interruptedMeetingCanBeFoundAndRecovered() passed after 0.002 seconds.
+✔ Suite "Meeting persistence" passed after 0.002 seconds.
+◇ Suite "Recording coordinator lifecycle" started.
+◇ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() started.
+✔ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() passed after 0.818 seconds.
+◇ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() started.
+✔ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() passed after 0.007 seconds.
+◇ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() started.
+✔ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() passed after 0.005 seconds.
+◇ Test testCallbacksFromFinishedSessionCannotChangeNextSession() started.
+✔ Test testCallbacksFromFinishedSessionCannotChangeNextSession() passed after 0.005 seconds.
+◇ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() started.
+✔ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() passed after 0.006 seconds.
+◇ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() started.
+✔ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() passed after 0.003 seconds.
+◇ Test testCameraDisconnectChangesOnlyThatSourceAvailability() started.
+✔ Test testCameraDisconnectChangesOnlyThatSourceAvailability() passed after 0.003 seconds.
+◇ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() started.
+✔ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() passed after 0.010 seconds.
+✔ Suite "Recording coordinator lifecycle" passed after 0.863 seconds.
+◇ Suite "Live recording desktop selection" started.
+◇ Test displayMappingUsesBothScreenFramesWithoutApplyingRetinaPixelsTwice() started.
+✔ Test displayMappingUsesBothScreenFramesWithoutApplyingRetinaPixelsTwice() passed after 0.001 seconds.
+◇ Test windowHitUsesLiveFrontOrderAndExcludesApplicationChrome() started.
+✔ Test windowHitUsesLiveFrontOrderAndExcludesApplicationChrome() passed after 0.001 seconds.
+◇ Test selectionLockAndControlHoverPreserveTheChosenTarget() started.
+✔ Test selectionLockAndControlHoverPreserveTheChosenTarget() passed after 0.001 seconds.
+◇ Test freshClickRetargetsWhileHoverAndControlsRespectTheLock() started.
+✔ Test freshClickRetargetsWhileHoverAndControlsRespectTheLock() passed after 0.001 seconds.
+◇ Test regionMoveAndAllEightResizeHandlesStayOnTheirOriginalScreen() started.
+✔ Test regionMoveAndAllEightResizeHandlesStayOnTheirOriginalScreen() passed after 0.001 seconds.
+✔ Suite "Live recording desktop selection" passed after 0.002 seconds.
+◇ Suite "Editor handoff boundary" started.
+◇ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() started.
+✔ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() passed after 0.006 seconds.
+◇ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() started.
+✔ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() passed after 0.012 seconds.
+◇ Test unverifiedJianyingAndMulticamHaveExplicitGates() started.
+✔ Test unverifiedJianyingAndMulticamHaveExplicitGates() passed after 0.002 seconds.
+◇ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() started.
+✔ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() passed after 0.002 seconds.
+◇ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() started.
+✔ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() passed after 0.006 seconds.
+◇ Test mixedFrameRatesKeepSourceRangesDistinctFromTimelinePlacement() started.
+✔ Test mixedFrameRatesKeepSourceRangesDistinctFromTimelinePlacement() passed after 0.001 seconds.
+✔ Suite "Editor handoff boundary" passed after 0.031 seconds.
+◇ Suite "Recording media handoff" started.
+◇ Test allEditorsPreserveSegmentsAndIndependentAudio() started.
+✔ Test allEditorsPreserveSegmentsAndIndependentAudio() passed after 0.245 seconds.
+◇ Test audioOnlyRecoveredSessionExportsWithoutInventingMulticamOrVideo() started.
+✔ Test audioOnlyRecoveredSessionExportsWithoutInventingMulticamOrVideo() passed after 0.166 seconds.
+◇ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() started.
+✔ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() passed after 0.319 seconds.
+◇ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() started.
+✔ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() passed after 0.131 seconds.
+◇ Test cancellationAndCollisionPreserveExistingDestination() started.
+✔ Test cancellationAndCollisionPreserveExistingDestination() passed after 0.128 seconds.
+◇ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() started.
+✔ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() passed after 0.147 seconds.
+◇ Test longSegmentedTimelinePreservesExactRationalOffsets() started.
+✔ Test longSegmentedTimelinePreservesExactRationalOffsets() passed after 0.013 seconds.
+✔ Suite "Recording media handoff" passed after 1.152 seconds.
+◇ Suite "Recording immersive workflow" started.
+◇ Test targetReadinessTracksSelectionAndModeChanges() started.
+✔ Test targetReadinessTracksSelectionAndModeChanges() passed after 0.001 seconds.
+◇ Test cameraSelectionEnforcesTwoUniqueSourcesAndCompactsOnRemoval() started.
+✔ Test cameraSelectionEnforcesTwoUniqueSourcesAndCompactsOnRemoval() passed after 0.001 seconds.
+◇ Test busyRecordingDoesNotMutateSelectionOrCameraAssignments() started.
+✔ Test busyRecordingDoesNotMutateSelectionOrCameraAssignments() passed after 0.003 seconds.
+✔ Suite "Recording immersive workflow" passed after 0.005 seconds.
+◇ Suite "Recording immersive native views" started.
+◇ Test selectionToolbarRendersAtLightDarkAndCompactSizes() started.
+✔ Test selectionToolbarRendersAtLightDarkAndCompactSizes() passed after 0.467 seconds.
+◇ Test compactControlRendersRecordingPausedAndFinalizing() started.
+✔ Test compactControlRendersRecordingPausedAndFinalizing() passed after 0.422 seconds.
+✔ Suite "Recording immersive native views" passed after 0.890 seconds.
+◇ Suite "Recording preview lifecycle" started.
+◇ Test activePreviewBecomesAvailableWhenSessionIsReady() started.
+✔ Test activePreviewBecomesAvailableWhenSessionIsReady() passed after 0.010 seconds.
+◇ Test missingScreenAngleFallsBackToRecoveredCamera() started.
+✔ Test missingScreenAngleFallsBackToRecoveredCamera() passed after 0.004 seconds.
+◇ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() started.
+✔ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() passed after 0.013 seconds.
+◇ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() started.
+✔ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() passed after 0.008 seconds.
+◇ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() started.
+✔ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() passed after 0.003 seconds.
+◇ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() started.
+✔ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() passed after 0.003 seconds.
+◇ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() started.
+✔ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() passed after 0.001 seconds.
+✔ Suite "Recording preview lifecycle" passed after 0.047 seconds.
+◇ Suite "Recording storage" started.
+◇ Test configurationBoundsAndSourceKindsAreValidated() started.
+✔ Test configurationBoundsAndSourceKindsAreValidated() passed after 0.001 seconds.
+◇ Test independentSessionsPersistSegmentsAndDerivedDuration() started.
+✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.006 seconds.
+◇ Test activePhasesRecoverAsInterruptedAndKeepMedia() started.
+✔ Test activePhasesRecoverAsInterruptedAndKeepMedia() passed after 0.003 seconds.
+◇ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() started.
+✔ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() passed after 0.002 seconds.
+◇ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() started.
+✔ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() passed after 0.003 seconds.
+◇ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() started.
+✔ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() passed after 0.001 seconds.
+✔ Suite "Recording storage" passed after 0.019 seconds.
+◇ Suite "Recording termination flush" started.
+◇ Test testTerminationWaitsForStopAndPersistsFinalSegmentCallback() started.
+✔ Test testTerminationWaitsForStopAndPersistsFinalSegmentCallback() passed after 0.004 seconds.
+◇ Test testTerminationJoinsAnAlreadyRunningStopInsteadOfReturningEarly() started.
+✔ Test testTerminationJoinsAnAlreadyRunningStopInsteadOfReturningEarly() passed after 0.004 seconds.
+◇ Test testTerminationStopsAndFinalizesPausedRecording() started.
+✔ Test testTerminationStopsAndFinalizesPausedRecording() passed after 0.004 seconds.
+◇ Test testConcurrentTerminationWaitersShareOneUnderlyingStop() started.
+✔ Test testConcurrentTerminationWaitersShareOneUnderlyingStop() passed after 0.004 seconds.
+✔ Suite "Recording termination flush" passed after 0.018 seconds.
+✔ Test run with 194 tests in 30 suites passed after 20.485 seconds.
+	/tmp/prosio-recording-clean-build-20260930/Logs/Test/Test-Prosio-2026.09.30_19-36-49-+0800.xcresult
+** TEST SUCCEEDED **

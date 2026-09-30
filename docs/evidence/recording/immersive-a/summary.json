@@ -1,0 +1,51 @@
+{
+  "date": "2026-09-30",
+  "direction": "A",
+  "production": "native AppKit desktop overlays + SwiftUI toolbar and previews",
+  "mainApplication": {
+    "build": "passed",
+    "hostlessTests": 235,
+    "xctest": 41,
+    "swiftTesting": 194,
+    "failures": 0,
+    "isolatedSource": "HEAD baseline plus recording-only changes, no Presentation drafts",
+    "installedAppLaunchedOrReplaced": false
+  },
+  "recordingModule": {
+    "hostlessTests": 89,
+    "xctest": 41,
+    "swiftTesting": 48,
+    "failures": 0
+  },
+  "deviceValidationTool": {
+    "releaseTests": 8,
+    "failures": 0,
+    "frozenSources": 15,
+    "launched": false
+  },
+  "visualEvidence": {
+    "source": "Production SwiftUI/AppKit view layer rendering with fake inventory and engine",
+    "images": [
+      "toolbar-light.png",
+      "toolbar-dark.png",
+      "toolbar-small.png",
+      "control-recording.png",
+      "control-paused.png",
+      "control-finalizing.png"
+    ],
+    "realCapture": false
+  },
+  "pending": [
+    "Physical dual-camera preview and source transitions",
+    "Actual permission dialog visibility",
+    "Real display/window/region overlay gestures on multi-screen hardware",
+    "Physical disconnect/reconnect and long running recording",
+    "Four-editor import acceptance"
+  ],
+  "finalNativeVerification": {
+    "tests": 10,
+    "failures": 0,
+    "after": "Final menu window-level adjustment and deterministic audio fixture",
+    "build": "main app rebuilt and signed"
+  }
+}

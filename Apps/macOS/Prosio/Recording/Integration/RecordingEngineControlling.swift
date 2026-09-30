@@ -1,4 +1,11 @@
 import Foundation
+import AVFoundation
+
+/// Optional capability: fakes and recording-only clients need not provide preview sessions.
+@MainActor
+protocol RecordingCameraPreviewProviding: AnyObject {
+    func previewSession(for sourceID: String) -> AVCaptureSession?
+}
 
 @MainActor
 protocol RecordingEngineControlling: AnyObject {

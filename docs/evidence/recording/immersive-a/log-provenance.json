@@ -1,0 +1,22 @@
+{
+  "device-tool-test.log": {
+    "originalSHA256": "5dc16916adb029f25980324e6e74a5f20dc6d303ede23315bab2db24436c1c0a",
+    "retained": "Test discovery, case results, totals, diagnostics, result bundle references; build commands omitted and trailing whitespace removed"
+  },
+  "recording-test.log": {
+    "originalSHA256": "3ce50fbea9b1805d4d070afa4748c272517e41ef47d3f3e0e3d40a1f9760a3d8",
+    "retained": "Test discovery, case results, totals, diagnostics, result bundle references; build commands omitted and trailing whitespace removed"
+  },
+  "native-focused-test.log": {
+    "originalSHA256": "47082d67768cb1432644914a80bc840af5abfa7c4d5f5fa873fa7bf5186df870",
+    "retained": "Test discovery, case results, totals, diagnostics, result bundle references; build commands omitted and trailing whitespace removed"
+  },
+  "integration-test.log": {
+    "originalSHA256": "cb5da05c692e1f4fa09e65cac1519c7b83d9b0f76abb3a0ca4976240bcc015b4",
+    "retained": "Test discovery, case results, totals, diagnostics, result bundle references; build commands omitted and trailing whitespace removed"
+  },
+  "final-ui-test.log": {
+    "originalSHA256": "aa247f1482f2238c024b444afc63320d36bbbd26a3719c31ca6070276bac1ce9",
+    "retained": "Test cases, totals, diagnostics and result bundle path; build commands omitted, whitespace stripped"
+  }
+}

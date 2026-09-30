@@ -15,6 +15,11 @@ targets:
     sources:
       - path: ../../Apps/macOS/Prosio/Recording
       - path: ../../Apps/macOS/Prosio/UI/Recording
+      - path: ../../Apps/macOS/Prosio/Capture/Domain/CaptureGeometry.swift
+      - path: ../../Apps/macOS/Prosio/Capture/Interaction/CaptureInteractionGeometry.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingDesktopSelectionTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingCameraPreviewTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingImmersiveWorkflowTests.swift
       - path: ../../Apps/macOS/Prosio/System/PermissionsManager.swift
       - path: ../../Apps/macOS/Prosio/System/ProsioLog.swift
       - path: ../../Apps/macOS/ProsioTests/RecordingStoreTests.swift

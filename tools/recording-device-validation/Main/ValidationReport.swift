@@ -35,7 +35,7 @@ nonisolated struct ValidationBuildEvidence: Codable, Sendable {
             let evidence = try JSONDecoder().decode(Self.self, from: Data(contentsOf: url))
             let hexadecimal = CharacterSet(charactersIn: "0123456789abcdef")
             guard !evidence.revision.isEmpty, !evidence.builtAtUTC.isEmpty,
-                  evidence.sourceSHA256.count == 14,
+                  evidence.sourceSHA256.count == 15,
                   evidence.sourceSHA256.values.allSatisfy({ hash in
                       hash.count == 64 && hash.unicodeScalars.allSatisfy { hexadecimal.contains($0) }
                   }) else { throw CocoaError(.fileReadCorruptFile) }

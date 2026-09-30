@@ -113,7 +113,7 @@ nonisolated final class ValidationReportTests: XCTestCase {
             builtAtUTC: "2026-09-30", sourceSHA256: [:])
         try JSONEncoder().encode(incomplete).write(to: url)
         XCTAssertThrowsError(try ValidationBuildEvidence.load(from: url))
-        let hashes = Dictionary(uniqueKeysWithValues: (0..<14).map { ("source\($0).swift", String(repeating: "a", count: 64)) })
+        let hashes = Dictionary(uniqueKeysWithValues: (0..<15).map { ("source\($0).swift", String(repeating: "a", count: 64)) })
         let valid = ValidationBuildEvidence(revision: "revision", workingTreeDirty: true,
             builtAtUTC: "2026-09-30", sourceSHA256: hashes)
         try JSONEncoder().encode(valid).write(to: url)

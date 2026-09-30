@@ -112,9 +112,10 @@ struct RecordingCaptureCallbacks: Sendable {
     }
 }
 
-@MainActor private final class RecordingDeviceSource: RecordingCaptureSource {
+@MainActor private final class RecordingDeviceSource: RecordingCaptureSource, RecordingCameraPreviewProviding {
     let capture: RecordingDeviceCapture
     init(capture: RecordingDeviceCapture) { self.capture = capture }
     func start() async throws { try await capture.start() }
     func stop() async { await capture.stop() }
+    func previewSession(for sourceID: String) -> AVCaptureSession? { capture.session }
 }

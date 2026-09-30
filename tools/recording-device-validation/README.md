@@ -5,7 +5,7 @@
 - 主工具：`app.prosio.validation.recording`
 - 动态窗口：`app.prosio.validation.recording.fixture`
 
-直接编译当前生产 RecordingEngine、完整 Platform、Domain、Storage 和引擎协议。没有替换生产采集后端。构建时保存源码快照及 SHA-256，报告包含实际编译的源文件身份。构建脚本在签名前检查包内 `Contents/Resources/validation-build.json` 与全部 14 份冻结源码相符；该文件缺失、损坏或身份字段不完整时，工具明确拒绝请求权限和开始捕获。
+直接编译当前生产 RecordingEngine、完整 Platform、Domain、Storage 和引擎协议。没有替换生产采集后端。构建时保存源码快照及 SHA-256，报告包含实际编译的源文件身份。构建脚本在签名前检查包内 `Contents/Resources/validation-build.json` 与全部 15 份冻结源码相符；该文件缺失、损坏或身份字段不完整时，工具明确拒绝请求权限和开始捕获。
 
 ## 构建和审查
 

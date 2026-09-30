@@ -1,0 +1,34 @@
+/tmp/prosio-recording-device-validation.RnzAHG/sources/tools/recording-device-validation/Main/ValidationReport.swift:78:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+/tmp/prosio-recording-device-validation.RnzAHG/sources/tools/recording-device-validation/Main/ValidationReport.swift:88:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+/tmp/prosio-recording-device-validation.RnzAHG/sources/tools/recording-device-validation/Main/ValidationReport.swift:113:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+/tmp/prosio-recording-device-validation.RnzAHG/sources/tools/recording-device-validation/Main/ValidationReport.swift:78:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+/tmp/prosio-recording-device-validation.RnzAHG/sources/tools/recording-device-validation/Main/ValidationReport.swift:88:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+/tmp/prosio-recording-device-validation.RnzAHG/sources/tools/recording-device-validation/Main/ValidationReport.swift:113:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+2026-09-30 19:34:14.427 appintentsmetadataprocessor[1977:9665201] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+Test Suite 'All tests' started at 2026-09-30 19:34:18.230.
+Test Suite 'RecordingDeviceValidationTests.xctest' started at 2026-09-30 19:34:18.231.
+Test Suite 'ValidationReportTests' started at 2026-09-30 19:34:18.231.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testCancelledPreparationFinalizesWithoutClaimingMediaVerified]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testCancelledPreparationFinalizesWithoutClaimingMediaVerified]' passed (0.002 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testFixtureHandshakeRejectsOtherProcessBundleOrZeroWindow]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testFixtureHandshakeRejectsOtherProcessBundleOrZeroWindow]' passed (0.001 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testFixtureSelfExitDecisionOnlyChecksOwnedParentIdentity]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testFixtureSelfExitDecisionOnlyChecksOwnedParentIdentity]' passed (0.001 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testMissingOrCorruptMediaCannotBecomeVerifiedEvidence]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testMissingOrCorruptMediaCannotBecomeVerifiedEvidence]' passed (0.011 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testPCMInspectionMeasuresDecodedAudioRatherThanSignalSchedule]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testPCMInspectionMeasuresDecodedAudioRatherThanSignalSchedule]' passed (0.621 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testPermissionFailureFinalizesOptionalReportWithoutOverlappingAccess]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testPermissionFailureFinalizesOptionalReportWithoutOverlappingAccess]' passed (0.002 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testRealSyntheticMediaInspectionAndMissingSourceAreDistinct]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testRealSyntheticMediaInspectionAndMissingSourceAreDistinct]' passed (0.287 seconds).
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testRequiredBuildEvidenceRejectsMissingCorruptAndIncompleteIdentity]' started.
+Test Case '-[RecordingDeviceValidationTests.ValidationReportTests testRequiredBuildEvidenceRejectsMissingCorruptAndIncompleteIdentity]' passed (0.002 seconds).
+Test Suite 'ValidationReportTests' passed at 2026-09-30 19:34:19.159.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.926 (0.929) seconds
+Test Suite 'RecordingDeviceValidationTests.xctest' passed at 2026-09-30 19:34:19.160.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.926 (0.929) seconds
+Test Suite 'All tests' passed at 2026-09-30 19:34:19.160.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.926 (0.930) seconds
+	/tmp/prosio-recording-device-validation.RnzAHG/test-build/Logs/Test/Test-RecordingDeviceValidationTests-2026.09.30_19-33-53-+0800.xcresult
+** TEST SUCCEEDED **

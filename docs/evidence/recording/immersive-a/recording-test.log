@@ -1,0 +1,219 @@
+2026-09-30 19:33:06.782 appintentsmetadataprocessor[1463:9661167] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+Test Suite 'All tests' started at 2026-09-30 19:33:07.892.
+Test Suite 'RecordingValidationTests.xctest' started at 2026-09-30 19:33:07.893.
+Test Suite 'RecordingCameraPreviewTests' started at 2026-09-30 19:33:07.893.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testCancellingUpdateAwaitsSourceRelease]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testCancellingUpdateAwaitsSourceRelease]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testChangingSelectionWaitsForOldSetupBeforeNewDeviceStarts]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testChangingSelectionWaitsForOldSetupBeforeNewDeviceStarts]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testDeniedPermissionDoesNotCreateSource]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testDeniedPermissionDoesNotCreateSource]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testDisconnectedSourceReconnectsSameDeviceAndStaleCallbackCannotHideNewSession]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testDisconnectedSourceReconnectsSameDeviceAndStaleCallbackCannotHideNewSession]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testDiscoveryAndEmptySelectionNeverAuthorizeOrCreateSessions]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testDiscoveryAndEmptySelectionNeverAuthorizeOrCreateSessions]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testLimitAndDuplicatePhysicalDeviceRejectedBeforePermission]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testLimitAndDuplicatePhysicalDeviceRejectedBeforePermission]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testRecordingEngineExposesExactExistingCameraSessionOnly]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testRecordingEngineExposesExactExistingCameraSessionOnly]' passed (0.028 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testRevokedPermissionDoesNotPromptDuringRetry]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testRevokedPermissionDoesNotPromptDuringRetry]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testStoppedSetupReturningDeviceErrorStillReportsCancellation]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testStoppedSetupReturningDeviceErrorStillReportsCancellation]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testStopWaitsForInFlightSetupAndOldCallbackCannotReviveIt]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testStopWaitsForInFlightSetupAndOldCallbackCannotReviveIt]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testStopWaitsForReconnectSetup]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testStopWaitsForReconnectSetup]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testTemporaryMicrophoneFilterRetainsNormalUSBAndVirtualDevices]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testTemporaryMicrophoneFilterRetainsNormalUSBAndVirtualDevices]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testTwoSessionsAreRetainedAndStopReleasesBoth]' started.
+Test Case '-[RecordingValidationTests.RecordingCameraPreviewTests testTwoSessionsAreRetainedAndStopReleasesBoth]' passed (0.001 seconds).
+Test Suite 'RecordingCameraPreviewTests' passed at 2026-09-30 19:33:07.948.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.046 (0.055) seconds
+Test Suite 'RecordingEngineLifecycleTests' started at 2026-09-30 19:33:07.948.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' passed (0.289 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' passed (0.016 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFreshScreenReceiverCannotReuseOldStreamFrameBeforeOwnComplete]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFreshScreenReceiverCannotReuseOldStreamFrameBeforeOwnComplete]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' passed (0.009 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' passed (0.015 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldScreenCallbacksCannotReviveFailedOrReplacedAttempt]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldScreenCallbacksCannotReviveFailedOrReplacedAttempt]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeScreenLossKeepsDevicesRunningAndRecoversOriginalTargetWithGap]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeScreenLossKeepsDevicesRunningAndRecoversOriginalTargetWithGap]' passed (0.074 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testScreenPermissionAndUnavailableTargetRetriesStayIsolatedAndNeverSubstitute]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testScreenPermissionAndUnavailableTargetRetriesStayIsolatedAndNeverSubstitute]' passed (0.011 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testScreenStartupDelegateFailureRollsBackDevices]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testScreenStartupDelegateFailureRollsBackDevices]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectPreparation]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectPreparation]' passed (0.009 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectStart]' started.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopWaitsForScreenReconnectStart]' passed (0.008 seconds).
+Test Suite 'RecordingEngineLifecycleTests' passed at 2026-09-30 19:33:08.433.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.482 (0.485) seconds
+Test Suite 'RecordingPlatformTests' started at 2026-09-30 19:33:08.433.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (0.389 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.058 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (0.284 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.119 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.166 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' passed (0.001 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' started.
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.019 seconds).
+Test Suite 'RecordingPlatformTests' passed at 2026-09-30 19:33:09.471.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.035 (1.037) seconds
+Test Suite 'RecordingRecoveryTests' started at 2026-09-30 19:33:09.471.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' started.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' passed (0.063 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' started.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' passed (0.059 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' started.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' passed (0.064 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' started.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' passed (0.062 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' started.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' passed (0.061 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' started.
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' passed (0.077 seconds).
+Test Suite 'RecordingRecoveryTests' passed at 2026-09-30 19:33:09.859.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.387 (0.389) seconds
+Test Suite 'RecordingValidationTests.xctest' passed at 2026-09-30 19:33:09.860.
+	 Executed 41 tests, with 0 failures (0 unexpected) in 1.950 (1.967) seconds
+Test Suite 'All tests' passed at 2026-09-30 19:33:09.860.
+	 Executed 41 tests, with 0 failures (0 unexpected) in 1.950 (1.968) seconds
+◇ Test run started.
+◇ Suite "Recording coordinator lifecycle" started.
+◇ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() started.
+✔ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() passed after 0.793 seconds.
+◇ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() started.
+✔ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() passed after 0.008 seconds.
+◇ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() started.
+✔ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() passed after 0.005 seconds.
+◇ Test testCallbacksFromFinishedSessionCannotChangeNextSession() started.
+✔ Test testCallbacksFromFinishedSessionCannotChangeNextSession() passed after 0.007 seconds.
+◇ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() started.
+✔ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() passed after 0.006 seconds.
+◇ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() started.
+✔ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() passed after 0.004 seconds.
+◇ Test testCameraDisconnectChangesOnlyThatSourceAvailability() started.
+✔ Test testCameraDisconnectChangesOnlyThatSourceAvailability() passed after 0.004 seconds.
+◇ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() started.
+✔ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() passed after 0.013 seconds.
+✔ Suite "Recording coordinator lifecycle" passed after 0.844 seconds.
+◇ Suite "Live recording desktop selection" started.
+◇ Test displayMappingUsesBothScreenFramesWithoutApplyingRetinaPixelsTwice() started.
+✔ Test displayMappingUsesBothScreenFramesWithoutApplyingRetinaPixelsTwice() passed after 0.001 seconds.
+◇ Test windowHitUsesLiveFrontOrderAndExcludesApplicationChrome() started.
+✔ Test windowHitUsesLiveFrontOrderAndExcludesApplicationChrome() passed after 0.001 seconds.
+◇ Test selectionLockAndControlHoverPreserveTheChosenTarget() started.
+✔ Test selectionLockAndControlHoverPreserveTheChosenTarget() passed after 0.001 seconds.
+◇ Test freshClickRetargetsWhileHoverAndControlsRespectTheLock() started.
+✔ Test freshClickRetargetsWhileHoverAndControlsRespectTheLock() passed after 0.001 seconds.
+◇ Test regionMoveAndAllEightResizeHandlesStayOnTheirOriginalScreen() started.
+✔ Test regionMoveAndAllEightResizeHandlesStayOnTheirOriginalScreen() passed after 0.001 seconds.
+✔ Suite "Live recording desktop selection" passed after 0.001 seconds.
+◇ Suite "Editor handoff boundary" started.
+◇ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() started.
+✔ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() passed after 0.006 seconds.
+◇ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() started.
+✔ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() passed after 0.012 seconds.
+◇ Test unverifiedJianyingAndMulticamHaveExplicitGates() started.
+✔ Test unverifiedJianyingAndMulticamHaveExplicitGates() passed after 0.002 seconds.
+◇ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() started.
+✔ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() passed after 0.002 seconds.
+◇ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() started.
+✔ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() passed after 0.004 seconds.
+◇ Test mixedFrameRatesKeepSourceRangesDistinctFromTimelinePlacement() started.
+✔ Test mixedFrameRatesKeepSourceRangesDistinctFromTimelinePlacement() passed after 0.001 seconds.
+✔ Suite "Editor handoff boundary" passed after 0.029 seconds.
+◇ Suite "Recording media handoff" started.
+◇ Test allEditorsPreserveSegmentsAndIndependentAudio() started.
+✔ Test allEditorsPreserveSegmentsAndIndependentAudio() passed after 0.190 seconds.
+◇ Test audioOnlyRecoveredSessionExportsWithoutInventingMulticamOrVideo() started.
+✔ Test audioOnlyRecoveredSessionExportsWithoutInventingMulticamOrVideo() passed after 0.160 seconds.
+◇ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() started.
+✔ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() passed after 0.339 seconds.
+◇ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() started.
+✔ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() passed after 0.131 seconds.
+◇ Test cancellationAndCollisionPreserveExistingDestination() started.
+✔ Test cancellationAndCollisionPreserveExistingDestination() passed after 0.126 seconds.
+◇ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() started.
+✔ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() passed after 0.145 seconds.
+◇ Test longSegmentedTimelinePreservesExactRationalOffsets() started.
+✔ Test longSegmentedTimelinePreservesExactRationalOffsets() passed after 0.013 seconds.
+✔ Suite "Recording media handoff" passed after 1.109 seconds.
+◇ Suite "Recording immersive workflow" started.
+◇ Test targetReadinessTracksSelectionAndModeChanges() started.
+✔ Test targetReadinessTracksSelectionAndModeChanges() passed after 0.001 seconds.
+◇ Test cameraSelectionEnforcesTwoUniqueSourcesAndCompactsOnRemoval() started.
+✔ Test cameraSelectionEnforcesTwoUniqueSourcesAndCompactsOnRemoval() passed after 0.001 seconds.
+◇ Test busyRecordingDoesNotMutateSelectionOrCameraAssignments() started.
+✔ Test busyRecordingDoesNotMutateSelectionOrCameraAssignments() passed after 0.003 seconds.
+✔ Suite "Recording immersive workflow" passed after 0.005 seconds.
+◇ Suite "Recording immersive native views" started.
+◇ Test selectionToolbarRendersAtLightDarkAndCompactSizes() started.
+✔ Test selectionToolbarRendersAtLightDarkAndCompactSizes() passed after 0.732 seconds.
+◇ Test compactControlRendersRecordingPausedAndFinalizing() started.
+✔ Test compactControlRendersRecordingPausedAndFinalizing() passed after 0.387 seconds.
+✔ Suite "Recording immersive native views" passed after 1.120 seconds.
+◇ Suite "Recording preview lifecycle" started.
+◇ Test activePreviewBecomesAvailableWhenSessionIsReady() started.
+✔ Test activePreviewBecomesAvailableWhenSessionIsReady() passed after 0.009 seconds.
+◇ Test missingScreenAngleFallsBackToRecoveredCamera() started.
+✔ Test missingScreenAngleFallsBackToRecoveredCamera() passed after 0.005 seconds.
+◇ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() started.
+✔ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() passed after 0.015 seconds.
+◇ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() started.
+✔ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() passed after 0.008 seconds.
+◇ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() started.
+✔ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() passed after 0.003 seconds.
+◇ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() started.
+✔ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() passed after 0.003 seconds.
+◇ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() started.
+✔ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() passed after 0.001 seconds.
+✔ Suite "Recording preview lifecycle" passed after 0.049 seconds.
+◇ Suite "Recording storage" started.
+◇ Test configurationBoundsAndSourceKindsAreValidated() started.
+✔ Test configurationBoundsAndSourceKindsAreValidated() passed after 0.005 seconds.
+◇ Test independentSessionsPersistSegmentsAndDerivedDuration() started.
+✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.035 seconds.
+◇ Test activePhasesRecoverAsInterruptedAndKeepMedia() started.
+✔ Test activePhasesRecoverAsInterruptedAndKeepMedia() passed after 0.005 seconds.
+◇ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() started.
+✔ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() passed after 0.006 seconds.
+◇ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() started.
+✔ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() passed after 0.004 seconds.
+◇ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() started.
+✔ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() passed after 0.002 seconds.
+✔ Suite "Recording storage" passed after 0.061 seconds.
+◇ Suite "Recording termination flush" started.
+◇ Test testTerminationWaitsForStopAndPersistsFinalSegmentCallback() started.
+✔ Test testTerminationWaitsForStopAndPersistsFinalSegmentCallback() passed after 0.006 seconds.
+◇ Test testTerminationJoinsAnAlreadyRunningStopInsteadOfReturningEarly() started.
+✔ Test testTerminationJoinsAnAlreadyRunningStopInsteadOfReturningEarly() passed after 0.056 seconds.
+◇ Test testTerminationStopsAndFinalizesPausedRecording() started.
+✔ Test testTerminationStopsAndFinalizesPausedRecording() passed after 0.006 seconds.
+◇ Test testConcurrentTerminationWaitersShareOneUnderlyingStop() started.
+✔ Test testConcurrentTerminationWaitersShareOneUnderlyingStop() passed after 0.059 seconds.
+✔ Suite "Recording termination flush" passed after 0.130 seconds.
+✔ Test run with 48 tests in 9 suites passed after 3.352 seconds.
+	/tmp/prosio-recording-immersive-build-20260930/Logs/Test/Test-RecordingValidation-2026.09.30_19-32-59-+0800.xcresult
+** TEST SUCCEEDED **

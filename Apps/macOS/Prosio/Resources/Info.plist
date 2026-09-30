@@ -25,7 +25,7 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Prosio records the cameras you select only when you start screen recording.</string>
+	<string>Prosio previews and records only the cameras you select for screen recording.</string>
 	<key>NSCameraUseContinuityCameraDeviceType</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>

@@ -1,0 +1,38 @@
+2026-09-30 19:43:16.306 appintentsmetadataprocessor[3004:9676109] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-09-30 19:43:17.045 appintentsmetadataprocessor[3008:9676142] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+Test Suite 'Selected tests' started at 2026-09-30 19:43:20.241.
+Test Suite 'ProsioTests.xctest' started at 2026-09-30 19:43:20.242.
+Test Suite 'ProsioTests.xctest' passed at 2026-09-30 19:43:20.242.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-30 19:43:20.242.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+◇ Suite "Live recording desktop selection" started.
+◇ Test displayMappingUsesBothScreenFramesWithoutApplyingRetinaPixelsTwice() started.
+✔ Test displayMappingUsesBothScreenFramesWithoutApplyingRetinaPixelsTwice() passed after 0.001 seconds.
+◇ Test windowHitUsesLiveFrontOrderAndExcludesApplicationChrome() started.
+✔ Test windowHitUsesLiveFrontOrderAndExcludesApplicationChrome() passed after 0.001 seconds.
+◇ Test selectionLockAndControlHoverPreserveTheChosenTarget() started.
+✔ Test selectionLockAndControlHoverPreserveTheChosenTarget() passed after 0.009 seconds.
+◇ Test freshClickRetargetsWhileHoverAndControlsRespectTheLock() started.
+✔ Test freshClickRetargetsWhileHoverAndControlsRespectTheLock() passed after 0.001 seconds.
+◇ Test regionMoveAndAllEightResizeHandlesStayOnTheirOriginalScreen() started.
+✔ Test regionMoveAndAllEightResizeHandlesStayOnTheirOriginalScreen() passed after 0.001 seconds.
+✔ Suite "Live recording desktop selection" passed after 0.012 seconds.
+◇ Suite "Recording immersive workflow" started.
+◇ Test targetReadinessTracksSelectionAndModeChanges() started.
+✔ Test targetReadinessTracksSelectionAndModeChanges() passed after 0.819 seconds.
+◇ Test cameraSelectionEnforcesTwoUniqueSourcesAndCompactsOnRemoval() started.
+✔ Test cameraSelectionEnforcesTwoUniqueSourcesAndCompactsOnRemoval() passed after 0.001 seconds.
+◇ Test busyRecordingDoesNotMutateSelectionOrCameraAssignments() started.
+✔ Test busyRecordingDoesNotMutateSelectionOrCameraAssignments() passed after 0.010 seconds.
+✔ Suite "Recording immersive workflow" passed after 0.831 seconds.
+◇ Suite "Recording immersive native views" started.
+◇ Test selectionToolbarRendersAtLightDarkAndCompactSizes() started.
+✔ Test selectionToolbarRendersAtLightDarkAndCompactSizes() passed after 0.795 seconds.
+◇ Test compactControlRendersRecordingPausedAndFinalizing() started.
+✔ Test compactControlRendersRecordingPausedAndFinalizing() passed after 0.411 seconds.
+✔ Suite "Recording immersive native views" passed after 1.207 seconds.
+✔ Test run with 10 tests in 3 suites passed after 2.051 seconds.
+	/tmp/prosio-recording-clean-build-20260930/Logs/Test/Test-Prosio-2026.09.30_19-43-06-+0800.xcresult
+** TEST SUCCEEDED **

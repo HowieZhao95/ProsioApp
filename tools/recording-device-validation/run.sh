@@ -144,11 +144,11 @@ assert packaged.is_file(), 'Required build evidence was not packaged in the app'
 payload = json.loads(packaged.read_text())
 assert payload == json.loads(pathlib.Path(sys.argv[2]).read_text()), 'Packaged build evidence differs from the build snapshot'
 hashes = payload['sourceSHA256']
-assert len(hashes) == 14, f'Expected 14 frozen Swift sources, found {len(hashes)}'
+assert len(hashes) == 15, f'Expected 15 frozen Swift sources, found {len(hashes)}'
 for relative, expected in hashes.items():
     actual = hashlib.sha256((pathlib.Path(sys.argv[3]) / relative).read_bytes()).hexdigest()
     assert actual == expected, f'Frozen source identity mismatch: {relative}'
-print('Packaged build evidence verified: 14 frozen source hashes match')
+print('Packaged build evidence verified: 15 frozen source hashes match')
 PY
 codesign --force --sign "$validation_identity" --timestamp=none --options runtime "$validation_app/Contents/Helpers/RecordingValidationFixture.app"
 codesign --force --sign "$validation_identity" --timestamp=none --options runtime --entitlements "$repo_root/tools/recording-device-validation/Validation.entitlements" "$validation_app"

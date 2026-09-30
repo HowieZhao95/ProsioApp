@@ -32,7 +32,7 @@ final class RecordingCoordinator {
     private(set) var activeSession: RecordingSessionManifest?
     private(set) var phase: RecordingPhase = .ready
     private(set) var countdown: Int?
-    private(set) var message: String?
+    private(set) var message: String? { didSet { updateSelectionPanelSize() } }
     private(set) var sourceAvailability: [String: Bool] = [:]
     private(set) var inventory: RecordingSourceInventory?
     private(set) var loadingSources = false
@@ -40,6 +40,24 @@ final class RecordingCoordinator {
     private(set) var openingEditor = false
     private(set) var exportMessage: String?
     private(set) var permissionRecovery: RecordingPermissionRecovery?
+    @ObservationIgnored private var desktopSelection: RecordingDesktopSelectionController?
+    @ObservationIgnored private var selectionPanel: NSPanel?
+    @ObservationIgnored private var completionPanel: NSPanel?
+    @ObservationIgnored private var cameraPanels: [String: NSPanel] = [:]
+    @ObservationIgnored private let cameraPreview = RecordingCameraPreviewController()
+    @ObservationIgnored private var previewTask: Task<Void, Never>?
+    @ObservationIgnored private var previewRefreshTask: Task<Void, Never>?
+    @ObservationIgnored private var selectionTask: Task<Void, Never>?
+    @ObservationIgnored private var previewShutdownTask: Task<Void, Never>?
+    private(set) var closingSelection = false
+    @ObservationIgnored private var selectionGeneration = UUID()
+    @ObservationIgnored private var immersiveRecording = false
+    @ObservationIgnored private var hiddenPreviews = Set<String>()
+    @ObservationIgnored private var lastPanelScreenID: UInt32?
+    private(set) var selectionActive = false
+    private(set) var selectionTargetReady = false
+    private(set) var cameraPreviewStatuses: [String: RecordingCameraPreviewStatus] = [:]
+    private(set) var previewRevision = 0
     var selectedSessionID: UUID?
     var screenMode = "display"
     var displayID: UInt32 = 0
@@ -58,6 +76,8 @@ final class RecordingCoordinator {
         default: false
         }
     }
+
+    var blocksOtherCapture: Bool { isBusy || selectionActive || closingSelection }
 
     var isCapturing: Bool { phase == .recording || phase == .paused }
     var elapsedSeconds: TimeInterval {
@@ -131,6 +151,265 @@ final class RecordingCoordinator {
         Task { await refreshSources() }
     }
 
+    func showSelection() {
+        guard !isBusy, !closingSelection, canBegin() else { return }
+        if selectionActive { selectionPanel?.orderFrontRegardless(); return }
+        closeCompletion()
+        window?.orderOut(nil)
+        selectionActive = true
+        selectionTargetReady = false
+        immersiveRecording = false
+        hiddenPreviews.removeAll()
+        onActivity(true)
+        let generation = UUID()
+        selectionGeneration = generation
+        showSelectionPanel()
+        selectionTask = Task { [weak self] in
+            guard let self else { return }
+            await self.refreshSelectionSources()
+            guard self.selectionActive, self.selectionGeneration == generation else { return }
+        }
+    }
+
+    func refreshSelectionSources() async {
+        guard selectionActive, !isBusy else { return }
+        await refreshSources()
+        guard selectionActive, let inventory, permissionRecovery != .screen else { return }
+        if let desktopSelection { desktopSelection.updateInventory(inventory) }
+        else {
+            let selector = RecordingDesktopSelectionController(inventory: inventory,
+                mode: RecordingSelectionMode(rawValue: screenMode) ?? .display,
+                onSelection: { [weak self] in self?.updateSelectionTarget($0) },
+                onCancel: { [weak self] in self?.dismissSelection() },
+                onConfirm: { [weak self] in self?.begin() })
+            desktopSelection = selector
+            selector.present()
+            // The desktop starts in pointer-selected display mode, never a persisted region.
+            if screenMode == "region" { region = nil }
+        }
+        selectionPanel?.orderFrontRegardless()
+        syncCameraPreviews()
+    }
+
+    func updateSelectionTarget(_ target: RecordingScreenTarget?) {
+        guard !isBusy else { return }
+        selectionTargetReady = target != nil
+        guard let target else { return }
+        switch target {
+        case .display(let id): displayID = id; screenMode = "display"
+        case .window(let id): windowID = id; screenMode = "window"
+        case .region(let id, let rect): displayID = id; region = rect; screenMode = "region"
+        }
+        if let screen = desktopSelection?.currentScreen {
+            let id = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? UInt32
+            if lastPanelScreenID != id {
+                lastPanelScreenID = id
+                positionBottom(selectionPanel, on: screen)
+                positionCameraPanels(on: screen)
+            }
+        }
+    }
+
+    func setSelectionMode(_ mode: RecordingSelectionMode) {
+        guard !isBusy, screenMode != mode.rawValue else { return }
+        screenMode = mode.rawValue
+        selectionTargetReady = false
+        region = nil
+        desktopSelection?.setMode(mode)
+    }
+
+    func dismissSelection() {
+        guard selectionActive else { return }
+        selectionActive = false
+        selectionTargetReady = false
+        selectionGeneration = UUID()
+        selectionTask?.cancel()
+        selectionTask = nil
+        cancelPreparation()
+        desktopSelection?.dismiss()
+        desktopSelection = nil
+        selectionPanel?.orderOut(nil)
+        selectionPanel = nil
+        previewTask?.cancel()
+        closeCameraPanels()
+        closingSelection = true
+        previewShutdownTask = Task { [weak self] in
+            guard let self else { return }
+            if let previewTask = self.previewTask { await previewTask.value }
+            await self.cameraPreview.stopAll()
+            self.closingSelection = false
+            self.previewShutdownTask = nil
+            self.onActivity(self.blocksOtherCapture)
+        }
+    }
+
+    var selectedCameraIDs: [String] { [cameraOneID, cameraTwoID].filter { !$0.isEmpty } }
+    var selectedCameraSources: [RecordingSource] {
+        let ids = selectedCameraIDs
+        return ids.compactMap { id in inventory?.cameras.first { $0.id == id } }
+    }
+    func isCameraSelected(_ id: String) -> Bool { cameraOneID == id || cameraTwoID == id }
+    func toggleCamera(_ id: String) {
+        guard !isBusy, isCameraSelected(id) || inventory?.cameras.contains(where: { $0.id == id }) == true else { return }
+        if cameraOneID == id { cameraOneID = cameraTwoID; cameraTwoID = "" }
+        else if cameraTwoID == id { cameraTwoID = "" }
+        else if cameraOneID.isEmpty { cameraOneID = id }
+        else if cameraTwoID.isEmpty { cameraTwoID = id }
+        else { return }
+        hiddenPreviews.remove(id)
+        if selectedCameraIDs.isEmpty, permissionRecovery == .camera { permissionRecovery = nil; message = nil }
+        syncCameraPreviews()
+    }
+    func clearCameras() {
+        guard !isBusy else { return }
+        cameraOneID = ""; cameraTwoID = ""
+        if permissionRecovery == .camera { permissionRecovery = nil; message = nil }
+        syncCameraPreviews()
+    }
+    func microphoneName(_ source: RecordingSource) -> String {
+        source.name.hasPrefix("CADefaultDeviceAggregate-") ? "系统默认麦克风" : source.name
+    }
+    func cameraPreviewSession(for id: String) -> AVCaptureSession? {
+        _ = previewRevision
+        if phase == .preparing { return nil }
+        if isCapturing || phase == .finalizing {
+            return (engine as? any RecordingCameraPreviewProviding)?.previewSession(for: id)
+        }
+        return selectionActive ? cameraPreview.session(for: id) : nil
+    }
+    func previewStatusText(for id: String) -> String? {
+        if isCapturing || phase == .finalizing {
+            return sourceAvailability[id] == false ? "连接中，其他来源继续录制" : cameraPreviewSession(for: id) == nil ? "等待画面" : nil
+        }
+        switch cameraPreviewStatuses[id] ?? .starting {
+        case .idle, .starting: return "正在连接摄像头…"
+        case .live: return nil
+        case .disconnected: return "等待摄像头重新连接…"
+        case .failed(let reason): return reason
+        }
+    }
+    var previewsHidden: Bool { !hiddenPreviews.isEmpty }
+    func closeCameraPreview(_ id: String) {
+        if isBusy { hiddenPreviews.insert(id); cameraPanels[id]?.orderOut(nil) }
+        else { toggleCamera(id) }
+    }
+    func togglePreviewVisibility() {
+        if hiddenPreviews.isEmpty { hiddenPreviews.formUnion(selectedCameraSources.map(\.id)) }
+        else { hiddenPreviews.removeAll() }
+        syncCameraPanels()
+    }
+    func closeCompletion() { completionPanel?.orderOut(nil); completionPanel = nil }
+
+    private func syncCameraPreviews() {
+        guard selectionActive, !isBusy else { return }
+        syncCameraPanels()
+        cameraPreview.onStatus = { [weak self] id, status in
+            guard let self else { return }
+            self.cameraPreviewStatuses[id] = status
+            self.previewRevision += 1
+        }
+        previewTask?.cancel()
+        let sources = selectedCameraSources
+        previewTask = Task { [weak self] in
+            guard let self else { return }
+            let awaitingPermission = !sources.isEmpty && AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined
+            if awaitingPermission { self.setPreparationControlsHidden(true) }
+            defer { if awaitingPermission { self.setPreparationControlsHidden(false) } }
+            do { try await self.cameraPreview.update(sources: sources) }
+            catch {
+                if !(error is CancellationError), self.selectionActive {
+                    self.message = error.localizedDescription
+                    if AVCaptureDevice.authorizationStatus(for: .video) == .denied { self.permissionRecovery = .camera }
+                }
+            }
+        }
+    }
+
+    private func syncCameraPanels() {
+        let sources = selectedCameraSources
+        let desired = Set(sources.map(\.id))
+        for id in Array(cameraPanels.keys) where !desired.contains(id) {
+            cameraPanels.removeValue(forKey: id)?.orderOut(nil)
+        }
+        for source in sources {
+            if cameraPanels[source.id] == nil {
+                let panel = makeOverlayPanel(size: CGSize(width: 224, height: 158))
+                panel.isMovableByWindowBackground = true
+                panel.contentView = NSHostingView(rootView: RecordingCameraPreviewCard(coordinator: self, source: source))
+                cameraPanels[source.id] = panel
+                positionCameraPanels(on: desktopSelection?.currentScreen ?? pointerScreen())
+            }
+            cameraPanels[source.id]?.level = isBusy ? .floating : NSWindow.Level(rawValue: RecordingDesktopSelectionController.overlayLevel.rawValue + 1)
+            if hiddenPreviews.contains(source.id) { cameraPanels[source.id]?.orderOut(nil) }
+            else { cameraPanels[source.id]?.orderFrontRegardless() }
+        }
+    }
+    private func positionCameraPanels(on screen: NSScreen?) {
+        guard let screen else { return }
+        for (index, source) in selectedCameraSources.enumerated() {
+            cameraPanels[source.id]?.setFrameOrigin(NSPoint(x: screen.visibleFrame.maxX - 248,
+                y: screen.visibleFrame.maxY - 184 - CGFloat(index) * 174))
+        }
+    }
+    private func closeCameraPanels() {
+        previewRefreshTask?.cancel(); previewRefreshTask = nil
+        for panel in cameraPanels.values { panel.orderOut(nil); panel.contentView = nil }
+        cameraPanels.removeAll()
+    }
+    private func makeOverlayPanel(size: CGSize) -> NSPanel {
+        let panel = NSPanel(contentRect: CGRect(origin: .zero, size: size),
+            styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        panel.level = NSWindow.Level(rawValue: RecordingDesktopSelectionController.overlayLevel.rawValue + 1)
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = true
+        panel.hidesOnDeactivate = false
+        panel.sharingType = .none
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
+        return panel
+    }
+    private func pointerScreen() -> NSScreen? {
+        NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
+    }
+    private func positionBottom(_ panel: NSPanel?, on screen: NSScreen?) {
+        guard let panel, let screen else { return }
+        panel.setFrameOrigin(NSPoint(x: screen.visibleFrame.midX - panel.frame.width / 2,
+                                     y: screen.visibleFrame.minY + 24))
+    }
+    private func setPreparationControlsHidden(_ hidden: Bool) {
+        guard selectionActive else { return }
+        desktopSelection?.setTemporarilyHidden(hidden)
+        if hidden {
+            selectionPanel?.orderOut(nil)
+            for panel in cameraPanels.values { panel.orderOut(nil) }
+        } else {
+            selectionPanel?.orderFrontRegardless()
+            syncCameraPanels()
+        }
+    }
+    private func showSelectionPanel() {
+        let panel = makeOverlayPanel(size: CGSize(width: 510, height: message == nil ? 74 : 142))
+        panel.contentView = NSHostingView(rootView: RecordingSelectionToolbarView(coordinator: self)
+            .frame(maxHeight: .infinity, alignment: .top))
+        selectionPanel = panel
+        positionBottom(panel, on: pointerScreen())
+        panel.orderFrontRegardless()
+    }
+    private func updateSelectionPanelSize() {
+        guard let selectionPanel else { return }
+        let height: CGFloat = message == nil ? 74 : 142
+        selectionPanel.setFrame(CGRect(x: selectionPanel.frame.minX, y: selectionPanel.frame.minY,
+                                      width: 510, height: height), display: true)
+    }
+    private func showCompletion() {
+        let panel = makeOverlayPanel(size: CGSize(width: 370, height: 64))
+        panel.level = .floating
+        panel.contentView = NSHostingView(rootView: RecordingCompletionView(coordinator: self))
+        completionPanel = panel
+        positionBottom(panel, on: pointerScreen())
+        panel.orderFrontRegardless()
+    }
+
     func configuration() throws -> RecordingConfiguration {
         guard let inventory else { throw RecordingWorkflowError.message("请先刷新录制来源。") }
         let target: RecordingScreenTarget
@@ -173,7 +452,7 @@ final class RecordingCoordinator {
     }
 
     func begin() {
-        guard !isBusy, preparationTask == nil else { return }
+        guard !isBusy, preparationTask == nil, !selectionActive || selectionTargetReady else { return }
         do {
             let configuration = try configuration()
             guard canBegin() else {
@@ -197,9 +476,13 @@ final class RecordingCoordinator {
         var created: RecordingSessionManifest?
         do {
             if requestPermissions { try await authorize(configuration) }
+            previewTask?.cancel()
+            if let previewTask { await previewTask.value }
+            await cameraPreview.stopAll()
             try Task.checkCancellation()
             for remaining in stride(from: countdownSeconds, through: 1, by: -1) {
                 countdown = remaining
+                desktopSelection?.setCountdown(remaining)
                 try await Task.sleep(for: .seconds(1))
             }
             countdown = nil
@@ -227,12 +510,28 @@ final class RecordingCoordinator {
             try await engine.start(configuration: configuration, directory: store.directory(for: sessionID))
             try Task.checkCancellation()
             phase = .recording
+            selectionTargetReady = false
             elapsedOrigin = ProcessInfo.processInfo.systemUptime
             pausedDuration = 0
             pauseOrigin = nil
             try updateActive { $0.phase = .recording }
             persistPreferences()
-            if requestPermissions { showControlPanel() }
+            if requestPermissions {
+                immersiveRecording = selectionActive
+                selectionActive = false
+                selectionTargetReady = false
+                desktopSelection?.dismiss(); desktopSelection = nil
+                selectionPanel?.orderOut(nil); selectionPanel = nil
+                showControlPanel()
+                syncCameraPanels()
+                previewRefreshTask = Task { [weak self] in
+                    while !Task.isCancelled {
+                        try? await Task.sleep(for: .seconds(2))
+                        guard let self, !Task.isCancelled, self.isBusy else { return }
+                        self.previewRevision += 1
+                    }
+                }
+            }
         } catch {
             // Keep callbacks attached until writers finish so any completed raw file is retained.
             try? await engine?.stop()
@@ -247,6 +546,8 @@ final class RecordingCoordinator {
             phase = .failed
             message = error is CancellationError ? "已取消准备录制。" : error.localizedDescription
             releaseEngine()
+            desktopSelection?.setCountdown(nil)
+            if selectionActive { syncCameraPreviews() }
         }
         countdown = nil
         preparationTask = nil
@@ -306,13 +607,19 @@ final class RecordingCoordinator {
             message = "录制已结束；已完成原片保留。\(error.localizedDescription)"
         }
         releaseEngine()
-        if window != nil {
+        if immersiveRecording { immersiveRecording = false; showCompletion() }
+        else if window != nil {
             NSApp.activate(ignoringOtherApps: true)
             window?.makeKeyAndOrderFront(nil)
         }
     }
 
     func flushForTermination() async {
+        dismissSelection()
+        if let previewShutdownTask { await previewShutdownTask.value }
+        previewTask?.cancel()
+        if let previewTask { await previewTask.value }
+        await cameraPreview.stopAll()
         preparationTask?.cancel()
         if let preparationTask { await preparationTask.value }
         if isCapturing { await stop() }
@@ -323,6 +630,11 @@ final class RecordingCoordinator {
 
     private func authorize(_ configuration: RecordingConfiguration) async throws {
         permissions.refresh()
+        let needsAuthorization = !CGPreflightScreenCaptureAccess()
+            || (configuration.microphone != nil && permissions.statuses[.microphone] != .granted)
+            || (!configuration.cameras.isEmpty && AVCaptureDevice.authorizationStatus(for: .video) != .authorized)
+        if needsAuthorization { setPreparationControlsHidden(true) }
+        defer { if needsAuthorization { setPreparationControlsHidden(false) } }
         if !CGPreflightScreenCaptureAccess() {
             _ = CGRequestScreenCaptureAccess()
             guard CGPreflightScreenCaptureAccess() else {
@@ -473,6 +785,7 @@ final class RecordingCoordinator {
     private func releaseEngine() {
         controlPanel?.orderOut(nil)
         controlPanel = nil
+        closeCameraPanels()
         engine?.onSegment = nil
         engine?.onWarning = nil
         engine?.onSourceStatus = nil
@@ -482,25 +795,16 @@ final class RecordingCoordinator {
         sourceAvailability = [:]
         elapsedOrigin = nil
         pauseOrigin = nil
-        onActivity(false)
+        onActivity(blocksOtherCapture)
     }
 
     private func showControlPanel() {
         window?.orderOut(nil)
-        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 380, height: 106),
-                            styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        let panel = makeOverlayPanel(size: CGSize(width: 248, height: 60))
         panel.level = .floating
         panel.isMovableByWindowBackground = true
-        panel.isOpaque = false
-        panel.backgroundColor = .clear
-        panel.hasShadow = true
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        panel.contentView = NSHostingView(rootView:
-            RecordingControlView(coordinator: self, compact: true)
-                .padding(10).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16)))
-        if let screen = NSScreen.main {
-            panel.setFrameOrigin(NSPoint(x: screen.visibleFrame.maxX - 400, y: screen.visibleFrame.minY + 24))
-        }
+        panel.contentView = NSHostingView(rootView: RecordingCompactControlView(coordinator: self))
+        positionBottom(panel, on: pointerScreen())
         controlPanel = panel
         panel.orderFrontRegardless()
     }

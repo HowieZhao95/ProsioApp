@@ -38,7 +38,7 @@ targets:
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
         NSMicrophoneUsageDescription: Prosio uses your microphone when you start voice input, meeting recording, or screen recording.
-        NSCameraUsageDescription: Prosio records the cameras you select only when you start screen recording.
+        NSCameraUsageDescription: Prosio previews and records only the cameras you select for screen recording.
         NSCameraUseContinuityCameraDeviceType: true
         NSSpeechRecognitionUsageDescription: Prosio uses on-device speech recognition when you are offline or in private mode.
     entitlements:

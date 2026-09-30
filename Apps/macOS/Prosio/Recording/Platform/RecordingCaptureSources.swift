@@ -69,7 +69,7 @@ nonisolated final class RecordingScreenReceiver: NSObject, SCStreamOutput, SCStr
 nonisolated final class RecordingDeviceCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate, @unchecked Sendable {
     private let queue: DispatchQueue
     private let sampleQueue: DispatchQueue
-    private let session = AVCaptureSession()
+    let session = AVCaptureSession()
     private let clockRelay = RecordingCaptureClockRelay()
     private let source: RecordingSource
     private let writer: RecordingMediaWriter

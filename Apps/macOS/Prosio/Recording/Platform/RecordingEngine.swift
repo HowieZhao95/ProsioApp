@@ -1,6 +1,7 @@
 import AppKit
 import AVFoundation
 import CoreMedia
+import CoreAudio
 import ScreenCaptureKit
 
 nonisolated struct RecordingDisplayChoice: Identifiable, Sendable {
@@ -27,7 +28,7 @@ nonisolated struct RecordingSourceInventory: Sendable {
 }
 
 @MainActor
-final class RecordingEngine: RecordingEngineControlling {
+final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewProviding {
     static func discoverSources() async throws -> RecordingSourceInventory {
         let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
         let displays = content.displays.map { display in
@@ -48,9 +49,27 @@ final class RecordingEngine: RecordingEngineControlling {
 
     static func discoverMicrophones() -> [RecordingSource] {
         var seen = Set<String>()
-        return AVCaptureDevice.DiscoverySession(deviceTypes: [.microphone, .external], mediaType: .audio, position: .unspecified).devices.filter { $0.isConnected && seen.insert($0.uniqueID).inserted }.map {
+        let defaultID = AVCaptureDevice.default(for: .audio)?.uniqueID
+        let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [.microphone, .external], mediaType: .audio, position: .unspecified).devices.filter {
+            $0.isConnected && !Self.isTemporaryAggregateMicrophone(id: $0.uniqueID, name: $0.localizedName) && seen.insert($0.uniqueID).inserted
+        }.sorted {
+            let a = ($0.uniqueID == defaultID ? 0 : $0.transportType == kAudioDeviceTransportTypeBuiltIn ? 1 : 2)
+            let b = ($1.uniqueID == defaultID ? 0 : $1.transportType == kAudioDeviceTransportTypeBuiltIn ? 1 : 2)
+            return a != b ? a < b : $0.localizedName.localizedStandardCompare($1.localizedName) == .orderedAscending
+        }
+        return devices.map {
             RecordingSource(id: "microphone-\($0.uniqueID)", kind: .microphone, name: $0.localizedName, deviceID: $0.uniqueID)
         }
+    }
+
+    static func isTemporaryAggregateMicrophone(id: String, name: String) -> Bool {
+        id.hasPrefix("CADefaultDeviceAggregate-") || name.hasPrefix("CADefaultDeviceAggregate-")
+    }
+
+    func previewSession(for sourceID: String) -> AVCaptureSession? {
+        guard active, startupTask == nil, configuration?.cameras.contains(where: { $0.id == sourceID }) == true,
+              !disconnected.contains(sourceID) else { return nil }
+        return (devices[sourceID] as? any RecordingCameraPreviewProviding)?.previewSession(for: sourceID)
     }
 
     var onSegment: ((RecordingSegment) -> Void)?
