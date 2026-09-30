@@ -1,12 +1,16 @@
 import AVFoundation
 import CoreMedia
+import CoreGraphics
 import ScreenCaptureKit
 
 /// A narrow lifecycle seam; fake sources exercise the actual engine without TCC or hardware.
 @MainActor protocol RecordingCaptureSource: AnyObject {
     func start() async throws
     func stop() async
+    func deactivate()
 }
+
+@MainActor extension RecordingCaptureSource { func deactivate() {} }
 
 struct RecordingCaptureCallbacks: Sendable {
     let failed: @MainActor @Sendable (String) -> Void
@@ -14,7 +18,7 @@ struct RecordingCaptureCallbacks: Sendable {
 }
 
 @MainActor protocol RecordingCaptureBackend: AnyObject {
-    func makeScreen(configuration: RecordingConfiguration, writer: RecordingMediaWriter,
+    func makeScreen(configuration: RecordingConfiguration, isRetry: Bool, writer: RecordingMediaWriter,
                     callbacks: RecordingCaptureCallbacks) async throws -> any RecordingCaptureSource
     func makeDevice(source: RecordingSource, framesPerSecond: Int, writer: RecordingMediaWriter,
                     callbacks: RecordingCaptureCallbacks) -> any RecordingCaptureSource
@@ -34,8 +38,11 @@ struct RecordingCaptureCallbacks: Sendable {
             }))
     }
 
-    func makeScreen(configuration: RecordingConfiguration, writer: RecordingMediaWriter,
+    func makeScreen(configuration: RecordingConfiguration, isRetry: Bool, writer: RecordingMediaWriter,
                     callbacks: RecordingCaptureCallbacks) async throws -> any RecordingCaptureSource {
+        if isRetry, !CGPreflightScreenCaptureAccess() {
+            throw RecordingPlatformError.unavailable("屏幕录制权限暂时不可用；恢复权限后将重连原来源。")
+        }
         let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: false)
         let (filter, size, rect) = try Self.filter(for: configuration.screenTarget, content: content)
         let settings = SCStreamConfiguration()
@@ -95,8 +102,9 @@ struct RecordingCaptureCallbacks: Sendable {
     private var stopped = false
     init(stream: SCStream, receiver: RecordingScreenReceiver) { self.stream = stream; self.receiver = receiver }
     func start() async throws { try await stream.startCapture() }
+    func deactivate() { receiver.beginStopping() }
     func stop() async {
-        receiver.beginStopping()
+        deactivate()
         guard !stopped else { return }
         stopped = true
         // stopCapture also releases a stream whose start returned an error; errors are expected if never started.

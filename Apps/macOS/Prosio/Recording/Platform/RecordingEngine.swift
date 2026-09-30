@@ -74,6 +74,7 @@ final class RecordingEngine: RecordingEngineControlling {
     private var disconnected = Set<String>()
     private var active = false
     private var paused = false
+    private var lastScreenRetryWarning: String?
 
     init(backend: any RecordingCaptureBackend = RecordingSystemCaptureBackend(), monitoringInterval: Duration? = .seconds(2)) {
         self.backend = backend
@@ -120,8 +121,10 @@ final class RecordingEngine: RecordingEngineControlling {
                 }
             })
         writer = media
-        screen = try await backend.makeScreen(configuration: configuration, writer: media,
-            callbacks: screenCallbacks(token: token))
+        let screenAttempt = UUID()
+        sourceGenerations["screen"] = screenAttempt
+        screen = try await backend.makeScreen(configuration: configuration, isRetry: false, writer: media,
+            callbacks: screenCallbacks(token: token, attempt: screenAttempt))
         try requireActive(token)
         for source in selectedDevices(configuration) {
             let attempt = UUID()
@@ -134,8 +137,10 @@ final class RecordingEngine: RecordingEngineControlling {
             guard !failedAttempts.contains(attempt) else { throw RecordingPlatformError.unavailable("来源“\(source.name)”启动时已断开。") }
             onSourceStatus?(source.id, true)
         }
+        guard !failedAttempts.contains(screenAttempt) else { throw RecordingPlatformError.unavailable("屏幕来源未能启动。") }
         try await screen?.start()
         try requireActive(token)
+        guard !failedAttempts.contains(screenAttempt) else { throw RecordingPlatformError.unavailable("屏幕来源未能启动。") }
         onSourceStatus?("screen", true)
         if configuration.capturesSystemAudio { onSourceStatus?("systemAudio", true) }
         if let monitoringInterval {
@@ -165,6 +170,7 @@ final class RecordingEngine: RecordingEngineControlling {
         if let stoppingTask { try await stoppingTask.value; return }
         guard generation != nil else { return }
         active = false
+        screen?.deactivate()
         startupTask?.cancel()
         monitoring?.cancel()
         monitoring = nil
@@ -190,6 +196,7 @@ final class RecordingEngine: RecordingEngineControlling {
         disconnected.removeAll()
         configuration = nil
         paused = false
+        lastScreenRetryWarning = nil
         generation = nil
         startupTask = nil
         stoppingTask = nil
@@ -205,15 +212,78 @@ final class RecordingEngine: RecordingEngineControlling {
         configuration.cameras + (configuration.microphone.map { [$0] } ?? [])
     }
 
-    private func screenCallbacks(token: UUID) -> RecordingCaptureCallbacks {
+    private func screenCallbacks(token: UUID, attempt: UUID) -> RecordingCaptureCallbacks {
         RecordingCaptureCallbacks(failed: { [weak self] message in
-            guard let self, generation == token, active else { return }
-            onFailure?(message)
+            guard let self, generation == token, sourceGenerations["screen"] == attempt, active else { return }
+            failedAttempts.insert(attempt)
+            if startupTask != nil {
+                // The startup task observes this flag and rolls back all sources before returning.
+                screen?.deactivate()
+            } else {
+                screenDisconnected(token: token, message: message)
+            }
         }, availabilityChanged: { [weak self] available in
-            guard let self, generation == token, active else { return }
+            guard let self, generation == token, sourceGenerations["screen"] == attempt,
+                  !failedAttempts.contains(attempt), active else { return }
             onSourceStatus?("screen", available)
             onWarning?(available ? "屏幕来源已恢复。" : "屏幕来源暂时不可用；其他来源继续录制。")
         })
+    }
+
+    private func screenDisconnected(token: UUID, message: String) {
+        guard active, generation == token else { return }
+        screen?.deactivate()
+        if disconnected.insert("screen").inserted {
+            writer?.setSourceAvailable("screen", false)
+            onSourceStatus?("screen", false)
+            if configuration?.capturesSystemAudio == true {
+                writer?.setSourceAvailable("systemAudio", false)
+                onSourceStatus?("systemAudio", false)
+            }
+            onWarning?("屏幕来源已断开，摄像头和麦克风继续录制；正在等待原来源恢复。\(message)")
+        }
+        guard sourceOperations["screen"] == nil, let screen else { return }
+        sourceOperations["screen"] = Task { @MainActor [weak self] in
+            await screen.stop()
+            guard let self, generation == token else { return }
+            sourceOperations["screen"] = nil
+        }
+    }
+
+    private func retryScreen(configuration: RecordingConfiguration, writer: RecordingMediaWriter, token: UUID) {
+        sourceOperations["screen"] = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { if generation == token { sourceOperations["screen"] = nil } }
+            do {
+                try requireActive(token)
+                let attempt = UUID()
+                if let previous = sourceGenerations["screen"] { failedAttempts.remove(previous) }
+                sourceGenerations["screen"] = attempt
+                // Backend preflights permission on retries. A retry never changes the selected target.
+                screen = try await backend.makeScreen(configuration: configuration, isRetry: true, writer: writer,
+                    callbacks: screenCallbacks(token: token, attempt: attempt))
+                try requireActive(token)
+                guard !failedAttempts.contains(attempt) else { throw RecordingPlatformError.unavailable("屏幕来源暂时不可用。") }
+                try await screen?.start()
+                try requireActive(token)
+                guard !failedAttempts.contains(attempt) else { throw RecordingPlatformError.unavailable("屏幕来源暂时不可用。") }
+                writer.setSourceAvailable("screen", true)
+                onSourceStatus?("screen", true)
+                if configuration.capturesSystemAudio {
+                    writer.setSourceAvailable("systemAudio", true)
+                    onSourceStatus?("systemAudio", true)
+                }
+                disconnected.remove("screen")
+                lastScreenRetryWarning = nil
+                onWarning?("原屏幕来源已恢复，断连期间的时间间隙已保留。")
+            } catch {
+                screen?.deactivate()
+                await screen?.stop()
+                guard active, generation == token else { return }
+                let warning = error.localizedDescription
+                if lastScreenRetryWarning != warning { onWarning?(warning); lastScreenRetryWarning = warning }
+            }
+        }
     }
 
     private func deviceCallbacks(_ source: RecordingSource, token: UUID, attempt: UUID) -> RecordingCaptureCallbacks {
@@ -243,6 +313,9 @@ final class RecordingEngine: RecordingEngineControlling {
     func monitorSources() {
         guard active, startupTask == nil, let token = generation, let configuration, let writer else { return }
         writer.checkDisk()
+        if disconnected.contains("screen"), sourceOperations["screen"] == nil {
+            retryScreen(configuration: configuration, writer: writer, token: token)
+        }
         for source in selectedDevices(configuration) {
             let exists = backend.availableDevices(kind: source.kind).contains { $0.deviceID == source.deviceID }
             if !exists { sourceDisconnected(source, token: token) }

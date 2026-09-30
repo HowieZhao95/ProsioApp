@@ -8,6 +8,7 @@ nonisolated final class RecordingScreenReceiver: NSObject, SCStreamOutput, SCStr
     let onFailure: @Sendable (String) -> Void
     let onScreenAvailability: @Sendable (Bool) -> Void
     private var screenAvailable = true
+    private var screenFrames = RecordingScreenFrameRelay()
     private let lock = NSLock()
     private var stopping = false
 
@@ -21,15 +22,20 @@ nonisolated final class RecordingScreenReceiver: NSObject, SCStreamOutput, SCStr
     func beginStopping() { lock.lock(); stopping = true; lock.unlock() }
 
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
+        lock.lock(); let inactive = stopping; lock.unlock()
+        guard !inactive else { return }
         switch type {
         case .screen:
             guard let attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, createIfNecessary: false) as? [[SCStreamFrameInfo: Any]],
                   let status = attachments.first?[.status] as? Int else { return }
             if status == SCFrameStatus.complete.rawValue {
                 changeAvailability(true)
+                screenFrames.acceptComplete(sampleBuffer)
                 writer.append(sampleBuffer, sourceID: "screen", kind: .screen)
-            } else if status == SCFrameStatus.idle.rawValue {
-                writer.advanceScreen(at: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
+            } else if status == SCFrameStatus.idle.rawValue,
+                      let frame = screenFrames.idleFrame(at: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) {
+                // Each receiver owns its last complete frame. A fresh receiver never reuses a failed stream's image.
+                writer.append(frame, sourceID: "screen", kind: .screen)
             } else if status == SCFrameStatus.suspended.rawValue || status == SCFrameStatus.blank.rawValue {
                 changeAvailability(false)
             } else if status == SCFrameStatus.stopped.rawValue {
@@ -199,4 +205,20 @@ nonisolated private final class RecordingCaptureClockRelay: @unchecked Sendable 
     private var clock: CMClock?
     func set(_ clock: CMClock?) { lock.lock(); self.clock = clock; lock.unlock() }
     func get() -> CMClock? { lock.lock(); defer { lock.unlock() }; return clock }
+}
+
+/// Accessed only on the SCStream output queue, and discarded with that stream's receiver.
+nonisolated struct RecordingScreenFrameRelay {
+    private var latestComplete: CMSampleBuffer?
+    mutating func acceptComplete(_ sample: CMSampleBuffer) { latestComplete = sample }
+    func idleFrame(at timestamp: CMTime) -> CMSampleBuffer? {
+        guard let latestComplete, timestamp.isNumeric,
+              timestamp >= CMSampleBufferGetPresentationTimeStamp(latestComplete) else { return nil }
+        var timing = CMSampleTimingInfo(duration: CMSampleBufferGetDuration(latestComplete),
+            presentationTimeStamp: timestamp, decodeTimeStamp: .invalid)
+        var frame: CMSampleBuffer?
+        guard CMSampleBufferCreateCopyWithNewTiming(allocator: kCFAllocatorDefault, sampleBuffer: latestComplete,
+            sampleTimingEntryCount: 1, sampleTimingArray: &timing, sampleBufferOut: &frame) == noErr else { return nil }
+        return frame
+    }
 }
