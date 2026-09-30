@@ -1,0 +1,33 @@
+{
+  "blocksOtherCapture": true,
+  "closingSelection": false,
+  "completionAvailable": false,
+  "displayID": 1,
+  "elapsed": 26.482590041705407,
+  "events": [
+    "reservation:true",
+    "reservation:true",
+    "syntheticAuthorization: no permission requested",
+    "start: SYNTHETIC fixture only; no inputs, device capture or permissions; directory=/tmp/prosio-recording-complete-ui/sessions/CD82BD8F-D61D-407C-AC68-7351E9ACD6F3",
+    "pause: SYNTHETIC UI state only; no capture"
+  ],
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "paused",
+  "physicalCapturesStarted": false,
+  "previewStarted": 0,
+  "previewStopped": 0,
+  "region": {
+    "height": 350,
+    "width": 500,
+    "x": 350,
+    "y": 250
+  },
+  "screenMode": "region",
+  "selectedCameras": [],
+  "selectionActive": false,
+  "selectionReady": false,
+  "sessions": 2,
+  "systemAudio": true,
+  "windowID": 20479
+}

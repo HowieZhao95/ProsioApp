@@ -1,0 +1,34 @@
+{
+  "xmlParses": true,
+  "assetCount": 5,
+  "mediaReferenceCount": 5,
+  "multicamAngleCount": 3,
+  "files": [
+    {
+      "file": "FD1CFF10-AC35-49A8-AA12-79246B02975F.mov",
+      "sha256": "e1baafe21f31371d07da0d06862e18ce7ebedfe3cafb30f2cc7e19e36999fbf4",
+      "matchesOriginal": true
+    },
+    {
+      "file": "0F1C3B00-3958-42E6-958E-7456294BA2D5.mov",
+      "sha256": "2d20da29cc3a242585a7d15abd742e29530bd35d7d453cdde469fc3aed57870a",
+      "matchesOriginal": true
+    },
+    {
+      "file": "C719C56B-0651-412C-BA83-B87808CB761F.m4a",
+      "sha256": "855be076654c20f6dd535971f10fe9a41528fd08f651121329e4f3350e001fa3",
+      "matchesOriginal": true
+    },
+    {
+      "file": "5F94B912-B6E1-44AD-A4AB-FAA4E8BBDAB7.mov",
+      "sha256": "d9dd59d413ce4397b71524184b44f213e85a58fc8fec2e5488ab4d26b35ed7b9",
+      "matchesOriginal": true
+    },
+    {
+      "file": "071FA725-AAE5-41B9-BAFF-85DEB557E6EB.m4a",
+      "sha256": "855be076654c20f6dd535971f10fe9a41528fd08f651121329e4f3350e001fa3",
+      "matchesOriginal": true
+    }
+  ],
+  "editorImportVerified": false
+}

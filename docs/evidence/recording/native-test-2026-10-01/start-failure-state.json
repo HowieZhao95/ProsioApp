@@ -1,0 +1,32 @@
+{
+  "blocksOtherCapture": true,
+  "closingSelection": false,
+  "completionAvailable": false,
+  "displayID": 1,
+  "elapsed": 0,
+  "events": [
+    "reservation:true",
+    "reservation:true",
+    "syntheticAuthorization: no permission requested",
+    "reservation:true",
+    "reservation:false",
+    "reservation:true",
+    "reservation:true",
+    "syntheticAuthorization: no permission requested",
+    "reservation:true"
+  ],
+  "message": "\u5408\u6210\u542f\u52a8\u5931\u8d25\uff0c\u8bf7\u518d\u6b21\u5f55\u5236\u3002",
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "failed",
+  "physicalCapturesStarted": false,
+  "previewStarted": 0,
+  "previewStopped": 0,
+  "screenMode": "display",
+  "selectedCameras": [],
+  "selectionActive": true,
+  "selectionReady": true,
+  "sessions": 4,
+  "systemAudio": true,
+  "windowID": 20479
+}

@@ -1,0 +1,29 @@
+{
+  "blocksOtherCapture": true,
+  "closingSelection": false,
+  "completionAvailable": false,
+  "displayID": 1,
+  "elapsed": 0,
+  "events": [
+    "reservation:true"
+  ],
+  "microphone": true,
+  "permissionsRequested": false,
+  "phase": "ready",
+  "physicalCapturesStarted": false,
+  "previewStarted": 0,
+  "previewStopped": 0,
+  "region": {
+    "height": 350,
+    "width": 500.0000000000001,
+    "x": 475,
+    "y": 325
+  },
+  "screenMode": "region",
+  "selectedCameras": [],
+  "selectionActive": true,
+  "selectionReady": true,
+  "sessions": 2,
+  "systemAudio": true,
+  "windowID": 20479
+}

@@ -1,0 +1,278 @@
+{
+  "auditScope" : "finalizedMediaMetadata",
+  "auditedCount" : 5,
+  "crossSourceSpansMicroseconds" : {
+    "screen" : [
+      0,
+      2000000
+    ],
+    "systemAudio" : [
+      0,
+      2000000
+    ],
+    "ui-camera-1" : [
+      0,
+      2000000
+    ],
+    "ui-camera-2" : [
+      0,
+      2000000
+    ],
+    "ui-microphone" : [
+      0,
+      2000000
+    ]
+  },
+  "evidenceLimit" : "AVFoundation isPlayable and track metadata checks do not decode every frame or prove real-device lip-sync, two-hour drift, or editor import acceptance.",
+  "failedCount" : 0,
+  "informationalGapCount" : 0,
+  "inputCompleted" : true,
+  "inputFailures" : [
+
+  ],
+  "inputKind" : "manifest",
+  "inputPath" : "\/tmp\/prosio-native-ui-export-20261001\/录制-F38AA3DC-F61B3A\/recording.json",
+  "inputWarnings" : [
+
+  ],
+  "mediaRoot" : "\/tmp\/prosio-native-ui-export-20261001\/录制-F38AA3DC-F61B3A",
+  "noCompletedMedia" : false,
+  "passedCount" : 5,
+  "segmentCount" : 5,
+  "segments" : [
+    {
+      "assetDurationSeconds" : 2,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "id" : "C719C56B-0651-412C-BA83-B87808CB761F",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "Media\/C719C56B-0651-412C-BA83-B87808CB761F.m4a",
+      "sourceID" : "ui-microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 2,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 2,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "id" : "071FA725-AAE5-41B9-BAFF-85DEB557E6EB",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "Media\/071FA725-AAE5-41B9-BAFF-85DEB557E6EB.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 2,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 2,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "id" : "0F1C3B00-3958-42E6-958E-7456294BA2D5",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "Media\/0F1C3B00-3958-42E6-958E-7456294BA2D5.mov",
+      "sourceID" : "ui-camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 360,
+          "encodedWidth" : 640,
+          "mediaType" : "vide",
+          "naturalHeight" : 360,
+          "naturalWidth" : 640,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 2,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 2,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "id" : "FD1CFF10-AC35-49A8-AA12-79246B02975F",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "Media\/FD1CFF10-AC35-49A8-AA12-79246B02975F.mov",
+      "sourceID" : "ui-camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 360,
+          "encodedWidth" : 640,
+          "mediaType" : "vide",
+          "naturalHeight" : 360,
+          "naturalWidth" : 640,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 2,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 2,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "id" : "5F94B912-B6E1-44AD-A4AB-FAA4E8BBDAB7",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "Media\/5F94B912-B6E1-44AD-A4AB-FAA4E8BBDAB7.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        2000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 360,
+          "encodedWidth" : 640,
+          "mediaType" : "vide",
+          "naturalHeight" : 360,
+          "naturalWidth" : 640,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 2,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    }
+  ],
+  "snapshotIsPartial" : false,
+  "sources" : [
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 2000000,
+      "overlapCount" : 0,
+      "segmentCount" : 1,
+      "sourceID" : "screen",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 2000000,
+      "overlapCount" : 0,
+      "segmentCount" : 1,
+      "sourceID" : "systemAudio",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 2000000,
+      "overlapCount" : 0,
+      "segmentCount" : 1,
+      "sourceID" : "ui-camera-1",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 2000000,
+      "overlapCount" : 0,
+      "segmentCount" : 1,
+      "sourceID" : "ui-camera-2",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 2000000,
+      "overlapCount" : 0,
+      "segmentCount" : 1,
+      "sourceID" : "ui-microphone",
+      "timelineIssues" : [
+
+      ]
+    }
+  ],
+  "timelineErrorCount" : 0,
+  "tool" : "ProsioRecordingMediaAudit\/1"
+}

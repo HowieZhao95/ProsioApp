@@ -1,0 +1,20 @@
+{
+  "debug": {
+    "passed": 251,
+    "failed": 0,
+    "xctest": 48,
+    "swiftTesting": 203,
+    "log": "/tmp/prosio-recording-20261001-final-debug.log",
+    "sha256": "0eda3c371fb6ccd519261a1f1acee97e2e4ab8b69f9f49283bf6cba801c18f65",
+    "xcresult": "/tmp/prosio-recording-clean-build-20260930/Logs/Test/Test-Prosio-2026.10.01_02-27-50-+0800.xcresult"
+  },
+  "release": {
+    "passed": 251,
+    "failed": 0,
+    "xctest": 48,
+    "swiftTesting": 203,
+    "log": "/tmp/prosio-recording-20261001-final-release.log",
+    "sha256": "7a8a518c4c493aa358050879782e6c0f9a9b282dac05c82a6f10614c35fc53f1",
+    "xcresult": "/tmp/prosio-recording-clean-build-20260930/Logs/Test/Test-Prosio-2026.10.01_02-29-46-+0800.xcresult"
+  }
+}

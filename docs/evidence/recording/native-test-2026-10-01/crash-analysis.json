@@ -1,0 +1,361 @@
+{
+  "observedCrashes": [
+    {
+      "report": "RecordingUIValidation-2026-10-01-020241.ips",
+      "exception": {
+        "codes": "0x0000000000000000, 0x0000000000000000",
+        "rawCodes": [
+          0,
+          0
+        ],
+        "type": "EXC_CRASH",
+        "signal": "SIGABRT"
+      },
+      "terminationNamespace": "SIGNAL",
+      "frames": [
+        {
+          "symbol": "__pthread_kill",
+          "symbolLocation": 8
+        },
+        {
+          "symbol": "pthread_kill",
+          "symbolLocation": 296
+        },
+        {
+          "symbol": "abort",
+          "symbolLocation": 124
+        },
+        {
+          "symbol": "swift::fatalErrorv(unsigned int, char const*, char*)",
+          "symbolLocation": 144
+        },
+        {
+          "symbol": "swift::fatalError(unsigned int, char const*, ...)",
+          "symbolLocation": 32
+        },
+        {
+          "symbol": "getSuperclassMetadata",
+          "symbolLocation": 868
+        },
+        {
+          "symbol": "_swift_initClassMetadataImpl(swift::TargetClassMetadata<swift::InProcess, swift::TargetAnyClassMetadataObjCInterop<swift::InProcess>>*, swift::ClassLayoutFlags, unsigned long, swift::TargetTypeLayout<swift::InProcess> const* const*, unsigned long*, bool)",
+          "symbolLocation": 100
+        },
+        {
+          "symbol": null,
+          "symbolLocation": null
+        },
+        {
+          "symbol": "swift::GenericCacheEntry::tryInitialize(swift::TargetMetadata<swift::InProcess>*, swift::PrivateMetadataState, swift::PrivateMetadataCompletionContext*)",
+          "symbolLocation": 768
+        },
+        {
+          "symbol": "swift::MetadataCacheEntryBase<swift::GenericCacheEntry, void const*>::doInitialization(swift::MetadataWaitQueue::Worker&, swift::MetadataRequest)",
+          "symbolLocation": 104
+        },
+        {
+          "symbol": "std::__1::pair<swift::GenericCacheEntry*, swift::MetadataResponse> swift::LockingConcurrentMap<swift::GenericCacheEntry, swift::LockingConcurrentMapStorage<swift::GenericCacheEntry, (unsigned short)14>>::getOrInsert<swift::MetadataCacheKey, swift::MetadataRequest&, swift::TargetTypeContextDescriptor<swift::InProcess> const*&, void const* const*&>(swift::MetadataCacheKey, swift::MetadataRequest&, swift::TargetTypeContextDescriptor<swift::InProcess> const*&, void const* const*&)",
+          "symbolLocation": 212
+        },
+        {
+          "symbol": "_swift_getGenericMetadata(swift::MetadataRequest, void const* const*, swift::TargetTypeContextDescriptor<swift::InProcess> const*)",
+          "symbolLocation": 280
+        },
+        {
+          "symbol": "__swift_instantiateGenericMetadata",
+          "symbolLocation": 36
+        },
+        {
+          "symbol": "(anonymous namespace)::DecodedMetadataBuilder::createBoundGenericType(swift::TargetContextDescriptor<swift::InProcess> const*, __swift::__runtime::llvm::ArrayRef<swift::MetadataPackOrValue>, swift::MetadataPackOrValue) const",
+          "symbolLocation": 796
+        },
+        {
+          "symbol": "swift::Demangle::__runtime::TypeDecoder<(anonymous namespace)::DecodedMetadataBuilder>::decodeMangledType(swift::Demangle::__runtime::Node*, unsigned int, bool)",
+          "symbolLocation": 9016
+        },
+        {
+          "symbol": "swift_getTypeByMangledNodeImpl(swift::MetadataRequest, swift::Demangle::__runtime::Demangler&, swift::Demangle::__runtime::Node*, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 880
+        },
+        {
+          "symbol": "swift_getTypeByMangledNode",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getTypeByMangledNameImpl(swift::MetadataRequest, __swift::__runtime::llvm::StringRef, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 1204
+        },
+        {
+          "symbol": "swift_getTypeByMangledName",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitnessSlowImpl(swift::MetadataRequest, swift::TargetWitnessTable<swift::InProcess>*, swift::TargetMetadata<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*)",
+          "symbolLocation": 472
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitness",
+          "symbolLocation": 88
+        },
+        {
+          "symbol": "(anonymous namespace)::DecodedMetadataBuilder::createDependentMemberType(__swift::__runtime::llvm::StringRef, swift::MetadataPackOrValue, swift::TargetProtocolDescriptorRef<swift::InProcess>) const",
+          "symbolLocation": 1116
+        },
+        {
+          "symbol": "swift::Demangle::__runtime::TypeDecoder<(anonymous namespace)::DecodedMetadataBuilder>::decodeMangledType(swift::Demangle::__runtime::Node*, unsigned int, bool)",
+          "symbolLocation": 18880
+        },
+        {
+          "symbol": "swift_getTypeByMangledNodeImpl(swift::MetadataRequest, swift::Demangle::__runtime::Demangler&, swift::Demangle::__runtime::Node*, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 880
+        },
+        {
+          "symbol": "swift_getTypeByMangledNode",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getTypeByMangledNameImpl(swift::MetadataRequest, __swift::__runtime::llvm::StringRef, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 1204
+        },
+        {
+          "symbol": "swift_getTypeByMangledName",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitnessSlowImpl(swift::MetadataRequest, swift::TargetWitnessTable<swift::InProcess>*, swift::TargetMetadata<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*)",
+          "symbolLocation": 472
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitness",
+          "symbolLocation": 88
+        },
+        {
+          "symbol": "ViewResponderFilter.init(inputs:view:)",
+          "symbolLocation": 752
+        },
+        {
+          "symbol": "PlatformViewRepresentableFeature.modifyViewOutputs<A>(outputs:proxy:)",
+          "symbolLocation": 816
+        },
+        {
+          "symbol": "static CoreViewRepresentableFeatureBuffer._VTable.modifyViewOutputs<A>(elt:outputs:proxy:)",
+          "symbolLocation": 132
+        },
+        {
+          "symbol": "CoreViewRepresentableFeatureBuffer.Element.modifyViewOutputs<A>(outputs:proxy:)",
+          "symbolLocation": 84
+        },
+        {
+          "symbol": "static CoreViewRepresentable._makeView(view:inputs:)",
+          "symbolLocation": 2668
+        },
+        {
+          "symbol": "static View.makeDebuggableView(view:inputs:)",
+          "symbolLocation": 292
+        },
+        {
+          "symbol": "static NSViewRepresentable._makeView(view:inputs:)",
+          "symbolLocation": 340
+        },
+        {
+          "symbol": "project #1 <A>(_:) in TypedUnaryViewGenerator.makeView(inputs:indirectMap:)",
+          "symbolLocation": 344
+        },
+        {
+          "symbol": "protocol witness for UnaryViewGenerator.makeView(inputs:indirectMap:) in conformance TypedUnaryViewGenerator",
+          "symbolLocation": 156
+        },
+        {
+          "symbol": "closure #1 in UnaryElements.makeElements(from:inputs:indirectMap:body:)",
+          "symbolLocation": 364
+        },
+        {
+          "symbol": "<deduplicated_symbol>",
+          "symbolLocation": 68
+        }
+      ]
+    },
+    {
+      "report": "RecordingUIValidation-2026-10-01-021150.ips",
+      "exception": {
+        "codes": "0x0000000000000000, 0x0000000000000000",
+        "rawCodes": [
+          0,
+          0
+        ],
+        "type": "EXC_CRASH",
+        "signal": "SIGABRT"
+      },
+      "terminationNamespace": "SIGNAL",
+      "frames": [
+        {
+          "symbol": "__pthread_kill",
+          "symbolLocation": 8
+        },
+        {
+          "symbol": "pthread_kill",
+          "symbolLocation": 296
+        },
+        {
+          "symbol": "abort",
+          "symbolLocation": 124
+        },
+        {
+          "symbol": "swift::fatalErrorv(unsigned int, char const*, char*)",
+          "symbolLocation": 144
+        },
+        {
+          "symbol": "swift::fatalError(unsigned int, char const*, ...)",
+          "symbolLocation": 32
+        },
+        {
+          "symbol": "getSuperclassMetadata",
+          "symbolLocation": 868
+        },
+        {
+          "symbol": "_swift_initClassMetadataImpl(swift::TargetClassMetadata<swift::InProcess, swift::TargetAnyClassMetadataObjCInterop<swift::InProcess>>*, swift::ClassLayoutFlags, unsigned long, swift::TargetTypeLayout<swift::InProcess> const* const*, unsigned long*, bool)",
+          "symbolLocation": 100
+        },
+        {
+          "symbol": null,
+          "symbolLocation": null
+        },
+        {
+          "symbol": "swift::GenericCacheEntry::tryInitialize(swift::TargetMetadata<swift::InProcess>*, swift::PrivateMetadataState, swift::PrivateMetadataCompletionContext*)",
+          "symbolLocation": 768
+        },
+        {
+          "symbol": "swift::MetadataCacheEntryBase<swift::GenericCacheEntry, void const*>::doInitialization(swift::MetadataWaitQueue::Worker&, swift::MetadataRequest)",
+          "symbolLocation": 104
+        },
+        {
+          "symbol": "std::__1::pair<swift::GenericCacheEntry*, swift::MetadataResponse> swift::LockingConcurrentMap<swift::GenericCacheEntry, swift::LockingConcurrentMapStorage<swift::GenericCacheEntry, (unsigned short)14>>::getOrInsert<swift::MetadataCacheKey, swift::MetadataRequest&, swift::TargetTypeContextDescriptor<swift::InProcess> const*&, void const* const*&>(swift::MetadataCacheKey, swift::MetadataRequest&, swift::TargetTypeContextDescriptor<swift::InProcess> const*&, void const* const*&)",
+          "symbolLocation": 212
+        },
+        {
+          "symbol": "_swift_getGenericMetadata(swift::MetadataRequest, void const* const*, swift::TargetTypeContextDescriptor<swift::InProcess> const*)",
+          "symbolLocation": 280
+        },
+        {
+          "symbol": "__swift_instantiateGenericMetadata",
+          "symbolLocation": 36
+        },
+        {
+          "symbol": "(anonymous namespace)::DecodedMetadataBuilder::createBoundGenericType(swift::TargetContextDescriptor<swift::InProcess> const*, __swift::__runtime::llvm::ArrayRef<swift::MetadataPackOrValue>, swift::MetadataPackOrValue) const",
+          "symbolLocation": 796
+        },
+        {
+          "symbol": "swift::Demangle::__runtime::TypeDecoder<(anonymous namespace)::DecodedMetadataBuilder>::decodeMangledType(swift::Demangle::__runtime::Node*, unsigned int, bool)",
+          "symbolLocation": 9016
+        },
+        {
+          "symbol": "swift_getTypeByMangledNodeImpl(swift::MetadataRequest, swift::Demangle::__runtime::Demangler&, swift::Demangle::__runtime::Node*, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 880
+        },
+        {
+          "symbol": "swift_getTypeByMangledNode",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getTypeByMangledNameImpl(swift::MetadataRequest, __swift::__runtime::llvm::StringRef, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 1204
+        },
+        {
+          "symbol": "swift_getTypeByMangledName",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitnessSlowImpl(swift::MetadataRequest, swift::TargetWitnessTable<swift::InProcess>*, swift::TargetMetadata<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*)",
+          "symbolLocation": 472
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitness",
+          "symbolLocation": 88
+        },
+        {
+          "symbol": "(anonymous namespace)::DecodedMetadataBuilder::createDependentMemberType(__swift::__runtime::llvm::StringRef, swift::MetadataPackOrValue, swift::TargetProtocolDescriptorRef<swift::InProcess>) const",
+          "symbolLocation": 1116
+        },
+        {
+          "symbol": "swift::Demangle::__runtime::TypeDecoder<(anonymous namespace)::DecodedMetadataBuilder>::decodeMangledType(swift::Demangle::__runtime::Node*, unsigned int, bool)",
+          "symbolLocation": 18880
+        },
+        {
+          "symbol": "swift_getTypeByMangledNodeImpl(swift::MetadataRequest, swift::Demangle::__runtime::Demangler&, swift::Demangle::__runtime::Node*, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 880
+        },
+        {
+          "symbol": "swift_getTypeByMangledNode",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getTypeByMangledNameImpl(swift::MetadataRequest, __swift::__runtime::llvm::StringRef, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+          "symbolLocation": 1204
+        },
+        {
+          "symbol": "swift_getTypeByMangledName",
+          "symbolLocation": 368
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitnessSlowImpl(swift::MetadataRequest, swift::TargetWitnessTable<swift::InProcess>*, swift::TargetMetadata<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*)",
+          "symbolLocation": 472
+        },
+        {
+          "symbol": "swift_getAssociatedTypeWitness",
+          "symbolLocation": 88
+        },
+        {
+          "symbol": "ViewResponderFilter.init(inputs:view:)",
+          "symbolLocation": 752
+        },
+        {
+          "symbol": "PlatformViewRepresentableFeature.modifyViewOutputs<A>(outputs:proxy:)",
+          "symbolLocation": 816
+        },
+        {
+          "symbol": "static CoreViewRepresentableFeatureBuffer._VTable.modifyViewOutputs<A>(elt:outputs:proxy:)",
+          "symbolLocation": 132
+        },
+        {
+          "symbol": "CoreViewRepresentableFeatureBuffer.Element.modifyViewOutputs<A>(outputs:proxy:)",
+          "symbolLocation": 84
+        },
+        {
+          "symbol": "static CoreViewRepresentable._makeView(view:inputs:)",
+          "symbolLocation": 2668
+        },
+        {
+          "symbol": "static View.makeDebuggableView(view:inputs:)",
+          "symbolLocation": 292
+        },
+        {
+          "symbol": "static NSViewRepresentable._makeView(view:inputs:)",
+          "symbolLocation": 340
+        },
+        {
+          "symbol": "project #1 <A>(_:) in TypedUnaryViewGenerator.makeView(inputs:indirectMap:)",
+          "symbolLocation": 344
+        },
+        {
+          "symbol": "protocol witness for UnaryViewGenerator.makeView(inputs:indirectMap:) in conformance TypedUnaryViewGenerator",
+          "symbolLocation": 156
+        },
+        {
+          "symbol": "closure #1 in UnaryElements.makeElements(from:inputs:indirectMap:body:)",
+          "symbolLocation": 364
+        },
+        {
+          "symbol": "<deduplicated_symbol>",
+          "symbolLocation": 68
+        }
+      ]
+    }
+  ],
+  "systemLogMessage": "failed to demangle superclass of VideoPlayerView from mangled name 'So12AVPlayerViewC': unknown error",
+  "crashedDuring": "saved-material preview",
+  "rawMediaPreserved": true,
+  "beforeDirectAVKitLink": false,
+  "afterDirectAVKitLink": true,
+  "nativePreviewRetestPassed": true,
+  "realDeviceCaptureVerified": false
+}

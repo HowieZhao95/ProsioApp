@@ -320,7 +320,8 @@ final class RecordingDesktopSelectionController {
                                                        backing: .buffered, defer: false)
             panel.level = Self.overlayLevel
             panel.isOpaque = false
-            panel.backgroundColor = .clear
+            // WindowServer can pass clicks through fully transparent pixels inside the selection.
+            panel.backgroundColor = NSColor.black.withAlphaComponent(0.01)
             panel.hasShadow = false
             panel.isReleasedWhenClosed = false
             panel.acceptsMouseMovedEvents = true

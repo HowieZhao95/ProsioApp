@@ -172,7 +172,7 @@ private struct RecordingSessionDetailView: View {
                             ForEach(videoSources) { source in Text(source.name).tag(source.id) }
                         }.pickerStyle(.segmented)
                         if let player = preview.player {
-                            VideoPlayer(player: player).frame(minHeight: 210, maxHeight: 320)
+                            RecordingPlayerView(player: player).frame(minHeight: 210, maxHeight: 320)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         } else if preview.loading {
                             ProgressView("正在准备预览…").frame(maxWidth: .infinity, minHeight: 180)
@@ -280,6 +280,27 @@ private struct RecordingSessionDetailView: View {
             NSWorkspace.shared.activateFileViewerSelecting([output])
         } catch is CancellationError { previewError = "导出已取消，原片仍保留。" }
         catch { previewError = "导出未完成，可重试：\(error.localizedDescription)" }
+    }
+}
+
+/// Bind AVKit's native player directly; this also retains the AVPlayerView framework dependency.
+struct RecordingPlayerView: NSViewRepresentable {
+    let player: AVPlayer
+
+    func makeNSView(context: Context) -> AVPlayerView {
+        let view = AVPlayerView()
+        view.controlsStyle = .inline
+        view.player = player
+        return view
+    }
+
+    func updateNSView(_ view: AVPlayerView, context: Context) {
+        if view.player !== player { view.player?.pause(); view.player = player }
+    }
+
+    static func dismantleNSView(_ view: AVPlayerView, coordinator: ()) {
+        view.player?.pause()
+        view.player = nil
     }
 }
 

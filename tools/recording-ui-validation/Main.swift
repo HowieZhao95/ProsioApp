@@ -121,6 +121,19 @@ import SwiftUI
     func applicationDidFinishLaunching(_ notification: Notification) {
         let model = UIValidationState(); self.model = model
         model.launchFixture()
+        let mainMenu = NSMenu()
+        let appItem = NSMenuItem(title: "验收工具", action: nil, keyEquivalent: "")
+        let appMenu = NSMenu(title: "验收工具")
+        appMenu.addItem(withTitle: "退出验收", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appItem.submenu = appMenu; mainMenu.addItem(appItem)
+        let focusItem = NSMenuItem(title: "测试窗口", action: nil, keyEquivalent: "")
+        let focusMenu = NSMenu(title: "测试窗口")
+        for (title, tag) in [("桌面选择浮层", 1), ("底部工具栏", 2), ("机位一预览", 3), ("录制控制", 4), ("保存提示", 5)] {
+            let item = NSMenuItem(title: title, action: #selector(focusTestWindow(_:)), keyEquivalent: "")
+            item.target = self; item.tag = tag; focusMenu.addItem(item)
+        }
+        focusItem.submenu = focusMenu; mainMenu.addItem(focusItem)
+        NSApp.mainMenu = mainMenu
         let window = NSWindow(contentViewController: NSHostingController(rootView: UIValidationStation(model: model)))
         window.title = "Prosio · 原生录制交互验收（合成来源）"
         window.styleMask = [.titled, .closable, .miniaturizable]
@@ -129,6 +142,22 @@ import SwiftUI
         window.center(); window.makeKeyAndOrderFront(nil)
         self.window = window
         NSApp.activate(ignoringOtherApps: true)
+    }
+    /// Focus existing production windows for AX automation; never changes their views or actions.
+    @objc private func focusTestWindow(_ sender: NSMenuItem) {
+        let candidates = NSApp.windows.filter { $0.isVisible && $0 is NSPanel }
+        let target = candidates.first {
+            let viewType = $0.contentView.map { String(reflecting: type(of: $0)) } ?? ""
+            switch sender.tag {
+            case 1: return viewType.contains("RecordingDesktopSelectionView")
+            case 2: return viewType.contains("RecordingSelectionToolbarView")
+            case 3: return viewType.contains("RecordingCameraPreviewCard")
+            case 4: return viewType.contains("RecordingCompactControlView")
+            case 5: return viewType.contains("RecordingCompletionView")
+            default: return false
+            }
+        }
+        target?.makeKeyAndOrderFront(nil)
     }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard !terminating else { return .terminateLater }

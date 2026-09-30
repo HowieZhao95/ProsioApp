@@ -1,4 +1,5 @@
 import AppKit
+import AVKit
 import Foundation
 import SwiftUI
 import Testing
@@ -6,6 +7,13 @@ import Testing
 @Suite("Recording immersive native views", .serialized)
 @MainActor
 struct RecordingNativeViewTests {
+    @Test
+    func savedMaterialPlayerRendersNativeAVKitViewWithoutMetadataCrash() async throws {
+        _ = NSApplication.shared
+        try await render(RecordingPlayerView(player: AVPlayer()), theme: .aqua,
+                         size: CGSize(width: 520, height: 300), name: "saved-material-player")
+    }
+
     @Test
     func selectionToolbarRendersAtLightDarkAndCompactSizes() async throws {
         _ = NSApplication.shared

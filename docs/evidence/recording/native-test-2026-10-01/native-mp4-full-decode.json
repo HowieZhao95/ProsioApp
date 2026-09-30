@@ -1,0 +1,18 @@
+{
+  "durationSeconds" : 1.5,
+  "passed" : true,
+  "path" : "\/tmp\/prosio-native-ui-export-20261001\/native-trim.mp4",
+  "syntheticOnly" : true,
+  "tracks" : [
+    {
+      "decodedSamples" : 46,
+      "fullDecode" : true,
+      "kind" : "vide"
+    },
+    {
+      "decodedSamples" : 72000,
+      "fullDecode" : true,
+      "kind" : "soun"
+    }
+  ]
+}

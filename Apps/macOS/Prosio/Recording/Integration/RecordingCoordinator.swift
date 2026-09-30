@@ -153,6 +153,7 @@ final class RecordingCoordinator {
     func showWindow(sessionID: UUID? = nil) {
         guard presentsUI else { return }
         if let sessionID { selectedSessionID = sessionID }
+        else if selectedSession == nil { selectedSessionID = store.sessions.first?.id }
         if window == nil {
             let view = RecordingWorkspaceView(coordinator: self)
             let panel = NSWindow(contentViewController: NSHostingController(rootView: view))
@@ -212,7 +213,7 @@ final class RecordingCoordinator {
             // The desktop starts in pointer-selected display mode, never a persisted region.
             if screenMode == "region" { region = nil }
         }
-        selectionPanel?.orderFrontRegardless()
+        selectionPanel?.makeKeyAndOrderFront(nil)
         syncCameraPreviews()
     }
 
@@ -389,7 +390,7 @@ final class RecordingCoordinator {
         cameraPanels.removeAll()
     }
     private func makeOverlayPanel(size: CGSize) -> NSPanel {
-        let panel = NSPanel(contentRect: CGRect(origin: .zero, size: size),
+        let panel = RecordingFloatingPanel(contentRect: CGRect(origin: .zero, size: size),
             styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
         panel.level = NSWindow.Level(rawValue: RecordingDesktopSelectionController.overlayLevel.rawValue + 1)
         panel.isOpaque = false
@@ -426,7 +427,7 @@ final class RecordingCoordinator {
             selectionPanel?.orderOut(nil)
             for panel in cameraPanels.values { panel.orderOut(nil) }
         } else {
-            selectionPanel?.orderFrontRegardless()
+            selectionPanel?.makeKeyAndOrderFront(nil)
             syncCameraPanels()
         }
     }
@@ -437,7 +438,7 @@ final class RecordingCoordinator {
             .frame(maxHeight: .infinity, alignment: .top))
         selectionPanel = panel
         positionBottom(panel, on: pointerScreen())
-        panel.orderFrontRegardless()
+        panel.makeKeyAndOrderFront(nil)
     }
     private func updateSelectionPanelSize() {
         guard let selectionPanel else { return }
@@ -931,4 +932,10 @@ private final class RecordingWindowDelegate: NSObject, NSWindowDelegate {
     let onClose: () -> Void
     init(onClose: @escaping () -> Void) { self.onClose = onClose }
     func windowWillClose(_ notification: Notification) { onClose() }
+}
+
+/// Borderless controls must accept keyboard focus, including before source discovery succeeds.
+private final class RecordingFloatingPanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { false }
 }
