@@ -32,5 +32,6 @@
       "exactCombinedWorkStartRecorded": false
     }
   ],
-  "beforeNextRealDeviceCapture": "Rebuild only the independently identified device validation tool from latest Recording sources (Engine warning mailbox is newer than its current build), verify hashes/signature and current GUI privacy state; do not replace/relaunch installed Prosio or bypass TCC."
+  "beforeNextRealDeviceCapture": "Latest independent RnzAHG GUI tool rebuilt from revision431d105 with packaged15 source hashes matching current workspace; signature and Release8 synthetic tests passed. Re-check exact current GUI privacy state; do not replace/relaunch installed Prosio or bypass TCC.",
+  "deviceToolEvidence": "../device-tool-updated-2026-10-01/build-and-readiness.json"
 }
