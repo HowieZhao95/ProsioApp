@@ -32,3 +32,5 @@ xcodebuild test -project tools/recording-validation/RecordingValidation.xcodepro
 ```
 
 持续编码工具、已通过证据及真实机位/剪辑软件的待验收项目，分别见 [压力测试工具](../tools/recording-stress/README.md) 和 [录屏验收记录](evidence/recording/implementation-acceptance.md)。合成运行与实际设备、剪辑软件导入分别验收。
+
+实际设备验收使用[独立验收工具](../tools/recording-device-validation/README.md)，先构建审查，再由用户选择来源并开始。该工具复用生产采集后端，报告逐来源原片、状态和间隙；窗口捕获通过也不能替代桌面/区域、口型同步和四款编辑器验收。已发布原片可再用[只读媒体审计](../tools/recording-media-audit/README.md)核对。

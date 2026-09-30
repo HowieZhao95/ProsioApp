@@ -1,0 +1,56 @@
+{
+  "buildEvidence": {
+    "builtAtUTC": "2026-09-30T09:53:22.735214+00:00",
+    "revision": "d7502b335d77753887dce1edc29e8f8671d6755b",
+    "sourceSHA256": {
+      "Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift": "aad8cf91f46020054b4f4dba1c054c26ea6a44c6137bffd2db85246b06d62ca6",
+      "Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift": "e7a417c7e6100f76c1c2166c6dcd4958adf0ba5b3783cdc0bd9a0922212eb3d5",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift": "127d8f1c89362ae58e7cab017877153210382e94aef6fc04dacea301f89595b1",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift": "b75637efaeaf296a37a3de46bd031f1d707528e75751bedb4e5468baedc20bfd",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift": "a409f8d3d132246c7e6a32b0b52b5ba28e5e98ad88ea6282b8ba3a8af7905091",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift": "ba32e72f3162426303339757e9ce66822d362d953a91919bd8184ab8ab472244",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift": "1cbc93b72f382444e58c3bbda41744844702def6731c152c9c4dd6f66406499e",
+      "Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift": "5ced0b1177aa68cd9a919a5f15a5b6b34fdc27e46564057f4dd506d3acfd5254",
+      "tools/recording-device-validation/Fixture/FixtureMain.swift": "544f8a6e51b05d2262f12e6e89be55f2ee37b9ff9db9efbe720ea85fe33131ca",
+      "tools/recording-device-validation/Main/DeviceValidationModel.swift": "9a2f38646ef86dda5ab4cdaa05d0f99dcfb5b4ceaddf1d2030a29f70b95d7c74",
+      "tools/recording-device-validation/Main/ValidationReport.swift": "d3516a23f8e425ab037620e041fcf053f3f9da2af103cf39323a9e4c2108172b",
+      "tools/recording-device-validation/Main/ValidationUI.swift": "7727062c9497b1573a6bcdcda2a75d208e87ad11eee4faedd9a50773036a8c78",
+      "tools/recording-device-validation/Shared/ValidationFixtureHandshake.swift": "63bd9d8e8fe8731ee595c68d34486a4f0e4d681e3684b7a6cbdf01318e5ae4f5",
+      "tools/recording-device-validation/Tests/ValidationReportTests.swift": "a3060e0195b109be14f218bcc011cf968c1375b02c6124193850571ad9a0ffc4"
+    },
+    "workingTreeDirty": true
+  },
+  "compiledApplication": "/tmp/prosio-recording-device-validation.rYu3mb/build/Build/Products/Release/RecordingDeviceValidation.app",
+  "buildLog": "/tmp/prosio-recording-device-validation.rYu3mb/build.log",
+  "testBundle": "/tmp/prosio-recording-device-validation.rYu3mb/test-build/Logs/Test/Test-RecordingDeviceValidationTests-2026.09.30_17-53-47-+0800.xcresult",
+  "tests": {
+    "passedTests": 6,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "totalTestCount": 6,
+    "result": "Passed"
+  },
+  "packagedEvidenceMatchesFrozenSnapshot": true,
+  "sourceCount": 14,
+  "sourceDifferences": [],
+  "strictSignatureVerified": true,
+  "preflight": {
+    "cameraCount": 2,
+    "cameraCategories": [
+      "builtIn",
+      "pairedIPhone"
+    ],
+    "microphoneCount": 3,
+    "permissions": {
+      "camera": "未请求",
+      "microphone": "已授权",
+      "screen": true
+    },
+    "operatingSystem": "Version 26.3.1 (a) (Build 25D771280a)",
+    "capturesStarted": false,
+    "permissionsRequested": false,
+    "fixtureLaunched": false,
+    "processContext": "Command-line preflight; GUI permissions may differ."
+  },
+  "evidenceLimit": "Build, synthetic tests and device discovery only. No physical capture, continuity transport, source reconnect, long-run lip-sync or editor import has been verified."
+}
