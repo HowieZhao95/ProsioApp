@@ -7,6 +7,12 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
     let queue = DispatchQueue(label: "app.prosio.recording.media", qos: .userInitiated)
     private let admission = NSLock()
     private var enqueued = 0
+    private var peakEnqueued = 0
+    private var admissionDrops = 0
+    private var encoderDrops = 0
+    private var captureDrops = 0
+    private var writtenSamples = 0
+    private var finishedSegments = 0
     private var lastAdmissionWarning = Date.distantPast
     private var timeline: RecordingTimeline
     private let directory: URL
@@ -63,6 +69,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
     private func enqueue(_ work: @escaping @Sendable () -> Void) {
         admission.lock()
         guard enqueued < 16 else {
+            admissionDrops += 1
             let warn = Date().timeIntervalSince(lastAdmissionWarning) > 2
             if warn { lastAdmissionWarning = .now }
             admission.unlock()
@@ -70,6 +77,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
             return
         }
         enqueued += 1
+        peakEnqueued = max(peakEnqueued, enqueued)
         admission.unlock()
         queue.async { [self] in
             defer { admission.lock(); enqueued -= 1; admission.unlock() }
@@ -104,7 +112,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
     }
 
     func reportDroppedFrame(_ sourceID: String) {
-        enqueue { [self] in warn("capture-drop-\(sourceID)", "\(names[sourceID] ?? "来源") 采集速度超过处理速度，部分帧被跳过。") }
+        enqueue { [self] in captureDrops += 1; warn("capture-drop-\(sourceID)", "\(names[sourceID] ?? "来源") 采集速度超过处理速度，部分帧被跳过。") }
     }
 
     /// SCStream emits idle buffers for unchanged displays. Retiming the previous complete image
@@ -140,6 +148,20 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
         }
     }
 
+    func statistics() async -> RecordingWriterStatistics {
+        await withCheckedContinuation { continuation in
+            queue.async { [self] in
+                admission.lock()
+                let drops = admissionDrops
+                let peak = peakEnqueued
+                admission.unlock()
+                continuation.resume(returning: RecordingWriterStatistics(writtenSamples: writtenSamples,
+                    droppedAdmissionEvents: drops, droppedEncoderSamples: encoderDrops,
+                    droppedCaptureFrames: captureDrops, peakQueuedEvents: peak, finalizedSegments: finishedSegments))
+            }
+        }
+    }
+
     private func consume(_ sample: CMSampleBuffer, sourceID: String, kind: RecordingSourceKind) {
         guard !stopping, !failed, !unavailable.contains(sourceID), CMSampleBufferDataIsReady(sample) else { return }
         let pts = CMSampleBufferGetPresentationTimeStamp(sample)
@@ -166,6 +188,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
             guard let current = active[sourceID] else { return }
             guard pts > current.lastPTS || current.sampleCount == 0 else { return }
             guard current.input.isReadyForMoreMediaData else {
+                encoderDrops += 1
                 warn("backpressure-\(sourceID)", "\(names[sourceID] ?? "来源") 写入繁忙，部分帧被跳过。")
                 return
             }
@@ -173,6 +196,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
                 throw RecordingPlatformError.encoding(current.writer.error?.localizedDescription ?? "媒体编码失败。")
             }
             current.sampleCount += 1
+            writtenSamples += 1
             current.lastPTS = pts
             let duration = CMSampleBufferGetDuration(sample)
             let fallback: CMTime
@@ -223,6 +247,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
                     queue.async { [self] in fail(message) }
                 }
                 queue.async { [self] in
+                    if chunk.writer.status == .completed, FileManager.default.fileExists(atPath: chunk.finalURL.path) { finishedSegments += 1 }
                     pending[chunk.sourceID, default: 1] -= 1
                     resolveStopIfFinished()
                 }
@@ -334,4 +359,14 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
             return CMFormatDescriptionEqual(format, otherFormatDescription: incoming)
         }
     }
+}
+
+/// Diagnostics for synthetic soak tests; no media or personal data is exposed.
+nonisolated struct RecordingWriterStatistics: Codable, Sendable {
+    let writtenSamples: Int
+    let droppedAdmissionEvents: Int
+    let droppedEncoderSamples: Int
+    let droppedCaptureFrames: Int
+    let peakQueuedEvents: Int
+    let finalizedSegments: Int
 }

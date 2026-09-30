@@ -60,10 +60,11 @@ nonisolated final class RecordingScreenReceiver: NSObject, SCStreamOutput, SCStr
 }
 
 /// A camera has its own session so a disconnected device cannot stop the other angle.
-nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, @unchecked Sendable {
+nonisolated final class RecordingDeviceCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate, @unchecked Sendable {
     private let queue: DispatchQueue
     private let sampleQueue: DispatchQueue
     private let session = AVCaptureSession()
+    private let clockRelay = RecordingCaptureClockRelay()
     private let source: RecordingSource
     private let writer: RecordingMediaWriter
     private let framesPerSecond: Int
@@ -76,8 +77,8 @@ nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutp
         self.framesPerSecond = framesPerSecond
         self.writer = writer
         self.onDisconnect = onDisconnect
-        queue = DispatchQueue(label: "app.prosio.recording.camera.\(source.id)")
-        sampleQueue = DispatchQueue(label: "app.prosio.recording.camera.frames.\(source.id)", qos: .userInitiated)
+        queue = DispatchQueue(label: "app.prosio.recording.device.\(source.id)")
+        sampleQueue = DispatchQueue(label: "app.prosio.recording.device.frames.\(source.id)", qos: .userInitiated)
     }
 
     func start() async throws {
@@ -98,10 +99,12 @@ nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutp
                         }
                     ]
                     session.startRunning()
-                    guard session.isRunning else { throw RecordingPlatformError.unavailable("摄像头“\(source.name)”未能启动。") }
+                    clockRelay.set(session.synchronizationClock)
+                    guard session.isRunning else { throw RecordingPlatformError.unavailable("来源“\(source.name)”未能启动。") }
                     continuation.resume()
                 } catch {
-                    if session.isRunning { session.stopRunning() }
+                    session.stopRunning()
+                    clockRelay.set(nil)
                     continuation.resume(throwing: error)
                 }
             }
@@ -109,21 +112,28 @@ nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutp
     }
 
     private func configure() throws -> AVCaptureDevice {
-        let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .external, .continuityCamera], mediaType: .video, position: .unspecified).devices
+        let video = source.kind == .camera
+        let devices = AVCaptureDevice.DiscoverySession(deviceTypes: video ? [.builtInWideAngleCamera, .external, .continuityCamera] : [.microphone, .external], mediaType: video ? .video : .audio, position: .unspecified).devices
         guard let device = devices.first(where: { $0.uniqueID == source.deviceID && $0.isConnected }) else {
-            throw RecordingPlatformError.unavailable("摄像头“\(source.name)”当前不可用。")
+            throw RecordingPlatformError.unavailable("来源“\(source.name)”当前不可用。")
         }
         session.beginConfiguration()
         defer { session.commitConfiguration() }
         let input = try AVCaptureDeviceInput(device: device)
+        guard session.canAddInput(input) else { throw RecordingPlatformError.unavailable("无法连接来源“\(source.name)”。") }
+        session.addInput(input)
+        if !video {
+            let output = AVCaptureAudioDataOutput()
+            output.setSampleBufferDelegate(self, queue: sampleQueue)
+            guard session.canAddOutput(output) else { throw RecordingPlatformError.unavailable("无法读取麦克风“\(source.name)”。") }
+            session.addOutput(output)
+            return device
+        }
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         output.alwaysDiscardsLateVideoFrames = true
         output.setSampleBufferDelegate(self, queue: sampleQueue)
-        guard session.canAddInput(input), session.canAddOutput(output) else {
-            throw RecordingPlatformError.unavailable("无法连接摄像头“\(source.name)”。")
-        }
-        session.addInput(input)
+        guard session.canAddOutput(output) else { throw RecordingPlatformError.unavailable("无法读取摄像头“\(source.name)”。") }
         session.addOutput(output)
         if session.canSetSessionPreset(.hd1920x1080) { session.sessionPreset = .hd1920x1080 }
         try device.lockForConfiguration()
@@ -151,7 +161,8 @@ nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutp
             queue.async { [self] in
                 for observer in observers { NotificationCenter.default.removeObserver(observer) }
                 observers.removeAll()
-                if session.isRunning { session.stopRunning() }
+                session.stopRunning()
+                clockRelay.set(nil)
                 continuation.resume()
             }
         }
@@ -159,7 +170,7 @@ nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutp
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         // Apple's synchronizationClock defines every capture-output timestamp for this session.
-        guard let clock = session.synchronizationClock else { return }
+        guard let clock = clockRelay.get() else { return }
         var count = 0
         guard CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count) == noErr,
               count > 0 else { return }
@@ -174,10 +185,18 @@ nonisolated final class RecordingCameraCapture: NSObject, AVCaptureVideoDataOutp
         }
         var converted: CMSampleBuffer?
         let copied = timing.withUnsafeBufferPointer { CMSampleBufferCreateCopyWithNewTiming(allocator: kCFAllocatorDefault, sampleBuffer: sampleBuffer, sampleTimingEntryCount: count, sampleTimingArray: $0.baseAddress!, sampleBufferOut: &converted) }
-        if copied == noErr, let converted { writer.append(converted, sourceID: source.id, kind: .camera) }
+        if copied == noErr, let converted { writer.append(converted, sourceID: source.id, kind: source.kind) }
     }
 
     func captureOutput(_ output: AVCaptureOutput, didDrop sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         writer.reportDroppedFrame(source.id)
     }
+}
+
+/// CMClock is retained as an immutable reference under a lock; delegates never read session state.
+nonisolated private final class RecordingCaptureClockRelay: @unchecked Sendable {
+    private let lock = NSLock()
+    private var clock: CMClock?
+    func set(_ clock: CMClock?) { lock.lock(); self.clock = clock; lock.unlock() }
+    func get() -> CMClock? { lock.lock(); defer { lock.unlock() }; return clock }
 }
