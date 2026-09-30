@@ -30,8 +30,23 @@
       "interpretation": "background validation work overlaps this continuing run; not an idle benchmark",
       "knownRootUIRunStart": "2026-10-01T07:10:08+08:00",
       "exactCombinedWorkStartRecorded": false
+    },
+    {
+      "startedObservedAtUTC": "2026-09-30T23:50:22Z",
+      "work": "incremental full ffmpeg decode of finalized video/audio files",
+      "scope": "read-only synthetic media; no device access",
+      "interpretation": "adds CPU and disk background load; encoder ps metrics are not an idle-machine benchmark"
     }
   ],
   "beforeNextRealDeviceCapture": "Latest independent RnzAHG GUI tool rebuilt from revision431d105 with packaged15 source hashes matching current workspace; signature and Release8 synthetic tests passed. Re-check exact current GUI privacy state; do not replace/relaunch installed Prosio or bypass TCC.",
-  "deviceToolEvidence": "../device-tool-updated-2026-10-01/build-and-readiness.json"
+  "deviceToolEvidence": "../device-tool-updated-2026-10-01/build-and-readiness.json",
+  "incrementalFullDecodeAudit": {
+    "status": "running, not yet accepted",
+    "sessionId": 40876,
+    "sourceWriterSessionId": 75996,
+    "sourceWriterPID": 42815,
+    "outputPath": "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-2h-20261001.eafgcb_e/live-full-decode.json",
+    "logPath": "/tmp/prosio-recording-live-full-decode-20261001.log",
+    "startedObservedAtUTC": "2026-09-30T23:50:22Z"
+  }
 }

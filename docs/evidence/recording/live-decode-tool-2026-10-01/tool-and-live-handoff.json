@@ -1,0 +1,31 @@
+{
+  "scope": "incremental full ffmpeg decoding of finalized synthetic stress files; not hardware capture acceptance",
+  "testsPassed": 16,
+  "testLog": "/tmp/prosio-recording-live-decode-tests-20261001.log",
+  "testLogSHA256": "251e3fa43509eacc9ba70733b6aad89bb0e4dd1ac5200430db09a18485c48af4",
+  "sourceSHA256": {
+    "tools/recording-media-audit/live_decode.py": "1248b39a42fca1210aecc61b8caa36ec10ca9a0bc97410e84994ae0bbde2076b",
+    "tools/recording-media-audit/test_live_decode.py": "45fd2efb7689097ef0ff9d20a31a7f1726adb81d6e95be7bacc42cc732d7b2eb"
+  },
+  "liveAudit": {
+    "status": "running, not yet accepted",
+    "sessionId": 40876,
+    "sourceWriterSessionId": 75996,
+    "sourceWriterPID": 42815,
+    "outputPath": "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-2h-20261001.eafgcb_e/live-full-decode.json",
+    "logPath": "/tmp/prosio-recording-live-full-decode-20261001.log",
+    "startedObservedAtUTC": "2026-09-30T23:50:22Z"
+  },
+  "coverage": [
+    "real H264 five-frame fixture full decode",
+    "real AAC PCM stream counts with padding caveat",
+    "VFR gap exactly3 frames, no timestamp resampling",
+    "incremental cache reuses only same path+metadata+size+mtime",
+    "same-id new-path corrupted content not cached as passed",
+    "unsafe paths refused",
+    "watch exits nonzero on corrupted final media and zero-exit error diagnostics",
+    "per-file timeout and oversized progress bounded",
+    "writer-exit race rereads newly finalized report",
+    "empty final report cannot pass"
+  ]
+}
