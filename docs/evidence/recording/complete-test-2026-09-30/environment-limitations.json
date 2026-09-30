@@ -1,0 +1,22 @@
+{
+  "nativeMouseInteraction": "blocked: Mac locked; no continuation without manual unlock",
+  "realRecording": "blocked: GUI validation app screen recording permission missing; attempted window recording failed at start, elapsed 0",
+  "guiPermissionContextDistinctFromCLI": true,
+  "camerasDiscovered": [
+    "built-in camera",
+    "one iPhone Continuity camera"
+  ],
+  "physicalCameraCaptureVerified": false,
+  "editors": {
+    "searchedRoots": [
+      "/Applications",
+      "~/Applications"
+    ],
+    "maximumDepth": 2,
+    "found": []
+  },
+  "installedProsioReplaced": false,
+  "uiValidationBundleID": "app.prosio.validation.immersive",
+  "realDeviceValidationBundleID": "app.prosio.validation.recording",
+  "fullHardwareAcceptance": false
+}

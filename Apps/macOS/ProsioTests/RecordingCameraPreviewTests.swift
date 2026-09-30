@@ -200,6 +200,164 @@ nonisolated final class RecordingCameraPreviewTests: XCTestCase {
         XCTAssertNil(engine.previewSession(for: "a"))
     }
 
+    @MainActor func testAlreadyCancelledSelectionCannotClearLiveNewerSelection() async throws {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a"), camera("b")]
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        try await preview.update(sources: [camera("b")])
+        let liveSession = preview.session(for: "b")
+        let stale = Task {
+            while !Task.isCancelled { await Task.yield() }
+            try await preview.update(sources: [self.camera("a")])
+        }
+        stale.cancel()
+        assertCancellation(await stale.result)
+        XCTAssertTrue(preview.session(for: "b") === liveSession)
+        XCTAssertEqual(backend.created.count, 1)
+        await preview.stopAll()
+    }
+
+    @MainActor func testCancelledSelectionWaitingForStopCannotOverrideFreshSelection() async throws {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a"), camera("b")]
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        try await preview.update(sources: [camera("a")])
+        let original = backend.created[0]
+        original.blockStop = true
+        let stop = Task { await preview.stopAll() }
+        await wait { original.stopping }
+        var staleEntered = false
+        let stale = Task { staleEntered = true; try await preview.update(sources: [self.camera("a")]) }
+        await wait { staleEntered }
+        var freshEntered = false
+        let fresh = Task { freshEntered = true; try await preview.update(sources: [self.camera("b")]) }
+        await wait { freshEntered }
+        stale.cancel()
+        original.releaseStop()
+        await stop.value
+        assertCancellation(await stale.result)
+        try await fresh.value
+        XCTAssertEqual(preview.statuses["b"], .live)
+        XCTAssertNil(preview.session(for: "a"))
+        XCTAssertEqual(backend.created.count, 2)
+        await preview.stopAll()
+    }
+
+    @MainActor func testStopWaitsForPendingPermissionAndNeverCreatesDeviceAfterApproval() async {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a")]
+        backend.blockAuthorization = true
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        let start = Task { try await preview.update(sources: backend.available) }
+        await wait { backend.authorizationRequests == 1 }
+        var didStop = false
+        let stop = Task { await preview.stopAll(); didStop = true }
+        await Task.yield()
+        XCTAssertFalse(didStop)
+        XCTAssertTrue(backend.created.isEmpty)
+        backend.releaseAuthorization()
+        assertCancellation(await start.result)
+        await stop.value
+        XCTAssertTrue(didStop)
+        XCTAssertTrue(backend.created.isEmpty)
+        XCTAssertNil(preview.session(for: "a"))
+    }
+
+    @MainActor func testSelectionResumingAfterStopRemainsTrackedThroughAnotherStop() async throws {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a"), camera("b")]
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        try await preview.update(sources: [camera("a")])
+        let original = backend.created[0]
+        original.blockStop = true
+        let firstStop = Task { await preview.stopAll() }
+        await wait { original.stopping }
+        backend.blockNext = true
+        var newSelectionEntered = false
+        let next = Task { newSelectionEntered = true; try await preview.update(sources: [self.camera("b")]) }
+        await wait { newSelectionEntered }
+        original.releaseStop()
+        await firstStop.value
+        await wait { backend.created.count == 2 && backend.created[1].started }
+        let pending = backend.created[1]
+        var finalStopCompleted = false
+        let finalStop = Task { await preview.stopAll(); finalStopCompleted = true }
+        await Task.yield()
+        XCTAssertFalse(finalStopCompleted)
+        pending.release()
+        assertCancellation(await next.result)
+        await finalStop.value
+        XCTAssertTrue(finalStopCompleted)
+        XCTAssertEqual(pending.stopCount, 1)
+        XCTAssertNil(preview.session(for: "b"))
+    }
+
+    @MainActor func testSupersededPermissionFailureDuringDeviceReleaseCannotOverrideLatestSelection() async throws {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a"), camera("b")]
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        try await preview.update(sources: [camera("a")])
+        let original = backend.created[0]
+        original.blockStop = true
+        backend.authorized = false
+        let denied = Task { try await preview.update(sources: [self.camera("b")]) }
+        await wait { original.stopping }
+        backend.authorized = true
+        var latestEntered = false
+        let latest = Task { latestEntered = true; try await preview.update(sources: [self.camera("b")]) }
+        await wait { latestEntered }
+        original.releaseStop()
+        assertCancellation(await denied.result)
+        try await latest.value
+        XCTAssertEqual(preview.statuses["b"], .live)
+        XCTAssertNotNil(preview.session(for: "b"))
+        XCTAssertEqual(backend.created.count, 2)
+        await preview.stopAll()
+    }
+
+    @MainActor func testCancelledPermissionDenialReturnsCancellationRatherThanStaleFailure() async {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a")]
+        backend.blockAuthorization = true
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        let start = Task { try await preview.update(sources: backend.available) }
+        await wait { backend.authorizationRequests == 1 }
+        start.cancel()
+        backend.authorized = false
+        backend.releaseAuthorization()
+        assertCancellation(await start.result)
+        XCTAssertTrue(backend.created.isEmpty)
+        XCTAssertEqual(preview.statuses["a"], .idle)
+        await preview.stopAll()
+    }
+
+    @MainActor func testRapidSelectionDuringPermissionWaitSerializesAuthorizationAndStartsOnlyLatest() async throws {
+        let backend = PreviewTestBackend()
+        backend.available = [camera("a"), camera("b")]
+        backend.blockAuthorization = true
+        let preview = RecordingCameraPreviewController(backend: backend, monitoringInterval: nil)
+        let first = Task { try await preview.update(sources: [self.camera("a")]) }
+        await wait { backend.authorizationRequests == 1 }
+        var secondEntered = false
+        let second = Task { secondEntered = true; try await preview.update(sources: [self.camera("b")]) }
+        await wait { secondEntered }
+        XCTAssertEqual(backend.authorizationRequests, 1)
+        backend.releaseAuthorization()
+        assertCancellation(await first.result)
+        try await second.value
+        XCTAssertEqual(backend.maxConcurrentAuthorization, 1)
+        XCTAssertEqual(backend.created.map(\.deviceID), ["b"])
+        XCTAssertEqual(preview.statuses["b"], .live)
+        await preview.stopAll()
+    }
+
+    @MainActor private func assertCancellation(_ result: Result<Void, any Error>, file: StaticString = #filePath, line: UInt = #line) {
+        switch result {
+        case .success: XCTFail("Cancelled operation returned success", file: file, line: line)
+        case .failure(let error): XCTAssertTrue(error is CancellationError, "Unexpected error: \(error)", file: file, line: line)
+        }
+    }
+
     @MainActor func testTemporaryMicrophoneFilterRetainsNormalUSBAndVirtualDevices() {
         XCTAssertTrue(RecordingEngine.isTemporaryAggregateMicrophone(id: "CADefaultDeviceAggregate-86652-0", name: "Input"))
         XCTAssertTrue(RecordingEngine.isTemporaryAggregateMicrophone(id: "input", name: "CADefaultDeviceAggregate-86652-0"))
@@ -220,12 +378,24 @@ nonisolated final class RecordingCameraPreviewTests: XCTestCase {
     var blockNext = false
     var failNext = false
     var authorizationRequests = 0
+    var blockAuthorization = false
+    var maxConcurrentAuthorization = 0
+    private var concurrentAuthorization = 0
+    private var authorizationContinuation: CheckedContinuation<Void, Never>?
     var created: [PreviewTestSource] = []
     var isAuthorized: Bool { authorized }
     func authorize() async throws {
         authorizationRequests += 1
+        concurrentAuthorization += 1
+        maxConcurrentAuthorization = max(maxConcurrentAuthorization, concurrentAuthorization)
+        defer { concurrentAuthorization -= 1 }
+        if blockAuthorization {
+            blockAuthorization = false
+            await withCheckedContinuation { authorizationContinuation = $0 }
+        }
         if !authorized { throw NSError(domain: "PreviewTest", code: 1, userInfo: [NSLocalizedDescriptionKey: "denied"]) }
     }
+    func releaseAuthorization() { authorizationContinuation?.resume(); authorizationContinuation = nil }
     func availableSources() -> [RecordingSource] { available }
     func makeSource(_ source: RecordingSource, onFailure: @escaping @MainActor @Sendable () -> Void) -> any RecordingCameraPreviewSource {
         let capture = PreviewTestSource(deviceID: source.deviceID!, blocked: blockNext, failsStart: failNext, failure: onFailure)
@@ -244,7 +414,10 @@ nonisolated final class RecordingCameraPreviewTests: XCTestCase {
     let failure: @MainActor @Sendable () -> Void
     var started = false
     var stopCount = 0
+    var blockStop = false
+    var stopping = false
     private var continuation: CheckedContinuation<Void, Never>?
+    private var stopContinuation: CheckedContinuation<Void, Never>?
     init(deviceID: String, blocked: Bool, failsStart: Bool, failure: @escaping @MainActor @Sendable () -> Void) {
         self.deviceID = deviceID; self.blocked = blocked; self.failsStart = failsStart; self.failure = failure
     }
@@ -254,7 +427,12 @@ nonisolated final class RecordingCameraPreviewTests: XCTestCase {
         if failsStart { throw RecordingPlatformError.unavailable("Device failed during start") }
     }
     func release() { continuation?.resume(); continuation = nil }
-    func stop() async { stopCount += 1 }
+    func stop() async {
+        stopCount += 1
+        stopping = true
+        if blockStop { await withCheckedContinuation { stopContinuation = $0 } }
+    }
+    func releaseStop() { stopContinuation?.resume(); stopContinuation = nil }
     func previewSession(for sourceID: String) -> AVCaptureSession? { session }
 }
 

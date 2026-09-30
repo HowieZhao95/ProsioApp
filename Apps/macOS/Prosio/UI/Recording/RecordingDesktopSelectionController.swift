@@ -14,6 +14,20 @@ nonisolated struct RecordingDesktopWindowHit: Sendable {
     let alpha: Double
 }
 
+nonisolated enum RecordingDesktopKeyboardAction {
+    case passThrough, consume, cancel, confirm
+
+    static func resolve(keyCode: UInt16, hasSelection: Bool, isPresented: Bool, isHidden: Bool,
+                        isMenuTracking: Bool, isRegionDragging: Bool, isCountingDown: Bool) -> Self {
+        guard isPresented, !isHidden, !isMenuTracking else { return .passThrough }
+        if keyCode == 53 { return .cancel }
+        if keyCode == 36 || keyCode == 76 {
+            return hasSelection && !isRegionDragging && !isCountingDown ? .confirm : .consume
+        }
+        return .passThrough
+    }
+}
+
 nonisolated enum RecordingDesktopSelectionGeometry {
     static let minimumRegionSize = CGSize(width: 16, height: 16)
 
@@ -28,20 +42,42 @@ nonisolated enum RecordingDesktopSelectionGeometry {
         }
     }
 
+    static func liveWindow(id: UInt32, frontToBack: [RecordingDesktopWindowHit], available: [RecordingWindowChoice],
+                           excludingPID: Int32) -> RecordingDesktopWindowHit? {
+        guard available.contains(where: { $0.id == id }) else { return nil }
+        return frontToBack.first {
+            $0.id == id && $0.ownerPID != excludingPID && $0.layer == 0 && $0.alpha > 0 &&
+            $0.frame.width > 1 && $0.frame.height > 1
+        }
+    }
+
     static func region(_ overlayRect: CGRect, display: RecordingDisplayChoice, screenFrame: CGRect) -> RecordingScreenTarget? {
+        guard [overlayRect.minX, overlayRect.minY, overlayRect.width, overlayRect.height].allSatisfy(\.isFinite) else { return nil }
         let transform = CaptureDisplayTransform(captureFrame: display.frame, overlayFrame: screenFrame)
         let rect = overlayRect.standardized.intersection(transform.overlayLocalBounds)
         guard !rect.isNull, rect.width >= minimumRegionSize.width, rect.height >= minimumRegionSize.height else { return nil }
-        let captureRect = transform.captureLocalRect(fromOverlayLocalRect: rect).intersection(transform.captureLocalBounds)
+        let origin = transform.captureLocalPoint(fromOverlayLocalPoint: rect.origin)
+        let end = transform.captureLocalPoint(fromOverlayLocalPoint: CGPoint(x: rect.maxX, y: rect.maxY))
+        let captureRect = CGRect(x: origin.x, y: origin.y, width: end.x - origin.x, height: end.y - origin.y)
+            .intersection(transform.captureLocalBounds)
         guard !captureRect.isEmpty else { return nil }
         return .region(displayID: display.id, rect: RecordingRegion(x: captureRect.minX, y: captureRect.minY,
                                                                    width: captureRect.width, height: captureRect.height))
     }
 
+    /// Use the existing point transform without integer inflation on repeated display-layout rebuilds.
+    static func overlayRect(for region: RecordingRegion, display: RecordingDisplayChoice, screenFrame: CGRect) -> CGRect {
+        let transform = CaptureDisplayTransform(captureFrame: display.frame, overlayFrame: screenFrame)
+        let origin = transform.overlayLocalPoint(fromCaptureLocalPoint: CGPoint(x: region.x, y: region.y))
+        let end = transform.overlayLocalPoint(fromCaptureLocalPoint: CGPoint(x: region.x + region.width, y: region.y + region.height))
+        return CGRect(x: origin.x, y: origin.y, width: end.x - origin.x, height: end.y - origin.y).intersection(transform.overlayLocalBounds)
+    }
+
     static func handle(at point: CGPoint, in rect: CGRect, radius: CGFloat = 9) -> CaptureResizeHandle? {
-        CaptureResizeHandle.allCases.min {
+        let hitRadius = min(radius, min(rect.width, rect.height) / 4)
+        return CaptureResizeHandle.allCases.min {
             distance(point, $0.position(in: rect)) < distance(point, $1.position(in: rect))
-        }.flatMap { distance(point, $0.position(in: rect)) <= radius ? $0 : nil }
+        }.flatMap { distance(point, $0.position(in: rect)) <= hitRadius ? $0 : nil }
     }
 
     private static func distance(_ lhs: CGPoint, _ rhs: CGPoint) -> CGFloat { hypot(lhs.x - rhs.x, lhs.y - rhs.y) }
@@ -90,8 +126,11 @@ final class RecordingDesktopSelectionController {
     private var countdown: Int?
     private var isPresented = false
     private var isTemporarilyHidden = false
+    private var rebuildPending = false
     private var keyMonitor: Any?
     private var screenObserver: NSObjectProtocol?
+    private var menuObservers: [NSObjectProtocol] = []
+    private var trackingMenus = Set<ObjectIdentifier>()
 
     var currentScreen: NSScreen? {
         surfaces.first { $0.display.id == activeDisplayID }?.screen ??
@@ -114,19 +153,36 @@ final class RecordingDesktopSelectionController {
         rebuildSurfaces()
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             let consumed = MainActor.assumeIsolated {
-                guard let self, !self.isTemporarilyHidden else { return false }
-                if event.keyCode == 53 { self.cancel(); return true }
-                if event.keyCode == 36 || event.keyCode == 76 {
-                    if self.countdown == nil, self.state.target != nil {
+                guard let self else { return false }
+                switch RecordingDesktopKeyboardAction.resolve(keyCode: event.keyCode, hasSelection: self.state.target != nil,
+                                                              isPresented: self.isPresented, isHidden: self.isTemporarilyHidden,
+                                                              isMenuTracking: !self.trackingMenus.isEmpty,
+                                                              isRegionDragging: self.surfaces.contains { $0.view.hasActiveGesture },
+                                                              isCountingDown: self.countdown != nil) {
+                case .passThrough: return false
+                case .consume: return true
+                case .cancel: self.cancel(); return true
+                case .confirm:
+                    if self.validateSelection() {
                         self.state.lock()
                         self.redraw()
                         self.onConfirm()
                     }
                     return true
                 }
-                return false
             }
             return consumed ? nil : event
+        }
+        menuObservers = [NSMenu.didBeginTrackingNotification, NSMenu.didEndTrackingNotification].map { name in
+            NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] notification in
+                guard let menu = notification.object as? NSMenu else { return }
+                let identifier = ObjectIdentifier(menu)
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    if name == NSMenu.didBeginTrackingNotification { self.trackingMenus.insert(identifier) }
+                    else { self.trackingMenus.remove(identifier) }
+                }
+            }
         }
         screenObserver = NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
                                                                 object: nil, queue: .main) { [weak self] _ in
@@ -143,10 +199,14 @@ final class RecordingDesktopSelectionController {
     func dismiss() {
         isPresented = false
         isTemporarilyHidden = false
+        rebuildPending = false
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         keyMonitor = nil
         if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
         screenObserver = nil
+        menuObservers.forEach { NotificationCenter.default.removeObserver($0) }
+        menuObservers = []
+        trackingMenus = []
         surfaces.forEach { $0.panel.orderOut(nil); $0.panel.close() }
         surfaces = []
         countdown = nil
@@ -160,6 +220,8 @@ final class RecordingDesktopSelectionController {
             return
         }
         guard isPresented else { return }
+        if rebuildPending { rebuildPending = false; rebuildSurfaces() }
+        _ = refreshSelectedWindow()
         redraw()
         surfaces.forEach { $0.panel.orderFrontRegardless() }
         if let surface = surfaces.first(where: { $0.display.id == activeDisplayID }) ??
@@ -209,7 +271,7 @@ final class RecordingDesktopSelectionController {
             }
             if layoutChanged { rebuildSurfaces() }
             else {
-                if case let .window(id) = state.target { windowFrame = windowOrder().first { $0.id == id }?.frame }
+                _ = refreshSelectedWindow()
                 redraw()
             }
         }
@@ -221,9 +283,35 @@ final class RecordingDesktopSelectionController {
         redraw()
     }
 
+    /// Recheck the live target immediately before either Enter or the toolbar starts recording.
+    func validateSelection() -> Bool {
+        guard isPresented, let target = state.target, !surfaces.contains(where: { $0.view.hasActiveGesture }) else { return false }
+        if case .window = target { return refreshSelectedWindow() }
+        let id: UInt32
+        switch target {
+        case let .display(displayID), let .region(displayID, _): id = displayID
+        case .window: return false
+        }
+        let hardwareExists = NSScreen.screens.contains {
+            ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value == id
+        }
+        let display = inventory.displays.first { $0.id == id }
+        var valid = hardwareExists && display != nil
+        if case let .region(_, region) = target, let display {
+            valid = valid && region.isValid && CGRect(origin: .zero, size: display.frame.size)
+                .contains(CGRect(x: region.x, y: region.y, width: region.width, height: region.height))
+        }
+        guard valid else {
+            state.reset(); regionRect = nil; windowFrame = nil; publish(); redraw()
+            return false
+        }
+        return true
+    }
+
     private func rebuildSurfaces() {
         // An already queued screen-change notification cannot resurrect dismissed panels.
         guard isPresented else { return }
+        if isTemporarilyHidden { rebuildPending = true; return }
         surfaces.forEach { $0.panel.orderOut(nil); $0.panel.close() }
         surfaces = NSScreen.screens.compactMap { screen in
             guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber,
@@ -251,9 +339,7 @@ final class RecordingDesktopSelectionController {
         }
         if case let .region(displayID, region) = state.target,
            let surface = surfaces.first(where: { $0.display.id == displayID }) {
-            let transform = CaptureDisplayTransform(captureFrame: surface.display.frame, overlayFrame: surface.screen.frame)
-            regionRect = transform.overlayLocalRect(fromCaptureLocalRect: CGRect(x: region.x, y: region.y, width: region.width, height: region.height))
-                .intersection(transform.overlayLocalBounds)
+            regionRect = RecordingDesktopSelectionGeometry.overlayRect(for: region, display: surface.display, screenFrame: surface.screen.frame)
             let candidate = regionRect.flatMap { RecordingDesktopSelectionGeometry.region($0, display: surface.display, screenFrame: surface.screen.frame) }
             let wasLocked = state.locked
             state.reset()
@@ -261,10 +347,16 @@ final class RecordingDesktopSelectionController {
             publish()
         }
         redraw()
+        if NSApp.keyWindow == nil, let surface = surfaces.first(where: { $0.display.id == activeDisplayID }) ?? surfaces.first {
+            surface.panel.makeKeyAndOrderFront(nil)
+            surface.panel.makeFirstResponder(surface.view)
+        }
     }
 
     private func hover(on displayID: UInt32, at point: CGPoint) {
-        guard !isTemporarilyHidden, countdown == nil, !state.locked, !pointerIsOverControls() else { return }
+        guard !isTemporarilyHidden, countdown == nil, trackingMenus.isEmpty else { return }
+        if state.locked { _ = refreshSelectedWindow() }
+        guard !state.locked, !pointerIsOverControls() else { return }
         retarget(on: displayID, at: point, locking: false)
     }
 
@@ -289,7 +381,7 @@ final class RecordingDesktopSelectionController {
     }
 
     private func click(on displayID: UInt32, at point: CGPoint) {
-        guard !isTemporarilyHidden, countdown == nil, mode != .region, !pointerIsOverControls() else { return }
+        guard !isTemporarilyHidden, countdown == nil, trackingMenus.isEmpty, mode != .region, !pointerIsOverControls() else { return }
         retarget(on: displayID, at: point, locking: true)
     }
 
@@ -308,6 +400,22 @@ final class RecordingDesktopSelectionController {
         guard state.target != lastPublished else { return }
         lastPublished = state.target
         onSelection(state.target)
+    }
+
+    @discardableResult
+    private func refreshSelectedWindow() -> Bool {
+        guard case let .window(id) = state.target else { return true }
+        let hit = RecordingDesktopSelectionGeometry.liveWindow(id: id, frontToBack: windowOrder(), available: inventory.windows,
+                                                              excludingPID: ProcessInfo.processInfo.processIdentifier)
+        guard let hit else {
+            state.reset()
+            windowFrame = nil
+            publish()
+            redraw()
+            return false
+        }
+        if windowFrame != hit.frame { windowFrame = hit.frame; redraw() }
+        return true
     }
 
     private func pointerIsOverControls() -> Bool {
@@ -378,6 +486,7 @@ private final class RecordingDesktopSelectionView: NSView {
         case create(CGPoint), move(CGRect, CGPoint), resize(CGRect, CaptureResizeHandle, CGPoint)
     }
     private var gesture: Gesture?
+    var hasActiveGesture: Bool { gesture != nil }
     override var isFlipped: Bool { true }
     override var acceptsFirstResponder: Bool { true }
 
@@ -393,11 +502,12 @@ private final class RecordingDesktopSelectionView: NSView {
         addCursorRect(bounds, cursor: mode == .region ? .crosshair : .arrow)
         guard mode == .region, let selection else { return }
         addCursorRect(selection, cursor: .openHand)
+        let radius = min(9, min(selection.width, selection.height) / 4)
         for handle in CaptureResizeHandle.allCases {
             let p = handle.position(in: selection)
             let cursor: NSCursor = handle == .east || handle == .west ? .resizeLeftRight :
                 handle == .north || handle == .south ? .resizeUpDown : .crosshair
-            addCursorRect(CGRect(x: p.x - 9, y: p.y - 9, width: 18, height: 18), cursor: cursor)
+            addCursorRect(CGRect(x: p.x - radius, y: p.y - radius, width: radius * 2, height: radius * 2), cursor: cursor)
         }
     }
 

@@ -47,6 +47,7 @@ nonisolated enum RecordingCameraPreviewStatus: Equatable, Sendable {
 
     /// Call only after the user selects camera positions or explicitly enters preview.
     func update(sources selected: [RecordingSource]) async throws {
+        try Task.checkCancellation()
         guard selected.count <= 2 else { throw RecordingConfigurationError.tooManyCameras }
         var ids = Set<String>(), deviceIDs = Set<String>()
         for source in selected {
@@ -58,6 +59,8 @@ nonisolated enum RecordingCameraPreviewStatus: Equatable, Sendable {
             }
         }
         if let stopping { await stopping.value }
+        // A cancelled caller may resume after a newer selection has queued behind this stop.
+        try Task.checkCancellation()
         let token = UUID()
         generation = token
         desired = Dictionary(uniqueKeysWithValues: selected.map { ($0.id, $0) })
@@ -76,9 +79,13 @@ nonisolated enum RecordingCameraPreviewStatus: Equatable, Sendable {
                 if self.generation == token {
                     self.desired.removeAll()
                     await self.releaseAll()
-                    for source in selected { self.setStatus(source.id, error is CancellationError ? .idle : .failed(error.localizedDescription)) }
                 }
-                throw error
+                let finalError: any Error = Task.isCancelled || self.generation != token || self.stopping != nil
+                    ? CancellationError() : error
+                if self.generation == token {
+                    for source in selected { self.setStatus(source.id, finalError is CancellationError ? .idle : .failed(finalError.localizedDescription)) }
+                }
+                throw finalError
             }
         }
         transition = task
@@ -102,11 +109,12 @@ nonisolated enum RecordingCameraPreviewStatus: Equatable, Sendable {
             _ = await previous?.result
             await self.releaseAll()
             for id in Array(self.statuses.keys) { self.setStatus(id, .idle) }
+            // Clear ownership before waiters resume; an old stop caller must not clear a new update's task.
+            self.transition = nil
+            self.stopping = nil
         }
         stopping = task
         await task.value
-        transition = nil
-        stopping = nil
     }
 
     /// Also provides a deterministic refresh seam for hostless lifecycle tests.

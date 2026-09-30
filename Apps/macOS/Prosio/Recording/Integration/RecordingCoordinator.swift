@@ -11,6 +11,12 @@ final class RecordingCoordinator {
     let store: RecordingStore
     private let permissions: PermissionsManager
     @ObservationIgnored private let makeEngine: () -> any RecordingEngineControlling
+    @ObservationIgnored private let sourceDiscovery: () async throws -> RecordingSourceInventory
+    @ObservationIgnored private let authorization: ((RecordingConfiguration) async throws -> Void)?
+    @ObservationIgnored private let presentsUI: Bool
+    @ObservationIgnored private var sourceRequestID = UUID()
+    @ObservationIgnored private var previewGeneration = UUID()
+    @ObservationIgnored private var permissionPresentations = Set<UUID>()
     @ObservationIgnored private var engine: (any RecordingEngineControlling)?
     @ObservationIgnored private var preparationTask: Task<Void, Never>?
     @ObservationIgnored private var window: NSWindow?
@@ -44,12 +50,13 @@ final class RecordingCoordinator {
     @ObservationIgnored private var selectionPanel: NSPanel?
     @ObservationIgnored private var completionPanel: NSPanel?
     @ObservationIgnored private var cameraPanels: [String: NSPanel] = [:]
-    @ObservationIgnored private let cameraPreview = RecordingCameraPreviewController()
+    @ObservationIgnored private let cameraPreview: RecordingCameraPreviewController
     @ObservationIgnored private var previewTask: Task<Void, Never>?
     @ObservationIgnored private var previewRefreshTask: Task<Void, Never>?
     @ObservationIgnored private var selectionTask: Task<Void, Never>?
     @ObservationIgnored private var previewShutdownTask: Task<Void, Never>?
     private(set) var closingSelection = false
+    private(set) var completionAvailable = false
     @ObservationIgnored private var selectionGeneration = UUID()
     @ObservationIgnored private var immersiveRecording = false
     @ObservationIgnored private var hiddenPreviews = Set<String>()
@@ -91,12 +98,20 @@ final class RecordingCoordinator {
     init(root: URL, permissions: PermissionsManager,
          makeEngine: @escaping () -> any RecordingEngineControlling = { RecordingEngine() },
          inventory: RecordingSourceInventory? = nil,
-         editorHandoff: RecordingEditorHandoff = RecordingEditorHandoff()) {
+         editorHandoff: RecordingEditorHandoff = RecordingEditorHandoff(),
+         sourceDiscovery: @escaping () async throws -> RecordingSourceInventory = { try await RecordingEngine.discoverSources() },
+         cameraPreview: RecordingCameraPreviewController = RecordingCameraPreviewController(),
+         authorization: ((RecordingConfiguration) async throws -> Void)? = nil,
+         presentsUI: Bool = true) {
         store = RecordingStore(root: root)
         self.permissions = permissions
         self.makeEngine = makeEngine
         self.inventory = inventory
         self.editorHandoff = editorHandoff
+        self.sourceDiscovery = sourceDiscovery
+        self.cameraPreview = cameraPreview
+        self.authorization = authorization
+        self.presentsUI = presentsUI
         restorePreferences()
     }
 
@@ -114,16 +129,21 @@ final class RecordingCoordinator {
 
     func refreshSources() async {
         guard !loadingSources, !isBusy else { return }
+        let request = UUID()
+        sourceRequestID = request
         loadingSources = true
-        defer { loadingSources = false }
+        defer { if sourceRequestID == request { loadingSources = false } }
         do {
-            inventory = try await RecordingEngine.discoverSources()
+            let discovered = try await sourceDiscovery()
+            guard sourceRequestID == request, !Task.isCancelled else { return }
+            inventory = discovered
             if displayID == 0 { displayID = inventory?.displays.first?.id ?? 0 }
             if windowID == 0 { windowID = inventory?.windows.first?.id ?? 0 }
             if microphoneID.isEmpty { microphoneID = inventory?.microphones.first?.id ?? "" }
             message = nil
             permissionRecovery = nil
         } catch {
+            guard sourceRequestID == request, !Task.isCancelled else { return }
             message = "无法取得录制来源：\(error.localizedDescription)"
             permissions.refresh()
             permissionRecovery = CGPreflightScreenCaptureAccess() ? nil : .screen
@@ -131,6 +151,7 @@ final class RecordingCoordinator {
     }
 
     func showWindow(sessionID: UUID? = nil) {
+        guard presentsUI else { return }
         if let sessionID { selectedSessionID = sessionID }
         if window == nil {
             let view = RecordingWorkspaceView(coordinator: self)
@@ -156,6 +177,8 @@ final class RecordingCoordinator {
         if selectionActive { selectionPanel?.orderFrontRegardless(); return }
         closeCompletion()
         window?.orderOut(nil)
+        sourceRequestID = UUID()
+        loadingSources = false
         selectionActive = true
         selectionTargetReady = false
         immersiveRecording = false
@@ -173,8 +196,10 @@ final class RecordingCoordinator {
 
     func refreshSelectionSources() async {
         guard selectionActive, !isBusy else { return }
+        let generation = selectionGeneration
         await refreshSources()
-        guard selectionActive, let inventory, permissionRecovery != .screen else { return }
+        guard selectionActive, selectionGeneration == generation, let inventory, permissionRecovery != .screen else { return }
+        if !presentsUI { syncCameraPreviews(); return }
         if let desktopSelection { desktopSelection.updateInventory(inventory) }
         else {
             let selector = RecordingDesktopSelectionController(inventory: inventory,
@@ -223,6 +248,9 @@ final class RecordingCoordinator {
         selectionActive = false
         selectionTargetReady = false
         selectionGeneration = UUID()
+        sourceRequestID = UUID()
+        loadingSources = false
+        previewGeneration = UUID()
         selectionTask?.cancel()
         selectionTask = nil
         cancelPreparation()
@@ -298,26 +326,29 @@ final class RecordingCoordinator {
         else { hiddenPreviews.removeAll() }
         syncCameraPanels()
     }
-    func closeCompletion() { completionPanel?.orderOut(nil); completionPanel = nil }
+    func closeCompletion() { completionPanel?.orderOut(nil); completionPanel = nil; completionAvailable = false }
 
     private func syncCameraPreviews() {
         guard selectionActive, !isBusy else { return }
         syncCameraPanels()
         cameraPreview.onStatus = { [weak self] id, status in
-            guard let self else { return }
+            guard let self, self.selectionActive, self.selectedCameraIDs.contains(id) else { return }
             self.cameraPreviewStatuses[id] = status
             self.previewRevision += 1
         }
         previewTask?.cancel()
+        let generation = UUID()
+        previewGeneration = generation
         let sources = selectedCameraSources
         previewTask = Task { [weak self] in
             guard let self else { return }
+            guard self.selectionActive, self.previewGeneration == generation, !Task.isCancelled else { return }
             let awaitingPermission = !sources.isEmpty && AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined
-            if awaitingPermission { self.setPreparationControlsHidden(true) }
-            defer { if awaitingPermission { self.setPreparationControlsHidden(false) } }
+            let presentation = awaitingPermission ? self.beginPermissionPresentation() : nil
+            defer { if let presentation { self.endPermissionPresentation(presentation) } }
             do { try await self.cameraPreview.update(sources: sources) }
             catch {
-                if !(error is CancellationError), self.selectionActive {
+                if !(error is CancellationError), !Task.isCancelled, self.selectionActive, self.previewGeneration == generation {
                     self.message = error.localizedDescription
                     if AVCaptureDevice.authorizationStatus(for: .video) == .denied { self.permissionRecovery = .camera }
                 }
@@ -326,6 +357,7 @@ final class RecordingCoordinator {
     }
 
     private func syncCameraPanels() {
+        guard presentsUI else { return }
         let sources = selectedCameraSources
         let desired = Set(sources.map(\.id))
         for id in Array(cameraPanels.keys) where !desired.contains(id) {
@@ -340,7 +372,7 @@ final class RecordingCoordinator {
                 positionCameraPanels(on: desktopSelection?.currentScreen ?? pointerScreen())
             }
             cameraPanels[source.id]?.level = isBusy ? .floating : NSWindow.Level(rawValue: RecordingDesktopSelectionController.overlayLevel.rawValue + 1)
-            if hiddenPreviews.contains(source.id) { cameraPanels[source.id]?.orderOut(nil) }
+            if !permissionPresentations.isEmpty || hiddenPreviews.contains(source.id) { cameraPanels[source.id]?.orderOut(nil) }
             else { cameraPanels[source.id]?.orderFrontRegardless() }
         }
     }
@@ -376,8 +408,19 @@ final class RecordingCoordinator {
         panel.setFrameOrigin(NSPoint(x: screen.visibleFrame.midX - panel.frame.width / 2,
                                      y: screen.visibleFrame.minY + 24))
     }
-    private func setPreparationControlsHidden(_ hidden: Bool) {
-        guard selectionActive else { return }
+    private func beginPermissionPresentation() -> UUID {
+        let token = UUID()
+        permissionPresentations.insert(token)
+        updatePermissionPresentation()
+        return token
+    }
+    private func endPermissionPresentation(_ token: UUID) {
+        permissionPresentations.remove(token)
+        updatePermissionPresentation()
+    }
+    private func updatePermissionPresentation() {
+        guard selectionActive, presentsUI else { return }
+        let hidden = !permissionPresentations.isEmpty
         desktopSelection?.setTemporarilyHidden(hidden)
         if hidden {
             selectionPanel?.orderOut(nil)
@@ -388,6 +431,7 @@ final class RecordingCoordinator {
         }
     }
     private func showSelectionPanel() {
+        guard presentsUI else { return }
         let panel = makeOverlayPanel(size: CGSize(width: 510, height: message == nil ? 74 : 142))
         panel.contentView = NSHostingView(rootView: RecordingSelectionToolbarView(coordinator: self)
             .frame(maxHeight: .infinity, alignment: .top))
@@ -402,6 +446,8 @@ final class RecordingCoordinator {
                                       width: 510, height: height), display: true)
     }
     private func showCompletion() {
+        completionAvailable = true
+        guard presentsUI else { return }
         let panel = makeOverlayPanel(size: CGSize(width: 370, height: 64))
         panel.level = .floating
         panel.contentView = NSHostingView(rootView: RecordingCompletionView(coordinator: self))
@@ -453,6 +499,10 @@ final class RecordingCoordinator {
 
     func begin() {
         guard !isBusy, preparationTask == nil, !selectionActive || selectionTargetReady else { return }
+        guard desktopSelection?.validateSelection() != false else {
+            message = "录制目标已变化，请重新选择。"
+            return
+        }
         do {
             let configuration = try configuration()
             guard canBegin() else {
@@ -475,10 +525,14 @@ final class RecordingCoordinator {
         exportMessage = nil
         var created: RecordingSessionManifest?
         do {
-            if requestPermissions { try await authorize(configuration) }
             previewTask?.cancel()
             if let previewTask { await previewTask.value }
             await cameraPreview.stopAll()
+            try Task.checkCancellation()
+            if requestPermissions {
+                if let authorization { try await authorization(configuration) }
+                else { try await authorize(configuration) }
+            }
             try Task.checkCancellation()
             for remaining in stride(from: countdownSeconds, through: 1, by: -1) {
                 countdown = remaining
@@ -522,8 +576,7 @@ final class RecordingCoordinator {
                 selectionTargetReady = false
                 desktopSelection?.dismiss(); desktopSelection = nil
                 selectionPanel?.orderOut(nil); selectionPanel = nil
-                showControlPanel()
-                syncCameraPanels()
+                if presentsUI { showControlPanel(); syncCameraPanels() }
                 previewRefreshTask = Task { [weak self] in
                     while !Task.isCancelled {
                         try? await Task.sleep(for: .seconds(2))
@@ -547,7 +600,10 @@ final class RecordingCoordinator {
             message = error is CancellationError ? "已取消准备录制。" : error.localizedDescription
             releaseEngine()
             desktopSelection?.setCountdown(nil)
-            if selectionActive { syncCameraPreviews() }
+            if selectionActive {
+                selectionTargetReady = (try? self.configuration()) != nil
+                syncCameraPreviews()
+            }
         }
         countdown = nil
         preparationTask = nil
@@ -633,8 +689,9 @@ final class RecordingCoordinator {
         let needsAuthorization = !CGPreflightScreenCaptureAccess()
             || (configuration.microphone != nil && permissions.statuses[.microphone] != .granted)
             || (!configuration.cameras.isEmpty && AVCaptureDevice.authorizationStatus(for: .video) != .authorized)
-        if needsAuthorization { setPreparationControlsHidden(true) }
-        defer { if needsAuthorization { setPreparationControlsHidden(false) } }
+        let presentation = needsAuthorization ? beginPermissionPresentation() : nil
+        defer { if let presentation { endPermissionPresentation(presentation) } }
+        try Task.checkCancellation()
         if !CGPreflightScreenCaptureAccess() {
             _ = CGRequestScreenCaptureAccess()
             guard CGPreflightScreenCaptureAccess() else {
@@ -642,16 +699,20 @@ final class RecordingCoordinator {
                 throw RecordingWorkflowError.message("请在系统设置中允许 Prosio 录制屏幕，再重新开始。")
             }
         }
+        try Task.checkCancellation()
         if configuration.microphone != nil, permissions.statuses[.microphone] != .granted {
             await permissions.request(.microphone)
+            try Task.checkCancellation()
             guard permissions.statuses[.microphone] == .granted else {
                 permissionRecovery = .microphone
                 throw RecordingWorkflowError.message("请允许麦克风访问，或关闭麦克风后开始录屏。")
             }
         }
+        try Task.checkCancellation()
         if !configuration.cameras.isEmpty {
             var allowed = AVCaptureDevice.authorizationStatus(for: .video) == .authorized
             if !allowed { allowed = await AVCaptureDevice.requestAccess(for: .video) }
+            try Task.checkCancellation()
             guard allowed else {
                 permissionRecovery = .camera
                 throw RecordingWorkflowError.message("请允许摄像头访问，或关闭机位后开始录屏。")

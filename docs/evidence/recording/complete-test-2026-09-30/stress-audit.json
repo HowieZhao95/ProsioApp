@@ -1,0 +1,2137 @@
+{
+  "auditScope" : "finalizedMediaMetadata",
+  "auditedCount" : 60,
+  "crossSourceSpansMicroseconds" : {
+    "camera-1" : [
+      0,
+      120000000
+    ],
+    "camera-2" : [
+      0,
+      120000000
+    ],
+    "microphone" : [
+      0,
+      120000000
+    ],
+    "screen" : [
+      0,
+      120000000
+    ],
+    "systemAudio" : [
+      0,
+      120000000
+    ]
+  },
+  "evidenceLimit" : "AVFoundation isPlayable and track metadata checks do not decode every frame or prove real-device lip-sync, two-hour drift, or editor import acceptance.",
+  "failedCount" : 0,
+  "informationalGapCount" : 0,
+  "inputCompleted" : true,
+  "inputFailures" : [
+
+  ],
+  "inputKind" : "stressReport",
+  "inputPath" : "\/tmp\/prosio-recording-complete-stress-20260930\/report.json",
+  "inputWarnings" : [
+
+  ],
+  "mediaRoot" : "\/tmp\/prosio-recording-complete-stress-20260930",
+  "noCompletedMedia" : false,
+  "passedCount" : 60,
+  "segmentCount" : 60,
+  "segments" : [
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "E655BCF1-5738-4A7D-AACE-C9597AF87C58",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/E655BCF1-5738-4A7D-AACE-C9597AF87C58.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 29.6,
+          "rangeToleranceSeconds" : 0.03378378334839559,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "3E372430-7C02-4F80-BA14-61F868267FCE",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/3E372430-7C02-4F80-BA14-61F868267FCE.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 29.5,
+          "rangeToleranceSeconds" : 0.03389830508474576,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "06745D97-55A5-4B8D-998E-29CB85A11667",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/06745D97-55A5-4B8D-998E-29CB85A11667.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 29.5,
+          "rangeToleranceSeconds" : 0.03389830508474576,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "B4BC51EC-750E-49DD-8269-CF325ABAE7C4",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/B4BC51EC-750E-49DD-8269-CF325ABAE7C4.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "B0149DC2-D7BE-44B0-BFD0-7BFD2DB38272",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/B0149DC2-D7BE-44B0-BFD0-7BFD2DB38272.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "82BA3E5E-9127-4653-ABF9-CE84062327F6",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/82BA3E5E-9127-4653-ABF9-CE84062327F6.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        10000000,
+        20000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "2B400D4D-B674-418D-84A9-CBDB1ED50435",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/2B400D4D-B674-418D-84A9-CBDB1ED50435.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        10000000,
+        20000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "72164ADA-A37F-4A80-BF0B-F70A94F046DD",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/72164ADA-A37F-4A80-BF0B-F70A94F046DD.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        10000000,
+        20000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "6D0DEFF1-273F-4B5E-A6AA-A346B7F04AC3",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/6D0DEFF1-273F-4B5E-A6AA-A346B7F04AC3.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        10000000,
+        20000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "B3B4E004-F1F8-4202-BF01-A52E7648B132",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/B3B4E004-F1F8-4202-BF01-A52E7648B132.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        10000000,
+        20000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "412ACB9A-9847-442A-878E-C0EF50474940",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/412ACB9A-9847-442A-878E-C0EF50474940.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        20000000,
+        30000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "45E53650-8E8D-4CB3-BDC7-AB9120F95261",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/45E53650-8E8D-4CB3-BDC7-AB9120F95261.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        20000000,
+        30000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "96DB709F-226D-4C3C-B1D5-86F97BB1D66F",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/96DB709F-226D-4C3C-B1D5-86F97BB1D66F.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        20000000,
+        30000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "D91AD210-22A9-482D-8D7B-71277AC8AD45",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/D91AD210-22A9-482D-8D7B-71277AC8AD45.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        20000000,
+        30000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "0534069D-3A63-4647-8B05-BB6C6C05DF9C",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/0534069D-3A63-4647-8B05-BB6C6C05DF9C.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        20000000,
+        30000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "FF21380D-9B89-487C-993B-4C0FBB3A442C",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/FF21380D-9B89-487C-993B-4C0FBB3A442C.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        30000000,
+        40000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "474BAEEB-0DE5-4601-B344-CD30D912B209",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/474BAEEB-0DE5-4601-B344-CD30D912B209.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        30000000,
+        40000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "D84D6F53-9E2E-4C25-8973-1916CD14B227",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/D84D6F53-9E2E-4C25-8973-1916CD14B227.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        30000000,
+        40000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "B1E15529-EA97-406B-B232-336BD28F47F6",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/B1E15529-EA97-406B-B232-336BD28F47F6.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        30000000,
+        40000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "5FB3376C-FE6E-4EF4-9905-51D6F0BEF56D",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/5FB3376C-FE6E-4EF4-9905-51D6F0BEF56D.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        30000000,
+        40000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "3D7D460F-0BFE-4165-A46C-370C5F304744",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/3D7D460F-0BFE-4165-A46C-370C5F304744.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        40000000,
+        50000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "05809A89-947A-40EC-B33C-5F9493D58C49",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/05809A89-947A-40EC-B33C-5F9493D58C49.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        40000000,
+        50000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "658ECEF4-0269-4F70-81C2-A79A74D79F68",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/658ECEF4-0269-4F70-81C2-A79A74D79F68.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        40000000,
+        50000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "FF026766-2E3E-434B-BC12-1EC75E8810BC",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/FF026766-2E3E-434B-BC12-1EC75E8810BC.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        40000000,
+        50000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "A4D393E9-0CA1-41F8-8F7C-2FE5DD55D131",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/A4D393E9-0CA1-41F8-8F7C-2FE5DD55D131.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        40000000,
+        50000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "613B078B-0EF7-422F-A0C0-3D9CB2DDBA7F",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/613B078B-0EF7-422F-A0C0-3D9CB2DDBA7F.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        50000000,
+        60000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "443B665B-AC71-4399-BF7E-4AFB693040D0",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/443B665B-AC71-4399-BF7E-4AFB693040D0.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        50000000,
+        60000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "7FDDCEB3-AFB8-40AF-93FD-C5A65B2EC816",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/7FDDCEB3-AFB8-40AF-93FD-C5A65B2EC816.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        50000000,
+        60000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "A9218E3D-5DB4-4F15-B1DA-C4F6062CC062",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/A9218E3D-5DB4-4F15-B1DA-C4F6062CC062.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        50000000,
+        60000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "3F56C882-934C-42EB-922E-8ACD44E68584",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/3F56C882-934C-42EB-922E-8ACD44E68584.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        50000000,
+        60000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "7E65A4F7-7FDA-4452-B3FB-A0CB9A7D59D2",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/7E65A4F7-7FDA-4452-B3FB-A0CB9A7D59D2.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        60000000,
+        70000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "71C54BF1-2A1A-4505-B94D-DC063D514E0B",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/71C54BF1-2A1A-4505-B94D-DC063D514E0B.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        60000000,
+        70000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "FF4118DD-229C-4EC5-9980-DA4759FDEECB",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/FF4118DD-229C-4EC5-9980-DA4759FDEECB.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        60000000,
+        70000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "9BF48ADF-E2AD-4A79-ABC4-121A50708B30",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/9BF48ADF-E2AD-4A79-ABC4-121A50708B30.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        60000000,
+        70000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "CEC13F4A-4738-48A2-844D-9E656EB4AABB",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/CEC13F4A-4738-48A2-844D-9E656EB4AABB.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        60000000,
+        70000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "4812200A-4831-4E23-8EA9-8ED654F34D01",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/4812200A-4831-4E23-8EA9-8ED654F34D01.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        70000000,
+        80000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "54D06231-0CA8-4D1E-9ADA-96D5AB05950A",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/54D06231-0CA8-4D1E-9ADA-96D5AB05950A.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        70000000,
+        80000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "703F2384-9CA1-458D-9F7F-84289C1F66D3",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/703F2384-9CA1-458D-9F7F-84289C1F66D3.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        70000000,
+        80000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "38C020AB-99EA-4B5A-9B0B-61326F20A8C1",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/38C020AB-99EA-4B5A-9B0B-61326F20A8C1.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        70000000,
+        80000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "C43ABA65-7E7A-4EC7-8691-CC7FF4B10CC4",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/C43ABA65-7E7A-4EC7-8691-CC7FF4B10CC4.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        70000000,
+        80000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "86EA91BD-0E30-4D8B-A63F-5452523EB17A",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/86EA91BD-0E30-4D8B-A63F-5452523EB17A.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        80000000,
+        90000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "188C2DB2-20EC-48C8-82D1-62BBC86D9ECB",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/188C2DB2-20EC-48C8-82D1-62BBC86D9ECB.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        80000000,
+        90000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "47BB6A4E-C522-498B-85DC-64189CD13399",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/47BB6A4E-C522-498B-85DC-64189CD13399.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        80000000,
+        90000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "C2FC1F83-3467-4E1C-AF2D-DE14B9484F72",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/C2FC1F83-3467-4E1C-AF2D-DE14B9484F72.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        80000000,
+        90000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "8AB3B101-6CBD-47AB-ABE0-C099AD65CDCC",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/8AB3B101-6CBD-47AB-ABE0-C099AD65CDCC.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        80000000,
+        90000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "08BCF55B-FA76-4010-8FE7-3443AE61F40F",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/08BCF55B-FA76-4010-8FE7-3443AE61F40F.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        90000000,
+        100000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "063CD18C-0AB1-441F-AFDF-39C304819E96",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/063CD18C-0AB1-441F-AFDF-39C304819E96.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        90000000,
+        100000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "649F4D47-E82B-4BF7-AF3F-5BA6E866AFBC",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/649F4D47-E82B-4BF7-AF3F-5BA6E866AFBC.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        90000000,
+        100000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "45E27AC8-23AB-44EA-8CCF-D49D3555CBD2",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/45E27AC8-23AB-44EA-8CCF-D49D3555CBD2.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        90000000,
+        100000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "403A1398-D4CB-4DDE-865E-211EB81592B7",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/403A1398-D4CB-4DDE-865E-211EB81592B7.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        90000000,
+        100000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "028EBAC6-49FD-4DE8-AA55-354C280329B8",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/028EBAC6-49FD-4DE8-AA55-354C280329B8.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        100000000,
+        110000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "156F8A62-FF21-47CC-BC56-1DEF0ECE69E7",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/156F8A62-FF21-47CC-BC56-1DEF0ECE69E7.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        100000000,
+        110000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "8FF578FE-34B8-450A-8C30-6D41719A938B",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/8FF578FE-34B8-450A-8C30-6D41719A938B.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        100000000,
+        110000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "A09DB27F-9A06-4FC2-B255-17967876DCE5",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/A09DB27F-9A06-4FC2-B255-17967876DCE5.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        100000000,
+        110000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "DB2F8F2E-9826-437A-9965-CDEB47BC4201",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/DB2F8F2E-9826-437A-9965-CDEB47BC4201.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        100000000,
+        110000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "BC1BC769-E59C-4C1F-A7FA-D26C0F9551F3",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/BC1BC769-E59C-4C1F-A7FA-D26C0F9551F3.m4a",
+      "sourceID" : "microphone",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        110000000,
+        120000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "898B437C-418E-4C0F-BFA8-8237C94896B8",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/898B437C-418E-4C0F-BFA8-8237C94896B8.m4a",
+      "sourceID" : "systemAudio",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        110000000,
+        120000000
+      ],
+      "tracks" : [
+        {
+          "channelCount" : 2,
+          "codec" : "aac ",
+          "mediaType" : "soun",
+          "rangeToleranceSeconds" : 0.042666666666666665,
+          "sampleRate" : 48000,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "62EEEF7C-71B9-4F7E-A603-C0761B0665E8",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/62EEEF7C-71B9-4F7E-A603-C0761B0665E8.mov",
+      "sourceID" : "camera-1",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        110000000,
+        120000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "9D788068-78CD-42CF-8D5A-C10300E6A336",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/9D788068-78CD-42CF-8D5A-C10300E6A336.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        110000000,
+        120000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 10,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        10000000
+      ],
+      "id" : "4A211C3F-34CB-4797-B365-610AD7D38B90",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/4A211C3F-34CB-4797-B365-610AD7D38B90.mov",
+      "sourceID" : "camera-2",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        110000000,
+        120000000
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1080,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1080,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 30,
+          "rangeToleranceSeconds" : 0.03333333333333333,
+          "timeRange" : {
+            "durationSeconds" : 10,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    }
+  ],
+  "snapshotIsPartial" : false,
+  "sources" : [
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 120000000,
+      "overlapCount" : 0,
+      "segmentCount" : 12,
+      "sourceID" : "camera-1",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 120000000,
+      "overlapCount" : 0,
+      "segmentCount" : 12,
+      "sourceID" : "camera-2",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 120000000,
+      "overlapCount" : 0,
+      "segmentCount" : 12,
+      "sourceID" : "microphone",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 120000000,
+      "overlapCount" : 0,
+      "segmentCount" : 12,
+      "sourceID" : "screen",
+      "timelineIssues" : [
+
+      ]
+    },
+    {
+      "firstStartMicroseconds" : 0,
+      "gapCount" : 0,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 120000000,
+      "overlapCount" : 0,
+      "segmentCount" : 12,
+      "sourceID" : "systemAudio",
+      "timelineIssues" : [
+
+      ]
+    }
+  ],
+  "timelineErrorCount" : 0,
+  "tool" : "ProsioRecordingMediaAudit\/1"
+}

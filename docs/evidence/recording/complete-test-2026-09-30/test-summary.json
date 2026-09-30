@@ -1,0 +1,31 @@
+{
+  "recordingModule": {
+    "passed": 104,
+    "failed": 0,
+    "xctest": 48,
+    "swiftTesting": 56,
+    "rawLog": "/tmp/prosio-recording-complete-module-final.log",
+    "sha256": "4f2c2ed11ae1b2dec29b77c52c4593c881f62366b44856ffc75b2aa7bac9b773",
+    "xcresult": "/tmp/prosio-recording-complete-build/Logs/Test/Test-RecordingValidation-2026.09.30_23-17-08-+0800.xcresult"
+  },
+  "mainDebug": {
+    "passed": 250,
+    "failed": 0,
+    "xctest": 48,
+    "swiftTesting": 202,
+    "rawLog": "/tmp/prosio-recording-complete-regression-fixed.log",
+    "sha256": "9198a5c3bd4912cddc98708185feb1bdae349bcb675b193f4dae8d736df950cb",
+    "xcresult": "/tmp/prosio-recording-clean-build-20260930/Logs/Test/Test-Prosio-2026.09.30_23-24-08-+0800.xcresult"
+  },
+  "mainRelease": {
+    "passed": 250,
+    "failed": 0,
+    "xctest": 48,
+    "swiftTesting": 202,
+    "rawLog": "/tmp/prosio-recording-complete-release.log",
+    "sha256": "0a2598e1253944f0629e9220e3faadf66aa9e336da4dab8e1a00ffcbcde96e12",
+    "xcresult": "/tmp/prosio-recording-clean-build-20260930/Logs/Test/Test-Prosio-2026.09.30_23-27-19-+0800.xcresult"
+  },
+  "countsAreOverlapping": true,
+  "releaseExclusivity": "checked"
+}

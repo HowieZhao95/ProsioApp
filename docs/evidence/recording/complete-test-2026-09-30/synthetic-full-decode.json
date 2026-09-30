@@ -1,0 +1,70 @@
+{
+  "concurrentStopJoined" : true,
+  "directory" : "\/tmp\/prosio-recording-complete-ui-media\/8BECF8AB-DABC-43D0-8E8A-DE5DB90C54D7",
+  "events" : [
+    "start: SYNTHETIC fixture only; no inputs, device capture or permissions; directory=\/tmp\/prosio-recording-complete-ui-media\/8BECF8AB-DABC-43D0-8E8A-DE5DB90C54D7",
+    "pause: SYNTHETIC UI state only; no capture",
+    "resume: SYNTHETIC UI state only; no capture",
+    "stop: generating 2 seconds of SYNTHETIC 640x360 video \/ 48k stereo audio using production writer",
+    "segment: SYNTHETIC source=systemAudio path=media\/05B4CAC4-0EC7-4813-B97C-5B9EB8AF9CED.m4a startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=ui-microphone path=media\/A84AFB71-11EF-4391-9636-AA21187CBA47.m4a startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=ui-camera-2 path=media\/E28B7364-2FF2-41DC-950C-05667DD8D814.mov startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=screen path=media\/A28753A2-EFA3-4C4A-BB3F-F36DD9B9949E.mov startUs=0 durationUs=2000000",
+    "segment: SYNTHETIC source=ui-camera-1 path=media\/69EF6C18-A641-46F3-A0B6-52E88AC473F0.mov startUs=0 durationUs=2000000",
+    "writer.stats: written=580 segments=5 admissionDrops=0 encoderDrops=0",
+    "stop.completed: all SYNTHETIC files finished; not evidence of real capture or AV sync"
+  ],
+  "media" : [
+    {
+      "decodedSamples" : 96000,
+      "durationMicroseconds" : 2000000,
+      "fullDecode" : true,
+      "kind" : "systemAudio",
+      "relativePath" : "media\/05B4CAC4-0EC7-4813-B97C-5B9EB8AF9CED.m4a",
+      "sourceID" : "systemAudio",
+      "startMicroseconds" : 0
+    },
+    {
+      "decodedSamples" : 96000,
+      "durationMicroseconds" : 2000000,
+      "fullDecode" : true,
+      "kind" : "microphone",
+      "relativePath" : "media\/A84AFB71-11EF-4391-9636-AA21187CBA47.m4a",
+      "sourceID" : "ui-microphone",
+      "startMicroseconds" : 0
+    },
+    {
+      "decodedSamples" : 60,
+      "durationMicroseconds" : 2000000,
+      "fullDecode" : true,
+      "kind" : "camera",
+      "relativePath" : "media\/E28B7364-2FF2-41DC-950C-05667DD8D814.mov",
+      "sourceID" : "ui-camera-2",
+      "startMicroseconds" : 0
+    },
+    {
+      "decodedSamples" : 60,
+      "durationMicroseconds" : 2000000,
+      "fullDecode" : true,
+      "kind" : "screen",
+      "relativePath" : "media\/A28753A2-EFA3-4C4A-BB3F-F36DD9B9949E.mov",
+      "sourceID" : "screen",
+      "startMicroseconds" : 0
+    },
+    {
+      "decodedSamples" : 60,
+      "durationMicroseconds" : 2000000,
+      "fullDecode" : true,
+      "kind" : "camera",
+      "relativePath" : "media\/69EF6C18-A641-46F3-A0B6-52E88AC473F0.mov",
+      "sourceID" : "ui-camera-1",
+      "startMicroseconds" : 0
+    }
+  ],
+  "passed" : true,
+  "permissionsRequested" : false,
+  "physicalCapture" : false,
+  "previewWasEmptyAndStable" : true,
+  "syntheticAudioSources" : 2,
+  "syntheticVideoSources" : 3
+}
