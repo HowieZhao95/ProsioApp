@@ -31,6 +31,14 @@ final class RecordingProjectExporter {
             try Self.fcpxml(session: packaged, media: media).write(to: temporary.appendingPathComponent(fileName), options: .atomic)
         case .resolve, .premiere:
             try Self.fcp7XML(session: packaged, media: media).write(to: temporary.appendingPathComponent(fileName), options: .atomic)
+            if editor == .premiere && media.contains(where: \.isVideo) {
+                try RecordingPremiereMulticamAdapter.candidate(session: packaged, media: media).write(to: temporary.appendingPathComponent("Multicam.premiere.experimental.xml"), options: .atomic)
+            }
+            if editor == .resolve {
+                // Preserve FCPXML angles as an alternate interchange source; Resolve's vendor
+                // documentation describes imported FCPX multicams as compounds, not proof of native multicam.
+                try Self.fcpxml(session: packaged, media: media).write(to: temporary.appendingPathComponent("Multicam.fcpxml"), options: .atomic)
+            }
         case .jianying:
             try RecordingJianyingAdapter.write(session: packaged, media: media, directory: temporary, finalDirectory: destination)
         }
@@ -43,6 +51,9 @@ final class RecordingProjectExporter {
         当前交接文件使用本次导出位置的文件 URL。移动文件夹后，编辑软件可能要求重新链接 Media；也可在 Prosio 重新导出到新位置。不要单独移动 XML/草稿或删除原片。
         Final Cut Pro：导入 Timeline.fcpxml，时间线中为原生多机位，麦克风和系统声音各自独立。
         Resolve / Premiere：导入 Timeline.xml，得到独立对齐轨道；在编辑软件中创建多机位。FCP7 XML 以时间线帧率取最近帧，微秒原始偏移保存在 recording.json。
+        Premiere 包另含 Multicam.premiere.experimental.xml：按 Apple XMEML 多机位结构生成，保留分段角度和独立音频。Adobe 旧版资料支持最多四路未折叠多机位；当前版本与嵌套角度仍待实机验收。此文件不是已验证的默认导入路线。
+        Resolve 包另含 Multicam.fcpxml：保留角度定义。官方资料将导入的 FCPX 多机位视为复合片段；导入后可从素材池转换为多机位。未宣称一次导入即得到原生多机位。
+        XtoCC 官方说明会将多机位折叠为当前角度，因此不能用它保证原生多机位保留。
         剪映：实验性本地明文草稿。将整个包作为新草稿处理，按软件要求重新链接素材。未验证 macOS 版本，不自动写入或覆盖剪映草稿目录，不保证受加密格式限制的版本可读取。
         """
         try Data(note.utf8).write(to: temporary.appendingPathComponent("导入说明.txt"), options: .atomic)
@@ -122,8 +133,14 @@ final class RecordingProjectExporter {
         let base = Int(fps.rounded())
         let timelineFPS = Double(base) * (ntsc ? 1000.0 / 1001 : 1)
         func frames(_ value: Int64) -> String { String(Int64((Double(value) * timelineFPS / 1_000_000).rounded())) }
-        func rate() -> XMLElement {
-            let node = element("rate"); node.addChild(textElement("timebase", "\(base)")); node.addChild(textElement("ntsc", ntsc ? "TRUE" : "FALSE")); return node
+        func rate(_ item: RecordingMediaInfo? = nil) -> XMLElement {
+            let sourceFPS = item?.frameDuration.map { 1 / $0.seconds } ?? timelineFPS
+            let sourceNTSC = abs(sourceFPS - 29.97002997) < 0.01 || abs(sourceFPS - 59.94005994) < 0.01 || abs(sourceFPS - 23.976023976) < 0.01
+            let node = element("rate"); node.addChild(textElement("timebase", "\(Int(sourceFPS.rounded()))")); node.addChild(textElement("ntsc", sourceNTSC ? "TRUE" : "FALSE")); return node
+        }
+        func sourceFrames(_ value: Int64, item: RecordingMediaInfo) -> String {
+            let sourceFPS = item.frameDuration.map { 1 / $0.seconds } ?? timelineFPS
+            return String(Int64((Double(value) * sourceFPS / 1_000_000).rounded()))
         }
         let root = element("xmeml", ["version": "5"])
         let sequence = element("sequence", ["id": "sequence-\(session.id)"])
@@ -153,13 +170,13 @@ final class RecordingProjectExporter {
                     let (index, item) = entry
                     if !isVideo && channel > (item.channels ?? 1) { continue }
                     let clip = element("clipitem", ["id": isVideo ? "clip-\(index)" : "clip-\(index)-c\(channel)"])
-                    for (name, value) in [("name", source.name), ("duration", frames(Int64(item.duration.seconds * 1_000_000))), ("start", frames(item.segment.timelineStartMicroseconds)), ("end", frames(item.segment.timelineStartMicroseconds + item.segment.durationMicroseconds)), ("in", frames(item.segment.mediaStartMicroseconds)), ("out", frames(item.segment.mediaStartMicroseconds + item.segment.durationMicroseconds))] { clip.addChild(textElement(name, value)) }
-                    clip.addChild(rate())
+                    for (name, value) in [("name", source.name), ("duration", sourceFrames(Int64(item.duration.seconds * 1_000_000), item: item)), ("start", frames(item.segment.timelineStartMicroseconds)), ("end", frames(item.segment.timelineStartMicroseconds + item.segment.durationMicroseconds)), ("in", sourceFrames(item.segment.mediaStartMicroseconds, item: item)), ("out", sourceFrames(item.segment.mediaStartMicroseconds + item.segment.durationMicroseconds, item: item))] { clip.addChild(textElement(name, value)) }
+                    clip.addChild(rate(item))
                     let file = element("file", ["id": "file-\(index)"])
                     if channel == 1 {
-                    file.addChild(textElement("name", item.url.lastPathComponent)); file.addChild(textElement("pathurl", item.url.absoluteString)); file.addChild(rate()); file.addChild(textElement("duration", frames(Int64(item.duration.seconds * 1_000_000))))
+                    file.addChild(textElement("name", item.url.lastPathComponent)); file.addChild(textElement("pathurl", item.url.absoluteString)); file.addChild(rate(item)); file.addChild(textElement("duration", sourceFrames(Int64(item.duration.seconds * 1_000_000), item: item)))
                     let fileMedia = element("media"); let fileSection = element(kind); let sample = element("samplecharacteristics")
-                    if isVideo { sample.addChild(rate()); sample.addChild(textElement("width", "\(item.width ?? 1920)")); sample.addChild(textElement("height", "\(item.height ?? 1080)")); sample.addChild(textElement("pixelaspectratio", "square")); sample.addChild(textElement("fielddominance", "none")) }
+                    if isVideo { sample.addChild(rate(item)); sample.addChild(textElement("width", "\(item.width ?? 1920)")); sample.addChild(textElement("height", "\(item.height ?? 1080)")); sample.addChild(textElement("pixelaspectratio", "square")); sample.addChild(textElement("fielddominance", "none")) }
                     else { sample.addChild(textElement("depth", "16")); sample.addChild(textElement("samplerate", "\(item.sampleRate ?? 48000)")); fileSection.addChild(textElement("channelcount", "\(item.channels ?? 1)")) }
                     fileSection.addChild(sample); fileMedia.addChild(fileSection); file.addChild(fileMedia)
                     }
