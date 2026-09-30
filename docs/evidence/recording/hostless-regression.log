@@ -1,0 +1,672 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Prosio.xcodeproj -scheme ProsioValidation -configuration Debug -derivedDataPath /tmp/prosio-recording-validation-20260930 test -resultBundlePath /tmp/prosio-recording-validation-final-20260930.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  FluidAudio: /Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio @ local
+  ProsioKit: /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+
+Writing result bundle at path:
+	/tmp/prosio-recording-validation-final-20260930.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, name:Any Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'ProsioTests' in project 'Prosio'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /tmp/prosio-recording-validation-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/prosio-recording-validation-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+SwiftDriver ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-validation-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-validation-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-validation-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-validation-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-validation-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-validation-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ RecordingNativeViewTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingNativeViewTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingNativeViewTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ProsioTests (in target 'ProsioTests' from project 'Prosio')
+EmitSwiftModule normal arm64 (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingWorkspaceView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift (in target 'ProsioTests' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingNativeViewTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingWorkspaceView.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-validation-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-validation-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-validation-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-validation-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-validation-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-validation-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ProsioTests (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation\ Requirements ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-validation-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-validation-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-validation-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-validation-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-validation-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-validation-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-validation-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Ld /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests normal (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/prosio-recording-validation-20260930/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/prosio-recording-validation-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-validation-20260930/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.LinkFileList -Xlinker -rpath -Xlinker /tmp/prosio-recording-validation-20260930/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule @/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -no_adhoc_codesign -o /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule @/tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-linker-args.resp
+
+ExtractAppIntentsMetadata (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ProsioTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --bundle-identifier app.prosio.ProsioTests --output /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.0 --binary-file /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --dependency-file /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat --stringsdata-file /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList --metadata-file-list /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyMetadataFileList --static-metadata-file-list /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-30 15:30:49.091 appintentsmetadataprocessor[73944:9322972] Starting appintentsmetadataprocessor export
+2026-09-30 15:30:49.096 appintentsmetadataprocessor[73944:9322972] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-swiftStdLibTool --copy --verbose --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --scan-executable /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --scan-folder /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --scan-folder /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/PlugIns --scan-folder /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Library/SystemExtensions --scan-folder /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/prosio-recording-validation-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+    Signing Identity:     "Prosio Local Development"
+    
+    /usr/bin/codesign --force --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --timestamp\=none --generate-entitlement-der /tmp/prosio-recording-validation-20260930/Build/Products/Debug/ProsioTests.xctest
+
+Test Suite 'All tests' started at 2026-09-30 15:30:52.069.
+Test Suite 'ProsioTests.xctest' started at 2026-09-30 15:30:52.070.
+Test Suite 'RecordingPlatformTests' started at 2026-09-30 15:30:52.070.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (2.540 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' started.
+2026-09-30 15:30:54.791834+0800 xctest[73951:9323175] [] (Fig) signalled err=0 at <>:85
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.427 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (0.267 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.120 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.176 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' started.
+2026-09-30 15:30:55.616053+0800 xctest[73951:9323043] [] <<<< FigFile >>>> signalled err=-17913 at <>:745
+2026-09-30 15:30:55.616418+0800 xctest[73951:9323043] [] <<<< FigAssetWriter >>>> signalled err=-12143 at <>:384
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.017 seconds).
+Test Suite 'RecordingPlatformTests' passed at 2026-09-30 15:30:55.620.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 3.548 (3.550) seconds
+Test Suite 'RecordingRecoveryTests' started at 2026-09-30 15:30:55.620.
+Test Case '-[ProsioTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' started.
+2026-09-30 15:30:55.681457+0800 xctest[73951:9323314] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
+Test Case '-[ProsioTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' passed (0.064 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' passed (0.061 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' passed (0.065 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' started.
+2026-09-30 15:30:55.871554+0800 xctest[73951:9323314] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
+Test Case '-[ProsioTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' passed (0.061 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' passed (0.062 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' passed (0.065 seconds).
+Test Suite 'RecordingRecoveryTests' passed at 2026-09-30 15:30:56.000.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.378 (0.380) seconds
+Test Suite 'ProsioTests.xctest' passed at 2026-09-30 15:30:56.000.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 3.926 (3.930) seconds
+Test Suite 'All tests' passed at 2026-09-30 15:30:56.001.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 3.926 (3.931) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "AXCoordinateConverter" started.
+◇ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" started.
+✔ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" passed after 0.001 seconds.
+◇ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" started.
+✔ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" passed after 0.001 seconds.
+◇ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" started.
+✔ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" passed after 0.001 seconds.
+◇ Test "Round-tripping the flip twice with the same height returns the original rect" started.
+✔ Test "Round-tripping the flip twice with the same height returns the original rect" passed after 0.001 seconds.
+✔ Suite "AXCoordinateConverter" passed after 0.001 seconds.
+◇ Suite "Capture editable persistence" started.
+◇ Test "Restriction writes only crop source pixels and translates related geometry without UI selection" started.
+✔ Test "Restriction writes only crop source pixels and translates related geometry without UI selection" passed after 0.012 seconds.
+◇ Test "V2 fresh reopen retains editable geometry and exact flattened output while discarding full desktop" started.
+✔ Test "V2 fresh reopen retains editable geometry and exact flattened output while discarding full desktop" passed after 0.024 seconds.
+◇ Test "Completed history restores the full frozen screen, original crop, and every annotation" started.
+✔ Test "Completed history restores the full frozen screen, original crop, and every annotation" passed after 0.004 seconds.
+◇ Test "Legacy v1 PNG opens as editable whole-image document without inventing annotations" started.
+✔ Test "Legacy v1 PNG opens as editable whole-image document without inventing annotations" passed after 0.002 seconds.
+◇ Test "Document metadata write failure leaves earlier history and current editing unchanged" started.
+✔ Test "Document metadata write failure leaves earlier history and current editing unchanged" passed after 0.005 seconds.
+◇ Test "V2 cancellation after flattened PNG leaves no new source or history item" started.
+✔ Test "V2 cancellation after flattened PNG leaves no new source or history item" passed after 0.010 seconds.
+◇ Test "Damaged v2 editable metadata is preserved and excluded with a recovery warning" started.
+✔ Test "Damaged v2 editable metadata is preserved and excluded with a recovery warning" passed after 0.006 seconds.
+◇ Test "Saving a crop that intersects only rectangle stroke preserves the visible border on reopen" started.
+✔ Test "Saving a crop that intersects only rectangle stroke preserves the visible border on reopen" passed after 0.004 seconds.
+◇ Test "Mismatched source dimensions and inconsistent editable crop are rejected rather than reopening a different image" started.
+✔ Test "Mismatched source dimensions and inconsistent editable crop are rejected rather than reopening a different image" passed after 0.007 seconds.
+◇ Test "Failed external output rolls back only its newly persisted history asset" started.
+✔ Test "Failed external output rolls back only its newly persisted history asset" passed after 0.005 seconds.
+◇ Test "Successful external output retains precisely the committed asset passed to it" started.
+✔ Test "Successful external output retains precisely the committed asset passed to it" passed after 0.003 seconds.
+◇ Test "The 51st successful output evicts the oldest complete history directory" started.
+✔ Test "The 51st successful output evicts the oldest complete history directory" passed after 0.114 seconds.
+✔ Suite "Capture editable persistence" passed after 0.204 seconds.
+◇ Suite "Capture output state" started.
+◇ Test "Duplicate output is rejected and cancelled save or failure remains editable for retry" started.
+✔ Test "Duplicate output is rejected and cancelled save or failure remains editable for retry" passed after 0.001 seconds.
+◇ Test "Late output completion cannot resurrect a cancelled editing session" started.
+✔ Test "Late output completion cannot resurrect a cancelled editing session" passed after 0.001 seconds.
+✔ Suite "Capture output state" passed after 0.001 seconds.
+◇ Suite "Capture editor commands" started.
+◇ Test "Resizing and moving crop keeps annotation geometry anchored to source pixels" started.
+✔ Test "Resizing and moving crop keeps annotation geometry anchored to source pixels" passed after 0.001 seconds.
+◇ Test "Undo redo preserves update/delete and a new edit abandons the redo branch" started.
+✔ Test "Undo redo preserves update/delete and a new edit abandons the redo branch" passed after 0.001 seconds.
+◇ Test "Selection alone creates no content undo step and deleting clears selected IDs" started.
+✔ Test "Selection alone creates no content undo step and deleting clears selected IDs" passed after 0.001 seconds.
+◇ Test "All annotation geometry kinds translate by the same crop-origin delta" started.
+✔ Test "All annotation geometry kinds translate by the same crop-origin delta" passed after 0.001 seconds.
+✔ Suite "Capture editor commands" passed after 0.001 seconds.
+◇ Suite "Capture editor pixels" started.
+◇ Test "Straight lines have no arrowhead; capped annotation lines render a perpendicular tick at each endpoint" started.
+✔ Test "Straight lines have no arrowhead; capped annotation lines render a perpendicular tick at each endpoint" passed after 0.001 seconds.
+◇ Test "Unified filled rectangles match legacy highlight pixels and opacity survives storage with backward compatibility" started.
+✔ Test "Unified filled rectangles match legacy highlight pixels and opacity survives storage with backward compatibility" passed after 0.001 seconds.
+◇ Test "Mosaic and blur strengths below four produce distinct pixels instead of sharing a hard minimum" started.
+✔ Test "Mosaic and blur strengths below four produce distinct pixels instead of sharing a hard minimum" passed after 0.062 seconds.
+◇ Test "Crop exports exact pixel dimensions and the top-left source orientation" started.
+✔ Test "Crop exports exact pixel dimensions and the top-left source orientation" passed after 0.001 seconds.
+◇ Test "Selected handles and UI state do not enter the rendered image" started.
+✔ Test "Selected handles and UI state do not enter the rendered image" passed after 0.001 seconds.
+◇ Test "Solid redaction follows source pixels when crop changes and leaves outside pixels intact" started.
+✔ Test "Solid redaction follows source pixels when crop changes and leaves outside pixels intact" passed after 0.001 seconds.
+◇ Test "Invalid or out-of-source crops fail instead of silently exporting another region" started.
+✔ Test "Invalid or out-of-source crops fail instead of silently exporting another region" passed after 0.001 seconds.
+◇ Test "Blur and mosaic operate on already composited annotations without altering outside pixels" started.
+✔ Test "Blur and mosaic operate on already composited annotations without altering outside pixels" passed after 0.004 seconds.
+✔ Suite "Capture editor pixels" passed after 0.072 seconds.
+◇ Suite "Capture text and output key routing" started.
+◇ Test "Text editing owns Return and Cmd-C, while Cmd-Return commits text without output" started.
+✔ Test "Text editing owns Return and Cmd-C, while Cmd-Return commits text without output" passed after 0.001 seconds.
+◇ Test "Outside text editing Return and Cmd-C copy, save and undo retain their distinct actions" started.
+✔ Test "Outside text editing Return and Cmd-C copy, save and undo retain their distinct actions" passed after 0.001 seconds.
+◇ Test "Output in progress does not dispatch another key action or commit text" started.
+✔ Test "Output in progress does not dispatch another key action or commit text" passed after 0.001 seconds.
+✔ Suite "Capture text and output key routing" passed after 0.001 seconds.
+◇ Suite "Capture geometry" started.
+◇ Test "AppKit points map through each screen's distinct capture and overlay frames" started.
+✔ Test "AppKit points map through each screen's distinct capture and overlay frames" passed after 0.001 seconds.
+◇ Test "Retina preview crops use top-left pixels and invert only AppKit source y" started.
+✔ Test "Retina preview crops use top-left pixels and invert only AppKit source y" passed after 0.001 seconds.
+◇ Test "Fractional scaling expands outwards to preserve selected edge pixels" started.
+✔ Test "Fractional scaling expands outwards to preserve selected edge pixels" passed after 0.001 seconds.
+◇ Test "Reverse drags standardize before scaling" started.
+✔ Test "Reverse drags standardize before scaling" passed after 0.001 seconds.
+◇ Test "Local rect conversion preserves negative display origin and normalizes drag" started.
+✔ Test "Local rect conversion preserves negative display origin and normalizes drag" passed after 0.001 seconds.
+◇ Test "Invalid display dimensions and scale have finite safe defaults" started.
+✔ Test "Invalid display dimensions and scale have finite safe defaults" passed after 0.001 seconds.
+◇ Test "Intersecting display resolution chooses max scale and outside region uses fallback" started.
+✔ Test "Intersecting display resolution chooses max scale and outside region uses fallback" passed after 0.001 seconds.
+✔ Suite "Capture geometry" passed after 0.002 seconds.
+◇ Suite "Capture interaction geometry" started.
+◇ Test "Toolbar remains inside safe screen bounds at four corners, tiny and full-screen selections" started.
+✔ Test "Toolbar remains inside safe screen bounds at four corners, tiny and full-screen selections" passed after 0.001 seconds.
+◇ Test "Oversized toolbar explicitly requests compact controls rather than claiming unclipped content" started.
+✔ Test "Oversized toolbar explicitly requests compact controls rather than claiming unclipped content" passed after 0.001 seconds.
+◇ Test "Toolbar side is retained when still fitting and flips above near bottom edge" started.
+✔ Test "Toolbar side is retained when still fitting and flips above near bottom edge" passed after 0.001 seconds.
+◇ Test "Each resize handle clamps to viewport and minimum size while preserving opposite edges" started.
+✔ Test "Each resize handle clamps to viewport and minimum size while preserving opposite edges" passed after 0.001 seconds.
+✔ Suite "Capture interaction geometry" passed after 0.006 seconds.
+◇ Suite "Capture snap candidates" started.
+◇ Test "Hover selects the smallest visible frozen boundary and ignores viewport and stale detections" started.
+✔ Test "Hover selects the smallest visible frozen boundary and ignores viewport and stale detections" passed after 0.001 seconds.
+◇ Test "Only current-snapshot finite confident unique candidates survive filtering" started.
+✔ Test "Only current-snapshot finite confident unique candidates survive filtering" passed after 0.001 seconds.
+◇ Test "Entering within eight points locks, fourteen retains, eighteen releases and fresh state does not lock" started.
+✔ Test "Entering within eight points locks, fourteen retains, eighteen releases and fresh state does not lock" passed after 0.005 seconds.
+◇ Test "Resize snapping moves only dragged edge and never violates minimum size" started.
+✔ Test "Resize snapping moves only dragged edge and never violates minimum size" passed after 0.001 seconds.
+◇ Test "A hidden window edge cannot attract move snapping, while its exposed edge can" started.
+✔ Test "A hidden window edge cannot attract move snapping, while its exposed edge can" passed after 0.001 seconds.
+◇ Test "An AX content boundary does not hover or snap through a covering window" started.
+✔ Test "An AX content boundary does not hover or snap through a covering window" passed after 0.001 seconds.
+◇ Test "Partly visible rear windows remain candidates; own app, translucent and offscreen windows do not" started.
+✔ Test "Partly visible rear windows remain candidates; own app, translucent and offscreen windows do not" passed after 0.001 seconds.
+◇ Test "Global windows are scoped to each display's local coordinates, including negative origins and scale" started.
+✔ Test "Global windows are scoped to each display's local coordinates, including negative origins and scale" passed after 0.001 seconds.
+◇ Test "A fully covered rear window is not offered as a candidate" started.
+✔ Test "A fully covered rear window is not offered as a candidate" passed after 0.004 seconds.
+✔ Suite "Capture snap candidates" passed after 0.011 seconds.
+◇ Suite "Capture content detector boundaries" started.
+◇ Test "Vision bottom-left normalized panel maps into offset top-left screen points" started.
+✔ Test "Vision bottom-left normalized panel maps into offset top-left screen points" passed after 0.001 seconds.
+◇ Test "Cancelled optional detector exits before expensive image analysis" started.
+✔ Test "Cancelled optional detector exits before expensive image analysis" passed after 0.001 seconds.
+◇ Test "A controlled synthetic bordered panel produces a matching snapshot-bound candidate" started.
+✔ Test "A controlled synthetic bordered panel produces a matching snapshot-bound candidate" passed after 0.025 seconds.
+✔ Suite "Capture content detector boundaries" passed after 0.026 seconds.
+◇ Suite "Capture accessibility boundary fallback" started.
+◇ Test "Native sidebars, split panes and compact toolbars are eligible without a hit-test point" started.
+✔ Test "Native sidebars, split panes and compact toolbars are eligible without a hit-test point" passed after 0.001 seconds.
+◇ Test "Only visible finite content within ancestor bounds can become an AX candidate" started.
+✔ Test "Only visible finite content within ancestor bounds can become an AX candidate" passed after 0.001 seconds.
+◇ Test "Hit-test fallback inherits every parent clip and rejects hidden ancestry" started.
+✔ Test "Hit-test fallback inherits every parent clip and rejects hidden ancestry" passed after 0.001 seconds.
+◇ Test "AX windows must correspond to their frozen Quartz windows, not nested sheets" started.
+✔ Test "AX windows must correspond to their frozen Quartz windows, not nested sheets" passed after 0.001 seconds.
+◇ Test "Native AX traversal stays bounded, skips leaves and stops on cancellation" started.
+✔ Test "Native AX traversal stays bounded, skips leaves and stops on cancellation" passed after 0.001 seconds.
+◇ Test "Unavailable, empty or cancelled AX input returns no candidates without a system query" started.
+✔ Test "Unavailable, empty or cancelled AX input returns no candidates without a system query" passed after 0.001 seconds.
+✔ Suite "Capture accessibility boundary fallback" passed after 0.001 seconds.
+◇ Suite "Capture pixel loupe" started.
+◇ Test "Frozen source sampling keeps asymmetric top-left orientation and unpremultiplies alpha" started.
+✔ Test "Frozen source sampling keeps asymmetric top-left orientation and unpremultiplies alpha" passed after 0.001 seconds.
+◇ Test "View points map to exact Retina source pixels at negative origins and image edges" started.
+✔ Test "View points map to exact Retina source pixels at negative origins and image edges" passed after 0.001 seconds.
+◇ Test "HEX and RGB text use sampled channel values rather than display color names" started.
+✔ Test "HEX and RGB text use sampled channel values rather than display color names" passed after 0.001 seconds.
+◇ Test "Loupe popup stays on screen and avoids the toolbar when an open quadrant exists" started.
+✔ Test "Loupe popup stays on screen and avoids the toolbar when an open quadrant exists" passed after 0.001 seconds.
+◇ Test "Bare C copies only a visible color; Cmd-C, text and other modifiers retain their actions" started.
+✔ Test "Bare C copies only a visible color; Cmd-C, text and other modifiers retain their actions" passed after 0.001 seconds.
+◇ Test "Shift tap changes format once, while long hold, mixed modifiers, interruption or text entry do not" started.
+✔ Test "Shift tap changes format once, while long hold, mixed modifiers, interruption or text entry do not" passed after 0.003 seconds.
+✔ Suite "Capture pixel loupe" passed after 0.005 seconds.
+◇ Suite "Capture native canvas with synthetic frozen pixels" started.
+◇ Test "Moving an arrow replaces its old pixels immediately, follows each event and commits one undo step" started.
+2026-09-30 15:30:57.135935+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7ad00> windowNumber=4b8d which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:30:59.935367+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7ad00> windowNumber=4b8d which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Moving an arrow replaces its old pixels immediately, follows each event and commits one undo step" passed after 4.543 seconds.
+◇ Test "Moving filled annotations preserves layering and blur/pixelation in the live pixels" started.
+2026-09-30 15:31:00.950845+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6a8a00> windowNumber=4b8e which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.128321+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b8f which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.315265+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b90 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Moving filled annotations preserves layering and blur/pixelation in the live pixels" passed after 0.602 seconds.
+◇ Test "Arrow, straight line and capped line endpoints resize independently and win over crop handles" started.
+2026-09-30 15:31:01.544216+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.547232+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.554810+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.556134+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.558593+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.561001+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.564737+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b980> windowNumber=4b91 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.627685+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.630557+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.637872+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.639125+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.641437+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.643744+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.647276+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250780> windowNumber=4b92 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.707261+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.710049+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.717240+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.718498+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.720799+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.723118+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:01.726619+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4b93 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Arrow, straight line and capped line endpoints resize independently and win over crop handles" passed after 0.253 seconds.
+◇ Test "Unified shape properties edit existing geometry, remember each tool, and group slider changes into one undo" started.
+2026-09-30 15:31:01.800166+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7ad00> windowNumber=4b94 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:03.895414+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7ad00> windowNumber=4b94 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Unified shape properties edit existing geometry, remember each tool, and group slider changes into one undo" passed after 2.161 seconds.
+◇ Test "Text input is transparent, fits committed multiline text and grows again when re-edited" started.
+2026-09-30 15:31:04.842797+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fea80> windowNumber=4b95 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:05.854099+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fea80> windowNumber=4b95 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Text input is transparent, fits committed multiline text and grows again when re-edited" passed after 2.971 seconds.
+◇ Test "Mosaic and blur default to four and independently clamp strength to one through ten" started.
+2026-09-30 15:31:06.968465+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6a8f00> windowNumber=4b97 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Mosaic and blur default to four and independently clamp strength to one through ten" passed after 0.108 seconds.
+◇ Test "Native initial drag snaps to frozen window candidates and commits source-pixel crop without a confirmation" started.
+2026-09-30 15:31:07.023954+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c252a80> windowNumber=4b98 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native initial drag snaps to frozen window candidates and commits source-pixel crop without a confirmation" passed after 0.048 seconds.
+◇ Test "Native hover previews frozen window and content-block boundaries before any selection" started.
+✔ Test "Native hover previews frozen window and content-block boundaries before any selection" passed after 0.111 seconds.
+◇ Test "Entering before any drag previews the complete bright candidate frame" started.
+✔ Test "Entering before any drag previews the complete bright candidate frame" passed after 0.054 seconds.
+◇ Test "Native pixel loupe previews the frozen source before selecting" started.
+✔ Test "Native pixel loupe previews the frozen source before selecting" passed after 0.064 seconds.
+◇ Test "Native loupe keeps colors local to the frozen image across copy, Shift, drag and editing" started.
+2026-09-30 15:31:07.397633+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b700> windowNumber=4b9c which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:07.440568+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b700> windowNumber=4b9c which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:07.639637+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b700> windowNumber=4b9c which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native loupe keeps colors local to the frozen image across copy, Shift, drag and editing" passed after 0.374 seconds.
+◇ Test "Native click selects the small content block and exposes the editing toolbar" started.
+2026-09-30 15:31:07.649081+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6a9400> windowNumber=4b9d which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native click selects the small content block and exposes the editing toolbar" passed after 0.188 seconds.
+◇ Test "Two real clicks copy the chosen candidate or full display once and finish" started.
+2026-09-30 15:31:07.834974+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c252300> windowNumber=4b9e which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.014635+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c252300> windowNumber=4b9e which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.033688+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6ab480> windowNumber=4b9f which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.219932+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6ab480> windowNumber=4b9f which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.239628+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5ff980> windowNumber=4ba0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.432554+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5ff980> windowNumber=4ba0 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Two real clicks copy the chosen candidate or full display once and finish" passed after 0.620 seconds.
+◇ Test "Native drag shows guides before release and commits snapped source pixels" started.
+2026-09-30 15:31:08.458958+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c253200> windowNumber=4ba1 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native drag shows guides before release and commits snapped source pixels" passed after 0.058 seconds.
+◇ Test "Small pointer jitter clicks a candidate, while deliberate drag makes a free rectangle" started.
+2026-09-30 15:31:08.546576+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fcf00> windowNumber=4ba2 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.559263+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca78280> windowNumber=4ba3 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Small pointer jitter clicks a candidate, while deliberate drag makes a free rectangle" passed after 0.063 seconds.
+◇ Test "Async candidate append refreshes a stationary pointer; stale results do not replace it" started.
+✔ Test "Async candidate append refreshes a stationary pointer; stale results do not replace it" passed after 0.034 seconds.
+◇ Test "Without a candidate, single click selects the display while a fresh drag draws freely" started.
+2026-09-30 15:31:08.643894+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6a9b80> windowNumber=4ba5 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.655761+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5ff200> windowNumber=4ba6 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Without a candidate, single click selects the display while a fresh drag draws freely" passed after 0.060 seconds.
+◇ Test "History fit-to-window reselect maps the drawn image rectangle back to original pixels" started.
+2026-09-30 15:31:08.716498+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c250000> windowNumber=4ba7 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "History fit-to-window reselect maps the drawn image rectangle back to original pixels" passed after 0.051 seconds.
+◇ Test "All eight native handles resize before active drawing tool hit-testing" started.
+2026-09-30 15:31:08.768166+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b6aa580> windowNumber=4ba8 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.784601+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c251900> windowNumber=4ba9 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.801115+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fd400> windowNumber=4baa which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.817818+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91a864c80> windowNumber=4bab which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.834778+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91a898a00> windowNumber=4bac which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.851752+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91a8e8780> windowNumber=4bad which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.868416+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91a928500> windowNumber=4bae which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:08.885479+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91a988280> windowNumber=4baf which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "All eight native handles resize before active drawing tool hit-testing" passed after 0.187 seconds.
+◇ Test "Native light dark and narrow canvases preserve frozen pixels and record explicitly synthetic screenshots" started.
+✔ Test "Native light dark and narrow canvases preserve frozen pixels and record explicitly synthetic screenshots" passed after 2.279 seconds.
+◇ Test "Annotation colors appear contextually, remain visible at screen edges, and affect the next stroke" started.
+2026-09-30 15:31:11.243700+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91ca7b700> windowNumber=4bb2 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Annotation colors appear contextually, remain visible at screen edges, and affect the next stroke" passed after 1.094 seconds.
+◇ Test "Left and right replay saved screenshots and restore the in-progress capture" started.
+✔ Test "Left and right replay saved screenshots and restore the in-progress capture" passed after 0.374 seconds.
+◇ Test "Native session rejects duplicate output, preserves edits while busy, and permits retry after save cancellation" started.
+✔ Test "Native session rejects duplicate output, preserves edits while busy, and permits retry after save cancellation" passed after 0.047 seconds.
+◇ Test "Late native output completion cannot finish a force-cancelled session twice" started.
+✔ Test "Late native output completion cannot finish a force-cancelled session twice" passed after 0.057 seconds.
+◇ Test "Native text Return inserts a line and Cmd-Return commits it without triggering screenshot output" started.
+2026-09-30 15:31:12.815227+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91c251180> windowNumber=4bb4 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native text Return inserts a line and Cmd-Return commits it without triggering screenshot output" passed after 0.060 seconds.
+◇ Test "History text re-edit keeps stored source-pixel style and scales the native font to fitted image" started.
+2026-09-30 15:31:12.870942+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fc780> windowNumber=4bb5 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:31:12.872638+0800 xctest[73951:9323041] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0x91b5fc780> windowNumber=4bb5 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "History text re-edit keeps stored source-pixel style and scales the native font to fitted image" passed after 0.051 seconds.
+✔ Suite "Capture native canvas with synthetic frozen pixels" passed after 16.529 seconds.
+◇ Suite "Either Option capture tap" started.
+◇ Test "Only a short release after a right Option press fires once" started.
+✔ Test "Only a short release after a right Option press fires once" passed after 0.001 seconds.
+◇ Test "Left Option independently fires only on a short release" started.
+✔ Test "Left Option independently fires only on a short release" passed after 0.001 seconds.
+◇ Test "Long holds and reversed timestamps cannot be mistaken for a tap" started.
+✔ Test "Long holds and reversed timestamps cannot be mistaken for a tap" passed after 0.001 seconds.
+◇ Test "A repeated down does not restart the allowed time window" started.
+✔ Test "A repeated down does not restart the allowed time window" passed after 0.001 seconds.
+◇ Test "A repeated down while capture becomes busy revokes this press" started.
+✔ Test "A repeated down while capture becomes busy revokes this press" passed after 0.001 seconds.
+◇ Test "Each Option keycode uses its own device bit" started.
+✔ Test "Each Option keycode uses its own device bit" passed after 0.001 seconds.
+◇ Test "Right Option release with no left device bit remains eligible" started.
+✔ Test "Right Option release with no left device bit remains eligible" passed after 0.001 seconds.
+◇ Test "A real left Option bit on right release blocks capture" started.
+✔ Test "A real left Option bit on right release blocks capture" passed after 0.001 seconds.
+◇ Test "A real right Option bit on left release blocks capture" started.
+✔ Test "A real right Option bit on left release blocks capture" passed after 0.001 seconds.
+◇ Test "Crossing Option presses cancel in both directions until a fresh press" started.
+✔ Test "Crossing Option presses cancel in both directions until a fresh press" passed after 0.001 seconds.
+◇ Test "Both Option bits present at the first observation cannot start a tap" started.
+✔ Test "Both Option bits present at the first observation cannot start a tap" passed after 0.001 seconds.
+◇ Test "Left Option pressed during right Option cancels even if released before right" started.
+✔ Test "Left Option pressed during right Option cancels even if released before right" passed after 0.001 seconds.
+◇ Test "An interruption or reset cancels the current press and allows a later one" started.
+✔ Test "An interruption or reset cancels the current press and allows a later one" passed after 0.001 seconds.
+◇ Test "Permission, voice conflict, and capture busy gating must hold at both edges" started.
+✔ Test "Permission, voice conflict, and capture busy gating must hold at both edges" passed after 0.001 seconds.
+◇ Test "Right Option is unavailable during voice conflict or missing tap permissions" started.
+✔ Test "Right Option is unavailable during voice conflict or missing tap permissions" passed after 0.001 seconds.
+◇ Test "An absent shortcut gets right Option, but prior choices stay intact" started.
+✔ Test "An absent shortcut gets right Option, but prior choices stay intact" passed after 0.001 seconds.
+✔ Suite "Either Option capture tap" passed after 0.012 seconds.
+◇ Suite "Pinned screenshot window" started.
+◇ Test "Pinned image stays floating, moves freely, resizes proportionally, and closes independently" started.
+✔ Test "Pinned image stays floating, moves freely, resizes proportionally, and closes independently" passed after 0.041 seconds.
+✔ Suite "Pinned screenshot window" passed after 0.041 seconds.
+◇ Suite "Capture request planning" started.
+◇ Test "Single-display region uses display-local points and scaled output pixels" started.
+✔ Test "Single-display region uses display-local points and scaled output pixels" passed after 0.001 seconds.
+◇ Test "Regions outside or across display edges are rejected without silently clipping" started.
+✔ Test "Regions outside or across display edges are rejected without silently clipping" passed after 0.001 seconds.
+◇ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" started.
+✔ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" passed after 0.001 seconds.
+◇ Test "Disconnected display aborts before submitting screenshot request" started.
+✔ Test "Disconnected display aborts before submitting screenshot request" passed after 0.001 seconds.
+◇ Test "Window targets do not switch to an unrelated reused window ID" started.
+✔ Test "Window targets do not switch to an unrelated reused window ID" passed after 0.001 seconds.
+✔ Suite "Capture request planning" passed after 0.002 seconds.
+◇ Suite "Capture and voice hotkey ownership" started.
+◇ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" started.
+✔ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" passed after 0.001 seconds.
+◇ Test "Neither handler claims an unknown ID or foreign signature" started.
+✔ Test "Neither handler claims an unknown ID or foreign signature" passed after 0.001 seconds.
+◇ Test "A queued voice effect must recheck capture suspension before applying" started.
+✔ Test "A queued voice effect must recheck capture suspension before applying" passed after 0.001 seconds.
+✔ Suite "Capture and voice hotkey ownership" passed after 0.001 seconds.
+◇ Suite "Capture asset persistence" started.
+◇ Test "Fresh store restores stable identity and actual PNG dimensions and color" started.
+✔ Test "Fresh store restores stable identity and actual PNG dimensions and color" passed after 0.003 seconds.
+◇ Test "Reopening sorts by capture time and deleting one leaves the other intact" started.
+✔ Test "Reopening sorts by capture time and deleting one leaves the other intact" passed after 0.003 seconds.
+◇ Test "A file at storage root makes save fail without a successful-looking asset" started.
+✔ Test "A file at storage root makes save fail without a successful-looking asset" passed after 0.002 seconds.
+◇ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" started.
+✔ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" passed after 0.003 seconds.
+◇ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" started.
+✔ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" passed after 0.001 seconds.
+◇ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" started.
+✔ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" passed after 0.002 seconds.
+◇ Test "A cancelled caller cannot publish a new persisted asset" started.
+✔ Test "A cancelled caller cannot publish a new persisted asset" passed after 0.001 seconds.
+◇ Test "Damaged PNG content is excluded from recent assets with an explicit warning" started.
+✔ Test "Damaged PNG content is excluded from recent assets with an explicit warning" passed after 0.002 seconds.
+◇ Test "PNG header alone is not mistaken for a complete recoverable screenshot" started.
+2026-09-30 15:31:12.956181+0800 xctest[73951:9323041] [xctest] handle_error:268: PNG read error
+2026-09-30 15:31:12.956847+0800 xctest[73951:9323041] [xctest] imagePNG_error_break:384: *** ERROR: imagePNG_error_break
+2026-09-30 15:31:12.956858+0800 xctest[73951:9323041] [xctest] makeImagePlus:3798: *** ERROR: 'PNG '-_reader->initImage[0] failed err=-50
+✔ Test "PNG header alone is not mistaken for a complete recoverable screenshot" passed after 0.002 seconds.
+◇ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" started.
+✔ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" passed after 0.007 seconds.
+◇ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" started.
+✔ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" passed after 0.003 seconds.
+✔ Suite "Capture asset persistence" passed after 0.034 seconds.
+◇ Suite "HotkeyStateMachine" started.
+◇ Test "idle -> start" started.
+✔ Test "idle -> start" passed after 0.001 seconds.
+◇ Test "finished -> start (a fresh press after completion starts a new session)" started.
+✔ Test "finished -> start (a fresh press after completion starts a new session)" passed after 0.001 seconds.
+◇ Test "failed -> start (a fresh press after a failure starts a new session)" started.
+✔ Test "failed -> start (a fresh press after a failure starts a new session)" passed after 0.001 seconds.
+◇ Test "listening -> stop" started.
+✔ Test "listening -> stop" passed after 0.001 seconds.
+◇ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" started.
+✔ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" passed after 0.001 seconds.
+◇ Test "finalizing/composing/inserting -> ignore (no queue)" started.
+✔ Test "finalizing/composing/inserting -> ignore (no queue)" passed after 0.001 seconds.
+◇ Test "esc while listening -> cancel" started.
+✔ Test "esc while listening -> cancel" passed after 0.001 seconds.
+◇ Test "esc while answering -> dismissAnswer" started.
+✔ Test "esc while answering -> dismissAnswer" passed after 0.001 seconds.
+◇ Test "esc elsewhere is a no-op" started.
+✔ Test "esc elsewhere is a no-op" passed after 0.001 seconds.
+◇ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" started.
+✔ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" passed after 0.001 seconds.
+✔ Suite "HotkeyStateMachine" passed after 0.003 seconds.
+◇ Suite "TriggerPhysicalState" started.
+◇ Test "First observed down is not a repeat" started.
+✔ Test "First observed down is not a repeat" passed after 0.001 seconds.
+◇ Test "A normal down-then-up sequence is never a repeat" started.
+✔ Test "A normal down-then-up sequence is never a repeat" passed after 0.003 seconds.
+◇ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" started.
+✔ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" passed after 0.001 seconds.
+◇ Test "Two consecutive 'up' observations report a repeat" started.
+✔ Test "Two consecutive 'up' observations report a repeat" passed after 0.001 seconds.
+◇ Test "Reset returns to the not-down baseline" started.
+✔ Test "Reset returns to the not-down baseline" passed after 0.001 seconds.
+✔ Suite "TriggerPhysicalState" passed after 0.004 seconds.
+◇ Suite "Meeting persistence" started.
+◇ Test interruptedMeetingCanBeFoundAndRecovered() started.
+✔ Test interruptedMeetingCanBeFoundAndRecovered() passed after 0.003 seconds.
+✔ Suite "Meeting persistence" passed after 0.003 seconds.
+◇ Suite "Presentation ownership and privacy" started.
+◇ Test endingSessionKeepsManualChangesAndPrivacyStop() started.
+✔ Test endingSessionKeepsManualChangesAndPrivacyStop() passed after 0.001 seconds.
+◇ Test pausedSessionDoesNotDiscardOwnership() started.
+✔ Test pausedSessionDoesNotDiscardOwnership() passed after 0.001 seconds.
+◇ Test repeatAndUnrelatedReleaseDoNotCreateHistoryOrEndChord() started.
+✔ Test repeatAndUnrelatedReleaseDoNotCreateHistoryOrEndChord() passed after 0.001 seconds.
+◇ Test privacyClearAndLostReleaseLeaveNoStuckKeys() started.
+✔ Test privacyClearAndLostReleaseLeaveNoStuckKeys() passed after 0.001 seconds.
+✔ Suite "Presentation ownership and privacy" passed after 0.002 seconds.
+◇ Suite "Presentation power leases" started.
+◇ Test sessionEndCannotCancelEarlierManualLease() started.
+✔ Test sessionEndCannotCancelEarlierManualLease() passed after 0.001 seconds.
+◇ Test stoppingManualLeavesSessionAndDeadlineExtensionIsAdditive() started.
+✔ Test stoppingManualLeavesSessionAndDeadlineExtensionIsAdditive() passed after 0.001 seconds.
+◇ Test failedAndInvalidRequestsNeverClaimActive() started.
+✔ Test failedAndInvalidRequestsNeverClaimActive() passed after 0.001 seconds.
+◇ Test sleepingPastDeadlineExpiresWithoutWallClockDependency() started.
+✔ Test sleepingPastDeadlineExpiresWithoutWallClockDependency() passed after 0.001 seconds.
+◇ Test corruptPreferencesAreBoundedAndRuntimeIsNotRestored() started.
+✔ Test corruptPreferencesAreBoundedAndRuntimeIsNotRestored() passed after 0.003 seconds.
+✔ Suite "Presentation power leases" passed after 0.006 seconds.
+◇ Suite "Recording coordinator lifecycle" started.
+◇ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() started.
+2026-09-30 15:31:13.759107+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.763369+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.763402+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.773758+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() passed after 0.793 seconds.
+◇ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() started.
+2026-09-30 15:31:13.786826+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.786867+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.786886+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.786936+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() passed after 0.008 seconds.
+◇ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() started.
+2026-09-30 15:31:13.794405+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.794437+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.794456+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.794472+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() passed after 0.005 seconds.
+◇ Test testCallbacksFromFinishedSessionCannotChangeNextSession() started.
+2026-09-30 15:31:13.800259+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.800293+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.800311+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.800346+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCallbacksFromFinishedSessionCannotChangeNextSession() passed after 0.006 seconds.
+◇ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() started.
+2026-09-30 15:31:13.806537+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.806569+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.806586+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.806603+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() passed after 0.006 seconds.
+◇ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() started.
+2026-09-30 15:31:13.813214+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.813249+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.813269+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.813285+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() passed after 0.004 seconds.
+◇ Test testCameraDisconnectChangesOnlyThatSourceAvailability() started.
+2026-09-30 15:31:13.817241+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.817271+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.817289+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.817306+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCameraDisconnectChangesOnlyThatSourceAvailability() passed after 0.003 seconds.
+◇ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() started.
+2026-09-30 15:31:13.820807+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:13.820844+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:13.820864+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:13.820883+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() passed after 0.010 seconds.
+✔ Suite "Recording coordinator lifecycle" passed after 0.840 seconds.
+◇ Suite "Recording media handoff" started.
+◇ Test allEditorsPreserveSegmentsAndIndependentAudio() started.
+✔ Test allEditorsPreserveSegmentsAndIndependentAudio() passed after 0.238 seconds.
+◇ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() started.
+2026-09-30 15:31:14.269827+0800 xctest[73951:9323174] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x91e494060> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-09-30 15:31:14.363401+0800 xctest[73951:9323175] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-09-30 15:31:14.363584+0800 xctest[73951:9323175] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+✔ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() passed after 0.330 seconds.
+◇ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() started.
+✔ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() passed after 0.132 seconds.
+◇ Test cancellationAndCollisionPreserveExistingDestination() started.
+✔ Test cancellationAndCollisionPreserveExistingDestination() passed after 0.130 seconds.
+◇ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() started.
+✔ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() passed after 0.140 seconds.
+◇ Test longSegmentedTimelinePreservesExactRationalOffsets() started.
+✔ Test longSegmentedTimelinePreservesExactRationalOffsets() passed after 0.016 seconds.
+✔ Suite "Recording media handoff" passed after 0.989 seconds.
+◇ Suite "Recording native views" started.
+◇ Test sourceSetupInLightDarkAndSmallWindow() started.
+2026-09-30 15:31:14.821078+0800 xctest[73951:9323041] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:31:14.821124+0800 xctest[73951:9323041] [permissions] accessibility: nil -> denied
+2026-09-30 15:31:14.821143+0800 xctest[73951:9323041] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:31:14.821160+0800 xctest[73951:9323041] [permissions] speechRecognition: nil -> notDetermined
+✔ Test sourceSetupInLightDarkAndSmallWindow() passed after 1.125 seconds.
+✔ Suite "Recording native views" passed after 1.125 seconds.
+◇ Suite "Recording storage" started.
+◇ Test configurationBoundsAndSourceKindsAreValidated() started.
+✔ Test configurationBoundsAndSourceKindsAreValidated() passed after 0.002 seconds.
+◇ Test independentSessionsPersistSegmentsAndDerivedDuration() started.
+✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.008 seconds.
+◇ Test activePhasesRecoverAsInterruptedAndKeepMedia() started.
+✔ Test activePhasesRecoverAsInterruptedAndKeepMedia() passed after 0.004 seconds.
+◇ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() started.
+✔ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() passed after 0.003 seconds.
+◇ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() started.
+✔ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() passed after 0.003 seconds.
+◇ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() started.
+✔ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() passed after 0.002 seconds.
+✔ Suite "Recording storage" passed after 0.025 seconds.
+✔ Test run with 176 tests in 27 suites passed after 19.960 seconds.
+2026-09-30 15:31:16.436 xcodebuild[73869:9322329] [MT] IDETestOperationsObserverDebug: 27.060 elapsed -- Testing started completed.
+2026-09-30 15:31:16.436 xcodebuild[73869:9322329] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-30 15:31:16.436 xcodebuild[73869:9322329] [MT] IDETestOperationsObserverDebug: 27.060 sec, +27.060 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/prosio-recording-validation-final-20260930.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

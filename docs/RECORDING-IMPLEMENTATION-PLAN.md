@@ -66,6 +66,8 @@
 
 ## 当前状态
 
-方案已建立，实施尚未验收。既有未提交改动保留，不将其混入录屏提交。缺少实际设备或编辑软件时，先完成实现与可运行验证，并在证据中列出待验证项；完整目标仍保持活动。
+数据、采集、交接模块已分别实现并提交，原生 UI 与应用协调已接入当前工作区。主应用构建与签名验证通过；应用 hostless 回归 189 项通过，最新录屏独立模块 34 项通过。详细证据与未完成条件见 [开发验收记录](evidence/recording/implementation-acceptance.md)。
+
+真实设备长录制、USB/iPhone 断连恢复、四款剪辑软件实际导入，以及 Resolve/Premiere 原生多机位交接仍待完成。已有未提交和其他并行工作保持原样，接入文件暂不混入独立模块提交；完整目标保持活动。
 
 参考：[Apple 多机位 FCPXML](https://developer.apple.com/documentation/professional-video-applications/multicam-media)、[Apple 连续互通相机](https://support.apple.com/en-gb/102546)、[Adobe FCPXML 转换要求](https://helpx.adobe.com/premiere/desktop/organize-media/import-files/migrate-from-final-cut-pro-x.html)、[剪映草稿参考](https://github.com/GuanYixuan/pyJianYingDraft)。

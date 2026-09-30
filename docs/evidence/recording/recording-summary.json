@@ -1,0 +1,46 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "00008103-000655A10E8A001E",
+        "deviceName" : "My Mac",
+        "modelName" : "MacBook Pro",
+        "osBuildNumber" : "25D2128",
+        "osVersion" : "26.3.1",
+        "platform" : "macOS"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 0,
+      "passedTests" : 34,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "RecordingValidation · Built with macOS 26.3.1",
+  "expectedFailures" : 0,
+  "failedTests" : 0,
+  "finishTime" : 1790753670.087,
+  "passedTests" : 34,
+  "result" : "Passed",
+  "skippedTests" : 0,
+  "startTime" : 1790753645.795,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+
+  ],
+  "title" : "Test - RecordingValidation",
+  "topInsights" : [
+    {
+      "category" : "Longest Test Runs",
+      "impact" : "30% of duration",
+      "text" : "1 longest test run with outlier durations exceeding 0.89s (three standard deviations)"
+    }
+  ],
+  "totalTestCount" : 34
+}

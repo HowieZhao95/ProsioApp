@@ -1,0 +1,203 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Prosio.xcodeproj -scheme Prosio -configuration Debug -derivedDataPath /tmp/prosio-recording-build-20260930 build
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  ProsioKit: /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+  FluidAudio: /Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio @ local
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, name:Any Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (14 targets)
+    Target 'Prosio' in project 'Prosio'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioMeeting' in project 'ProsioKit'
+    Target 'ProsioMeeting' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioMeeting' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'FluidAudio' in project 'FluidAudio'
+    Target 'ProsioMeeting' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'FluidAudio' in project 'FluidAudio'
+    Target 'FluidAudio' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'FluidAudio' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'FluidAudio_FluidAudio' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'FastClusterWrapper' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'MachTaskSelfWrapper' in project 'FluidAudio'
+    Target 'FluidAudio' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'FluidAudio_FluidAudio' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'FastClusterWrapper' in project 'FluidAudio'
+        ➜ Explicit dependency on target 'MachTaskSelfWrapper' in project 'FluidAudio'
+    Target 'MachTaskSelfWrapper' in project 'FluidAudio' (no dependencies)
+    Target 'FastClusterWrapper' in project 'FluidAudio' (no dependencies)
+    Target 'FluidAudio_FluidAudio' in project 'FluidAudio' (no dependencies)
+    Target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /tmp/prosio-recording-build-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/prosio-recording-build-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+SwiftDriver Prosio normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Prosio -Onone @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-build-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-build-20260930/Build/Products/Debug -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-build-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-build-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-generated-files.hmap -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-project-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio/Sources/MachTaskSelfWrapper/include -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio/Sources/FastClusterWrapper/include -Xcc -I/tmp/prosio-recording-build-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ RecordingStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Prosio (in target 'Prosio' from project 'Prosio')
+EmitSwiftModule normal arm64 (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingCoordinator.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingStore.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingCoordinator.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 Compiling\ MenuBarContentView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/MenuBar/MenuBarContentView.swift (in target 'Prosio' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/MenuBar/MenuBarContentView.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ GeneralSettingsView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Settings/GeneralSettingsView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Settings/GeneralSettingsView.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ AppEnvironment.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/App/AppEnvironment.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/App/AppEnvironment.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingWorkspaceView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift (in target 'Prosio' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ SettingsRootView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Settings/SettingsRootView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Settings/SettingsRootView.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ OnboardingView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Onboarding/OnboardingView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Onboarding/OnboardingView.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ ProsioApp.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/App/ProsioApp.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/App/ProsioApp.swift (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling SettingsRootView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProsioApp.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling OnboardingView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppEnvironment.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling GeneralSettingsView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling MenuBarContentView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingWorkspaceView.swift (in target 'Prosio' from project 'Prosio')
+
+SwiftDriver\ Compilation Prosio normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Prosio -Onone @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-build-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-build-20260930/Build/Products/Debug -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-build-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-build-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-generated-files.hmap -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-project-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio/Sources/MachTaskSelfWrapper/include -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio/Sources/FastClusterWrapper/include -Xcc -I/tmp/prosio-recording-build-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for Prosio (in target 'Prosio' from project 'Prosio')
+
+SwiftDriver\ Compilation\ Requirements Prosio normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Prosio -Onone @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-build-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-build-20260930/Build/Products/Debug -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-build-20260930/Build/Products/Debug -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-build-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-build-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-build-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-generated-files.hmap -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio-project-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio/Sources/MachTaskSelfWrapper/include -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio/Sources/FastClusterWrapper/include -Xcc -I/tmp/prosio-recording-build-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.swiftmodule/arm64-apple-macos.swiftmodule /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftmodule (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftmodule /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftsourceinfo (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftsourceinfo /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.swiftmodule/arm64-apple-macos.abi.json /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.abi.json (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.abi.json /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.swiftmodule/arm64-apple-macos.abi.json
+
+Ld /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/MacOS/Prosio normal (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/prosio-recording-build-20260930/Build/Products/Debug -F/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-build-20260930/Build/Products/Debug -filelist /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.LinkFileList -Xlinker -rpath -Xlinker /tmp/prosio-recording-build-20260930/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.swiftmodule @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio-linker-args.resp -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -lc++ -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -ltext_processing_rs -Xlinker -no_adhoc_codesign -o /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/MacOS/Prosio -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-linker-args.resp -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioAudio.build/Objects-normal/arm64/ProsioAudio.swiftmodule @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioAudio.build/Objects-normal/arm64/ProsioAudio-linker-args.resp -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioTranscription.build/Objects-normal/arm64/ProsioTranscription.swiftmodule @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioTranscription.build/Objects-normal/arm64/ProsioTranscription-linker-args.resp -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioMeeting.build/Objects-normal/arm64/ProsioMeeting.swiftmodule @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioMeeting.build/Objects-normal/arm64/ProsioMeeting-linker-args.resp -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/FluidAudio.build/Debug/FluidAudio.build/Objects-normal/arm64/FluidAudio.swiftmodule @/tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/FluidAudio.build/Debug/FluidAudio.build/Objects-normal/arm64/FluidAudio-linker-args.resp
+
+ExtractAppIntentsMetadata (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name Prosio --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --bundle-identifier app.prosio.mac --output /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/Resources --target-triple arm64-apple-macos26.0 --binary-file /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/MacOS/Prosio --dependency-file /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio_dependency_info.dat --stringsdata-file /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.SwiftFileList --metadata-file-list /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio.DependencyMetadataFileList --static-metadata-file-list /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Objects-normal/arm64/Prosio.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-30 15:34:15.359 appintentsmetadataprocessor[74314:9327712] Starting appintentsmetadataprocessor export
+2026-09-30 15:34:15.364 appintentsmetadataprocessor[74314:9327712] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-swiftStdLibTool --copy --verbose --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --scan-executable /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/MacOS/Prosio --scan-folder /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/Frameworks --scan-folder /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/PlugIns --scan-folder /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/Library/SystemExtensions --scan-folder /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+    Signing Identity:     "Prosio Local Development"
+    
+    /usr/bin/codesign --force --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 -o runtime --entitlements /tmp/prosio-recording-build-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio.build/Prosio.app.xcent --timestamp\=none --generate-entitlement-der /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app
+
+Validate /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-validationUtility /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+RegisterWithLaunchServices /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app (in target 'Prosio' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /tmp/prosio-recording-build-20260930/Build/Products/Debug/Prosio.app
+
+** BUILD SUCCEEDED **
+
