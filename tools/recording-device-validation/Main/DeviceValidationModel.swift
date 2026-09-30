@@ -268,13 +268,16 @@ import ScreenCaptureKit
             await setup?.value
             do { try await self.engine?.stop() } catch { self.fail(error.localizedDescription) }
             if let manifest = self.report?.session, let directory = self.report?.sessionDirectory {
-                self.report?.media = await ValidationReportInspector.inspect(manifest, in: URL(fileURLWithPath: directory))
-                self.report?.gaps = ValidationReportInspector.gaps(manifest)
-                self.report?.sourceEvidence = ValidationReportInspector.sources(manifest, media: self.report?.media ?? [])
-                for source in self.report?.sourceEvidence ?? [] where source.status == "missing" {
+                let media = await ValidationReportInspector.inspect(manifest, in: URL(fileURLWithPath: directory))
+                let gaps = ValidationReportInspector.gaps(manifest)
+                let sourceEvidence = ValidationReportInspector.sources(manifest, media: media)
+                self.report?.media = media
+                self.report?.gaps = gaps
+                self.report?.sourceEvidence = sourceEvidence
+                for source in sourceEvidence where source.status == "missing" {
                     self.fail("来源“\(source.source.name)”没有完成片段，标记为 missing/notVerified。")
                 }
-                if self.report?.media.contains(where: { !$0.playable }) == true { self.fail("有原片未通过可播放检查；原始文件均保留。") }
+                if media.contains(where: { !$0.playable }) { self.fail("有原片未通过可播放检查；原始文件均保留。") }
                 if manifest.segments.isEmpty { self.fail("本次没有完成的原片，不能作为录制通过证据。") }
                 let finalPhase: RecordingPhase = self.report?.failures.isEmpty == true ? .ready : .failed
                 do {
@@ -297,11 +300,11 @@ import ScreenCaptureKit
                     try? JSONDecoder().decode(ValidationSignalEvent.self, from: Data($0))
                 }
             }
-            self.report?.elapsedActiveSeconds = self.elapsedActiveSeconds
-            self.report?.endedAt = .now
-            self.report?.permissions = .read()
-            self.report?.completion = self.report?.failures.isEmpty == true
-                ? (self.report?.media.isEmpty == false ? "mediaMetadataVerified" : "cancelledBeforeCapture") : "failed"
+            if let currentReport = self.report {
+                let finalizedReport = ValidationReportFinalizer.finish(currentReport,
+                    elapsedActiveSeconds: self.elapsedActiveSeconds, endedAt: .now, permissions: .read())
+                self.report = finalizedReport
+            }
             self.event("finished", "媒体收尾已完成；口型漂移和剪辑软件导入仍需另行验收。")
             var reportWriteError: String?
             do { try self.persistReport() } catch { reportWriteError = error.localizedDescription }

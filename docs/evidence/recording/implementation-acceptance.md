@@ -71,3 +71,5 @@ Premiere 包额外提供实验性多机位 XML，Resolve 包额外提供 FCPXML 
 媒体审计工具：`tools/recording-media-audit` 已完成，只读取已发布原片，逐片段核对 AVFoundation 可播放声明、轨道时长与格式。完成 30 秒样本 30/30 元数据通过；运行中进度快照 425/425 通过且标为 partial。缺失、路径越界、溢出、重叠、零片段和坏文件负例已覆盖；合法断连空隙仅记录。证据在 `media-audit/`，该检查不等于全帧解码、真实机位同步或剪辑软件验收。
 
 实机验收准备：`tools/recording-device-validation` 独立编译当前生产引擎和后端，以不同进程的动态窗口作为固定目标。主代理核对包内 14 个源码哈希与当前源码一致，严格签名通过，6 项合成测试通过；缺失身份文件会拒绝捕获。默认只显示设备，需用户选择来源并点击开始，才请求权限与录制。构建和只读预检证据见 `device-validation/build-and-preflight.json`，没有实际捕获或剪辑软件导入证据。
+
+实机工具 GUI 复验发现并修复了权限失败收尾中的 Swift 报告重叠访问崩溃，改为先计算报告快照再整体赋值，并避免媒体检查期间持有可选报告修改访问。新 Release 构建强制排他访问检查，8 项测试通过；主代理核对签名和 14 个源码哈希后，在真实 GUI 上验证未授权失败：原因可见、失败报告保存、返回可重试状态。GUI 的屏幕/摄像头/麦克风权限未授权，与先前命令行预检上下文不同；未授予新权限、未启动 fixture 或采集。证据见 `device-validation/failure-finalization-proof.json` 与 `permission-failure-report.json`。

@@ -53,6 +53,7 @@ settings:
   base:
     SWIFT_VERSION: '6.0'
     SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_ENFORCE_EXCLUSIVE_ACCESS: checked
     CODE_SIGNING_ALLOWED: NO
 targets:
   RecordingDeviceValidation:
@@ -153,7 +154,7 @@ codesign --force --sign "$validation_identity" --timestamp=none --options runtim
 codesign --force --sign "$validation_identity" --timestamp=none --options runtime --entitlements "$repo_root/tools/recording-device-validation/Validation.entitlements" "$validation_app"
 codesign --verify --deep --strict "$validation_app"
 if [ "$validation_test" = true ]; then
-    if ! xcodebuild test -project "$validation_build/RecordingDeviceValidation.xcodeproj" -scheme RecordingDeviceValidationTests -destination 'platform=macOS' -derivedDataPath "$validation_build/test-build" CODE_SIGNING_ALLOWED=NO > "$validation_build/test.log" 2>&1; then
+    if ! xcodebuild test -project "$validation_build/RecordingDeviceValidation.xcodeproj" -scheme RecordingDeviceValidationTests -configuration Release -destination 'platform=macOS' -derivedDataPath "$validation_build/test-build" CODE_SIGNING_ALLOWED=NO > "$validation_build/test.log" 2>&1; then
         echo "Synthetic tests failed; diagnostics: $validation_build/test.log" >&2
         rg -n 'error:|failed|Executed' "$validation_build/test.log" >&2 || true
         exit 1

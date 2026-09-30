@@ -35,6 +35,15 @@ nonisolated final class ValidationReportTests: XCTestCase {
         let gaps = ValidationReportInspector.gaps(session)
         XCTAssertEqual(gaps.first?.startMicroseconds, 0)
         XCTAssertEqual(gaps.first?.endMicroseconds, 500_000)
+        var report = preparationReport()
+        report.media = evidence
+        report.sourceEvidence = sources
+        report.failures = ["Selected camera has no frames"]
+        let finished = ValidationReportFinalizer.finish(report, elapsedActiveSeconds: 0.4, endedAt: .now,
+            permissions: report.permissions)
+        XCTAssertEqual(finished.completion, "failed")
+        XCTAssertEqual(finished.media.count, 1)
+        XCTAssertEqual(finished.sourceEvidence.last?.status, "missing")
     }
 
     @MainActor func testPCMInspectionMeasuresDecodedAudioRatherThanSignalSchedule() async throws {
@@ -109,6 +118,45 @@ nonisolated final class ValidationReportTests: XCTestCase {
             builtAtUTC: "2026-09-30", sourceSHA256: hashes)
         try JSONEncoder().encode(valid).write(to: url)
         XCTAssertEqual(try ValidationBuildEvidence.load(from: url).sourceSHA256, hashes)
+    }
+
+    nonisolated func testPermissionFailureFinalizesOptionalReportWithoutOverlappingAccess() throws {
+        var storedReport: ValidationReport? = preparationReport()
+        storedReport?.failures = ["屏幕录制权限尚未可用"]
+        let endedAt = Date(timeIntervalSince1970: 100)
+        for _ in 0..<1_000 {
+            let snapshot = try XCTUnwrap(storedReport)
+            let finalized = ValidationReportFinalizer.finish(snapshot, elapsedActiveSeconds: 0,
+                endedAt: endedAt, permissions: snapshot.permissions)
+            storedReport = finalized
+        }
+        let result = try XCTUnwrap(storedReport)
+        XCTAssertEqual(result.completion, "failed")
+        XCTAssertNil(result.fixture)
+        XCTAssertNil(result.session)
+        XCTAssertTrue(result.media.isEmpty)
+        XCTAssertEqual(result.failures, ["屏幕录制权限尚未可用"])
+        XCTAssertEqual(result.elapsedActiveSeconds, 0)
+        XCTAssertEqual(result.endedAt, endedAt)
+        let data = try JSONEncoder().encode(result)
+        XCTAssertEqual(try JSONDecoder().decode(ValidationReport.self, from: data).completion, "failed")
+    }
+
+    nonisolated func testCancelledPreparationFinalizesWithoutClaimingMediaVerified() {
+        let report = preparationReport()
+        let finished = ValidationReportFinalizer.finish(report, elapsedActiveSeconds: 0, endedAt: .now,
+            permissions: report.permissions)
+        XCTAssertEqual(finished.completion, "cancelledBeforeCapture")
+        XCTAssertNil(finished.fixture)
+        XCTAssertTrue(finished.media.isEmpty)
+    }
+
+    nonisolated private func preparationReport() -> ValidationReport {
+        ValidationReport(attemptID: UUID(), startedAt: .now, operatingSystem: "Test",
+            validationBundleID: "test", fixtureBundleID: "fixture", build: nil,
+            requestedDurationSeconds: 30, selectedCameras: [], selectedMicrophone: nil,
+            requestedSystemAudio: false, permissions: ValidationPermissionSnapshot(screen: false,
+                camera: "未请求", microphone: "未请求"))
     }
 
     nonisolated private func video(at seconds: Double) throws -> CMSampleBuffer {

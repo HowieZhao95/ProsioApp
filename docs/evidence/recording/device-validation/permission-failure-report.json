@@ -1,0 +1,74 @@
+{
+  "attemptID": "5809ACF9-5331-46E1-B023-377AE028FA44",
+  "build": {
+    "builtAtUTC": "2026-09-30T10:11:36.114343+00:00",
+    "revision": "a32e9f1fae95fc519c1644a7fea887f23cb3417e",
+    "sourceSHA256": {
+      "Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift": "aad8cf91f46020054b4f4dba1c054c26ea6a44c6137bffd2db85246b06d62ca6",
+      "Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift": "e7a417c7e6100f76c1c2166c6dcd4958adf0ba5b3783cdc0bd9a0922212eb3d5",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift": "127d8f1c89362ae58e7cab017877153210382e94aef6fc04dacea301f89595b1",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift": "b75637efaeaf296a37a3de46bd031f1d707528e75751bedb4e5468baedc20bfd",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift": "a409f8d3d132246c7e6a32b0b52b5ba28e5e98ad88ea6282b8ba3a8af7905091",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift": "ba32e72f3162426303339757e9ce66822d362d953a91919bd8184ab8ab472244",
+      "Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift": "1cbc93b72f382444e58c3bbda41744844702def6731c152c9c4dd6f66406499e",
+      "Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift": "5ced0b1177aa68cd9a919a5f15a5b6b34fdc27e46564057f4dd506d3acfd5254",
+      "tools/recording-device-validation/Fixture/FixtureMain.swift": "544f8a6e51b05d2262f12e6e89be55f2ee37b9ff9db9efbe720ea85fe33131ca",
+      "tools/recording-device-validation/Main/DeviceValidationModel.swift": "c1c347a32aa65c345095e8cf65bbd9b6c7462a9a2dd2b93157ef73cbe7d09665",
+      "tools/recording-device-validation/Main/ValidationReport.swift": "5d52eebab7d033200020a5bba174f48b99d3a131e0e1b32705bb0faa219ad8af",
+      "tools/recording-device-validation/Main/ValidationUI.swift": "7727062c9497b1573a6bcdcda2a75d208e87ad11eee4faedd9a50773036a8c78",
+      "tools/recording-device-validation/Shared/ValidationFixtureHandshake.swift": "63bd9d8e8fe8731ee595c68d34486a4f0e4d681e3684b7a6cbdf01318e5ae4f5",
+      "tools/recording-device-validation/Tests/ValidationReportTests.swift": "2a61c9678b7f288bd2feb82cc975ed136298d7eb94a8d1bfff6337eac15edf0a"
+    },
+    "workingTreeDirty": true
+  },
+  "completion": "failed",
+  "elapsedActiveSeconds": 0,
+  "endedAt": "2026-09-30T10:13:34Z",
+  "events": [
+    {
+      "date": "2026-09-30T10:13:34Z",
+      "hostTimeMicroseconds": 579565874241,
+      "kind": "preparing",
+      "message": "用户点击开始验收；仅固定动态窗口将被录屏。"
+    },
+    {
+      "date": "2026-09-30T10:13:34Z",
+      "hostTimeMicroseconds": 579565878949,
+      "kind": "failure",
+      "message": "屏幕录制权限尚未可用，请在系统设置中授权后重新打开此验收工具。"
+    },
+    {
+      "date": "2026-09-30T10:13:34Z",
+      "hostTimeMicroseconds": 579565892432,
+      "kind": "finalizing",
+      "message": "结束原因：startupFailure。等待所有媒体文件完成。"
+    },
+    {
+      "date": "2026-09-30T10:13:34Z",
+      "hostTimeMicroseconds": 579565927984,
+      "kind": "finished",
+      "message": "媒体收尾已完成；口型漂移和剪辑软件导入仍需另行验收。"
+    }
+  ],
+  "evidenceLimit": "此报告验证真实生产引擎、媒体写盘、可播放性与时间偏移。录制时长或时间戳一致不证明两小时口型漂移，仍需实拍打板/可见时钟与音频标记及剪辑软件验收。",
+  "failures": [
+    "屏幕录制权限尚未可用，请在系统设置中授权后重新打开此验收工具。"
+  ],
+  "fixtureBundleID": "app.prosio.validation.recording.fixture",
+  "fixtureSignalEvents": [],
+  "gaps": [],
+  "media": [],
+  "operatingSystem": "Version 26.3.1 (a) (Build 25D771280a)",
+  "permissions": {
+    "camera": "未请求",
+    "microphone": "未请求",
+    "screen": false
+  },
+  "requestedDurationSeconds": 30,
+  "requestedSystemAudio": false,
+  "schemaVersion": 1,
+  "selectedCameras": [],
+  "sourceEvidence": [],
+  "startedAt": "2026-09-30T10:13:34Z",
+  "validationBundleID": "app.prosio.validation.recording"
+}

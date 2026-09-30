@@ -113,6 +113,21 @@ nonisolated struct ValidationReport: Codable, Sendable {
     let evidenceLimit = "此报告验证真实生产引擎、媒体写盘、可播放性与时间偏移。录制时长或时间戳一致不证明两小时口型漂移，仍需实拍打板/可见时钟与音频标记及剪辑软件验收。"
 }
 
+nonisolated enum ValidationReportFinalizer {
+    static func finish(_ report: ValidationReport, elapsedActiveSeconds: Double, endedAt: Date,
+                       permissions: ValidationPermissionSnapshot) -> ValidationReport {
+        // Compute from a read-only snapshot before mutating the returned value.
+        let completion = report.failures.isEmpty
+            ? (report.media.isEmpty ? "cancelledBeforeCapture" : "mediaMetadataVerified") : "failed"
+        var result = report
+        result.elapsedActiveSeconds = elapsedActiveSeconds
+        result.endedAt = endedAt
+        result.permissions = permissions
+        result.completion = completion
+        return result
+    }
+}
+
 nonisolated struct ValidationSourceEvidence: Codable, Sendable {
     let source: RecordingSource
     let completedSegments: Int
