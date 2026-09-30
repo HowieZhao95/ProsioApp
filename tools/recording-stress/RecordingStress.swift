@@ -37,6 +37,11 @@ import Foundation
             onSegment: { collector.segment($0) }, onWarning: { collector.warning($0) }, onFailure: { collector.failure($0) })
         let factories = try (0..<3).map { try StressVideoFactory(width: width, height: height, angle: $0) }
         let start = ContinuousClock.now
+        func elapsedSeconds() -> Double {
+            let elapsed = (ContinuousClock.now - start).components
+            return Double(elapsed.seconds) + Double(elapsed.attoseconds) / 1e18
+        }
+        var maximumSchedulingLagSeconds = 0.0
         var videoIndex = 0
         var audioIndex = 0
         var factorySkippedFrames = 0
@@ -48,6 +53,7 @@ import Foundation
             let nextTime = min(videoTime, audioTime)
             if nextTime >= duration || !collector.failures.isEmpty { break }
             try await ContinuousClock().sleep(until: start.advanced(by: .seconds(nextTime)))
+            maximumSchedulingLagSeconds = max(maximumSchedulingLagSeconds, elapsedSeconds() - nextTime)
             let timestamp = origin + CMTime(seconds: nextTime, preferredTimescale: 1_000_000)
             if videoTime <= nextTime + 0.000_001 {
                 for angle in 0..<3 {
@@ -65,22 +71,22 @@ import Foundation
             }
             if nextTime >= nextReport {
                 nextReport += 5
-                snapshots.append(StressSnapshot(elapsedSeconds: nextTime, residentBytes: residentBytes(), diskBytes: diskBytes(output), statistics: await writer.statistics()))
+                snapshots.append(StressSnapshot(elapsedSeconds: elapsedSeconds(), residentBytes: residentBytes(), diskBytes: diskBytes(output), statistics: await writer.statistics()))
                 try write(StressReport(mode: "synthetic H264/AAC; no screen/camera/microphone access", completed: false,
-                    durationSeconds: duration, width: width, height: height, fps: fps, segmentSeconds: chunk,
+                    durationSeconds: duration, actualElapsedSeconds: elapsedSeconds(), maximumSchedulingLagSeconds: maximumSchedulingLagSeconds, width: width, height: height, fps: fps, segmentSeconds: chunk,
                     videoFramesPerSource: videoIndex, audioBuffersPerSource: audioIndex, fixtureSkippedFrames: factorySkippedFrames,
                     snapshots: snapshots, segments: collector.segments, warnings: collector.warnings,
                     failures: collector.failures), to: output.appendingPathComponent("progress.json"))
             }
         }
         do { try await writer.stop() } catch { collector.failure(error.localizedDescription) }
-        snapshots.append(StressSnapshot(elapsedSeconds: duration, residentBytes: residentBytes(), diskBytes: diskBytes(output), statistics: await writer.statistics()))
+        snapshots.append(StressSnapshot(elapsedSeconds: elapsedSeconds(), residentBytes: residentBytes(), diskBytes: diskBytes(output), statistics: await writer.statistics()))
         for segment in collector.segments {
             let asset = AVURLAsset(url: output.appendingPathComponent(segment.relativePath))
             if (try? await asset.load(.isPlayable)) != true { collector.failure("Unplayable finalized segment: \(segment.relativePath)") }
         }
         let report = StressReport(mode: "synthetic H264/AAC; no screen/camera/microphone access", completed: collector.failures.isEmpty,
-            durationSeconds: duration, width: width, height: height, fps: fps, segmentSeconds: chunk,
+            durationSeconds: duration, actualElapsedSeconds: elapsedSeconds(), maximumSchedulingLagSeconds: maximumSchedulingLagSeconds, width: width, height: height, fps: fps, segmentSeconds: chunk,
             videoFramesPerSource: videoIndex, audioBuffersPerSource: audioIndex, fixtureSkippedFrames: factorySkippedFrames,
             snapshots: snapshots, segments: collector.segments, warnings: collector.warnings, failures: collector.failures)
         try write(report, to: output.appendingPathComponent("report.json"))
@@ -122,6 +128,8 @@ nonisolated private struct StressReport: Codable {
     let mode: String
     let completed: Bool
     let durationSeconds: Double
+    let actualElapsedSeconds: Double
+    let maximumSchedulingLagSeconds: Double
     let width: Int
     let height: Int
     let fps: Int
