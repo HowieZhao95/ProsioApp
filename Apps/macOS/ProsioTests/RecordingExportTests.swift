@@ -56,6 +56,74 @@ struct RecordingExportTests {
         }
     }
 
+    @Test func audioOnlyRecoveredSessionExportsWithoutInventingMulticamOrVideo() async throws {
+        let root = temporaryRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        var session = try await fixture(in: root)
+        session.phase = .interrupted
+        session.segments.removeAll { $0.sourceID == "screen" || $0.sourceID == "camera" }
+        session.segments.append(RecordingSegment(sourceID: "mic", relativePath: "audio.caf", timelineStartMicroseconds: 3_503_501, mediaStartMicroseconds: 133_333, durationMicroseconds: 1_000_000))
+        try FileManager.default.removeItem(at: root.appendingPathComponent("video.mov"))
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+
+        func expectAudioFCPXML(_ document: XMLDocument) throws {
+            #expect(try document.nodes(forXPath: "//multicam | //mc-angle | //mc-clip | //*[@ref='multicam']").isEmpty)
+            #expect(try document.nodes(forXPath: "/fcpxml/resources/media").isEmpty)
+            #expect(try document.nodes(forXPath: "//spine/gap/asset-clip").count == 3)
+            #expect(try document.nodes(forXPath: "//spine/gap/asset-clip[@audioRole='dialogue']").count == 2)
+            #expect(try document.nodes(forXPath: "//spine/gap/asset-clip[@audioRole='effects']").count == 1)
+            let recovered = try #require(try document.nodes(forXPath: "//spine/gap/asset-clip[@audioRole='dialogue']").last as? XMLElement)
+            #expect(recovered.attribute(forName: "offset")?.stringValue == "3503501/1000000s")
+            #expect(recovered.attribute(forName: "start")?.stringValue == "133333/1000000s")
+            #expect(try document.nodes(forXPath: "/fcpxml/resources/asset[@hasVideo='1']").isEmpty)
+        }
+
+        for editor in RecordingEditor.allCases {
+            let destination = root.appendingPathComponent("Recovered-\(editor.rawValue)")
+            let result = try await RecordingProjectExporter().export(session: session, sourceDirectory: root, destination: destination, editor: editor)
+            let packaged = try decoder.decode(RecordingSessionManifest.self, from: Data(contentsOf: destination.appendingPathComponent("recording.json")))
+            #expect(packaged.segments.map(\.timelineStartMicroseconds) == session.segments.map(\.timelineStartMicroseconds))
+            #expect(packaged.segments.map(\.mediaStartMicroseconds) == session.segments.map(\.mediaStartMicroseconds))
+            #expect(packaged.durationMicroseconds == 4_503_501)
+            for (original, copied) in zip(session.segments, packaged.segments) {
+                #expect(try Data(contentsOf: root.appendingPathComponent(original.relativePath)) == Data(contentsOf: destination.appendingPathComponent(copied.relativePath)))
+            }
+            let note = try String(contentsOf: destination.appendingPathComponent("导入说明.txt"), encoding: .utf8)
+            #expect(note.contains("本次恢复仅保留音频"))
+            #expect(!note.contains("时间线中为原生多机位"))
+            if editor == .jianying {
+                let draft = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: result)) as? [String: Any])
+                let tracks = try #require(draft["tracks"] as? [[String: Any]])
+                #expect(tracks.count == 2)
+                #expect(tracks.allSatisfy { ($0["type"] as? String) == "audio" })
+                let segments = try #require(tracks.first?["segments"] as? [[String: Any]])
+                let range = try #require(segments.last?["target_timerange"] as? [String: Int64])
+                #expect(range["start"] == 3_503_501)
+                let materials = try #require(draft["materials"] as? [String: Any])
+                #expect((materials["videos"] as? [[String: Any]])?.isEmpty == true)
+            } else if editor == .finalCutPro {
+                try expectAudioFCPXML(XMLDocument(contentsOf: result))
+            } else {
+                let xml = try XMLDocument(contentsOf: result)
+                #expect(try xml.nodes(forXPath: "/xmeml/sequence/media/video/track | //multiclip").isEmpty)
+                #expect(try xml.nodes(forXPath: "/xmeml/sequence/media/audio/track").count == 3)
+                #expect(try xml.nodes(forXPath: "/xmeml/sequence/media/audio/track[1]/clipitem[2]/start").first?.stringValue == "105")
+                #expect(!FileManager.default.fileExists(atPath: destination.appendingPathComponent("Multicam.premiere.experimental.xml").path))
+                if editor == .resolve { try expectAudioFCPXML(XMLDocument(contentsOf: destination.appendingPathComponent("Multicam.fcpxml"))) }
+            }
+        }
+        let movie = root.appendingPathComponent("invented.mp4")
+        do {
+            _ = try await RecordingVideoExporter.exportMP4(session: session, sourceDirectory: root, videoSourceID: "screen", destination: movie)
+            Issue.record("Audio-only recovery must not produce a synthetic video")
+        } catch RecordingExportError.noVideo {
+            // Expected: originals can be handed off without pretending video survived recovery.
+        }
+        #expect(!FileManager.default.fileExists(atPath: movie.path))
+        #expect(FileManager.default.fileExists(atPath: root.appendingPathComponent("audio.caf").path))
+        #expect(FileManager.default.fileExists(atPath: root.appendingPathComponent("system.caf").path))
+    }
+
     @Test func compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() async throws {
         let root = temporaryRoot()
         defer { try? FileManager.default.removeItem(at: root) }

@@ -276,28 +276,33 @@ private struct RecordingSessionDetailView: View {
                     Button("查看原片") { coordinator.reveal(session) }
                 }
                 if canPreview {
-                    Picker("预览画面", selection: $selectedSource) {
-                        ForEach(videoSources) { source in Text(source.name).tag(source.id) }
-                    }.pickerStyle(.segmented)
-                    if let player = preview.player {
-                        VideoPlayer(player: player).frame(minHeight: 210, maxHeight: 320)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    } else if preview.loading {
-                        ProgressView("正在准备预览…").frame(maxWidth: .infinity, minHeight: 180)
-                    }
-                    if let previewError { Text(previewError).font(.caption).foregroundStyle(.orange) }
-                    if let error = preview.error { Text(error).font(.caption).foregroundStyle(.orange) }
-                    HStack {
-                        Text("导出范围").font(.caption).foregroundStyle(.secondary)
-                        TextField("起点秒", value: $trimStart, format: .number)
-                            .frame(width: 70).textFieldStyle(.roundedBorder)
-                        Text("至").font(.caption).foregroundStyle(.secondary)
-                        TextField("终点秒", value: $trimEnd, format: .number)
-                            .frame(width: 70).textFieldStyle(.roundedBorder)
-                        Text("秒").font(.caption).foregroundStyle(.secondary)
-                        Spacer()
-                        Button("导出 MP4…") { Task { await exportMP4() } }
-                            .disabled(exportingMP4 || preview.loading || selectedSource.isEmpty)
+                    if videoSources.isEmpty {
+                        ContentUnavailableView("没有可预览的视频", systemImage: "video.slash",
+                                               description: Text("已完成的声音原片仍保留，可查看文件或交给剪辑软件。"))
+                    } else {
+                        Picker("预览画面", selection: $selectedSource) {
+                            ForEach(videoSources) { source in Text(source.name).tag(source.id) }
+                        }.pickerStyle(.segmented)
+                        if let player = preview.player {
+                            VideoPlayer(player: player).frame(minHeight: 210, maxHeight: 320)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        } else if preview.loading {
+                            ProgressView("正在准备预览…").frame(maxWidth: .infinity, minHeight: 180)
+                        }
+                        if let previewError { Text(previewError).font(.caption).foregroundStyle(.orange) }
+                        if let error = preview.error { Text(error).font(.caption).foregroundStyle(.orange) }
+                        HStack {
+                            Text("导出范围").font(.caption).foregroundStyle(.secondary)
+                            TextField("起点秒", value: $trimStart, format: .number)
+                                .frame(width: 70).textFieldStyle(.roundedBorder)
+                            Text("至").font(.caption).foregroundStyle(.secondary)
+                            TextField("终点秒", value: $trimEnd, format: .number)
+                                .frame(width: 70).textFieldStyle(.roundedBorder)
+                            Text("秒").font(.caption).foregroundStyle(.secondary)
+                            Spacer()
+                            Button("导出 MP4…") { Task { await exportMP4() } }
+                                .disabled(exportingMP4 || preview.loading || selectedSource.isEmpty)
+                        }
                     }
                     Divider()
                     VStack(alignment: .leading, spacing: 10) {

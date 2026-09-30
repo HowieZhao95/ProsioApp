@@ -42,17 +42,23 @@ final class RecordingProjectExporter {
         case .jianying:
             try RecordingJianyingAdapter.write(session: packaged, media: media, directory: temporary, finalDirectory: destination)
         }
+        let hasVideo = media.contains(where: \.isVideo)
+        let sessionNote = hasVideo ? editor.importVerificationNote : "本次恢复仅保留音频：没有可用视频原片，不生成多机位或 MP4。麦克风和系统声音分别保存并按录制时间对齐；各编辑软件当前版本的导入仍需实机验收。"
+        let finalCutNote = hasVideo ? "Final Cut Pro：导入 Timeline.fcpxml，时间线中为原生多机位，麦克风和系统声音各自独立。" : "Final Cut Pro：导入 Timeline.fcpxml，独立音频连接在占位时间线上，不包含多机位。"
+        let alignedNote = hasVideo ? "Resolve / Premiere：导入 Timeline.xml，得到独立对齐轨道；在编辑软件中创建多机位。" : "Resolve / Premiere：导入 Timeline.xml，得到独立对齐音轨，不包含视频或多机位。"
+        let premiereNote = editor == .premiere && hasVideo ? "Premiere 包另含 Multicam.premiere.experimental.xml：按 Apple XMEML 多机位结构生成，保留分段角度和独立音频。Adobe 旧版资料支持最多四路未折叠多机位；当前版本与嵌套角度仍待实机验收。此文件不是已验证的默认导入路线。" : ""
+        let resolveNote = editor != .resolve ? "" : hasVideo ? "Resolve 包另含 Multicam.fcpxml：保留角度定义。官方资料将导入的 FCPX 多机位视为复合片段；导入后可从素材池转换为多机位。未宣称一次导入即得到原生多机位。" : "Resolve 包另含 Multicam.fcpxml：此次仅包含独立音频与占位时间线，没有多机位角度。"
         let note = """
         Prosio 录制交接 — \(editor.title)
 
-        \(editor.importVerificationNote)
+        \(sessionNote)
 
         原片位于 Media，recording.json 保留整数微秒对齐信息；请整体保留此文件夹。
         当前交接文件使用本次导出位置的文件 URL。移动文件夹后，编辑软件可能要求重新链接 Media；也可在 Prosio 重新导出到新位置。不要单独移动 XML/草稿或删除原片。
-        Final Cut Pro：导入 Timeline.fcpxml，时间线中为原生多机位，麦克风和系统声音各自独立。
-        Resolve / Premiere：导入 Timeline.xml，得到独立对齐轨道；在编辑软件中创建多机位。FCP7 XML 以时间线帧率取最近帧，微秒原始偏移保存在 recording.json。
-        Premiere 包另含 Multicam.premiere.experimental.xml：按 Apple XMEML 多机位结构生成，保留分段角度和独立音频。Adobe 旧版资料支持最多四路未折叠多机位；当前版本与嵌套角度仍待实机验收。此文件不是已验证的默认导入路线。
-        Resolve 包另含 Multicam.fcpxml：保留角度定义。官方资料将导入的 FCPX 多机位视为复合片段；导入后可从素材池转换为多机位。未宣称一次导入即得到原生多机位。
+        \(finalCutNote)
+        \(alignedNote) FCP7 XML 以时间线帧率取最近帧，微秒原始偏移保存在 recording.json。
+        \(premiereNote)
+        \(resolveNote)
         XtoCC 官方说明会将多机位折叠为当前角度，因此不能用它保证原生多机位保留。
         剪映：实验性本地明文草稿。将整个包作为新草稿处理，按软件要求重新链接素材。未验证 macOS 版本，不自动写入或覆盖剪映草稿目录，不保证受加密格式限制的版本可读取。
         """
@@ -84,24 +90,26 @@ final class RecordingProjectExporter {
             asset.addChild(element("media-rep", ["kind": "original-media", "src": item.url.absoluteString]))
             resources.addChild(asset)
         }
-        let multicamMedia = element("media", ["id": "multicam", "name": session.title])
-        let multicam = element("multicam", ["format": primaryFormat, "tcStart": "0s", "tcFormat": "NDF"])
-        multicamMedia.addChild(multicam)
         let angles = session.sources.filter { $0.kind == .screen || $0.kind == .camera }.filter { source in video.contains { $0.source.id == source.id } }
-        for (angleIndex, source) in angles.enumerated() {
-            let angle = element("mc-angle", ["angleID": "angle\(angleIndex)", "name": source.name])
-            var end: Int64 = 0
-            for (index, item) in media.enumerated().filter({ $0.element.source.id == source.id }).sorted(by: { $0.element.segment.timelineStartMicroseconds < $1.element.segment.timelineStartMicroseconds }) {
-                if item.segment.timelineStartMicroseconds > end {
-                    angle.addChild(element("gap", ["name": "来源间隙", "offset": micros(end), "start": "0s", "duration": micros(item.segment.timelineStartMicroseconds - end)]))
+        if !angles.isEmpty {
+            let multicamMedia = element("media", ["id": "multicam", "name": session.title])
+            let multicam = element("multicam", ["format": primaryFormat, "tcStart": "0s", "tcFormat": "NDF"])
+            multicamMedia.addChild(multicam)
+            for (angleIndex, source) in angles.enumerated() {
+                let angle = element("mc-angle", ["angleID": "angle\(angleIndex)", "name": source.name])
+                var end: Int64 = 0
+                for (index, item) in media.enumerated().filter({ $0.element.source.id == source.id }).sorted(by: { $0.element.segment.timelineStartMicroseconds < $1.element.segment.timelineStartMicroseconds }) {
+                    if item.segment.timelineStartMicroseconds > end {
+                        angle.addChild(element("gap", ["name": "来源间隙", "offset": micros(end), "start": "0s", "duration": micros(item.segment.timelineStartMicroseconds - end)]))
+                    }
+                    angle.addChild(assetClip(item, index: index))
+                    end = item.segment.timelineEndMicroseconds ?? end
                 }
-                angle.addChild(assetClip(item, index: index))
-                end = item.segment.timelineEndMicroseconds ?? end
+                if end < session.durationMicroseconds { angle.addChild(element("gap", ["name": "来源间隙", "offset": micros(end), "start": "0s", "duration": micros(session.durationMicroseconds - end)])) }
+                multicam.addChild(angle)
             }
-            if end < session.durationMicroseconds { angle.addChild(element("gap", ["name": "来源间隙", "offset": micros(end), "start": "0s", "duration": micros(session.durationMicroseconds - end)])) }
-            multicam.addChild(angle)
+            resources.addChild(multicamMedia)
         }
-        resources.addChild(multicamMedia)
         let library = element("library")
         let event = element("event", ["name": session.title])
         let project = element("project", ["name": session.title])
