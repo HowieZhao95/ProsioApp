@@ -98,11 +98,19 @@ struct RecordingWorkspaceView: View {
                                 ForEach(coordinator.inventory?.windows ?? [], id: \.id) { choice in
                                     Text(choice.name).tag(choice.id)
                                 }
+                                if !(coordinator.inventory?.windows.contains(where: { $0.id == coordinator.windowID }) ?? false) {
+                                    Text(coordinator.windowID == 0 ? "未发现可录制窗口" : "所选窗口已关闭")
+                                        .tag(coordinator.windowID)
+                                }
                             }
                         } else {
                             Picker("显示器", selection: $coordinator.displayID) {
                                 ForEach(coordinator.inventory?.displays ?? [], id: \.id) { choice in
                                     Text(choice.name).tag(choice.id)
+                                }
+                                if !(coordinator.inventory?.displays.contains(where: { $0.id == coordinator.displayID }) ?? false) {
+                                    Text(coordinator.displayID == 0 ? "未发现可用显示器" : "所选显示器不可用")
+                                        .tag(coordinator.displayID)
                                 }
                             }
                             .onChange(of: coordinator.displayID) { coordinator.region = nil }
@@ -142,6 +150,10 @@ struct RecordingWorkspaceView: View {
                             Picker("来源", selection: $coordinator.microphoneID) {
                                 ForEach(coordinator.inventory?.microphones ?? [], id: \.id) { source in
                                     Text(source.name).tag(source.id)
+                                }
+                                if !(coordinator.inventory?.microphones.contains(where: { $0.id == coordinator.microphoneID }) ?? false) {
+                                    Text(coordinator.microphoneID.isEmpty ? "未发现麦克风" : "所选麦克风不可用")
+                                        .tag(coordinator.microphoneID)
                                 }
                             }
                         }
