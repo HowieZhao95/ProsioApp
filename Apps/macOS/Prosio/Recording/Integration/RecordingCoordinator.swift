@@ -19,6 +19,10 @@ final class RecordingCoordinator {
     @ObservationIgnored private var stopRequested = false
     @ObservationIgnored private var fatalReason: String?
     @ObservationIgnored private var exportTask: Task<URL, Error>?
+    @ObservationIgnored private let editorHandoff: RecordingEditorHandoff
+    private var exportedSessionID: UUID?
+    private var exportedEditor: RecordingEditor?
+    private var exportedFile: URL?
     private var elapsedOrigin: TimeInterval?
     private var pauseOrigin: TimeInterval?
     private var pausedDuration: TimeInterval = 0
@@ -33,6 +37,7 @@ final class RecordingCoordinator {
     private(set) var inventory: RecordingSourceInventory?
     private(set) var loadingSources = false
     private(set) var exporting = false
+    private(set) var openingEditor = false
     private(set) var exportMessage: String?
     private(set) var permissionRecovery: RecordingPermissionRecovery?
     var selectedSessionID: UUID?
@@ -65,11 +70,13 @@ final class RecordingCoordinator {
 
     init(root: URL, permissions: PermissionsManager,
          makeEngine: @escaping () -> any RecordingEngineControlling = { RecordingEngine() },
-         inventory: RecordingSourceInventory? = nil) {
+         inventory: RecordingSourceInventory? = nil,
+         editorHandoff: RecordingEditorHandoff = RecordingEditorHandoff()) {
         store = RecordingStore(root: root)
         self.permissions = permissions
         self.makeEngine = makeEngine
         self.inventory = inventory
+        self.editorHandoff = editorHandoff
         restorePreferences()
     }
 
@@ -379,6 +386,8 @@ final class RecordingCoordinator {
 
     func export(_ session: RecordingSessionManifest, editor: RecordingEditor) async {
         guard !exporting, !session.segments.isEmpty else { return }
+        exporting = true
+        defer { exporting = false }
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
@@ -386,9 +395,7 @@ final class RecordingCoordinator {
         panel.prompt = "导出到此处"
         panel.message = "将在所选文件夹中保存独立原片与\(editor.title)交接文件。"
         guard await panel.begin() == .OK, let destination = panel.url else { return }
-        exporting = true
         exportMessage = nil
-        defer { exporting = false }
         do {
             let sourceDirectory = store.directory(for: session.id)
             let task = Task {
@@ -399,6 +406,9 @@ final class RecordingCoordinator {
             exportTask = task
             defer { exportTask = nil }
             let output = try await task.value
+            exportedSessionID = session.id
+            exportedEditor = editor
+            exportedFile = output
             exportMessage = "交接文件已保存。请在\(editor.title)中导入并检查机位和音频。"
             NSWorkspace.shared.activateFileViewerSelecting([output])
         } catch is CancellationError { exportMessage = "导出已取消，原片仍保留。" }
@@ -406,6 +416,24 @@ final class RecordingCoordinator {
     }
 
     func cancelExport() { exportTask?.cancel() }
+
+    func hasExport(for sessionID: UUID, editor: RecordingEditor) -> Bool {
+        exportedSessionID == sessionID && exportedEditor == editor && exportedFile != nil
+    }
+
+    func openExport(for sessionID: UUID, editor: RecordingEditor) async {
+        guard !exporting, !openingEditor, hasExport(for: sessionID, editor: editor), let file = exportedFile else { return }
+        openingEditor = true
+        defer { openingEditor = false }
+        do {
+            let receipt = try await editorHandoff.open(exportedFile: file, editor: editor)
+            exportMessage = receipt.message
+        } catch is CancellationError {
+            exportMessage = "打开已取消，交接文件仍保留。"
+        } catch {
+            exportMessage = error.localizedDescription
+        }
+    }
 
     private func append(_ segment: RecordingSegment, sessionID: UUID) {
         guard activeSession?.id == sessionID else { return }

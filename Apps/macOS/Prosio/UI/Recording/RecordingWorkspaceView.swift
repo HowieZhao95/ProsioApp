@@ -244,11 +244,10 @@ struct RecordingControlView: View {
 private struct RecordingSessionDetailView: View {
     @Bindable var coordinator: RecordingCoordinator
     let session: RecordingSessionManifest
-    @State private var player: AVPlayer?
+    @State private var preview = RecordingPreviewController()
     @State private var selectedSource = ""
     @State private var editor: RecordingEditor = .finalCutPro
     @State private var previewError: String?
-    @State private var loading = false
     @State private var exportingMP4 = false
     @State private var exportTask: Task<URL, Error>?
     @State private var trimStart = 0.0
@@ -257,7 +256,10 @@ private struct RecordingSessionDetailView: View {
     private var duration: Double { Double(session.durationMicroseconds) / 1_000_000 }
     private var canPreview: Bool { coordinator.activeSession?.id != session.id && !session.segments.isEmpty }
     private var videoSources: [RecordingSource] {
-        session.sources.filter { $0.kind == .screen || $0.kind == .camera }
+        RecordingPreviewController.availableVideoSources(in: session)
+    }
+    private var previewRequest: RecordingPreviewRequest {
+        RecordingPreviewRequest(session: session, sourceID: selectedSource, isReady: canPreview)
     }
 
     var body: some View {
@@ -276,13 +278,14 @@ private struct RecordingSessionDetailView: View {
                     Picker("预览画面", selection: $selectedSource) {
                         ForEach(videoSources) { source in Text(source.name).tag(source.id) }
                     }.pickerStyle(.segmented)
-                    if let player {
+                    if let player = preview.player {
                         VideoPlayer(player: player).frame(minHeight: 210, maxHeight: 320)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
-                    } else if loading {
+                    } else if preview.loading {
                         ProgressView("正在准备预览…").frame(maxWidth: .infinity, minHeight: 180)
                     }
                     if let previewError { Text(previewError).font(.caption).foregroundStyle(.orange) }
+                    if let error = preview.error { Text(error).font(.caption).foregroundStyle(.orange) }
                     HStack {
                         Text("导出范围").font(.caption).foregroundStyle(.secondary)
                         TextField("起点秒", value: $trimStart, format: .number)
@@ -293,7 +296,7 @@ private struct RecordingSessionDetailView: View {
                         Text("秒").font(.caption).foregroundStyle(.secondary)
                         Spacer()
                         Button("导出 MP4…") { Task { await exportMP4() } }
-                            .disabled(exportingMP4 || loading)
+                            .disabled(exportingMP4 || preview.loading || selectedSource.isEmpty)
                     }
                     Divider()
                     VStack(alignment: .leading, spacing: 10) {
@@ -306,7 +309,13 @@ private struct RecordingSessionDetailView: View {
                                 Task { await coordinator.export(session, editor: editor) }
                             }
                             .buttonStyle(.borderedProminent)
-                            .disabled(coordinator.exporting)
+                            .disabled(coordinator.exporting || coordinator.openingEditor)
+                            if editor != .jianying, coordinator.hasExport(for: session.id, editor: editor) {
+                                Button(coordinator.openingEditor ? "正在打开…" : "在\(editor.title)中打开") {
+                                    Task { await coordinator.openExport(for: session.id, editor: editor) }
+                                }
+                                .disabled(coordinator.exporting || coordinator.openingEditor)
+                            }
                         }
                         Text(editor.importVerificationNote)
                             .font(.caption).foregroundStyle(.secondary)
@@ -334,31 +343,23 @@ private struct RecordingSessionDetailView: View {
             }
         }
         .onAppear {
-            selectedSource = videoSources.first?.id ?? ""
+            selectedSource = RecordingPreviewController.preferredSource(in: session, selectedID: selectedSource)
             trimEnd = duration
         }
-        .task(id: selectedSource) { await loadPreview() }
-        .onDisappear { player?.pause(); player = nil }
-    }
-
-    private func loadPreview() async {
-        guard canPreview, !selectedSource.isEmpty else { return }
-        player?.pause()
-        player = nil
-        loading = true
-        previewError = nil
-        defer { loading = false }
-        do {
-            let composition = try await RecordingVideoExporter.composition(
-                session: session, sourceDirectory: coordinator.store.directory(for: session.id),
-                videoSourceID: selectedSource)
-            try Task.checkCancellation()
-            player = AVPlayer(playerItem: AVPlayerItem(asset: composition))
-        } catch is CancellationError {
-        } catch { previewError = "无法预览：\(error.localizedDescription)" }
+        .onChange(of: videoSources.map(\.id)) {
+            selectedSource = RecordingPreviewController.preferredSource(in: session, selectedID: selectedSource)
+        }
+        .onChange(of: duration) { old, new in
+            if trimEnd == old || trimEnd == 0 { trimEnd = new }
+        }
+        .task(id: previewRequest) {
+            await preview.load(previewRequest, sourceDirectory: coordinator.store.directory(for: session.id))
+        }
+        .onDisappear { preview.clear() }
     }
 
     private func exportMP4() async {
+        guard !exportingMP4 else { return }
         guard trimStart.isFinite, trimEnd.isFinite, trimStart >= 0,
               trimEnd > trimStart, trimEnd <= duration else {
             previewError = "请输入录制时长以内的有效起点和终点。"
@@ -367,14 +368,17 @@ private struct RecordingSessionDetailView: View {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.mpeg4Movie]
         panel.nameFieldStringValue = "录制.mp4"
-        guard await panel.begin() == .OK, let url = panel.url else { return }
         exportingMP4 = true
         defer { exportingMP4 = false }
+        let sourceID = selectedSource
+        let start = trimStart
+        let end = trimEnd
+        guard await panel.begin() == .OK, let url = panel.url else { return }
         do {
             let task = Task {
                 try await RecordingVideoExporter.exportMP4(
                     session: session, sourceDirectory: coordinator.store.directory(for: session.id),
-                    videoSourceID: selectedSource, destination: url, trimStart: trimStart, trimEnd: trimEnd)
+                    videoSourceID: sourceID, destination: url, trimStart: start, trimEnd: end)
             }
             exportTask = task
             defer { exportTask = nil }

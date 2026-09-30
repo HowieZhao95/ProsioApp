@@ -23,6 +23,9 @@ targets:
       - path: ../../Apps/macOS/ProsioTests/RecordingRecoveryTests.swift
       - path: ../../Apps/macOS/ProsioTests/RecordingCoordinatorTests.swift
       - path: ../../Apps/macOS/ProsioTests/RecordingNativeViewTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingPreviewTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift
+      - path: ../../Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift
 schemes:
   RecordingValidation:
     build:
