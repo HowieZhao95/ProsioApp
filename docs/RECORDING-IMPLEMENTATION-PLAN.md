@@ -39,7 +39,7 @@
 
 ## 剪辑交接方案
 
-以录制清单为统一来源，分别生成适配文件。FCPXML 生成原生多机位角度，屏幕和两路摄像头分别成为角度，主麦克风和系统声音保持独立可控制。Resolve 和 Premiere 的 FCP7 XML 路线先保证独立多轨对齐，再验证原生多机位结构；不可把混合音频片段等同于多机位序列。导出后提供定向打开已安装剪辑软件的动作，打开请求和软件内导入成功分别记录。附带 Premiere 实验性多机位 XML 和 Resolve FCPXML 角度结构，默认仍使用对齐轨道路线。剪映自动交接需先通过具体 macOS 版本验收。
+优先复用四款剪辑软件已有的交换格式和成熟适配实现；第三方插件在确认名称、许可、接口及目标版本后接入。以录制清单为统一来源，分别生成适配文件。FCPXML 生成原生多机位角度，屏幕和两路摄像头分别成为角度，主麦克风和系统声音保持独立可控制。Resolve 和 Premiere 的 FCP7 XML 路线先保证独立多轨对齐，再验证原生多机位结构；不可把混合音频片段等同于多机位序列。导出后提供定向打开已安装剪辑软件的动作，打开请求和软件内导入成功分别记录。附带 Premiere 实验性多机位 XML 和 Resolve FCPXML 角度结构，默认仍使用对齐轨道路线。剪映自动交接需先通过具体 macOS 版本验收。
 
 剪映使用经过版本验证的草稿适配；其格式不是官方稳定 XML 协议。现有开源实现作为参考候选，先检查许可、macOS 支持和实际导入；若当前版本不接受，保留原片与通用时间线，显示明确限制并继续完成适配，不假装已支持。
 
@@ -66,8 +66,8 @@
 
 ## 当前状态
 
-数据、采集、交接模块已分别实现并提交，原生 UI 与应用协调已接入当前工作区。主应用构建与签名验证通过；应用 hostless 回归 209 项通过，最新录屏独立模块 55 项通过。详细证据与未完成条件见 [开发验收记录](evidence/recording/implementation-acceptance.md)。
+数据、采集、交接模块已分别实现并提交，原生 UI 与应用协调已接入当前工作区。主应用构建与签名验证通过；最新隔离应用 hostless 回归 213 项通过；此前 `ff7d718` 阶段录屏独立模块 59 项通过。详细证据与未完成条件见 [开发验收记录](evidence/recording/implementation-acceptance.md)。
 
-真实设备长录制、USB/iPhone 断连恢复、四款剪辑软件实际导入，以及 Resolve/Premiere 原生多机位交接仍待完成。已有未提交和其他并行工作保持原样，接入文件暂不混入独立模块提交；完整目标保持活动。
+真实设备长录制、USB/iPhone 断连恢复、四款剪辑软件实际导入，以及 Resolve/Premiere 原生多机位交接仍待完成。所需截图/录音转写基础与录屏接入已分别提交；隔离副本与 165 个提交内构建文件一致，独立构建、签名及 213 项回归通过。演示、服务端和其他并行工作仍保留在原工作区。完整目标保持活动。
 
 参考：[Apple 多机位 FCPXML](https://developer.apple.com/documentation/professional-video-applications/multicam-media)、[Apple 连续互通相机](https://support.apple.com/en-gb/102546)、[Adobe FCPXML 转换要求](https://helpx.adobe.com/premiere/desktop/organize-media/import-files/migrate-from-final-cut-pro-x.html)、[剪映草稿参考](https://github.com/GuanYixuan/pyJianYingDraft)。

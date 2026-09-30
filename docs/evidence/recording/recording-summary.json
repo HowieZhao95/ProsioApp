@@ -12,7 +12,7 @@
       },
       "expectedFailures" : 0,
       "failedTests" : 0,
-      "passedTests" : 55,
+      "passedTests" : 59,
       "skippedTests" : 0,
       "testPlanConfiguration" : {
         "configurationId" : "1",
@@ -23,11 +23,11 @@
   "environmentDescription" : "RecordingValidation · Built with macOS 26.3.1",
   "expectedFailures" : 0,
   "failedTests" : 0,
-  "finishTime" : 1790755105.809,
-  "passedTests" : 55,
+  "finishTime" : 1790757667.989,
+  "passedTests" : 59,
   "result" : "Passed",
   "skippedTests" : 0,
-  "startTime" : 1790755095.433,
+  "startTime" : 1790757654.5,
   "statistics" : [
 
   ],
@@ -38,9 +38,9 @@
   "topInsights" : [
     {
       "category" : "Longest Test Runs",
-      "impact" : "30% of duration",
-      "text" : "1 longest test run with outlier durations exceeding 0.76s (three standard deviations)"
+      "impact" : "49% of duration",
+      "text" : "2 longest test runs with outlier durations exceeding 1.62s (three standard deviations)"
     }
   ],
-  "totalTestCount" : 55
+  "totalTestCount" : 59
 }

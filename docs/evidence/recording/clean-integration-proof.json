@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-30",
+  "integrationCommit": "ff8b91de3ef3126aa265c1565bb180af70dec82a",
+  "method": "isolated source snapshot equals all committed main-app build source/configuration files; no Presentation or server drafts",
+  "trackedBuildFilesCompared": 165,
+  "differences": [],
+  "fluidAudioRevision": "20d4f0bd46d11d7f50a6eb4f7835cfdbd2b4ba14",
+  "cleanDependencyBootstrap": "fresh pinned checkout fetched using committed bootstrap script",
+  "buildResult": "BUILD SUCCEEDED",
+  "signatureCheck": "codesign --verify --deep --strict passed",
+  "regressionPassed": 213,
+  "regressionFailed": 0,
+  "recordingIndependentPassed": 59,
+  "hardwareAndEditorImportVerified": false,
+  "baselineRegressionCommit": "fdbfe4983ecf9f91732a5dfcb34b4e5eaba5a7da",
+  "followUpBuildResult": "BUILD SUCCEEDED; screen isolation, original-target retry, audio-only handoff, region gate and termination fixtures included",
+  "followUpFocusedTerminationPassed": 4,
+  "followUpFocusedTerminationFailed": 0,
+  "recordingIndependentCommit": "ff7d718d8f5ddd56489655c9e5f0f8d365a49803"
+}

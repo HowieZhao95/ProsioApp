@@ -1,8 +1,8 @@
 Command line invocation:
-    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project tools/recording-validation/RecordingValidation.xcodeproj -scheme RecordingValidation -destination platform=macOS -derivedDataPath /tmp/prosio-recording-review-20260930 -resultBundlePath /tmp/prosio-recording-review-final-20260930.xcresult
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project tools/recording-validation/RecordingValidation.xcodeproj -scheme RecordingValidation -destination platform=macOS -derivedDataPath /tmp/prosio-recording-review-20260930 -resultBundlePath /tmp/prosio-recording-integrated-final-20260930.xcresult
 
 Writing result bundle at path:
-	/tmp/prosio-recording-review-final-20260930.xcresult
+	/tmp/prosio-recording-integrated-final-20260930.xcresult
 
 --- xcodebuild: WARNING: Using the first of multiple matching destinations:
 { platform:macOS, arch:arm64, id:00008103-000655A10E8A001E, name:My Mac }
@@ -30,278 +30,265 @@ ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefaul
     cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation/RecordingValidation.xcodeproj
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/prosio-recording-review-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
 
-SwiftDriver RecordingValidationTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RecordingValidationTests -Onone @/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-review-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-review-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-review-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-review-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-review-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation -experimental-emit-module-separately -disable-cmo
-
-SwiftCompile normal arm64 Compiling\ RecordingProjectExporter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingProjectExporter.swift (in target 'RecordingValidationTests' from project 'RecordingValidation')
-
-SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingProjectExporter.swift (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-
-
-SwiftCompile normal arm64 Compiling\ RecordingEditorHandoffTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift (in target 'RecordingValidationTests' from project 'RecordingValidation')
-SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-
-
-SwiftEmitModule normal arm64 Emitting\ module\ for\ RecordingValidationTests (in target 'RecordingValidationTests' from project 'RecordingValidation')
-EmitSwiftModule normal arm64 (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-
-
-SwiftDriverJobDiscovery normal arm64 Compiling RecordingProjectExporter.swift (in target 'RecordingValidationTests' from project 'RecordingValidation')
-
-SwiftDriverJobDiscovery normal arm64 Compiling RecordingEditorHandoffTests.swift (in target 'RecordingValidationTests' from project 'RecordingValidation')
-
-SwiftDriver\ Compilation RecordingValidationTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RecordingValidationTests -Onone @/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-review-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-review-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-review-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-review-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-review-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation -experimental-emit-module-separately -disable-cmo
-
-SwiftDriverJobDiscovery normal arm64 Emitting module for RecordingValidationTests (in target 'RecordingValidationTests' from project 'RecordingValidation')
-
-SwiftDriver\ Compilation\ Requirements RecordingValidationTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name RecordingValidationTests -Onone @/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-review-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-review-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-review-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-review-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-review-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-review-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-review-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation -experimental-emit-module-separately -disable-cmo
-
-Copy /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.swiftmodule/arm64-apple-macos.abi.json /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.abi.json (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.abi.json /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.swiftmodule/arm64-apple-macos.abi.json
-
-Copy /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.swiftmodule/arm64-apple-macos.swiftmodule /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftmodule (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftmodule /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.swiftmodule/arm64-apple-macos.swiftmodule
-
-Copy /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftsourceinfo (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftsourceinfo /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
-
-Ld /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/MacOS/RecordingValidationTests normal (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/prosio-recording-review-20260930/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/prosio-recording-review-20260930/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.LinkFileList -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.swiftmodule @/tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests-linker-args.resp -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -o /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/MacOS/RecordingValidationTests
-
-ExtractAppIntentsMetadata (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name RecordingValidationTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --output /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.0 --binary-file /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/MacOS/RecordingValidationTests --dependency-file /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests_dependency_info.dat --stringsdata-file /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.SwiftFileList --metadata-file-list /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests.DependencyMetadataFileList --static-metadata-file-list /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/RecordingValidationTests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/Objects-normal/arm64/RecordingValidationTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
-2026-09-30 15:58:19.921 appintentsmetadataprocessor[77182:9362016] Starting appintentsmetadataprocessor export
-2026-09-30 15:58:19.923 appintentsmetadataprocessor[77182:9362016] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
-
-CopySwiftLibs /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest (in target 'RecordingValidationTests' from project 'RecordingValidation')
-    cd /Users/guest01/projectCodeMac2/ProsioApp/tools/recording-validation
-    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/MacOS/RecordingValidationTests --scan-folder /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/Frameworks --scan-folder /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/PlugIns --scan-folder /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/Library/SystemExtensions --scan-folder /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/prosio-recording-review-20260930/Build/Products/Debug/RecordingValidationTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/prosio-recording-review-20260930/Build/Intermediates.noindex/RecordingValidation.build/Debug/RecordingValidationTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
-Ignoring --strip-bitcode because --sign was not passed
-
-Test Suite 'All tests' started at 2026-09-30 15:58:20.622.
-Test Suite 'RecordingValidationTests.xctest' started at 2026-09-30 15:58:20.623.
-Test Suite 'RecordingEngineLifecycleTests' started at 2026-09-30 15:58:20.623.
+Test Suite 'All tests' started at 2026-09-30 16:40:57.491.
+Test Suite 'RecordingValidationTests.xctest' started at 2026-09-30 16:40:57.492.
+Test Suite 'RecordingEngineLifecycleTests' started at 2026-09-30 16:40:57.492.
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' started.
-2026-09-30 15:58:20.671511+0800 xctest[77183:9362038] [] (Fig) signalled err=0 at <>:85
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' passed (0.189 seconds).
+2026-09-30 16:40:57.911941+0800 xctest[83896:9441817] [] (Fig) signalled err=0 at <>:85
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' passed (0.619 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' started.
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' passed (0.017 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' passed (0.021 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' started.
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' passed (0.009 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' started.
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' passed (0.015 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' passed (0.019 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' started.
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' passed (0.010 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' started.
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' passed (0.010 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' started.
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' passed (0.008 seconds).
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' passed (0.010 seconds).
 Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' started.
-Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' passed (0.008 seconds).
-Test Suite 'RecordingEngineLifecycleTests' passed at 2026-09-30 15:58:20.889.
-	 Executed 8 tests, with 0 failures (0 unexpected) in 0.264 (0.266) seconds
-Test Suite 'RecordingPlatformTests' started at 2026-09-30 15:58:20.889.
+Test Case '-[RecordingValidationTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' passed (0.010 seconds).
+Test Suite 'RecordingEngineLifecycleTests' passed at 2026-09-30 16:40:58.204.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.708 (0.711) seconds
+Test Suite 'RecordingPlatformTests' started at 2026-09-30 16:40:58.204.
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' started.
-Test Case '-[RecordingValidationTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (0.347 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (3.102 seconds).
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' started.
-Test Case '-[RecordingValidationTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.078 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.087 seconds).
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' started.
-Test Case '-[RecordingValidationTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (0.265 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (0.431 seconds).
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' started.
-Test Case '-[RecordingValidationTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.121 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.120 seconds).
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' started.
-Test Case '-[RecordingValidationTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.172 seconds).
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.214 seconds).
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' started.
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' passed (0.001 seconds).
 Test Case '-[RecordingValidationTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' started.
-2026-09-30 15:58:21.887685+0800 xctest[77183:9362039] [] <<<< FigFile >>>> signalled err=-17913 at <>:745
-2026-09-30 15:58:21.887797+0800 xctest[77183:9362039] [] <<<< FigAssetWriter >>>> signalled err=-12143 at <>:384
-Test Case '-[RecordingValidationTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.017 seconds).
-Test Suite 'RecordingPlatformTests' passed at 2026-09-30 15:58:21.892.
-	 Executed 7 tests, with 0 failures (0 unexpected) in 1.001 (1.002) seconds
-Test Suite 'RecordingRecoveryTests' started at 2026-09-30 15:58:21.892.
+2026-09-30 16:41:02.178597+0800 xctest[83896:9441810] [] <<<< FigFile >>>> signalled err=-17913 at <>:745
+2026-09-30 16:41:02.179181+0800 xctest[83896:9441810] [] <<<< FigAssetWriter >>>> signalled err=-12143 at <>:384
+Test Case '-[RecordingValidationTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.020 seconds).
+Test Suite 'RecordingPlatformTests' passed at 2026-09-30 16:41:02.184.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 3.974 (3.980) seconds
+Test Suite 'RecordingRecoveryTests' started at 2026-09-30 16:41:02.185.
 Test Case '-[RecordingValidationTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' started.
-2026-09-30 15:58:21.953031+0800 xctest[77183:9362072] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
-Test Case '-[RecordingValidationTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' passed (0.065 seconds).
+2026-09-30 16:41:02.291461+0800 xctest[83896:9441879] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' passed (0.110 seconds).
 Test Case '-[RecordingValidationTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' started.
-Test Case '-[RecordingValidationTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' passed (0.062 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' passed (0.083 seconds).
 Test Case '-[RecordingValidationTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' started.
-Test Case '-[RecordingValidationTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' passed (0.067 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' passed (0.069 seconds).
 Test Case '-[RecordingValidationTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' started.
-2026-09-30 15:58:22.146408+0800 xctest[77183:9362100] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
-Test Case '-[RecordingValidationTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' passed (0.061 seconds).
+2026-09-30 16:41:02.553871+0800 xctest[83896:9441879] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' passed (0.107 seconds).
 Test Case '-[RecordingValidationTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' started.
-Test Case '-[RecordingValidationTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' passed (0.062 seconds).
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' passed (0.064 seconds).
 Test Case '-[RecordingValidationTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' started.
-Test Case '-[RecordingValidationTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' passed (0.064 seconds).
-Test Suite 'RecordingRecoveryTests' passed at 2026-09-30 15:58:22.274.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.380 (0.382) seconds
-Test Suite 'RecordingValidationTests.xctest' passed at 2026-09-30 15:58:22.274.
-	 Executed 21 tests, with 0 failures (0 unexpected) in 1.645 (1.651) seconds
-Test Suite 'All tests' passed at 2026-09-30 15:58:22.274.
-	 Executed 21 tests, with 0 failures (0 unexpected) in 1.645 (1.652) seconds
+Test Case '-[RecordingValidationTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' passed (0.076 seconds).
+Test Suite 'RecordingRecoveryTests' passed at 2026-09-30 16:41:02.695.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.509 (0.511) seconds
+Test Suite 'RecordingValidationTests.xctest' passed at 2026-09-30 16:41:02.696.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 5.191 (5.203) seconds
+Test Suite 'All tests' passed at 2026-09-30 16:41:02.696.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 5.191 (5.205) seconds
 ◇ Test run started.
 ↳ Testing Library Version: 1902
 ↳ Target Platform: arm64e-apple-macos14.0
 ◇ Suite "Recording coordinator lifecycle" started.
 ◇ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() started.
-2026-09-30 15:58:22.981179+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:22.985622+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:22.985655+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:22.996975+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() passed after 0.728 seconds.
+2026-09-30 16:41:03.628424+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.634014+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.634059+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.686790+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() passed after 1.034 seconds.
 ◇ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() started.
-2026-09-30 15:58:23.006250+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.006291+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.006310+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.006328+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() passed after 0.007 seconds.
+2026-09-30 16:41:03.740523+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.740579+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.740598+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.740617+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() passed after 0.010 seconds.
 ◇ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() started.
-2026-09-30 15:58:23.054780+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.054831+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.054856+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.054880+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() passed after 0.047 seconds.
+2026-09-30 16:41:03.750483+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.750555+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.750580+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.750601+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() passed after 0.007 seconds.
 ◇ Test testCallbacksFromFinishedSessionCannotChangeNextSession() started.
-2026-09-30 15:58:23.061480+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.061519+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.061543+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.061566+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testCallbacksFromFinishedSessionCannotChangeNextSession() passed after 0.007 seconds.
+2026-09-30 16:41:03.760455+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.760498+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.760517+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.760545+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCallbacksFromFinishedSessionCannotChangeNextSession() passed after 0.009 seconds.
 ◇ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() started.
-2026-09-30 15:58:23.068574+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.068618+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.068642+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.068663+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() passed after 0.007 seconds.
+2026-09-30 16:41:03.768408+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.768453+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.768473+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.768490+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() passed after 0.008 seconds.
 ◇ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() started.
-2026-09-30 15:58:23.075877+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.075911+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.075933+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.075952+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() passed after 0.003 seconds.
+2026-09-30 16:41:03.775581+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.775625+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.775644+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.775662+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() passed after 0.004 seconds.
 ◇ Test testCameraDisconnectChangesOnlyThatSourceAvailability() started.
-2026-09-30 15:58:23.079929+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.079984+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.080007+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.080027+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
+2026-09-30 16:41:03.780581+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.780624+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.780643+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.780660+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
 ✔ Test testCameraDisconnectChangesOnlyThatSourceAvailability() passed after 0.003 seconds.
 ◇ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() started.
-2026-09-30 15:58:23.083996+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:23.084032+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:23.084053+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:23.084072+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() passed after 0.033 seconds.
-✔ Suite "Recording coordinator lifecycle" passed after 0.840 seconds.
+2026-09-30 16:41:03.785583+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:03.785625+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:03.785643+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:03.785661+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() passed after 0.024 seconds.
+✔ Suite "Recording coordinator lifecycle" passed after 1.106 seconds.
 ◇ Suite "Editor handoff boundary" started.
 ◇ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() started.
-✔ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() passed after 0.003 seconds.
+✔ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() passed after 0.053 seconds.
 ◇ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() started.
-✔ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() passed after 0.012 seconds.
+✔ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() passed after 0.024 seconds.
 ◇ Test unverifiedJianyingAndMulticamHaveExplicitGates() started.
-✔ Test unverifiedJianyingAndMulticamHaveExplicitGates() passed after 0.001 seconds.
+✔ Test unverifiedJianyingAndMulticamHaveExplicitGates() passed after 0.015 seconds.
 ◇ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() started.
-✔ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() passed after 0.002 seconds.
+✔ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() passed after 0.007 seconds.
 ◇ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() started.
-✔ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() passed after 0.005 seconds.
+✔ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() passed after 0.022 seconds.
 ◇ Test mixedFrameRatesKeepSourceRangesDistinctFromTimelinePlacement() started.
 ✔ Test mixedFrameRatesKeepSourceRangesDistinctFromTimelinePlacement() passed after 0.001 seconds.
-✔ Suite "Editor handoff boundary" passed after 0.026 seconds.
+✔ Suite "Editor handoff boundary" passed after 0.124 seconds.
 ◇ Suite "Recording media handoff" started.
 ◇ Test allEditorsPreserveSegmentsAndIndependentAudio() started.
-✔ Test allEditorsPreserveSegmentsAndIndependentAudio() passed after 0.173 seconds.
+✔ Test allEditorsPreserveSegmentsAndIndependentAudio() passed after 0.334 seconds.
 ◇ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() started.
-2026-09-30 15:58:23.490909+0800 xctest[77183:9362037] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0xa4108f7e0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
-2026-09-30 15:58:23.521370+0800 xctest[77183:9362258] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
-2026-09-30 15:58:23.521678+0800 xctest[77183:9362258] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
-✔ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() passed after 0.230 seconds.
+2026-09-30 16:41:04.573065+0800 xctest[83896:9441817] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0xbe1945460> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-09-30 16:41:04.684908+0800 xctest[83896:9441868] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-09-30 16:41:04.685385+0800 xctest[83896:9441868] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+✔ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() passed after 0.567 seconds.
 ◇ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() started.
-✔ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() passed after 0.136 seconds.
+✔ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() passed after 0.274 seconds.
 ◇ Test cancellationAndCollisionPreserveExistingDestination() started.
-✔ Test cancellationAndCollisionPreserveExistingDestination() passed after 0.126 seconds.
+✔ Test cancellationAndCollisionPreserveExistingDestination() passed after 0.150 seconds.
 ◇ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() started.
-✔ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() passed after 0.142 seconds.
+✔ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() passed after 0.217 seconds.
 ◇ Test longSegmentedTimelinePreservesExactRationalOffsets() started.
 ✔ Test longSegmentedTimelinePreservesExactRationalOffsets() passed after 0.015 seconds.
-✔ Suite "Recording media handoff" passed after 0.823 seconds.
+✔ Suite "Recording media handoff" passed after 1.561 seconds.
 ◇ Suite "Recording native views" started.
 ◇ Test sourceSetupInLightDarkAndSmallWindow() started.
-2026-09-30 15:58:24.040279+0800 xctest[77183:9362027] [permissions] microphone: nil -> notDetermined
-2026-09-30 15:58:24.040323+0800 xctest[77183:9362027] [permissions] accessibility: nil -> denied
-2026-09-30 15:58:24.040342+0800 xctest[77183:9362027] [permissions] inputMonitoring: nil -> denied
-2026-09-30 15:58:24.040358+0800 xctest[77183:9362027] [permissions] speechRecognition: nil -> notDetermined
-✔ Test sourceSetupInLightDarkAndSmallWindow() passed after 1.486 seconds.
-✔ Suite "Recording native views" passed after 1.486 seconds.
+2026-09-30 16:41:05.626475+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:05.626530+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:05.626569+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:05.626592+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+2026-09-30 16:41:06.987268+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:06.987546+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:06.987554+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:06.987581+0800 xctest[83896:9441809] [NSCGS] Entangling fence requested after pre-commit
+2026-09-30 16:41:06.988370+0800 xctest[83896:9441809] [API] cannot add handler to 2 from 2 - dropping
+2026-09-30 16:41:06.989363+0800 xctest[83896:9441809] [NSCGS] Warning: Invalid attempt to open a new transaction during CA commit. This is likely to break AppKit transactional behavior. Break on NSCGSTransactionCreatedDuringCommitError to debug.
+2026-09-30 16:41:07.268192+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.268226+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.268232+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.268253+0800 xctest[83896:9441809] [NSCGS] Entangling fence requested after pre-commit
+2026-09-30 16:41:07.268468+0800 xctest[83896:9441809] [API] cannot add handler to 2 from 2 - dropping
+2026-09-30 16:41:07.268483+0800 xctest[83896:9441809] [NSCGS] Warning: Invalid attempt to open a new transaction during CA commit. This is likely to break AppKit transactional behavior. Break on NSCGSTransactionCreatedDuringCommitError to debug.
+✔ Test sourceSetupInLightDarkAndSmallWindow() passed after 1.886 seconds.
+✔ Suite "Recording native views" passed after 1.887 seconds.
 ◇ Suite "Recording preview lifecycle" started.
 ◇ Test activePreviewBecomesAvailableWhenSessionIsReady() started.
 ✔ Test activePreviewBecomesAvailableWhenSessionIsReady() passed after 0.010 seconds.
 ◇ Test missingScreenAngleFallsBackToRecoveredCamera() started.
-✔ Test missingScreenAngleFallsBackToRecoveredCamera() passed after 0.003 seconds.
+✔ Test missingScreenAngleFallsBackToRecoveredCamera() passed after 0.004 seconds.
 ◇ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() started.
-2026-09-30 15:58:25.473402+0800 xctest[77183:9362382] [player] <<<< Async >>>> signalled err=-12785 at <>:2025
-2026-09-30 15:58:25.474028+0800 xctest[77183:9362378] [player] <<<< Async >>>> signalled err=-12785 at <>:3462
-2026-09-30 15:58:25.479219+0800 xctest[77183:9362112] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479356+0800 xctest[77183:9362373] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-✔ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() passed after 0.010 seconds.
-2026-09-30 15:58:25.479443+0800 xctest[77183:9362373] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479443+0800 xctest[77183:9362112] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479453+0800 xctest[77183:9362373] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479456+0800 xctest[77183:9362112] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479601+0800 xctest[77183:9362112] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479622+0800 xctest[77183:9362373] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.479636+0800 xctest[77183:9362258] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+✔ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() passed after 0.006 seconds.
 ◇ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() started.
-✔ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() passed after 0.008 seconds.
-2026-09-30 15:58:25.488032+0800 xctest[77183:9362381] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+2026-09-30 16:41:07.412863+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.412912+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.412920+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.412953+0800 xctest[83896:9441809] [NSCGS] Entangling fence requested after pre-commit
+2026-09-30 16:41:07.413045+0800 xctest[83896:9441809] [API] cannot add handler to 2 from 2 - dropping
+2026-09-30 16:41:07.413057+0800 xctest[83896:9441809] [NSCGS] Warning: Invalid attempt to open a new transaction during CA commit. This is likely to break AppKit transactional behavior. Break on NSCGSTransactionCreatedDuringCommitError to debug.
+✔ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() passed after 0.016 seconds.
 ◇ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() started.
-2026-09-30 15:58:25.488073+0800 xctest[77183:9362381] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.488082+0800 xctest[77183:9362381] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.488090+0800 xctest[77183:9362381] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.488233+0800 xctest[77183:9362258] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
-2026-09-30 15:58:25.488918+0800 xctest[77183:9362375] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
-2026-09-30 15:58:25.488956+0800 xctest[77183:9362039] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
-2026-09-30 15:58:25.488993+0800 xctest[77183:9362377] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
-2026-09-30 15:58:25.489040+0800 xctest[77183:9362379] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
-✔ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() passed after 0.003 seconds.
+✔ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() passed after 0.002 seconds.
 ◇ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() started.
 ✔ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() passed after 0.003 seconds.
 ◇ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() started.
 ✔ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() passed after 0.001 seconds.
-✔ Suite "Recording preview lifecycle" passed after 0.041 seconds.
+✔ Suite "Recording preview lifecycle" passed after 0.045 seconds.
 ◇ Suite "Recording storage" started.
 ◇ Test configurationBoundsAndSourceKindsAreValidated() started.
 ✔ Test configurationBoundsAndSourceKindsAreValidated() passed after 0.001 seconds.
 ◇ Test independentSessionsPersistSegmentsAndDerivedDuration() started.
-✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.004 seconds.
+✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.016 seconds.
 ◇ Test activePhasesRecoverAsInterruptedAndKeepMedia() started.
-✔ Test activePhasesRecoverAsInterruptedAndKeepMedia() passed after 0.002 seconds.
+✔ Test activePhasesRecoverAsInterruptedAndKeepMedia() passed after 0.004 seconds.
 ◇ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() started.
-✔ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() passed after 0.002 seconds.
+✔ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() passed after 0.003 seconds.
 ◇ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() started.
-✔ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() passed after 0.002 seconds.
+✔ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() passed after 0.003 seconds.
 ◇ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() started.
-✔ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() passed after 0.001 seconds.
-✔ Suite "Recording storage" passed after 0.014 seconds.
-✔ Test run with 34 tests in 6 suites passed after 3.233 seconds.
-2026-09-30 15:58:25.800 xcodebuild[77137:9361554] [MT] IDETestOperationsObserverDebug: 5.803 elapsed -- Testing started completed.
-2026-09-30 15:58:25.801 xcodebuild[77137:9361554] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-09-30 15:58:25.801 xcodebuild[77137:9361554] [MT] IDETestOperationsObserverDebug: 5.803 sec, +5.803 sec -- end
+✔ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() passed after 0.003 seconds.
+✔ Suite "Recording storage" passed after 0.033 seconds.
+◇ Suite "Recording termination flush" started.
+◇ Test testTerminationWaitsForStopAndPersistsFinalSegmentCallback() started.
+2026-09-30 16:41:07.462417+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:07.462463+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:07.462482+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:07.462499+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testTerminationWaitsForStopAndPersistsFinalSegmentCallback() passed after 0.005 seconds.
+◇ Test testTerminationJoinsAnAlreadyRunningStopInsteadOfReturningEarly() started.
+2026-09-30 16:41:07.472439+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:07.472499+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:07.472521+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:07.472558+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+2026-09-30 16:41:07.480546+0800 xctest[83896:9442093] [] <<< URLAsset >>> signalled err=-12174 at <>:9345
+2026-09-30 16:41:07.480546+0800 xctest[83896:9442622] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+2026-09-30 16:41:07.480546+0800 xctest[83896:9441879] [] <<< URLAsset >>> signalled err=-12174 at <>:9345
+2026-09-30 16:41:07.480556+0800 xctest[83896:9442638] [] <<< URLAsset >>> signalled err=-12174 at <>:9345
+2026-09-30 16:41:07.480608+0800 xctest[83896:9441868] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+2026-09-30 16:41:07.480644+0800 xctest[83896:9442622] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+2026-09-30 16:41:07.480654+0800 xctest[83896:9442622] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+2026-09-30 16:41:07.480661+0800 xctest[83896:9442622] [] <<< URLAsset >>> signalled err=-12174 at <>:2316
+2026-09-30 16:41:07.480760+0800 xctest[83896:9442621] [player] <<<< Async >>>> signalled err=-12785 at <>:1919
+2026-09-30 16:41:07.480829+0800 xctest[83896:9442621] [player] <<<< Async >>>> signalled err=-12785 at <>:3462
+2026-09-30 16:41:07.480958+0800 xctest[83896:9442621] [player] <<<< Async >>>> signalled err=-12785 at <>:3462
+2026-09-30 16:41:07.481733+0800 xctest[83896:9442622] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 16:41:07.481745+0800 xctest[83896:9442155] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 16:41:07.481795+0800 xctest[83896:9442610] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 16:41:07.481852+0800 xctest[83896:9441818] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 16:41:07.481955+0800 xctest[83896:9442622] [player] <<<< Async >>>> signalled err=-12785 at <>:4776
+2026-09-30 16:41:07.482005+0800 xctest[83896:9441810] [player] <<<< Async >>>> signalled err=-12785 at <>:4776
+2026-09-30 16:41:07.481995+0800 xctest[83896:9442155] [player] <<<< Async >>>> signalled err=-12785 at <>:4776
+2026-09-30 16:41:07.522281+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.522317+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.522325+0800 xctest[83896:9441809] [NSCGS] Ignoring request to entangle context after pre-commit
+2026-09-30 16:41:07.522352+0800 xctest[83896:9441809] [NSCGS] Entangling fence requested after pre-commit
+2026-09-30 16:41:07.522429+0800 xctest[83896:9441809] [API] cannot add handler to 2 from 2 - dropping
+2026-09-30 16:41:07.522446+0800 xctest[83896:9441809] [NSCGS] Warning: Invalid attempt to open a new transaction during CA commit. This is likely to break AppKit transactional behavior. Break on NSCGSTransactionCreatedDuringCommitError to debug.
+✔ Test testTerminationJoinsAnAlreadyRunningStopInsteadOfReturningEarly() passed after 0.065 seconds.
+◇ Test testTerminationStopsAndFinalizesPausedRecording() started.
+2026-09-30 16:41:07.534099+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:07.534154+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:07.534181+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:07.534216+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testTerminationStopsAndFinalizesPausedRecording() passed after 0.006 seconds.
+◇ Test testConcurrentTerminationWaitersShareOneUnderlyingStop() started.
+2026-09-30 16:41:07.539823+0800 xctest[83896:9441809] [permissions] microphone: nil -> notDetermined
+2026-09-30 16:41:07.539873+0800 xctest[83896:9441809] [permissions] accessibility: nil -> denied
+2026-09-30 16:41:07.539893+0800 xctest[83896:9441809] [permissions] inputMonitoring: nil -> denied
+2026-09-30 16:41:07.539912+0800 xctest[83896:9441809] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testConcurrentTerminationWaitersShareOneUnderlyingStop() passed after 0.059 seconds.
+✔ Suite "Recording termination flush" passed after 0.137 seconds.
+✔ Test run with 38 tests in 7 suites passed after 4.898 seconds.
+2026-09-30 16:41:07.976 xcodebuild[83713:9439770] [MT] IDETestOperationsObserverDebug: 11.348 elapsed -- Testing started completed.
+2026-09-30 16:41:07.976 xcodebuild[83713:9439770] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-30 16:41:07.976 xcodebuild[83713:9439770] [MT] IDETestOperationsObserverDebug: 11.348 sec, +11.348 sec -- end
 
 Test session results, code coverage, and logs:
-	/tmp/prosio-recording-review-final-20260930.xcresult
+	/tmp/prosio-recording-integrated-final-20260930.xcresult
 
 ** TEST SUCCEEDED **
 
