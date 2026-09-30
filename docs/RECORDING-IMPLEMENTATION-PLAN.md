@@ -71,3 +71,5 @@
 真实设备长录制、USB/iPhone 断连恢复、四款剪辑软件实际导入，以及 Resolve/Premiere 原生多机位交接仍待完成。所需截图/录音转写基础与录屏接入已分别提交；隔离副本与 165 个提交内构建文件一致，独立构建、签名及 213 项回归通过。演示、服务端和其他并行工作仍保留在原工作区。完整目标保持活动。
 
 参考：[Apple 多机位 FCPXML](https://developer.apple.com/documentation/professional-video-applications/multicam-media)、[Apple 连续互通相机](https://support.apple.com/en-gb/102546)、[Adobe FCPXML 转换要求](https://helpx.adobe.com/premiere/desktop/organize-media/import-files/migrate-from-final-cut-pro-x.html)、[剪映草稿参考](https://github.com/GuanYixuan/pyJianYingDraft)。
+
+最新稳定性证据：三路 1080p30 合成视频与两路 48kHz 双声道音频，持续实际运行 7200.753 秒，完成 600 段，写盘失败 0，600/600 媒体元数据通过；编码跳帧 19 次和生成器跳过 25 帧已记录。真实来源与口型同步仍待验收，详见[最终合成报告](evidence/recording/synthetic-stress-2h/summary.json)。独立实机验收工具已构建签名并通过 6 项测试，等待在所选设备上开始真实捕获。

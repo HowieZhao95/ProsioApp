@@ -1,0 +1,84 @@
+{
+  "actualElapsedSeconds": 7200.753118667,
+  "audioBuffersPerSource": 720000,
+  "completed": true,
+  "durationSeconds": 7200,
+  "failures": [],
+  "fixtureSkippedFrames": 25,
+  "fps": 30,
+  "height": 1080,
+  "maximumSchedulingLagSeconds": 3.4797389169999633,
+  "mode": "synthetic H264/AAC; no screen/camera/microphone access",
+  "segmentSeconds": 60,
+  "videoFramesPerSource": 216000,
+  "warnings": [
+    "Synthetic camera 1 写入繁忙，部分帧被跳过。",
+    "Synthetic camera 2 写入繁忙，部分帧被跳过。"
+  ],
+  "width": 1920,
+  "writerSourceSHA256": "ba32e72f3162426303339757e9ce66822d362d953a91919bd8184ab8ab472244",
+  "evidenceRevision": "3af9ecfbd013ee05398e52f23523b44b55069ce4",
+  "segmentCount": 600,
+  "peakSampledResidentBytes": 242499584,
+  "finalSnapshot": {
+    "diskBytes": 24891535775,
+    "elapsedSeconds": 7200.044974208,
+    "residentBytes": 59015168,
+    "statistics": {
+      "droppedAdmissionEvents": 0,
+      "droppedCaptureFrames": 0,
+      "droppedEncoderSamples": 19,
+      "finalizedSegments": 600,
+      "peakQueuedEvents": 16,
+      "writtenSamples": 2087956
+    }
+  },
+  "reportSHA256": "59e4232d3c046ecb25074b1f107ae92683a8b00699e2a3be5b5a81cd36410886",
+  "auditSHA256": "091d0f62d150fb3ec63b6c69ea2899f1bcb5a857c68493eba4089fb1dcab0b89",
+  "mediaAudit": {
+    "auditScope": "finalizedMediaMetadata",
+    "auditedCount": 600,
+    "crossSourceSpansMicroseconds": {
+      "camera-1": [
+        0,
+        7200000000
+      ],
+      "camera-2": [
+        0,
+        7200000000
+      ],
+      "microphone": [
+        0,
+        7200000000
+      ],
+      "screen": [
+        0,
+        7200000000
+      ],
+      "systemAudio": [
+        0,
+        7200000000
+      ]
+    },
+    "evidenceLimit": "AVFoundation isPlayable and track metadata checks do not decode every frame or prove real-device lip-sync, two-hour drift, or editor import acceptance.",
+    "failedCount": 0,
+    "informationalGapCount": 0,
+    "inputCompleted": true,
+    "inputFailures": [],
+    "inputKind": "stressReport",
+    "inputPath": "/tmp/prosio-recording-stress-2h-1080p-20260930/report.json",
+    "inputWarnings": [
+      "Synthetic camera 1 写入繁忙，部分帧被跳过。",
+      "Synthetic camera 2 写入繁忙，部分帧被跳过。"
+    ],
+    "mediaRoot": "/tmp/prosio-recording-stress-2h-1080p-20260930",
+    "noCompletedMedia": false,
+    "passedCount": 600,
+    "segmentCount": 600,
+    "snapshotIsPartial": false,
+    "timelineErrorCount": 0,
+    "tool": "ProsioRecordingMediaAudit/1"
+  },
+  "originalMediaRoot": "/tmp/prosio-recording-stress-2h-1080p-20260930",
+  "evidenceLimit": "Synthetic production writer run only. No actual source capture, source disconnection, physical clock drift, full-frame decoding or editor import verified."
+}
