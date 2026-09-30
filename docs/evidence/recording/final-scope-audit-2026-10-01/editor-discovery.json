@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-10-01T06:47:28.726092+08:00",
+  "roots": [
+    "/Applications",
+    "/Users/guest01/Applications"
+  ],
+  "maximumDepth": 2,
+  "skipsPackages": true,
+  "recognizedApplications": [],
+  "scopeLimit": "default discovery roots only; not an all-volume search or proof software cannot exist elsewhere",
+  "actualEditorImportVerified": false
+}

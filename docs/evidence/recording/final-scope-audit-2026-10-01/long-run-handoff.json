@@ -1,0 +1,20 @@
+{
+  "status": "running, not acceptance passed",
+  "sourceRevision": "3d2bec8f90977835fcacfcd8c1b38123ac5c1ffc",
+  "writerSHA256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97",
+  "samplerPath": "/tmp/prosio-recording-performance-fixed-2h.py",
+  "sessionId": 75996,
+  "mediaRoot": "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-2h-20261001.eafgcb_e/media-run",
+  "runnerLog": "/tmp/prosio-recording-performance-fixed-2h-run.log",
+  "durationSeconds": 7200,
+  "scope": "synthetic 3x1080p30 H264, 2x48k stereo AAC; no device access",
+  "diskFreeBytesAtStart": 46051037184,
+  "estimatedMediaBytes": 25000000000,
+  "completionEvidenceRequired": [
+    "terminal live process status",
+    "report.json completed/no failures",
+    "loss counts by source/reason",
+    "media audit",
+    "audio valid lengths and timeline gaps"
+  ]
+}
