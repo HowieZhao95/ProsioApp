@@ -1,0 +1,1599 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project Prosio.xcodeproj -scheme ProsioValidation -destination platform=macOS -derivedDataPath /tmp/prosio-recording-integration-20260930 -resultBundlePath /tmp/prosio-recording-integration-20260930.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  FluidAudio: /Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio @ local
+  ProsioKit: /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+
+Writing result bundle at path:
+	/tmp/prosio-recording-integration-20260930.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00008103-000655A10E8A001E, name:My Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'ProsioTests' in project 'Prosio'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: c8f1c91b357a0ad512bec5552e1c9316
+Build description path: /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/XCBuildData/c8f1c91b357a0ad512bec5552e1c9316.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Products
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Products
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Products/Debug
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Products/Debug
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ExplicitPrecompiledModules
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml
+
+CreateBuildDirectory /tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-create-build-directory /tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.hmap (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.hmap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/empty-ProsioTests.plist (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/empty-ProsioTests.plist
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-target-headers.hmap (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-target-headers.hmap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyStaticMetadataFileList (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyMetadataFileList (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyMetadataFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftConstValuesFileList (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.LinkFileList (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.LinkFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.DependencyStaticMetadataFileList (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.DependencyMetadataFileList (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.DependencyMetadataFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.modulemap (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.modulemap
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_const_extract_protocols.json (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_const_extract_protocols.json
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftFileList (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftConstValuesFileList (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.LinkFileList (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.LinkFileList
+
+WriteAuxiliaryFile /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-OutputFileMap.json (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    write-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-OutputFileMap.json
+
+MkDir /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /bin/mkdir -p /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents
+
+MkDir /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /bin/mkdir -p /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS
+
+MkDir /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /bin/mkdir -p /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/GeneratedModuleMaps/ProsioCore.modulemap /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.modulemap (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.modulemap /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/GeneratedModuleMaps
+
+MkDir /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /bin/mkdir -p /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest
+
+SwiftDriver ProsioCore normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioCore -Onone @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-integration-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-integration-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Session.modulevalidation -package-name prosiokit -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_const_extract_protocols.json -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ptrauth-G35WK17OBUYWAYBF8FHHMYZV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/SwiftShims-5F8XFBUS5SS26W3P4LCHIM3B5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_SwiftConcurrencyShims-D6WQHPJ4H1NSMPA2JAU6JKYP0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ptrcheck-C7X33IXHCRL95V3V4BAWMPHJB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdarg-5F1XAKMI22VS9BAZYJLTD1VWK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdbool-EFY3R0YFN8ZQL8C297Y7U7DWK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stddef-F51IXFXPEA7TAEYF1JFU4XVP8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_float-2DOF2T01ONJ6F8AA1EH0UC1UI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_AvailabilityInternal-1TKT3LHSWBFM81J045EFE4BY7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_DarwinFoundation1-9DQOCI5UNNQ4DOFIL3P6EEPTY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_limits-EK8M75AAWB117KE65XMNEKA9R.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_DarwinFoundation2-AV2S7GSWAEYZZQQQ3HPAW289T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdint-AI8EWEQ2KRRKYD4KIBDDQFEGB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/sys_types-8DOGF2DNMNTEW7SIBN6S64JDN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_DarwinFoundation3-A6K9ERU9IFZ8A9LN5PLMY2VOA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdatomic-5M81UTS5Z5RHDV4GCPPYAY91D.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/libDER-66HZEWKN212LGFLLRG24N6X40.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_inttypes-1GCNCYTR72146E26YQE09ZF0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Darwin-RS6YS46WQNIRAZXV5WSVGKSS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/MachO-8FVGZQ4AO4BL14EBN14WPBY6U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/libkern-E9XEPUQ64AN422L3MKWGIXV8U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/launch-8B76OD9OQHUQV9VPUX2XJMXCR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ObjectiveC-7VRMCIB89E7S7RC2FIXPE48BB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/os_object-BLOL1UMA1LQA0LG44CNNOR10R.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/os_workgroup-7OKIW6134S9QACLPX1TA8249G.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Dispatch-1KP7185TKZHUD3UTB84J8TM8E.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/XPC-EH2HDYXRIWPTVKLJD8BOCRYNH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreFoundation-HLJ84WXO5EJ4M3FHD7MUX0KO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/os-5DVMPIMU4MQWRYALGP6BGBO88.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/IOKit-79EZ7FRABW82M6PZ6B9BI93I0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CFNetwork-8ML1E5KGKZZOC6NL4N5Y5TZK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Security-9REZOVFLNNM23ZGLXBZGB6WES.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreGraphics-1SDDXQE9A5NDY05E6X1H6KMAD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/DiskArbitration-MV5VQZXUOGHAYHYIT2SLKHGL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreServices-4JWWBJ9LFTKE5RRXNSCTDE2WV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Foundation-2921U2FPV8ODGH620Z42N4D3P.pcm
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ProsioCore (in target 'ProsioCore' from project 'ProsioKit')
+
+EmitSwiftModule normal arm64 (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ HistoryStore.swift,\ JSONFileStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Stores/HistoryStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Stores/JSONFileStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Stores/HistoryStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Stores/JSONFileStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ AudioPreparing.swift,\ BackendClient.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Audio/AudioPreparing.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Backend/BackendClient.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Audio/AudioPreparing.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Backend/BackendClient.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ IntentRules.swift,\ SceneResolver.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Compose/IntentRules.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Compose/SceneResolver.swift (in target 'ProsioCore' from project 'ProsioKit')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Compose/IntentRules.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Compose/SceneResolver.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ AppSettings.swift,\ DictionaryStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Settings/AppSettings.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Stores/DictionaryStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Settings/AppSettings.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Stores/DictionaryStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ ProsioLog.swift,\ WAVFile.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/ProsioLog.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/WAVFile.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/ProsioLog.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/WAVFile.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ DictationLog.swift,\ DropDetection.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DictationLog.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DropDetection.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DictationLog.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DropDetection.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ DictationController.swift,\ FallbackTranscriptionEngine.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Session/DictationController.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Session/FallbackTranscriptionEngine.swift (in target 'ProsioCore' from project 'ProsioKit')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Session/DictationController.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Session/FallbackTranscriptionEngine.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 Compiling\ Contracts.swift,\ DebugRecordingWriter.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Contracts/Contracts.swift /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DebugRecordingWriter.swift (in target 'ProsioCore' from project 'ProsioKit')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Contracts/Contracts.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DebugRecordingWriter.swift (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ProsioCore (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProsioLog.swift, WAVFile.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriver\ Compilation\ Requirements ProsioCore normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioCore -Onone @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-integration-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-integration-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Session.modulevalidation -package-name prosiokit -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_const_extract_protocols.json -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling DictationLog.swift, DropDetection.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AudioPreparing.swift, BackendClient.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppSettings.swift, DictionaryStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriverJobDiscovery normal arm64 Compiling HistoryStore.swift, JSONFileStore.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftMergeGeneratedHeaders /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/GeneratedModuleMaps/ProsioCore-Swift.h /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-Swift.h (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-swiftHeaderTool -arch arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-Swift.h -o /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/GeneratedModuleMaps/ProsioCore-Swift.h
+
+SwiftDriverJobDiscovery normal arm64 Compiling IntentRules.swift, SceneResolver.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/arm64-apple-macos.swiftdoc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftdoc (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftdoc /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/arm64-apple-macos.swiftdoc
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/arm64-apple-macos.abi.json /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.abi.json (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.abi.json /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/arm64-apple-macos.swiftmodule /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftsourceinfo (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftsourceinfo /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftDriver ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-integration-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-integration-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling DictationController.swift, FallbackTranscriptionEngine.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriverJobDiscovery normal arm64 Compiling Contracts.swift, DebugRecordingWriter.swift (in target 'ProsioCore' from project 'ProsioKit')
+
+SwiftDriver\ Compilation ProsioCore normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioCore -Onone @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-integration-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-integration-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Session.modulevalidation -package-name prosiokit -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_const_extract_protocols.json -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.o normal (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -r -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/prosio-recording-integration-20260930/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-linker-args.resp -o /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.o
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdarg-8DX2L9S3S5TBPO4RYI570JD52.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stddef-D7S34SBJX8ENL6BMU344EDMM2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_SwiftConcurrencyShims-C7BJPTQANRA7ND8AOV3NM96F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdbool-68IV5QJFICZHL3WSYSH3JPWL1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/DeveloperToolsSupport-4K7AC8PJT4793739CFSEMDO6A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/SwiftShims-3DNKKUHLTXAN8PUD304XUEGR2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_float-6RX563IFYI2VG1SQOJEP8RXX7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_AvailabilityInternal-DCCBXNNZGWBEB69OPCOJOHMQT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ptrauth-2ZX0EDE2TY8SGZ71KS19VIMN8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ptrcheck-1NVAMC84RD7IL2VA8TAQ9T867.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_DarwinFoundation1-6PUZ1OKZA6VQPC8DMCY5XFUYO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_limits-E6PJIT902CDMDGQ4M09TTN4ZO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_DarwinFoundation2-5M1ISJC7B13JERE4M4KXEDIAL.pcm
+
+ExtractAppIntentsMetadata (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ProsioCore --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --bundle-identifier prosiokit.ProsioCore --output /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.appintents --target-triple arm64-apple-macos26.0 --binary-file /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.o --dependency-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore_dependency_info.dat --stringsdata-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftFileList --metadata-file-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.DependencyMetadataFileList --static-metadata-file-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/ProsioCore.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.SwiftConstValuesFileList --force --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-30 15:56:12.846 appintentsmetadataprocessor[76466:9355592] Starting appintentsmetadataprocessor export
+2026-09-30 15:56:12.872 appintentsmetadataprocessor[76466:9355592] Extracted no relevant App Intents symbols, skipping writing output
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/sys_types-A2RZ47U2N7J9PT18WLEOJBEGI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdint-CDQ86UURYAZI71YSSV5W7ETQJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_tgmath-94QQRBTF61Y8GVLR2JZB5RDSL.pcm
+
+RegisterExecutionPolicyException /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.o (in target 'ProsioCore' from project 'ProsioKit')
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+    builtin-RegisterExecutionPolicyException /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioCore.o
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/OpenGL-4ITP7VS7LDFCLO5X9UNIVHPP9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/libDER-4QX0811ON06F4TMY245QH0XBB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_intrinsics-3B4A9SVD83BQOQWMU4F3Z24OU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_stdatomic-A1FHV11ULDKPOQ3X17SEOTFOS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_DarwinFoundation3-AM1MBKNNJ27F01GPY41P4A1RM.pcm
+
+CpResource /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources/pyJianYingDraft-LICENSE.txt /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/pyJianYingDraft-LICENSE.txt (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/pyJianYingDraft-LICENSE.txt /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources
+
+ProcessInfoPlistFile /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Info.plist /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/empty-ProsioTests.plist (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-infoPlistUtility /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/empty-ProsioTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -o /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Info.plist
+
+CpResource /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources/README.md /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/README.md (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/README.md /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/_Builtin_inttypes-651VADD61J60ILP1GJYSF00OL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Darwin-BL2INC1K8QM8R684FFIXG04MF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/simd-BG4KT6RU2XNMZ0I0GZOH8BC9T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/MachO-BP9WZNPTFVO5OSCYUMESH6UNL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/launch-CGCVFFYB5QJY4ZTX81BSZSA5O.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/libkern-CIO8C5TX86MYK75NJ2R8LOIA2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CUPS-3K8Q0LVIY7GGQSPMVD9TCZ58C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ObjectiveC-7YOD08GNOYDK7FNEKLLJKNH2C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Spatial-BKFUC6K8EVH03BE577NRVAJYC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/os_object-963EMRCBE0CVU42S6SDLWMUXG.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/Testing-1DCKJ1T5W6L2J.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/os_workgroup-2GATEDZ50FDDME9G343Y2VMC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Dispatch-EJB2SLOKQO5C1SGCO9P8HKZZK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/XPC-5WAH05UGXMG5HOJPU9E9EQMVD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreFoundation-B6O8SFJVELWYB103GTAGXTIWV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/os-8D6SO38B5X4C4AYXU93UMD835.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreAudioTypes-EWS70U3EOFA4T9H2AYGF0XWD6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ColorSync-A2SJOVKNJXY3WSX5V9OAJZ8RC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Security-EKFWYR62W4HPF2I0O9SJ48XZZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/IOKit-3G5I3VAZISRBO8LGCRXVHKLIF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CFNetwork-8IBU8812A6MYR0JRBWQTM41WZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreGraphics-88Z1LZ31T0HVR78MMC85AFZ4H.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/DiskArbitration-24HW221GBK9MV4HYAK01RCYKZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreServices-7MBWKL276XUQ5GNGPJTJ0HVAI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ImageIO-7KZSOYVOYBHU0G7MU6Q52UV7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreText-A1BZP5Z4TFVP7F8T7X9DNCQAP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Foundation-5TF4ORQI3OO3ZHS5YWBN1LYTX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreTransferable-7MK3JDWBMGI3JZXHO1KLKW2UL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Symbols-92G7MGPQ6Y5PDU0ISVB5EPHQN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Accessibility-742VS7SIQWOUVPCI5O6NKPWHY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/IOSurface-80SI3V0YDEUVOZZ28V87VLNCZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/DataDetection-6D35G8KWB9SOU1XJBXQ9FOQ2G.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreMIDI-5VZLPGS8CU01GWK49E76J71T1.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/_Testing_Foundation-2TP5E48SH34V2.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/UniformTypeIdentifiers-CYYQNX6ME9JQ4N704NLGSXLMP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/OSLog-37FOH2B0REOGOJN04SACNGBFE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ApplicationServices-9UBAF1IHF4NIBF8LMIQSFKSD8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreAudio-93WMJV6LVMN7QU4KU6LJFAZI2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreData-9LZKQ6G76NS4ON6IVN6CG0QL5.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/_Testing_CoreGraphics-3QM610GXL9DOX.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Metal-DLUQNLS61KA2PUBXBJSEMQLME.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/MediaAccessibility-25B72NENVWZSMRBYTVHXBNIFP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Carbon-DKJ2GAFEI58C4W9E5ZSL0FEL3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreVideo-5K4MWAULN3V1FT776EWIWA6HO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/QuartzCore-CM6PMUHVOTOGGG27MOQ9WKE23.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreMedia-DXIMBVCW8Y1U03CMBNBISVOYV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreImage-3827TCCJIY4N2WWQRY1PCY40K.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/CoreML-3TM8JZCL6ZRPC9H729G580D8M.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Accelerate-8G593GCT9ACHG8VSL3YEL1AM0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/AudioToolbox-6MQM309HGB3TO5OUEK5K8CDQJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/AppKit-559P8L4KM3IJ6ZE6B5KZSZIPL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/SwiftUICore-1F0LTTWD2NQ1XFXQLQRAA9OBW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Vision-9T85WP5TA77GLE6R8RSOPR0U3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/AVFAudio-2FWDZLT3F6O2G84H1BVM64P4L.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/MediaToolbox-5K2FH4ZRBE9AE6TCIQM6U1150.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/AVFoundation-7IR0KKYAWLC410UMK23YKATPG.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Speech-23OU5EGDPH7LPRY6UNPL8ITM9.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/_Testing_AppKit-29WWFUB8CVUYN.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCUIAutomation-E6YMOKBAW720D8TE33L91B6AS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/SwiftUI-BQJFHLYHKE2DBSYAT33XCZMKQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Cocoa-CJWBOZJTU0F4XLB8NN31BJ04J.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/ScreenCaptureKit-EBUBZXSGZGSGQKSC97IQOAL71.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/AVKit-CLC2EGVY6LEUZGZYBHU7HN3RL.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCUIAutomation-3P3UBF24CGLYB.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCTest-DUX189LOO4N3ZT5GU87E1YQO5.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCTest-3K2W9TDVIAKGP.swiftmodule
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ProsioTests (in target 'ProsioTests' from project 'Prosio')
+
+EmitSwiftModule normal arm64 (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ PresentationClock.swift,\ PresentationPreferences.swift,\ PresentationState.swift,\ PresentationTests.swift,\ ProsioLog.swift,\ RecordingCaptureBackend.swift,\ RecordingCaptureSources.swift,\ RecordingCoordinator.swift,\ RecordingCoordinatorTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Platform/PresentationClock.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Domain/PresentationPreferences.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Domain/PresentationState.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/PresentationTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/ProsioLog.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingCoordinatorTests.swift (in target 'ProsioTests' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Platform/PresentationClock.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Domain/PresentationPreferences.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Domain/PresentationState.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/PresentationTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/ProsioLog.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingCoordinatorTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ RecordingEditorHandoff.swift,\ RecordingEditorHandoffTests.swift,\ RecordingEngine.swift,\ RecordingEngineControlling.swift,\ RecordingEngineLifecycleTests.swift,\ RecordingExportSupport.swift,\ RecordingExportTests.swift,\ RecordingJianyingAdapter.swift,\ RecordingMediaWriter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingEditorHandoff.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingExportSupport.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingExportTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingJianyingAdapter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingEditorHandoff.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingExportSupport.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingExportTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingJianyingAdapter.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ CaptureEditorTests.swift,\ CaptureGeometry.swift,\ CaptureGeometryTests.swift,\ CaptureInteractionGeometry.swift,\ CaptureInteractionTests.swift,\ CaptureKeyRouting.swift,\ CaptureModels.swift,\ CaptureNativeCanvasTests.swift,\ CaptureOptionTapTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureEditorTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Domain/CaptureGeometry.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureGeometryTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Interaction/CaptureInteractionGeometry.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureInteractionTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/CaptureKeyRouting.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Domain/CaptureModels.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureNativeCanvasTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureOptionTapTests.swift (in target 'ProsioTests' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureEditorTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Domain/CaptureGeometry.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureGeometryTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Interaction/CaptureInteractionGeometry.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureInteractionTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/CaptureKeyRouting.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Domain/CaptureModels.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureNativeCanvasTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureOptionTapTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ CaptureOutputTransaction.swift,\ CapturePinnedWindow.swift,\ CapturePinnedWindowTests.swift,\ CapturePixelLoupe.swift,\ CaptureServiceTests.swift,\ CaptureSnapCandidates.swift,\ CaptureStoreTests.swift,\ EditableCaptureDocument.swift,\ EditorCommands.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/CaptureOutputTransaction.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Editor/CapturePinnedWindow.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CapturePinnedWindowTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Interaction/CapturePixelLoupe.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureServiceTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Snapping/CaptureSnapCandidates.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureStoreTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditableCaptureDocument.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditorCommands.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/CaptureOutputTransaction.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Editor/CapturePinnedWindow.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CapturePinnedWindowTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Interaction/CapturePixelLoupe.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureServiceTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Snapping/CaptureSnapCandidates.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditableCaptureDocument.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditorCommands.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ EditorModel.swift,\ EditorRenderer.swift,\ FocusContextProvider.swift,\ HotkeyRouting.swift,\ HotkeyStateMachine.swift,\ HotkeyStateMachineTests.swift,\ MeetingStore.swift,\ MeetingStoreTests.swift,\ PermissionsManager.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditorModel.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditorRenderer.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/FocusContextProvider.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/HotkeyRouting.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/HotkeyStateMachine.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/HotkeyStateMachineTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Meeting/MeetingStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/MeetingStoreTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/PermissionsManager.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditorModel.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Editing/EditorRenderer.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/FocusContextProvider.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/HotkeyRouting.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/HotkeyStateMachine.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/HotkeyStateMachineTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Meeting/MeetingStore.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/MeetingStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/System/PermissionsManager.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ RecordingRegionSelector.swift,\ RecordingStore.swift,\ RecordingStoreTests.swift,\ RecordingTimeline.swift,\ RecordingVideoExporter.swift,\ RecordingWorkspaceView.swift,\ ScreenCapturePlatform.swift,\ ScreenCaptureService.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingRegionSelector.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingStoreTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingVideoExporter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Platform/ScreenCapturePlatform.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Screenshot/ScreenCaptureService.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingRegionSelector.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingVideoExporter.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Platform/ScreenCapturePlatform.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Screenshot/ScreenCaptureService.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ AXCoordinateConverterTests.swift,\ AwakeService.swift,\ CaptureAXBoundaryProvider.swift,\ CaptureAssetStore.swift,\ CaptureContentBoundaryDetector.swift,\ CaptureEditableStoreTests.swift,\ CaptureEditingCanvas.swift,\ CaptureEditingSession.swift,\ CaptureEditingToolbar.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/AXCoordinateConverterTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Platform/AwakeService.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Snapping/CaptureAXBoundaryProvider.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Storage/CaptureAssetStore.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Snapping/CaptureContentBoundaryDetector.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureEditableStoreTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Editor/CaptureEditingCanvas.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Integration/CaptureEditingSession.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Editor/CaptureEditingToolbar.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/AXCoordinateConverterTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Presentation/Platform/AwakeService.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Snapping/CaptureAXBoundaryProvider.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Storage/CaptureAssetStore.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Snapping/CaptureContentBoundaryDetector.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureEditableStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Editor/CaptureEditingCanvas.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Capture/Integration/CaptureEditingSession.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Editor/CaptureEditingToolbar.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 Compiling\ RecordingModels.swift,\ RecordingNativeViewTests.swift,\ RecordingPlatformTests.swift,\ RecordingPremiereMulticamAdapter.swift,\ RecordingPreviewController.swift,\ RecordingPreviewTests.swift,\ RecordingProjectExporter.swift,\ RecordingRecovery.swift,\ RecordingRecoveryTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingNativeViewTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingPlatformTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingPremiereMulticamAdapter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingPreviewController.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingPreviewTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingProjectExporter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingRecovery.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingRecoveryTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingNativeViewTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingPlatformTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingPremiereMulticamAdapter.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/UI/Recording/RecordingPreviewController.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingPreviewTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Export/RecordingProjectExporter.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingRecovery.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingRecoveryTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ProsioTests (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling CaptureOutputTransaction.swift, CapturePinnedWindow.swift, CapturePinnedWindowTests.swift, CapturePixelLoupe.swift, CaptureServiceTests.swift, CaptureSnapCandidates.swift, CaptureStoreTests.swift, EditableCaptureDocument.swift, EditorCommands.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation\ Requirements ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-integration-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-integration-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftMergeGeneratedHeaders /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/ProsioTests-Swift.h /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-swiftHeaderTool -arch arm64 /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -o /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/ProsioTests-Swift.h
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftmodule /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftdoc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftdoc (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftdoc /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftdoc
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling EditorModel.swift, EditorRenderer.swift, FocusContextProvider.swift, HotkeyRouting.swift, HotkeyStateMachine.swift, HotkeyStateMachineTests.swift, MeetingStore.swift, MeetingStoreTests.swift, PermissionsManager.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingEditorHandoff.swift, RecordingEditorHandoffTests.swift, RecordingEngine.swift, RecordingEngineControlling.swift, RecordingEngineLifecycleTests.swift, RecordingExportSupport.swift, RecordingExportTests.swift, RecordingJianyingAdapter.swift, RecordingMediaWriter.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PresentationClock.swift, PresentationPreferences.swift, PresentationState.swift, PresentationTests.swift, ProsioLog.swift, RecordingCaptureBackend.swift, RecordingCaptureSources.swift, RecordingCoordinator.swift, RecordingCoordinatorTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingRegionSelector.swift, RecordingStore.swift, RecordingStoreTests.swift, RecordingTimeline.swift, RecordingVideoExporter.swift, RecordingWorkspaceView.swift, ScreenCapturePlatform.swift, ScreenCaptureService.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingModels.swift, RecordingNativeViewTests.swift, RecordingPlatformTests.swift, RecordingPremiereMulticamAdapter.swift, RecordingPreviewController.swift, RecordingPreviewTests.swift, RecordingProjectExporter.swift, RecordingRecovery.swift, RecordingRecoveryTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AXCoordinateConverterTests.swift, AwakeService.swift, CaptureAXBoundaryProvider.swift, CaptureAssetStore.swift, CaptureContentBoundaryDetector.swift, CaptureEditableStoreTests.swift, CaptureEditingCanvas.swift, CaptureEditingSession.swift, CaptureEditingToolbar.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling CaptureEditorTests.swift, CaptureGeometry.swift, CaptureGeometryTests.swift, CaptureInteractionGeometry.swift, CaptureInteractionTests.swift, CaptureKeyRouting.swift, CaptureModels.swift, CaptureNativeCanvasTests.swift, CaptureOptionTapTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-recording-integration-20260930/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-recording-integration-20260930/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-recording-integration-20260930/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-recording-integration-20260930/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-recording-integration-20260930/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-recording-integration-20260930/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Products/Debug/include -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests normal (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/prosio-recording-integration-20260930/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-recording-integration-20260930/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.LinkFileList -Xlinker -rpath -Xlinker /tmp/prosio-recording-integration-20260930/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -no_adhoc_codesign -o /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests -Xlinker -add_ast_path -Xlinker /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule @/tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-linker-args.resp
+
+CopySwiftLibs /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-swiftStdLibTool --copy --verbose --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --scan-executable /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --scan-folder /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --scan-folder /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/PlugIns --scan-folder /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Library/SystemExtensions --scan-folder /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ProsioTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --bundle-identifier app.prosio.ProsioTests --output /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.0 --binary-file /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --dependency-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat --stringsdata-file /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList --metadata-file-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyMetadataFileList --static-metadata-file-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/prosio-recording-integration-20260930/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-30 15:56:30.172 appintentsmetadataprocessor[76585:9356234] Starting appintentsmetadataprocessor export
+2026-09-30 15:56:30.175 appintentsmetadataprocessor[76585:9356234] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CodeSign /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+
+    Signing Identity:     "Prosio Local Development"
+
+    /usr/bin/codesign --force --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --timestamp\=none --generate-entitlement-der /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest
+
+RegisterExecutionPolicyException /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-RegisterExecutionPolicyException /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest
+
+Touch /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /usr/bin/touch -c /tmp/prosio-recording-integration-20260930/Build/Products/Debug/ProsioTests.xctest
+
+Test Suite 'All tests' started at 2026-09-30 15:56:33.912.
+Test Suite 'ProsioTests.xctest' started at 2026-09-30 15:56:33.913.
+Test Suite 'RecordingEngineLifecycleTests' started at 2026-09-30 15:56:33.913.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' started.
+2026-09-30 15:56:34.031138+0800 xctest[76591:9356369] [] (Fig) signalled err=0 at <>:85
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testConcurrentPauseResumePauseKeepsLastIntentAndDropsPausedSamples]' passed (0.331 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testFailedStartupRollsBackEveryOwnedSourceAndCanRetry]' passed (0.018 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testMicrophoneRemovalLeavesScreenAndOtherCameraRunningAndRestoresExactDevice]' passed (0.009 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testOldCallbacksCannotMutateReusedEngineOrCurrentDeviceAttempt]' passed (0.015 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testRuntimeFailureReconnectsEvenWhileDeviceStillEnumerated]' passed (0.008 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsInitialDeviceSetupAndDoesNotStartSecondDevice]' passed (0.008 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopAwaitsScreenPreparationAndPreventsLateStart]' passed (0.008 seconds).
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' started.
+Test Case '-[ProsioTests.RecordingEngineLifecycleTests testStopOwnsAndAwaitsInFlightReconnect]' passed (0.008 seconds).
+Test Suite 'RecordingEngineLifecycleTests' passed at 2026-09-30 15:56:34.321.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.405 (0.408) seconds
+Test Suite 'RecordingPlatformTests' started at 2026-09-30 15:56:34.321.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (0.396 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.084 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (0.276 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.122 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.177 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' passed (0.001 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' started.
+2026-09-30 15:56:35.392466+0800 xctest[76591:9356372] [] <<<< FigFile >>>> signalled err=-17913 at <>:745
+2026-09-30 15:56:35.392794+0800 xctest[76591:9356372] [] <<<< FigAssetWriter >>>> signalled err=-12143 at <>:384
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.018 seconds).
+Test Suite 'RecordingPlatformTests' passed at 2026-09-30 15:56:35.397.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.073 (1.076) seconds
+Test Suite 'RecordingRecoveryTests' started at 2026-09-30 15:56:35.397.
+Test Case '-[ProsioTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' started.
+2026-09-30 15:56:35.459201+0800 xctest[76591:9356437] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
+Test Case '-[ProsioTests.RecordingRecoveryTests testCorruptReceiptAndCorruptPartialAreRetainedWithoutFalseRecovery]' passed (0.067 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testExtremeAndNegativeReceiptTimesDoNotTrapOrLoseOriginal]' passed (0.080 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testFinalizedOrphanReceiptAdoptsOffsetAndDoesNotDuplicate]' passed (0.084 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' started.
+2026-09-30 15:56:35.693202+0800 xctest[76591:9356437] [] <<< FFR_Common >>> signalled err=-12848 at <>:4018
+Test Case '-[ProsioTests.RecordingRecoveryTests testMissingOriginalWarnsAndCorruptListedOriginalIsRemovedButPreserved]' passed (0.066 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testUnsafeReceiptAndSymlinkCannotEscapeSession]' passed (0.062 seconds).
+Test Case '-[ProsioTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' started.
+Test Case '-[ProsioTests.RecordingRecoveryTests testVerifiedPartialIsRenamedAndAdopted]' passed (0.067 seconds).
+Test Suite 'RecordingRecoveryTests' passed at 2026-09-30 15:56:35.824.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.425 (0.427) seconds
+Test Suite 'ProsioTests.xctest' passed at 2026-09-30 15:56:35.825.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 1.904 (1.911) seconds
+Test Suite 'All tests' passed at 2026-09-30 15:56:35.825.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 1.904 (1.912) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "AXCoordinateConverter" started.
+◇ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" started.
+✔ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" passed after 0.001 seconds.
+◇ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" started.
+✔ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" passed after 0.001 seconds.
+◇ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" started.
+✔ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" passed after 0.001 seconds.
+◇ Test "Round-tripping the flip twice with the same height returns the original rect" started.
+✔ Test "Round-tripping the flip twice with the same height returns the original rect" passed after 0.001 seconds.
+✔ Suite "AXCoordinateConverter" passed after 0.001 seconds.
+◇ Suite "Capture editable persistence" started.
+◇ Test "Restriction writes only crop source pixels and translates related geometry without UI selection" started.
+✔ Test "Restriction writes only crop source pixels and translates related geometry without UI selection" passed after 0.012 seconds.
+◇ Test "V2 fresh reopen retains editable geometry and exact flattened output while discarding full desktop" started.
+✔ Test "V2 fresh reopen retains editable geometry and exact flattened output while discarding full desktop" passed after 0.015 seconds.
+◇ Test "Completed history restores the full frozen screen, original crop, and every annotation" started.
+✔ Test "Completed history restores the full frozen screen, original crop, and every annotation" passed after 0.005 seconds.
+◇ Test "Legacy v1 PNG opens as editable whole-image document without inventing annotations" started.
+✔ Test "Legacy v1 PNG opens as editable whole-image document without inventing annotations" passed after 0.002 seconds.
+◇ Test "Document metadata write failure leaves earlier history and current editing unchanged" started.
+✔ Test "Document metadata write failure leaves earlier history and current editing unchanged" passed after 0.005 seconds.
+◇ Test "V2 cancellation after flattened PNG leaves no new source or history item" started.
+✔ Test "V2 cancellation after flattened PNG leaves no new source or history item" passed after 0.010 seconds.
+◇ Test "Damaged v2 editable metadata is preserved and excluded with a recovery warning" started.
+✔ Test "Damaged v2 editable metadata is preserved and excluded with a recovery warning" passed after 0.006 seconds.
+◇ Test "Saving a crop that intersects only rectangle stroke preserves the visible border on reopen" started.
+✔ Test "Saving a crop that intersects only rectangle stroke preserves the visible border on reopen" passed after 0.004 seconds.
+◇ Test "Mismatched source dimensions and inconsistent editable crop are rejected rather than reopening a different image" started.
+✔ Test "Mismatched source dimensions and inconsistent editable crop are rejected rather than reopening a different image" passed after 0.007 seconds.
+◇ Test "Failed external output rolls back only its newly persisted history asset" started.
+✔ Test "Failed external output rolls back only its newly persisted history asset" passed after 0.004 seconds.
+◇ Test "Successful external output retains precisely the committed asset passed to it" started.
+✔ Test "Successful external output retains precisely the committed asset passed to it" passed after 0.003 seconds.
+◇ Test "The 51st successful output evicts the oldest complete history directory" started.
+✔ Test "The 51st successful output evicts the oldest complete history directory" passed after 0.105 seconds.
+✔ Suite "Capture editable persistence" passed after 0.185 seconds.
+◇ Suite "Capture output state" started.
+◇ Test "Duplicate output is rejected and cancelled save or failure remains editable for retry" started.
+✔ Test "Duplicate output is rejected and cancelled save or failure remains editable for retry" passed after 0.001 seconds.
+◇ Test "Late output completion cannot resurrect a cancelled editing session" started.
+✔ Test "Late output completion cannot resurrect a cancelled editing session" passed after 0.001 seconds.
+✔ Suite "Capture output state" passed after 0.001 seconds.
+◇ Suite "Capture editor commands" started.
+◇ Test "Resizing and moving crop keeps annotation geometry anchored to source pixels" started.
+✔ Test "Resizing and moving crop keeps annotation geometry anchored to source pixels" passed after 0.001 seconds.
+◇ Test "Undo redo preserves update/delete and a new edit abandons the redo branch" started.
+✔ Test "Undo redo preserves update/delete and a new edit abandons the redo branch" passed after 0.001 seconds.
+◇ Test "Selection alone creates no content undo step and deleting clears selected IDs" started.
+✔ Test "Selection alone creates no content undo step and deleting clears selected IDs" passed after 0.001 seconds.
+◇ Test "All annotation geometry kinds translate by the same crop-origin delta" started.
+✔ Test "All annotation geometry kinds translate by the same crop-origin delta" passed after 0.001 seconds.
+✔ Suite "Capture editor commands" passed after 0.001 seconds.
+◇ Suite "Capture editor pixels" started.
+◇ Test "Straight lines have no arrowhead; capped annotation lines render a perpendicular tick at each endpoint" started.
+✔ Test "Straight lines have no arrowhead; capped annotation lines render a perpendicular tick at each endpoint" passed after 0.001 seconds.
+◇ Test "Unified filled rectangles match legacy highlight pixels and opacity survives storage with backward compatibility" started.
+✔ Test "Unified filled rectangles match legacy highlight pixels and opacity survives storage with backward compatibility" passed after 0.001 seconds.
+◇ Test "Mosaic and blur strengths below four produce distinct pixels instead of sharing a hard minimum" started.
+✔ Test "Mosaic and blur strengths below four produce distinct pixels instead of sharing a hard minimum" passed after 0.055 seconds.
+◇ Test "Crop exports exact pixel dimensions and the top-left source orientation" started.
+✔ Test "Crop exports exact pixel dimensions and the top-left source orientation" passed after 0.001 seconds.
+◇ Test "Selected handles and UI state do not enter the rendered image" started.
+✔ Test "Selected handles and UI state do not enter the rendered image" passed after 0.001 seconds.
+◇ Test "Solid redaction follows source pixels when crop changes and leaves outside pixels intact" started.
+✔ Test "Solid redaction follows source pixels when crop changes and leaves outside pixels intact" passed after 0.001 seconds.
+◇ Test "Invalid or out-of-source crops fail instead of silently exporting another region" started.
+✔ Test "Invalid or out-of-source crops fail instead of silently exporting another region" passed after 0.001 seconds.
+◇ Test "Blur and mosaic operate on already composited annotations without altering outside pixels" started.
+✔ Test "Blur and mosaic operate on already composited annotations without altering outside pixels" passed after 0.004 seconds.
+✔ Suite "Capture editor pixels" passed after 0.066 seconds.
+◇ Suite "Capture text and output key routing" started.
+◇ Test "Text editing owns Return and Cmd-C, while Cmd-Return commits text without output" started.
+✔ Test "Text editing owns Return and Cmd-C, while Cmd-Return commits text without output" passed after 0.001 seconds.
+◇ Test "Outside text editing Return and Cmd-C copy, save and undo retain their distinct actions" started.
+✔ Test "Outside text editing Return and Cmd-C copy, save and undo retain their distinct actions" passed after 0.001 seconds.
+◇ Test "Output in progress does not dispatch another key action or commit text" started.
+✔ Test "Output in progress does not dispatch another key action or commit text" passed after 0.001 seconds.
+✔ Suite "Capture text and output key routing" passed after 0.001 seconds.
+◇ Suite "Capture geometry" started.
+◇ Test "AppKit points map through each screen's distinct capture and overlay frames" started.
+✔ Test "AppKit points map through each screen's distinct capture and overlay frames" passed after 0.001 seconds.
+◇ Test "Retina preview crops use top-left pixels and invert only AppKit source y" started.
+✔ Test "Retina preview crops use top-left pixels and invert only AppKit source y" passed after 0.001 seconds.
+◇ Test "Fractional scaling expands outwards to preserve selected edge pixels" started.
+✔ Test "Fractional scaling expands outwards to preserve selected edge pixels" passed after 0.001 seconds.
+◇ Test "Reverse drags standardize before scaling" started.
+✔ Test "Reverse drags standardize before scaling" passed after 0.001 seconds.
+◇ Test "Local rect conversion preserves negative display origin and normalizes drag" started.
+✔ Test "Local rect conversion preserves negative display origin and normalizes drag" passed after 0.001 seconds.
+◇ Test "Invalid display dimensions and scale have finite safe defaults" started.
+✔ Test "Invalid display dimensions and scale have finite safe defaults" passed after 0.001 seconds.
+◇ Test "Intersecting display resolution chooses max scale and outside region uses fallback" started.
+✔ Test "Intersecting display resolution chooses max scale and outside region uses fallback" passed after 0.001 seconds.
+✔ Suite "Capture geometry" passed after 0.001 seconds.
+◇ Suite "Capture interaction geometry" started.
+◇ Test "Toolbar remains inside safe screen bounds at four corners, tiny and full-screen selections" started.
+✔ Test "Toolbar remains inside safe screen bounds at four corners, tiny and full-screen selections" passed after 0.001 seconds.
+◇ Test "Oversized toolbar explicitly requests compact controls rather than claiming unclipped content" started.
+✔ Test "Oversized toolbar explicitly requests compact controls rather than claiming unclipped content" passed after 0.001 seconds.
+◇ Test "Toolbar side is retained when still fitting and flips above near bottom edge" started.
+✔ Test "Toolbar side is retained when still fitting and flips above near bottom edge" passed after 0.001 seconds.
+◇ Test "Each resize handle clamps to viewport and minimum size while preserving opposite edges" started.
+✔ Test "Each resize handle clamps to viewport and minimum size while preserving opposite edges" passed after 0.001 seconds.
+✔ Suite "Capture interaction geometry" passed after 0.006 seconds.
+◇ Suite "Capture snap candidates" started.
+◇ Test "Hover selects the smallest visible frozen boundary and ignores viewport and stale detections" started.
+✔ Test "Hover selects the smallest visible frozen boundary and ignores viewport and stale detections" passed after 0.001 seconds.
+◇ Test "Only current-snapshot finite confident unique candidates survive filtering" started.
+✔ Test "Only current-snapshot finite confident unique candidates survive filtering" passed after 0.001 seconds.
+◇ Test "Entering within eight points locks, fourteen retains, eighteen releases and fresh state does not lock" started.
+✔ Test "Entering within eight points locks, fourteen retains, eighteen releases and fresh state does not lock" passed after 0.001 seconds.
+◇ Test "Resize snapping moves only dragged edge and never violates minimum size" started.
+✔ Test "Resize snapping moves only dragged edge and never violates minimum size" passed after 0.005 seconds.
+◇ Test "A hidden window edge cannot attract move snapping, while its exposed edge can" started.
+✔ Test "A hidden window edge cannot attract move snapping, while its exposed edge can" passed after 0.001 seconds.
+◇ Test "An AX content boundary does not hover or snap through a covering window" started.
+✔ Test "An AX content boundary does not hover or snap through a covering window" passed after 0.001 seconds.
+◇ Test "Partly visible rear windows remain candidates; own app, translucent and offscreen windows do not" started.
+✔ Test "Partly visible rear windows remain candidates; own app, translucent and offscreen windows do not" passed after 0.001 seconds.
+◇ Test "Global windows are scoped to each display's local coordinates, including negative origins and scale" started.
+✔ Test "Global windows are scoped to each display's local coordinates, including negative origins and scale" passed after 0.001 seconds.
+◇ Test "A fully covered rear window is not offered as a candidate" started.
+✔ Test "A fully covered rear window is not offered as a candidate" passed after 0.001 seconds.
+✔ Suite "Capture snap candidates" passed after 0.007 seconds.
+◇ Suite "Capture content detector boundaries" started.
+◇ Test "Vision bottom-left normalized panel maps into offset top-left screen points" started.
+✔ Test "Vision bottom-left normalized panel maps into offset top-left screen points" passed after 0.001 seconds.
+◇ Test "Cancelled optional detector exits before expensive image analysis" started.
+✔ Test "Cancelled optional detector exits before expensive image analysis" passed after 0.001 seconds.
+◇ Test "A controlled synthetic bordered panel produces a matching snapshot-bound candidate" started.
+✔ Test "A controlled synthetic bordered panel produces a matching snapshot-bound candidate" passed after 0.021 seconds.
+✔ Suite "Capture content detector boundaries" passed after 0.026 seconds.
+◇ Suite "Capture accessibility boundary fallback" started.
+◇ Test "Native sidebars, split panes and compact toolbars are eligible without a hit-test point" started.
+✔ Test "Native sidebars, split panes and compact toolbars are eligible without a hit-test point" passed after 0.001 seconds.
+◇ Test "Only visible finite content within ancestor bounds can become an AX candidate" started.
+✔ Test "Only visible finite content within ancestor bounds can become an AX candidate" passed after 0.001 seconds.
+◇ Test "Hit-test fallback inherits every parent clip and rejects hidden ancestry" started.
+✔ Test "Hit-test fallback inherits every parent clip and rejects hidden ancestry" passed after 0.001 seconds.
+◇ Test "AX windows must correspond to their frozen Quartz windows, not nested sheets" started.
+✔ Test "AX windows must correspond to their frozen Quartz windows, not nested sheets" passed after 0.001 seconds.
+◇ Test "Native AX traversal stays bounded, skips leaves and stops on cancellation" started.
+✔ Test "Native AX traversal stays bounded, skips leaves and stops on cancellation" passed after 0.001 seconds.
+◇ Test "Unavailable, empty or cancelled AX input returns no candidates without a system query" started.
+✔ Test "Unavailable, empty or cancelled AX input returns no candidates without a system query" passed after 0.001 seconds.
+✔ Suite "Capture accessibility boundary fallback" passed after 0.001 seconds.
+◇ Suite "Capture pixel loupe" started.
+◇ Test "Frozen source sampling keeps asymmetric top-left orientation and unpremultiplies alpha" started.
+✔ Test "Frozen source sampling keeps asymmetric top-left orientation and unpremultiplies alpha" passed after 0.001 seconds.
+◇ Test "View points map to exact Retina source pixels at negative origins and image edges" started.
+✔ Test "View points map to exact Retina source pixels at negative origins and image edges" passed after 0.001 seconds.
+◇ Test "HEX and RGB text use sampled channel values rather than display color names" started.
+✔ Test "HEX and RGB text use sampled channel values rather than display color names" passed after 0.001 seconds.
+◇ Test "Loupe popup stays on screen and avoids the toolbar when an open quadrant exists" started.
+✔ Test "Loupe popup stays on screen and avoids the toolbar when an open quadrant exists" passed after 0.001 seconds.
+◇ Test "Bare C copies only a visible color; Cmd-C, text and other modifiers retain their actions" started.
+✔ Test "Bare C copies only a visible color; Cmd-C, text and other modifiers retain their actions" passed after 0.001 seconds.
+◇ Test "Shift tap changes format once, while long hold, mixed modifiers, interruption or text entry do not" started.
+✔ Test "Shift tap changes format once, while long hold, mixed modifiers, interruption or text entry do not" passed after 0.001 seconds.
+✔ Suite "Capture pixel loupe" passed after 0.007 seconds.
+◇ Suite "Capture native canvas with synthetic frozen pixels" started.
+◇ Test "Moving an arrow replaces its old pixels immediately, follows each event and commits one undo step" started.
+2026-09-30 15:56:36.879314+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7aa80> windowNumber=4bcb which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:39.595620+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7aa80> windowNumber=4bcb which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Moving an arrow replaces its old pixels immediately, follows each event and commits one undo step" passed after 4.793 seconds.
+◇ Test "Moving filled annotations preserves layering and blur/pixelation in the live pixels" started.
+2026-09-30 15:56:40.997873+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19ca00> windowNumber=4bcc which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.193245+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19c000> windowNumber=4bcd which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.402629+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bce which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Moving filled annotations preserves layering and blur/pixelation in the live pixels" passed after 0.702 seconds.
+◇ Test "Arrow, straight line and capped line endpoints resize independently and win over crop handles" started.
+2026-09-30 15:56:41.689613+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.692813+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.700805+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.702167+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.704662+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.707195+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.711038+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955400> windowNumber=4bcf which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.775801+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.778853+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.786730+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.788098+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.790734+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.793277+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.797185+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4bd0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.862056+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.865446+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.873901+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.875415+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.878151+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.880778+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:41.884809+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19f980> windowNumber=4bd1 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Arrow, straight line and capped line endpoints resize independently and win over crop handles" passed after 0.273 seconds.
+◇ Test "Unified shape properties edit existing geometry, remember each tool, and group slider changes into one undo" started.
+2026-09-30 15:56:41.973896+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d956800> windowNumber=4bd2 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:44.464140+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d956800> windowNumber=4bd2 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Unified shape properties edit existing geometry, remember each tool, and group slider changes into one undo" passed after 2.569 seconds.
+◇ Test "Text input is transparent, fits committed multiline text and grows again when re-edited" started.
+2026-09-30 15:56:45.436639+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d954f00> windowNumber=4bd3 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:46.551984+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d954f00> windowNumber=4bd3 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Text input is transparent, fits committed multiline text and grows again when re-edited" passed after 3.126 seconds.
+◇ Test "Mosaic and blur default to four and independently clamp strength to one through ten" started.
+2026-09-30 15:56:47.721626+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d110f00> windowNumber=4bd5 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Mosaic and blur default to four and independently clamp strength to one through ten" passed after 0.134 seconds.
+◇ Test "Native initial drag snaps to frozen window candidates and commits source-pixel crop without a confirmation" started.
+2026-09-30 15:56:47.774022+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d955e00> windowNumber=4bd6 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native initial drag snaps to frozen window candidates and commits source-pixel crop without a confirmation" passed after 0.046 seconds.
+◇ Test "Native hover previews frozen window and content-block boundaries before any selection" started.
+✔ Test "Native hover previews frozen window and content-block boundaries before any selection" passed after 0.107 seconds.
+◇ Test "Entering before any drag previews the complete bright candidate frame" started.
+✔ Test "Entering before any drag previews the complete bright candidate frame" passed after 0.051 seconds.
+◇ Test "Native pixel loupe previews the frozen source before selecting" started.
+✔ Test "Native pixel loupe previews the frozen source before selecting" passed after 0.059 seconds.
+◇ Test "Native loupe keeps colors local to the frozen image across copy, Shift, drag and editing" started.
+2026-09-30 15:56:48.119776+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d112800> windowNumber=4bda which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:48.158275+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d112800> windowNumber=4bda which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:48.349256+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d112800> windowNumber=4bda which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native loupe keeps colors local to the frozen image across copy, Shift, drag and editing" passed after 0.347 seconds.
+◇ Test "Native click selects the small content block and exposes the editing toolbar" started.
+2026-09-30 15:56:48.358870+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d954280> windowNumber=4bdb which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native click selects the small content block and exposes the editing toolbar" passed after 0.185 seconds.
+◇ Test "Two real clicks copy the chosen candidate or full display once and finish" started.
+2026-09-30 15:56:48.541405+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d112080> windowNumber=4bdc which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:48.718185+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d112080> windowNumber=4bdc which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:48.737071+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d954c80> windowNumber=4bdd which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:48.912275+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d954c80> windowNumber=4bdd which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:48.931270+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19cf00> windowNumber=4bde which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.108421+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19cf00> windowNumber=4bde which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Two real clicks copy the chosen candidate or full display once and finish" passed after 0.587 seconds.
+◇ Test "Native drag shows guides before release and commits snapped source pixels" started.
+2026-09-30 15:56:49.131618+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d110000> windowNumber=4bdf which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native drag shows guides before release and commits snapped source pixels" passed after 0.045 seconds.
+◇ Test "Small pointer jitter clicks a candidate, while deliberate drag makes a free rectangle" started.
+2026-09-30 15:56:49.204606+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d957c00> windowNumber=4be0 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.216196+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d113480> windowNumber=4be1 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Small pointer jitter clicks a candidate, while deliberate drag makes a free rectangle" passed after 0.058 seconds.
+◇ Test "Async candidate append refreshes a stationary pointer; stale results do not replace it" started.
+✔ Test "Async candidate append refreshes a stationary pointer; stale results do not replace it" passed after 0.032 seconds.
+◇ Test "Without a candidate, single click selects the display while a fresh drag draws freely" started.
+2026-09-30 15:56:49.295864+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d954500> windowNumber=4be3 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.307580+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d113c00> windowNumber=4be4 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Without a candidate, single click selects the display while a fresh drag draws freely" passed after 0.058 seconds.
+◇ Test "History fit-to-window reselect maps the drawn image rectangle back to original pixels" started.
+2026-09-30 15:56:49.367767+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7ea7bc00> windowNumber=4be5 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "History fit-to-window reselect maps the drawn image rectangle back to original pixels" passed after 0.051 seconds.
+◇ Test "All eight native handles resize before active drawing tool hit-testing" started.
+2026-09-30 15:56:49.419769+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d110f00> windowNumber=4be6 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.435951+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d956a80> windowNumber=4be7 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.452458+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19d180> windowNumber=4be8 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.468694+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d378f00> windowNumber=4be9 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.485015+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d3bcc80> windowNumber=4bea which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.501320+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7c00ca00> windowNumber=4beb which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.517364+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7c050780> windowNumber=4bec which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:49.533781+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7c0b0500> windowNumber=4bed which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "All eight native handles resize before active drawing tool hit-testing" passed after 0.181 seconds.
+◇ Test "Native light dark and narrow canvases preserve frozen pixels and record explicitly synthetic screenshots" started.
+✔ Test "Native light dark and narrow canvases preserve frozen pixels and record explicitly synthetic screenshots" passed after 2.085 seconds.
+◇ Test "Annotation colors appear contextually, remain visible at screen edges, and affect the next stroke" started.
+2026-09-30 15:56:51.691992+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d956f80> windowNumber=4bf0 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Annotation colors appear contextually, remain visible at screen edges, and affect the next stroke" passed after 1.052 seconds.
+◇ Test "Left and right replay saved screenshots and restore the in-progress capture" started.
+✔ Test "Left and right replay saved screenshots and restore the in-progress capture" passed after 0.367 seconds.
+◇ Test "Native session rejects duplicate output, preserves edits while busy, and permits retry after save cancellation" started.
+✔ Test "Native session rejects duplicate output, preserves edits while busy, and permits retry after save cancellation" passed after 0.046 seconds.
+◇ Test "Late native output completion cannot finish a force-cancelled session twice" started.
+✔ Test "Late native output completion cannot finish a force-cancelled session twice" passed after 0.058 seconds.
+◇ Test "Native text Return inserts a line and Cmd-Return commits it without triggering screenshot output" started.
+2026-09-30 15:56:53.217375+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d110500> windowNumber=4bf2 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "Native text Return inserts a line and Cmd-Return commits it without triggering screenshot output" passed after 0.061 seconds.
+◇ Test "History text re-edit keeps stored source-pixel style and scales the native font to fitted image" started.
+2026-09-30 15:56:53.273050+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19c280> windowNumber=4bf3 which returned NO from -[NSWindow canBecomeKeyWindow].
+2026-09-30 15:56:53.274783+0800 xctest[76591:9356283] [Window] Warning: -[NSWindow makeKeyWindow] called on <NSWindow: 0xc7d19c280> windowNumber=4bf3 which returned NO from -[NSWindow canBecomeKeyWindow].
+✔ Test "History text re-edit keeps stored source-pixel style and scales the native font to fitted image" passed after 0.051 seconds.
+✔ Suite "Capture native canvas with synthetic frozen pixels" passed after 17.138 seconds.
+◇ Suite "Either Option capture tap" started.
+◇ Test "Only a short release after a right Option press fires once" started.
+✔ Test "Only a short release after a right Option press fires once" passed after 0.001 seconds.
+◇ Test "Left Option independently fires only on a short release" started.
+✔ Test "Left Option independently fires only on a short release" passed after 0.001 seconds.
+◇ Test "Long holds and reversed timestamps cannot be mistaken for a tap" started.
+✔ Test "Long holds and reversed timestamps cannot be mistaken for a tap" passed after 0.001 seconds.
+◇ Test "A repeated down does not restart the allowed time window" started.
+✔ Test "A repeated down does not restart the allowed time window" passed after 0.001 seconds.
+◇ Test "A repeated down while capture becomes busy revokes this press" started.
+✔ Test "A repeated down while capture becomes busy revokes this press" passed after 0.001 seconds.
+◇ Test "Each Option keycode uses its own device bit" started.
+✔ Test "Each Option keycode uses its own device bit" passed after 0.001 seconds.
+◇ Test "Right Option release with no left device bit remains eligible" started.
+✔ Test "Right Option release with no left device bit remains eligible" passed after 0.001 seconds.
+◇ Test "A real left Option bit on right release blocks capture" started.
+✔ Test "A real left Option bit on right release blocks capture" passed after 0.001 seconds.
+◇ Test "A real right Option bit on left release blocks capture" started.
+✔ Test "A real right Option bit on left release blocks capture" passed after 0.001 seconds.
+◇ Test "Crossing Option presses cancel in both directions until a fresh press" started.
+✔ Test "Crossing Option presses cancel in both directions until a fresh press" passed after 0.001 seconds.
+◇ Test "Both Option bits present at the first observation cannot start a tap" started.
+✔ Test "Both Option bits present at the first observation cannot start a tap" passed after 0.001 seconds.
+◇ Test "Left Option pressed during right Option cancels even if released before right" started.
+✔ Test "Left Option pressed during right Option cancels even if released before right" passed after 0.004 seconds.
+◇ Test "An interruption or reset cancels the current press and allows a later one" started.
+✔ Test "An interruption or reset cancels the current press and allows a later one" passed after 0.001 seconds.
+◇ Test "Permission, voice conflict, and capture busy gating must hold at both edges" started.
+✔ Test "Permission, voice conflict, and capture busy gating must hold at both edges" passed after 0.001 seconds.
+◇ Test "Right Option is unavailable during voice conflict or missing tap permissions" started.
+✔ Test "Right Option is unavailable during voice conflict or missing tap permissions" passed after 0.001 seconds.
+◇ Test "An absent shortcut gets right Option, but prior choices stay intact" started.
+✔ Test "An absent shortcut gets right Option, but prior choices stay intact" passed after 0.001 seconds.
+✔ Suite "Either Option capture tap" passed after 0.007 seconds.
+◇ Suite "Pinned screenshot window" started.
+◇ Test "Pinned image stays floating, moves freely, resizes proportionally, and closes independently" started.
+✔ Test "Pinned image stays floating, moves freely, resizes proportionally, and closes independently" passed after 0.037 seconds.
+✔ Suite "Pinned screenshot window" passed after 0.037 seconds.
+◇ Suite "Capture request planning" started.
+◇ Test "Single-display region uses display-local points and scaled output pixels" started.
+✔ Test "Single-display region uses display-local points and scaled output pixels" passed after 0.001 seconds.
+◇ Test "Regions outside or across display edges are rejected without silently clipping" started.
+✔ Test "Regions outside or across display edges are rejected without silently clipping" passed after 0.001 seconds.
+◇ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" started.
+✔ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" passed after 0.001 seconds.
+◇ Test "Disconnected display aborts before submitting screenshot request" started.
+✔ Test "Disconnected display aborts before submitting screenshot request" passed after 0.001 seconds.
+◇ Test "Window targets do not switch to an unrelated reused window ID" started.
+✔ Test "Window targets do not switch to an unrelated reused window ID" passed after 0.001 seconds.
+✔ Suite "Capture request planning" passed after 0.001 seconds.
+◇ Suite "Capture and voice hotkey ownership" started.
+◇ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" started.
+✔ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" passed after 0.001 seconds.
+◇ Test "Neither handler claims an unknown ID or foreign signature" started.
+✔ Test "Neither handler claims an unknown ID or foreign signature" passed after 0.001 seconds.
+◇ Test "A queued voice effect must recheck capture suspension before applying" started.
+✔ Test "A queued voice effect must recheck capture suspension before applying" passed after 0.001 seconds.
+✔ Suite "Capture and voice hotkey ownership" passed after 0.001 seconds.
+◇ Suite "Capture asset persistence" started.
+◇ Test "Fresh store restores stable identity and actual PNG dimensions and color" started.
+✔ Test "Fresh store restores stable identity and actual PNG dimensions and color" passed after 0.004 seconds.
+◇ Test "Reopening sorts by capture time and deleting one leaves the other intact" started.
+✔ Test "Reopening sorts by capture time and deleting one leaves the other intact" passed after 0.003 seconds.
+◇ Test "A file at storage root makes save fail without a successful-looking asset" started.
+✔ Test "A file at storage root makes save fail without a successful-looking asset" passed after 0.001 seconds.
+◇ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" started.
+✔ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" passed after 0.002 seconds.
+◇ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" started.
+✔ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" passed after 0.001 seconds.
+◇ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" started.
+✔ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" passed after 0.002 seconds.
+◇ Test "A cancelled caller cannot publish a new persisted asset" started.
+✔ Test "A cancelled caller cannot publish a new persisted asset" passed after 0.001 seconds.
+◇ Test "Damaged PNG content is excluded from recent assets with an explicit warning" started.
+✔ Test "Damaged PNG content is excluded from recent assets with an explicit warning" passed after 0.002 seconds.
+◇ Test "PNG header alone is not mistaken for a complete recoverable screenshot" started.
+2026-09-30 15:56:53.349565+0800 xctest[76591:9356283] [xctest] handle_error:268: PNG read error
+2026-09-30 15:56:53.350255+0800 xctest[76591:9356283] [xctest] imagePNG_error_break:384: *** ERROR: imagePNG_error_break
+2026-09-30 15:56:53.350267+0800 xctest[76591:9356283] [xctest] makeImagePlus:3798: *** ERROR: 'PNG '-_reader->initImage[0] failed err=-50
+✔ Test "PNG header alone is not mistaken for a complete recoverable screenshot" passed after 0.002 seconds.
+◇ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" started.
+✔ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" passed after 0.007 seconds.
+◇ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" started.
+✔ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" passed after 0.003 seconds.
+✔ Suite "Capture asset persistence" passed after 0.033 seconds.
+◇ Suite "HotkeyStateMachine" started.
+◇ Test "idle -> start" started.
+✔ Test "idle -> start" passed after 0.001 seconds.
+◇ Test "finished -> start (a fresh press after completion starts a new session)" started.
+✔ Test "finished -> start (a fresh press after completion starts a new session)" passed after 0.001 seconds.
+◇ Test "failed -> start (a fresh press after a failure starts a new session)" started.
+✔ Test "failed -> start (a fresh press after a failure starts a new session)" passed after 0.001 seconds.
+◇ Test "listening -> stop" started.
+✔ Test "listening -> stop" passed after 0.001 seconds.
+◇ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" started.
+✔ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" passed after 0.001 seconds.
+◇ Test "finalizing/composing/inserting -> ignore (no queue)" started.
+✔ Test "finalizing/composing/inserting -> ignore (no queue)" passed after 0.001 seconds.
+◇ Test "esc while listening -> cancel" started.
+✔ Test "esc while listening -> cancel" passed after 0.001 seconds.
+◇ Test "esc while answering -> dismissAnswer" started.
+✔ Test "esc while answering -> dismissAnswer" passed after 0.001 seconds.
+◇ Test "esc elsewhere is a no-op" started.
+✔ Test "esc elsewhere is a no-op" passed after 0.001 seconds.
+◇ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" started.
+✔ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" passed after 0.001 seconds.
+✔ Suite "HotkeyStateMachine" passed after 0.002 seconds.
+◇ Suite "TriggerPhysicalState" started.
+◇ Test "First observed down is not a repeat" started.
+✔ Test "First observed down is not a repeat" passed after 0.001 seconds.
+◇ Test "A normal down-then-up sequence is never a repeat" started.
+✔ Test "A normal down-then-up sequence is never a repeat" passed after 0.001 seconds.
+◇ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" started.
+✔ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" passed after 0.001 seconds.
+◇ Test "Two consecutive 'up' observations report a repeat" started.
+✔ Test "Two consecutive 'up' observations report a repeat" passed after 0.001 seconds.
+◇ Test "Reset returns to the not-down baseline" started.
+✔ Test "Reset returns to the not-down baseline" passed after 0.001 seconds.
+✔ Suite "TriggerPhysicalState" passed after 0.007 seconds.
+◇ Suite "Meeting persistence" started.
+◇ Test interruptedMeetingCanBeFoundAndRecovered() started.
+✔ Test interruptedMeetingCanBeFoundAndRecovered() passed after 0.002 seconds.
+✔ Suite "Meeting persistence" passed after 0.002 seconds.
+◇ Suite "Presentation ownership and privacy" started.
+◇ Test endingSessionKeepsManualChangesAndPrivacyStop() started.
+✔ Test endingSessionKeepsManualChangesAndPrivacyStop() passed after 0.001 seconds.
+◇ Test pausedSessionDoesNotDiscardOwnership() started.
+✔ Test pausedSessionDoesNotDiscardOwnership() passed after 0.001 seconds.
+◇ Test repeatAndUnrelatedReleaseDoNotCreateHistoryOrEndChord() started.
+✔ Test repeatAndUnrelatedReleaseDoNotCreateHistoryOrEndChord() passed after 0.001 seconds.
+◇ Test privacyClearAndLostReleaseLeaveNoStuckKeys() started.
+✔ Test privacyClearAndLostReleaseLeaveNoStuckKeys() passed after 0.001 seconds.
+✔ Suite "Presentation ownership and privacy" passed after 0.003 seconds.
+◇ Suite "Presentation power leases" started.
+◇ Test sessionEndCannotCancelEarlierManualLease() started.
+✔ Test sessionEndCannotCancelEarlierManualLease() passed after 0.001 seconds.
+◇ Test stoppingManualLeavesSessionAndDeadlineExtensionIsAdditive() started.
+✔ Test stoppingManualLeavesSessionAndDeadlineExtensionIsAdditive() passed after 0.001 seconds.
+◇ Test failedAndInvalidRequestsNeverClaimActive() started.
+✔ Test failedAndInvalidRequestsNeverClaimActive() passed after 0.001 seconds.
+◇ Test sleepingPastDeadlineExpiresWithoutWallClockDependency() started.
+✔ Test sleepingPastDeadlineExpiresWithoutWallClockDependency() passed after 0.001 seconds.
+◇ Test corruptPreferencesAreBoundedAndRuntimeIsNotRestored() started.
+✔ Test corruptPreferencesAreBoundedAndRuntimeIsNotRestored() passed after 0.002 seconds.
+✔ Suite "Presentation power leases" passed after 0.005 seconds.
+◇ Suite "Recording coordinator lifecycle" started.
+◇ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() started.
+2026-09-30 15:56:53.780281+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.784460+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.784489+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.796275+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testStartupFailureStopsEngineReleasesReservationAndKeepsFinalizedRawMedia() passed after 0.419 seconds.
+◇ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() started.
+2026-09-30 15:56:53.804407+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.804449+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.804468+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.804494+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testPauseResumePersistsTransitionsAndStopWaitsForFinalizedSegmentCallbacks() passed after 0.006 seconds.
+◇ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() started.
+2026-09-30 15:56:53.811049+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.811083+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.811102+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.811119+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testConcurrentStopRequestsShareOneUnderlyingFinalization() passed after 0.005 seconds.
+◇ Test testCallbacksFromFinishedSessionCannotChangeNextSession() started.
+2026-09-30 15:56:53.816619+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.816648+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.816666+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.816682+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCallbacksFromFinishedSessionCannotChangeNextSession() passed after 0.005 seconds.
+◇ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() started.
+2026-09-30 15:56:53.823203+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.823236+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.823255+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.823273+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testFatalEngineFailureEndsAsInterruptedAndPreservesCompletedSegment() passed after 0.007 seconds.
+◇ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() started.
+2026-09-30 15:56:53.829647+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.829681+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.829701+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.829718+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCountdownCancellationDoesNotCreateReadySessionAndReleasesReservation() passed after 0.003 seconds.
+◇ Test testCameraDisconnectChangesOnlyThatSourceAvailability() started.
+2026-09-30 15:56:53.833623+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.833654+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.833672+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.833689+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testCameraDisconnectChangesOnlyThatSourceAvailability() passed after 0.003 seconds.
+◇ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() started.
+2026-09-30 15:56:53.836900+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:53.836932+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:53.836949+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:53.836965+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test testManifestWriteFailureStillStopsCaptureAndDrainsFinalizedMediaCallbacks() passed after 0.010 seconds.
+✔ Suite "Recording coordinator lifecycle" passed after 0.462 seconds.
+◇ Suite "Editor handoff boundary" started.
+◇ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() started.
+✔ Test explicitRequestTargetsChosenEditorAndDoesNotClaimImport() passed after 0.002 seconds.
+◇ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() started.
+✔ Test missingWrongEditorMalformedOrOversizedFilesNeverLaunch() passed after 0.010 seconds.
+◇ Test unverifiedJianyingAndMulticamHaveExplicitGates() started.
+✔ Test unverifiedJianyingAndMulticamHaveExplicitGates() passed after 0.001 seconds.
+◇ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() started.
+✔ Test openerFailurePropagatesAndDiscoveryReadsBundleIdentities() passed after 0.002 seconds.
+◇ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() started.
+✔ Test nativeCandidatePreservesRecoveredAnglesAndIndependentStereoAudio() passed after 0.003 seconds.
+✔ Suite "Editor handoff boundary" passed after 0.020 seconds.
+◇ Suite "Recording media handoff" started.
+◇ Test allEditorsPreserveSegmentsAndIndependentAudio() started.
+✔ Test allEditorsPreserveSegmentsAndIndependentAudio() passed after 0.172 seconds.
+◇ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() started.
+2026-09-30 15:56:54.216651+0800 xctest[76591:9356294] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0xc803b6c20> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-09-30 15:56:54.246002+0800 xctest[76591:9357491] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-09-30 15:56:54.246384+0800 xctest[76591:9357491] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+✔ Test compositionAndTrimmedMP4PreserveLeadingAndRecoveredGaps() passed after 0.233 seconds.
+◇ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() started.
+✔ Test pathTraversalSymlinksOverlapAndMissingMediaAreRejected() passed after 0.130 seconds.
+◇ Test cancellationAndCollisionPreserveExistingDestination() started.
+✔ Test cancellationAndCollisionPreserveExistingDestination() passed after 0.127 seconds.
+◇ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() started.
+✔ Test boundedCopyCanCancelAndInvalidTrimCannotPublish() passed after 0.141 seconds.
+◇ Test longSegmentedTimelinePreservesExactRationalOffsets() started.
+✔ Test longSegmentedTimelinePreservesExactRationalOffsets() passed after 0.012 seconds.
+✔ Suite "Recording media handoff" passed after 0.817 seconds.
+◇ Suite "Recording native views" started.
+◇ Test sourceSetupInLightDarkAndSmallWindow() started.
+2026-09-30 15:56:54.685521+0800 xctest[76591:9356283] [permissions] microphone: nil -> notDetermined
+2026-09-30 15:56:54.685563+0800 xctest[76591:9356283] [permissions] accessibility: nil -> denied
+2026-09-30 15:56:54.685582+0800 xctest[76591:9356283] [permissions] inputMonitoring: nil -> denied
+2026-09-30 15:56:54.685602+0800 xctest[76591:9356283] [permissions] speechRecognition: nil -> notDetermined
+✔ Test sourceSetupInLightDarkAndSmallWindow() passed after 1.077 seconds.
+✔ Suite "Recording native views" passed after 1.078 seconds.
+◇ Suite "Recording preview lifecycle" started.
+◇ Test activePreviewBecomesAvailableWhenSessionIsReady() started.
+✔ Test activePreviewBecomesAvailableWhenSessionIsReady() passed after 0.007 seconds.
+◇ Test missingScreenAngleFallsBackToRecoveredCamera() started.
+✔ Test missingScreenAngleFallsBackToRecoveredCamera() passed after 0.003 seconds.
+◇ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() started.
+2026-09-30 15:56:55.780034+0800 xctest[76591:9357580] [player] <<<< Async >>>> signalled err=-12785 at <>:3471
+2026-09-30 15:56:55.785296+0800 xctest[76591:9357498] [] <<< URLAsset >>> signalled err=-12174 at <>:9345
+2026-09-30 15:56:55.785332+0800 xctest[76591:9357500] [] <<< URLAsset >>> signalled err=-12174 at <>:9345
+2026-09-30 15:56:55.785334+0800 xctest[76591:9357592] [] <<< URLAsset >>> signalled err=-12174 at <>:9345
+✔ Test delayedOldAngleCannotReplaceSelectedAngleOrLoadingState() passed after 0.010 seconds.
+◇ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() started.
+2026-09-30 15:56:55.786190+0800 xctest[76591:9357591] [player] <<<< Async >>>> signalled err=-12785 at <>:4776
+2026-09-30 15:56:55.792134+0800 xctest[76591:9356290] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 15:56:55.792191+0800 xctest[76591:9357584] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 15:56:55.792215+0800 xctest[76591:9357586] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+2026-09-30 15:56:55.794316+0800 xctest[76591:9356290] [player] <<<< FigAirPlay_Route >>>> signalled err=-12860 at <>:596
+✔ Test obsoleteFailureCannotReplaceNewSuccessfulPreview() passed after 0.008 seconds.
+◇ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() started.
+✔ Test clearingWhileCompositionIsPendingPreventsPlayerRevival() passed after 0.003 seconds.
+◇ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() started.
+✔ Test cancelledCompositionDoesNotLeaveLoadingOrErrorState() passed after 0.003 seconds.
+◇ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() started.
+✔ Test retainedAngleStaysSelectedAndRemovedAngleFallsBack() passed after 0.001 seconds.
+✔ Suite "Recording preview lifecycle" passed after 0.038 seconds.
+◇ Suite "Recording storage" started.
+◇ Test configurationBoundsAndSourceKindsAreValidated() started.
+✔ Test configurationBoundsAndSourceKindsAreValidated() passed after 0.001 seconds.
+◇ Test independentSessionsPersistSegmentsAndDerivedDuration() started.
+✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.003 seconds.
+◇ Test activePhasesRecoverAsInterruptedAndKeepMedia() started.
+✔ Test activePhasesRecoverAsInterruptedAndKeepMedia() passed after 0.002 seconds.
+◇ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() started.
+✔ Test traversalAndSymlinkEscapeAreRejectedWithoutDeletingFiles() passed after 0.001 seconds.
+◇ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() started.
+✔ Test recoveryDropsMissingMediaFromPlayableListAndReportsIt() passed after 0.002 seconds.
+◇ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() started.
+✔ Test unsupportedAndMalformedManifestsArePreservedWithWarnings() passed after 0.001 seconds.
+✔ Suite "Recording storage" passed after 0.012 seconds.
+✔ Test run with 188 tests in 29 suites passed after 19.982 seconds.
+2026-09-30 15:56:56.140 xcodebuild[76352:9354912] [MT] IDETestOperationsObserverDebug: 25.566 elapsed -- Testing started completed.
+2026-09-30 15:56:56.140 xcodebuild[76352:9354912] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-30 15:56:56.140 xcodebuild[76352:9354912] [MT] IDETestOperationsObserverDebug: 25.566 sec, +25.566 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/prosio-recording-integration-20260930.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

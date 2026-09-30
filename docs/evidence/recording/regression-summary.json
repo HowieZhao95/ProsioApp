@@ -12,7 +12,7 @@
       },
       "expectedFailures" : 0,
       "failedTests" : 0,
-      "passedTests" : 189,
+      "passedTests" : 209,
       "skippedTests" : 0,
       "testPlanConfiguration" : {
         "configurationId" : "1",
@@ -23,11 +23,11 @@
   "environmentDescription" : "ProsioValidation · Built with macOS 26.3.1",
   "expectedFailures" : 0,
   "failedTests" : 0,
-  "finishTime" : 1790753476.447,
-  "passedTests" : 189,
+  "finishTime" : 1790755016.152,
+  "passedTests" : 209,
   "result" : "Passed",
   "skippedTests" : 0,
-  "startTime" : 1790753439.238,
+  "startTime" : 1790754962.979,
   "statistics" : [
 
   ],
@@ -38,9 +38,9 @@
   "topInsights" : [
     {
       "category" : "Longest Test Runs",
-      "impact" : "60% of duration",
-      "text" : "5 longest test runs with outlier durations exceeding 1.63s (three standard deviations)"
+      "impact" : "57% of duration",
+      "text" : "4 longest test runs with outlier durations exceeding 1.51s (three standard deviations)"
     }
   ],
-  "totalTestCount" : 189
+  "totalTestCount" : 209
 }
