@@ -1,0 +1,3896 @@
+{
+  "claim": "iTunSMPB valid-sample metadata compared with manifest durations; container/stream metadata only, not PCM content decoding",
+  "failedCount": 0,
+  "finalizedAacSegmentCount": 168,
+  "input": "progress.json",
+  "passedCount": 168,
+  "segments": [
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "DF9A52D0-21F9-48BF-811B-69B757334D9B",
+      "path": "media/DF9A52D0-21F9-48BF-811B-69B757334D9B.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "5558FDDE-2572-4CF1-B0DB-F384C09816BF",
+      "path": "media/5558FDDE-2572-4CF1-B0DB-F384C09816BF.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "6DF452FA-6D93-4646-B971-3F2C8257127A",
+      "path": "media/6DF452FA-6D93-4646-B971-3F2C8257127A.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "6FA1C212-B15F-42B8-A779-6E70DC542767",
+      "path": "media/6FA1C212-B15F-42B8-A779-6E70DC542767.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "55A1A834-5EB2-468A-88B9-B959998D7756",
+      "path": "media/55A1A834-5EB2-468A-88B9-B959998D7756.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "6FB8EDC1-E161-4224-922E-7F681E82DD84",
+      "path": "media/6FB8EDC1-E161-4224-922E-7F681E82DD84.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C605DAF6-317F-49DC-9482-3A7A4A43384A",
+      "path": "media/C605DAF6-317F-49DC-9482-3A7A4A43384A.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "5DB9D405-1A8B-4059-92E4-111F0F3C3DD5",
+      "path": "media/5DB9D405-1A8B-4059-92E4-111F0F3C3DD5.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "29D01A10-53B9-4632-B88A-D3754BB8A11A",
+      "path": "media/29D01A10-53B9-4632-B88A-D3754BB8A11A.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "58DABA04-2847-4B63-9348-5D0DB5BE62EB",
+      "path": "media/58DABA04-2847-4B63-9348-5D0DB5BE62EB.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "89F8AE76-6830-4A56-A423-6AC8078ECDF9",
+      "path": "media/89F8AE76-6830-4A56-A423-6AC8078ECDF9.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "2860087C-6B46-4CFB-890C-13996C4481F2",
+      "path": "media/2860087C-6B46-4CFB-890C-13996C4481F2.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "8D2B4467-ACBD-474D-BE10-3B9736ECA3FB",
+      "path": "media/8D2B4467-ACBD-474D-BE10-3B9736ECA3FB.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "2A69612C-8841-48DA-8E46-6A40DBE3CFA5",
+      "path": "media/2A69612C-8841-48DA-8E46-6A40DBE3CFA5.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "63CB89DD-D277-4DF7-BA9F-C050F7E54214",
+      "path": "media/63CB89DD-D277-4DF7-BA9F-C050F7E54214.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "EF246A40-A2FA-452B-9D40-11C4BBEDB9E9",
+      "path": "media/EF246A40-A2FA-452B-9D40-11C4BBEDB9E9.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "6217F9F9-7CD5-458E-921C-5CA25C5633B0",
+      "path": "media/6217F9F9-7CD5-458E-921C-5CA25C5633B0.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "1BF6FD12-2958-45A1-9B58-A7100FAF89AF",
+      "path": "media/1BF6FD12-2958-45A1-9B58-A7100FAF89AF.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "7A6CC9FE-523A-4CE9-B69F-ADA847510214",
+      "path": "media/7A6CC9FE-523A-4CE9-B69F-ADA847510214.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "5BC5D014-1702-4255-A0C7-14B0E15605E1",
+      "path": "media/5BC5D014-1702-4255-A0C7-14B0E15605E1.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9825826C-0283-4D41-8437-EAC39CD2126F",
+      "path": "media/9825826C-0283-4D41-8437-EAC39CD2126F.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "E6E04F30-FE01-48AD-8A6A-345303100033",
+      "path": "media/E6E04F30-FE01-48AD-8A6A-345303100033.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "50EB98AA-19A5-4B16-B211-4CA469F249CF",
+      "path": "media/50EB98AA-19A5-4B16-B211-4CA469F249CF.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "46E7E9D3-C68B-49E2-8C85-DE57EC5071E3",
+      "path": "media/46E7E9D3-C68B-49E2-8C85-DE57EC5071E3.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "F5C940D7-ADBB-46F4-A530-A55EE791757B",
+      "path": "media/F5C940D7-ADBB-46F4-A530-A55EE791757B.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C10A5AE8-5C75-4743-85E8-3D810CCC108F",
+      "path": "media/C10A5AE8-5C75-4743-85E8-3D810CCC108F.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "684C468F-79B6-4305-A042-F3F563889B39",
+      "path": "media/684C468F-79B6-4305-A042-F3F563889B39.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B5A743AD-3A6F-409B-A402-2BFA81901F9D",
+      "path": "media/B5A743AD-3A6F-409B-A402-2BFA81901F9D.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "62B5405C-B4E9-4809-8604-A1754FD4EB34",
+      "path": "media/62B5405C-B4E9-4809-8604-A1754FD4EB34.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "3A51BF7A-ADF2-4460-B6D5-6F0B41AD90F5",
+      "path": "media/3A51BF7A-ADF2-4460-B6D5-6F0B41AD90F5.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "F0B0CF45-F916-4658-ACC5-321351D4DE98",
+      "path": "media/F0B0CF45-F916-4658-ACC5-321351D4DE98.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C79892E5-EE09-4689-BF5B-8B69349DDEC6",
+      "path": "media/C79892E5-EE09-4689-BF5B-8B69349DDEC6.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "982B8DAA-D068-44A4-A754-AE3C3F25466C",
+      "path": "media/982B8DAA-D068-44A4-A754-AE3C3F25466C.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "779E0D05-B4F6-4E4B-8FBA-4C81644B7756",
+      "path": "media/779E0D05-B4F6-4E4B-8FBA-4C81644B7756.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C6E64377-45A8-4DD2-83FC-34312CCABBDA",
+      "path": "media/C6E64377-45A8-4DD2-83FC-34312CCABBDA.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9E22D1DB-6A5D-4805-9538-354EFBCEA362",
+      "path": "media/9E22D1DB-6A5D-4805-9538-354EFBCEA362.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "2D627787-DEC8-4E94-95B6-2A03ED7AE615",
+      "path": "media/2D627787-DEC8-4E94-95B6-2A03ED7AE615.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "FDCD3C38-7214-4610-A084-AF0518625E05",
+      "path": "media/FDCD3C38-7214-4610-A084-AF0518625E05.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9FE76017-7588-4337-91A8-7B95D276B047",
+      "path": "media/9FE76017-7588-4337-91A8-7B95D276B047.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "F670138F-69EB-4E73-A314-AF381AFC500F",
+      "path": "media/F670138F-69EB-4E73-A314-AF381AFC500F.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "E13A07F8-A9F0-40FE-B157-5AB01D812ED1",
+      "path": "media/E13A07F8-A9F0-40FE-B157-5AB01D812ED1.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "BDA133BF-3597-4721-9131-1D501A2F9560",
+      "path": "media/BDA133BF-3597-4721-9131-1D501A2F9560.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "01145C5F-920C-4A8F-BC6D-F9A7E172AA4F",
+      "path": "media/01145C5F-920C-4A8F-BC6D-F9A7E172AA4F.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "556D900A-15F9-4B32-976E-4B637D6BD6FC",
+      "path": "media/556D900A-15F9-4B32-976E-4B637D6BD6FC.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "2512B233-F8A4-4D2F-BF5E-59E5EE697E14",
+      "path": "media/2512B233-F8A4-4D2F-BF5E-59E5EE697E14.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "D5BEF54E-87DE-452B-9BF1-31ADACC43C59",
+      "path": "media/D5BEF54E-87DE-452B-9BF1-31ADACC43C59.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "F28820E7-BECA-44EF-B9AC-C2F08098E7B4",
+      "path": "media/F28820E7-BECA-44EF-B9AC-C2F08098E7B4.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "63B04087-8D06-42C0-B566-D448A9D4851F",
+      "path": "media/63B04087-8D06-42C0-B566-D448A9D4851F.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "2DF18137-9E83-4FBC-8749-9B8BDD2E8D97",
+      "path": "media/2DF18137-9E83-4FBC-8749-9B8BDD2E8D97.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "93E9AB17-9759-4653-B87D-C3F0CC1A8E9C",
+      "path": "media/93E9AB17-9759-4653-B87D-C3F0CC1A8E9C.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "DF176186-2C10-43AD-8268-36E53398045A",
+      "path": "media/DF176186-2C10-43AD-8268-36E53398045A.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "AEF5EB2A-F9D4-4383-A348-4D079BD3EF7B",
+      "path": "media/AEF5EB2A-F9D4-4383-A348-4D079BD3EF7B.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "E4D24D7C-22E6-45A6-B4D9-E1972B20314F",
+      "path": "media/E4D24D7C-22E6-45A6-B4D9-E1972B20314F.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9EF5C5A8-73A8-4ED8-B0B5-B5507828DE85",
+      "path": "media/9EF5C5A8-73A8-4ED8-B0B5-B5507828DE85.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A4FFE0A3-1610-4F55-B6B1-E1682944B37E",
+      "path": "media/A4FFE0A3-1610-4F55-B6B1-E1682944B37E.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "FAAC9A33-E303-4E0F-9C99-B6984D84853F",
+      "path": "media/FAAC9A33-E303-4E0F-9C99-B6984D84853F.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "3D2AFD74-5943-4631-9962-1D3C5988B7EB",
+      "path": "media/3D2AFD74-5943-4631-9962-1D3C5988B7EB.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "41843A84-323F-448F-A239-401D675A2A88",
+      "path": "media/41843A84-323F-448F-A239-401D675A2A88.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "AFE93509-7C4B-4F00-9D17-09A906EB5452",
+      "path": "media/AFE93509-7C4B-4F00-9D17-09A906EB5452.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "BA25D96C-74BE-4D1D-9E53-FE740250DB44",
+      "path": "media/BA25D96C-74BE-4D1D-9E53-FE740250DB44.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A0A4BEB8-6FE5-4F33-89FE-EA7C39525098",
+      "path": "media/A0A4BEB8-6FE5-4F33-89FE-EA7C39525098.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "14F74D79-A4ED-4EE6-9454-D24F111934BF",
+      "path": "media/14F74D79-A4ED-4EE6-9454-D24F111934BF.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "DD160E81-F238-4997-B4DD-880E8EB32003",
+      "path": "media/DD160E81-F238-4997-B4DD-880E8EB32003.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "64E6E6DC-59B0-4AE9-B579-37CD5222FCAB",
+      "path": "media/64E6E6DC-59B0-4AE9-B579-37CD5222FCAB.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "88E5DE49-4738-4252-8461-00EC8F80BC82",
+      "path": "media/88E5DE49-4738-4252-8461-00EC8F80BC82.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "980FE0F9-049C-4E8E-9FCB-2360056C01EB",
+      "path": "media/980FE0F9-049C-4E8E-9FCB-2360056C01EB.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "76003258-C190-46A8-8244-1A736FCC3A5B",
+      "path": "media/76003258-C190-46A8-8244-1A736FCC3A5B.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "FC3ACF25-8B3E-4F16-BB05-9B07958CB83C",
+      "path": "media/FC3ACF25-8B3E-4F16-BB05-9B07958CB83C.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "64A854A7-E4B1-48BF-9BAE-39101837CD4E",
+      "path": "media/64A854A7-E4B1-48BF-9BAE-39101837CD4E.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "122F748F-F87B-4BE5-842D-247B669BCECE",
+      "path": "media/122F748F-F87B-4BE5-842D-247B669BCECE.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A288A365-CF2E-47E8-9B6D-165868348EDC",
+      "path": "media/A288A365-CF2E-47E8-9B6D-165868348EDC.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C1AC9704-FCE0-4222-AD90-4F3F9BAECFDC",
+      "path": "media/C1AC9704-FCE0-4222-AD90-4F3F9BAECFDC.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B3A69103-72D7-4EE3-9520-2A9099DF293A",
+      "path": "media/B3A69103-72D7-4EE3-9520-2A9099DF293A.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A24ED470-4268-4072-9763-301CCFF00C51",
+      "path": "media/A24ED470-4268-4072-9763-301CCFF00C51.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "0081D533-BE98-48D0-A708-06F3F8F82519",
+      "path": "media/0081D533-BE98-48D0-A708-06F3F8F82519.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C1BA921B-FF1A-4C56-BF0A-DCFD1E914DB7",
+      "path": "media/C1BA921B-FF1A-4C56-BF0A-DCFD1E914DB7.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "57837210-9BAD-42A0-BCD1-BA3BEC6EA3DA",
+      "path": "media/57837210-9BAD-42A0-BCD1-BA3BEC6EA3DA.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "EF76C108-F30A-4C74-89E9-B7021357ED1B",
+      "path": "media/EF76C108-F30A-4C74-89E9-B7021357ED1B.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "79DFCF24-37D0-41F2-8A39-389CC3B4A1F0",
+      "path": "media/79DFCF24-37D0-41F2-8A39-389CC3B4A1F0.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "0E9F6932-0F40-4381-9FD7-480378F71F80",
+      "path": "media/0E9F6932-0F40-4381-9FD7-480378F71F80.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "446F3F67-F918-4E8B-ABA8-E0954EAC38F0",
+      "path": "media/446F3F67-F918-4E8B-ABA8-E0954EAC38F0.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "4557FF05-45D4-4176-A746-10C45DB589AE",
+      "path": "media/4557FF05-45D4-4176-A746-10C45DB589AE.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "66BFFE55-C8C7-41EB-8728-5DA1688871A7",
+      "path": "media/66BFFE55-C8C7-41EB-8728-5DA1688871A7.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "485D92B5-C27C-49D2-9FDB-5A06F8FE18A2",
+      "path": "media/485D92B5-C27C-49D2-9FDB-5A06F8FE18A2.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "D2F4121E-6C63-44AB-8A6A-A85834B913CA",
+      "path": "media/D2F4121E-6C63-44AB-8A6A-A85834B913CA.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "7436CC03-1D14-414C-9ED0-1CA123EFC292",
+      "path": "media/7436CC03-1D14-414C-9ED0-1CA123EFC292.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "BF9F66DA-AA90-4634-AFEF-391049D627B3",
+      "path": "media/BF9F66DA-AA90-4634-AFEF-391049D627B3.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "67640E5D-B373-429A-9BEE-7C9B3722E033",
+      "path": "media/67640E5D-B373-429A-9BEE-7C9B3722E033.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "2561BE6A-9037-4258-8E5F-A1E472952261",
+      "path": "media/2561BE6A-9037-4258-8E5F-A1E472952261.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "369EEF92-4B84-46A9-8ACF-509BEB95468C",
+      "path": "media/369EEF92-4B84-46A9-8ACF-509BEB95468C.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "1A5F6C4D-E7D0-4C20-AA26-DE15C2DD7E0B",
+      "path": "media/1A5F6C4D-E7D0-4C20-AA26-DE15C2DD7E0B.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "728141BA-B22F-4E63-9AC6-115555A12251",
+      "path": "media/728141BA-B22F-4E63-9AC6-115555A12251.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "67DF36FC-17EF-487A-AC37-B477AB92B63B",
+      "path": "media/67DF36FC-17EF-487A-AC37-B477AB92B63B.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "360A69A0-94FC-4335-9540-70B0D4630032",
+      "path": "media/360A69A0-94FC-4335-9540-70B0D4630032.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "05AEFCC4-6B29-454D-84D2-BD922B5FEB84",
+      "path": "media/05AEFCC4-6B29-454D-84D2-BD922B5FEB84.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "64F4B0E4-6130-4D5B-B854-DEB965ACF4B6",
+      "path": "media/64F4B0E4-6130-4D5B-B854-DEB965ACF4B6.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "DB857F14-4B36-4316-BE39-F6918E9E002F",
+      "path": "media/DB857F14-4B36-4316-BE39-F6918E9E002F.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "954068DF-4EAF-49B9-9B3A-587C9AD3D1ED",
+      "path": "media/954068DF-4EAF-49B9-9B3A-587C9AD3D1ED.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "8C3DA3DE-037A-418A-9F81-F9315540D9FF",
+      "path": "media/8C3DA3DE-037A-418A-9F81-F9315540D9FF.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B7A644FB-75B1-41C1-9A58-501B7E2FB5C4",
+      "path": "media/B7A644FB-75B1-41C1-9A58-501B7E2FB5C4.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "49787AF9-7743-4BE5-90B6-98ADFE64EAFD",
+      "path": "media/49787AF9-7743-4BE5-90B6-98ADFE64EAFD.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "77869D3B-A9C9-4E45-88DD-878502C7FBFE",
+      "path": "media/77869D3B-A9C9-4E45-88DD-878502C7FBFE.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "5047D41D-ADC3-4409-9CF3-D9858C3403BA",
+      "path": "media/5047D41D-ADC3-4409-9CF3-D9858C3403BA.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "DA248191-B350-44E0-AA19-E064347AFE4E",
+      "path": "media/DA248191-B350-44E0-AA19-E064347AFE4E.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "BB033033-673F-4448-8E27-02811AB8A809",
+      "path": "media/BB033033-673F-4448-8E27-02811AB8A809.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "3F6434BD-EDA9-4BF9-85D5-C5EE0E5F45E4",
+      "path": "media/3F6434BD-EDA9-4BF9-85D5-C5EE0E5F45E4.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "20A54B2B-1E00-41FF-98B8-F6C68002852D",
+      "path": "media/20A54B2B-1E00-41FF-98B8-F6C68002852D.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "3AED6751-0AFC-40F4-975E-B13B55CD6219",
+      "path": "media/3AED6751-0AFC-40F4-975E-B13B55CD6219.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "861D9264-456E-4698-BCBF-AB4C6964242C",
+      "path": "media/861D9264-456E-4698-BCBF-AB4C6964242C.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "AEF27567-8B1E-4CC6-A907-9F97A06F31D3",
+      "path": "media/AEF27567-8B1E-4CC6-A907-9F97A06F31D3.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "8A8A114B-CAF5-436B-B6F3-BB881B7B34B3",
+      "path": "media/8A8A114B-CAF5-436B-B6F3-BB881B7B34B3.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "8D11791E-BE84-4C70-8570-3B122471E970",
+      "path": "media/8D11791E-BE84-4C70-8570-3B122471E970.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "76BD00E8-D02F-4472-8999-DDA8A89C0F2C",
+      "path": "media/76BD00E8-D02F-4472-8999-DDA8A89C0F2C.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C398A105-2C5E-4637-83F6-053ECAB986BE",
+      "path": "media/C398A105-2C5E-4637-83F6-053ECAB986BE.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "8F778A17-2888-435B-B80F-E1972039C775",
+      "path": "media/8F778A17-2888-435B-B80F-E1972039C775.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "357553C3-4621-4039-9A71-5A3C663D4B4C",
+      "path": "media/357553C3-4621-4039-9A71-5A3C663D4B4C.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "8F916FC4-772B-45E2-A9D2-0906E75DE8BB",
+      "path": "media/8F916FC4-772B-45E2-A9D2-0906E75DE8BB.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B674924B-DE33-40D9-A4E5-C357692BADEB",
+      "path": "media/B674924B-DE33-40D9-A4E5-C357692BADEB.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "0BDB7EE2-4D41-47B0-B62E-70706DDDF582",
+      "path": "media/0BDB7EE2-4D41-47B0-B62E-70706DDDF582.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "36BE09BC-4850-4F77-9ADA-62F390957BC0",
+      "path": "media/36BE09BC-4850-4F77-9ADA-62F390957BC0.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9B4A2D32-5E00-4CF3-8149-3DCACDB21EBA",
+      "path": "media/9B4A2D32-5E00-4CF3-8149-3DCACDB21EBA.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "640F9F81-A25E-4930-97CB-68FC1F80275B",
+      "path": "media/640F9F81-A25E-4930-97CB-68FC1F80275B.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "D3FCB604-39E7-4B95-A766-9E66ED712FD4",
+      "path": "media/D3FCB604-39E7-4B95-A766-9E66ED712FD4.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A180F8AF-FB93-4073-898F-A37C743CE631",
+      "path": "media/A180F8AF-FB93-4073-898F-A37C743CE631.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "89754672-A580-4498-BB3A-3C7A0E06889E",
+      "path": "media/89754672-A580-4498-BB3A-3C7A0E06889E.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "E3CD863B-AC59-4520-9E3E-2E13C65F0B58",
+      "path": "media/E3CD863B-AC59-4520-9E3E-2E13C65F0B58.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "F3375B69-7109-4F3E-BC6E-66BE9BE296BA",
+      "path": "media/F3375B69-7109-4F3E-BC6E-66BE9BE296BA.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "BED8B91E-3FFF-4A0C-B333-605B346ACE1A",
+      "path": "media/BED8B91E-3FFF-4A0C-B333-605B346ACE1A.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "07859280-212D-48FF-B91D-ED6F84BC1B09",
+      "path": "media/07859280-212D-48FF-B91D-ED6F84BC1B09.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C332EBE3-7E33-4EDE-AB6E-3AFCF9309D39",
+      "path": "media/C332EBE3-7E33-4EDE-AB6E-3AFCF9309D39.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "33F1867C-5C38-4E7A-8A6D-69125C994071",
+      "path": "media/33F1867C-5C38-4E7A-8A6D-69125C994071.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "0A4D7326-9632-42F3-AC63-7BCC76158252",
+      "path": "media/0A4D7326-9632-42F3-AC63-7BCC76158252.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "CD1C3C39-E633-4A15-B258-C5A46122FF38",
+      "path": "media/CD1C3C39-E633-4A15-B258-C5A46122FF38.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "017E11D2-4E3E-4695-B3F7-7DE78A82A6EA",
+      "path": "media/017E11D2-4E3E-4695-B3F7-7DE78A82A6EA.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B3C3AE3E-B206-4EDF-A9AC-25838559826F",
+      "path": "media/B3C3AE3E-B206-4EDF-A9AC-25838559826F.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "D25467A1-2205-40E2-B055-1B742E33BD41",
+      "path": "media/D25467A1-2205-40E2-B055-1B742E33BD41.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B623CC3E-0ED2-402B-BD58-52E7710BE0A5",
+      "path": "media/B623CC3E-0ED2-402B-BD58-52E7710BE0A5.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9454DACC-E1AD-4314-A2FC-003817271AC5",
+      "path": "media/9454DACC-E1AD-4314-A2FC-003817271AC5.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B88B1045-C10C-4E2B-A97D-32F3D63CF64D",
+      "path": "media/B88B1045-C10C-4E2B-A97D-32F3D63CF64D.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "E704F214-606F-4AD2-96B2-B2135A8E997F",
+      "path": "media/E704F214-606F-4AD2-96B2-B2135A8E997F.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "51086FA4-59A2-4D9E-A6D6-101DBFE9BBDE",
+      "path": "media/51086FA4-59A2-4D9E-A6D6-101DBFE9BBDE.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "1C7D5A6A-51E9-4B0C-9E5C-36A25E11768F",
+      "path": "media/1C7D5A6A-51E9-4B0C-9E5C-36A25E11768F.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "5FBE9705-7E1D-48CE-83B5-AD64D61A4BEF",
+      "path": "media/5FBE9705-7E1D-48CE-83B5-AD64D61A4BEF.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "E0068859-6ECE-4F81-8CCB-98D437904FAE",
+      "path": "media/E0068859-6ECE-4F81-8CCB-98D437904FAE.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "51DAE2FF-E9F7-47C6-B892-AFCD1521F0CB",
+      "path": "media/51DAE2FF-E9F7-47C6-B892-AFCD1521F0CB.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "962F7C95-9642-4BAE-8232-9FF2A73194EA",
+      "path": "media/962F7C95-9642-4BAE-8232-9FF2A73194EA.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "EA7E5F21-58C0-43EA-B9B1-BAC1F5D05865",
+      "path": "media/EA7E5F21-58C0-43EA-B9B1-BAC1F5D05865.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "0997851E-8E4C-4B7B-9A8F-EAB70C6FCB1C",
+      "path": "media/0997851E-8E4C-4B7B-9A8F-EAB70C6FCB1C.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C783EBE1-3B04-4154-A2F3-E5165ED018DE",
+      "path": "media/C783EBE1-3B04-4154-A2F3-E5165ED018DE.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B4673824-D675-4CCB-9BA9-50FA0F4BC005",
+      "path": "media/B4673824-D675-4CCB-9BA9-50FA0F4BC005.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "B224771D-6419-4AA5-9691-23AE017B9A02",
+      "path": "media/B224771D-6419-4AA5-9691-23AE017B9A02.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "0047E4B0-CF78-47FF-8BAB-625AC5931515",
+      "path": "media/0047E4B0-CF78-47FF-8BAB-625AC5931515.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "CDDA5BFC-B432-458C-A11A-53BB184B32CE",
+      "path": "media/CDDA5BFC-B432-458C-A11A-53BB184B32CE.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "903A6E75-E0A8-4D22-AF97-26E8DF4B5A05",
+      "path": "media/903A6E75-E0A8-4D22-AF97-26E8DF4B5A05.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "C8328222-E7CB-4CE7-87D3-9196CA381C00",
+      "path": "media/C8328222-E7CB-4CE7-87D3-9196CA381C00.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9C54C56C-6EA4-436F-9130-A8016C31F5C1",
+      "path": "media/9C54C56C-6EA4-436F-9130-A8016C31F5C1.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "37E7725B-0A7E-4810-878D-B18E3C1FB963",
+      "path": "media/37E7725B-0A7E-4810-878D-B18E3C1FB963.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "33ED9D32-D708-4762-BBAB-316C80FBFD48",
+      "path": "media/33ED9D32-D708-4762-BBAB-316C80FBFD48.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A17DD271-EA5A-4A51-BE24-E8BD4A6C8CF3",
+      "path": "media/A17DD271-EA5A-4A51-BE24-E8BD4A6C8CF3.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "9F6F72DC-208D-42F7-B7D6-7FE4661D33AA",
+      "path": "media/9F6F72DC-208D-42F7-B7D6-7FE4661D33AA.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "A299DE0B-CCA1-4DDB-AB22-011E8D23B25B",
+      "path": "media/A299DE0B-CCA1-4DDB-AB22-011E8D23B25B.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "87B649F4-4BF3-4B1E-B20A-2339604B4047",
+      "path": "media/87B649F4-4BF3-4B1E-B20A-2339604B4047.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "5AC476F9-EC2D-4F23-A83C-D342D720097E",
+      "path": "media/5AC476F9-EC2D-4F23-A83C-D342D720097E.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "11F28252-A284-4ECF-A821-668ABA66DB88",
+      "path": "media/11F28252-A284-4ECF-A821-668ABA66DB88.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "6D882BA7-87C7-442B-BA9B-33E82959F978",
+      "path": "media/6D882BA7-87C7-442B-BA9B-33E82959F978.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "6BC3D32D-3521-4B78-99E2-08A9E0456BAE",
+      "path": "media/6BC3D32D-3521-4B78-99E2-08A9E0456BAE.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "68C3B7BF-0C1B-401D-8E0E-55D0008EA442",
+      "path": "media/68C3B7BF-0C1B-401D-8E0E-55D0008EA442.m4a",
+      "sourceID": "microphone",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    },
+    {
+      "actualChannels": 2,
+      "actualSampleRate": 48000,
+      "containerDurationSeconds": "60.053333",
+      "declaredDurationMicroseconds": 60000000,
+      "durationCheck": {
+        "differenceSamples": 0.0,
+        "expectedSamplesFromDeclaredDuration": 2880000.0,
+        "withinRoundingTolerance": true
+      },
+      "errors": [],
+      "iTunSMPB": {
+        "encoderPrimingSamples": 2112,
+        "reserved": 0,
+        "trailingPaddingSamples": 448,
+        "validSampleCount": 2880000
+      },
+      "id": "85D9A377-9DC3-4479-ADAB-4B7C46B18758",
+      "path": "media/85D9A377-9DC3-4479-ADAB-4B7C46B18758.m4a",
+      "sourceID": "systemAudio",
+      "status": "passed",
+      "streamDurationSeconds": "60.053333"
+    }
+  ],
+  "snapshotIsPartial": true,
+  "sources": {
+    "microphone": {
+      "failedCount": 0,
+      "finalizedDurationSeconds": 5040.0,
+      "finalizedSegmentCount": 84,
+      "passedCount": 84,
+      "validSampleCountSum": 241920000,
+      "validSeconds": 5040.0
+    },
+    "systemAudio": {
+      "failedCount": 0,
+      "finalizedDurationSeconds": 5040.0,
+      "finalizedSegmentCount": 84,
+      "passedCount": 84,
+      "validSampleCountSum": 241920000,
+      "validSeconds": 5040.0
+    }
+  },
+  "tool": "ProsioRecordingAACValidMetadataAudit/1",
+  "writerFailures": [],
+  "writerReportCompleted": false,
+  "writerWarnings": []
+}

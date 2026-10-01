@@ -47,6 +47,10 @@
     "sourceWriterPID": 42815,
     "outputPath": "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-2h-20261001.eafgcb_e/live-full-decode.json",
     "logPath": "/tmp/prosio-recording-live-full-decode-20261001.log",
-    "startedObservedAtUTC": "2026-09-30T23:50:22Z"
-  }
+    "startedObservedAtUTC": "2026-09-30T23:50:22Z",
+    "lastSnapshotDecodedCount": 455,
+    "lastSnapshotFailedCount": 0
+  },
+  "latestPartialProof": "../long-run-audio-snapshot-2026-10-01/partial-proof.json",
+  "latestPartialSnapshotUTC": "2026-10-01T00:17:28.497091+00:00"
 }
