@@ -1,5 +1,5 @@
 {
-  "status": "running, not acceptance passed",
+  "status": "completed synthetic encoding and full decode; real-device/editor gates remain incomplete",
   "sourceRevision": "3d2bec8f90977835fcacfcd8c1b38123ac5c1ffc",
   "writerSHA256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97",
   "samplerPath": "/tmp/prosio-recording-performance-fixed-2h.py",
@@ -41,7 +41,7 @@
   "beforeNextRealDeviceCapture": "Latest independent RnzAHG GUI tool rebuilt from revision431d105 with packaged15 source hashes matching current workspace; signature and Release8 synthetic tests passed. Re-check exact current GUI privacy state; do not replace/relaunch installed Prosio or bypass TCC.",
   "deviceToolEvidence": "../device-tool-updated-2026-10-01/build-and-readiness.json",
   "incrementalFullDecodeAudit": {
-    "status": "running, not yet accepted",
+    "status": "completed full final report coverage",
     "sessionId": 40876,
     "sourceWriterSessionId": 75996,
     "sourceWriterPID": 42815,
@@ -49,8 +49,15 @@
     "logPath": "/tmp/prosio-recording-live-full-decode-20261001.log",
     "startedObservedAtUTC": "2026-09-30T23:50:22Z",
     "lastSnapshotDecodedCount": 455,
-    "lastSnapshotFailedCount": 0
+    "lastSnapshotFailedCount": 0,
+    "exitCode": 0,
+    "decodedCount": 600,
+    "failedCount": 0,
+    "completed": true
   },
   "latestPartialProof": "../long-run-audio-snapshot-2026-10-01/partial-proof.json",
-  "latestPartialSnapshotUTC": "2026-10-01T00:17:28.497091+00:00"
+  "latestPartialSnapshotUTC": "2026-10-01T00:17:28.497091+00:00",
+  "completedAtObservedUTC": "2026-10-01T00:52:15.609217+00:00",
+  "sessionExitCode": 0,
+  "finalAcceptanceEvidence": "../fixed-two-hour-2026-10-01/proof.json"
 }

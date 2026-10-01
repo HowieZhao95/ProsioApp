@@ -8,13 +8,17 @@
     "tools/recording-media-audit/test_live_decode.py": "45fd2efb7689097ef0ff9d20a31a7f1726adb81d6e95be7bacc42cc732d7b2eb"
   },
   "liveAudit": {
-    "status": "running, not yet accepted",
+    "status": "completed with final report; synthetic acceptance only",
     "sessionId": 40876,
     "sourceWriterSessionId": 75996,
     "sourceWriterPID": 42815,
     "outputPath": "/var/folders/r4/9y_xrg_d1hv5pf36ld4frjv00000gn/T/prosio-recording-perf-fixed-2h-20261001.eafgcb_e/live-full-decode.json",
     "logPath": "/tmp/prosio-recording-live-full-decode-20261001.log",
-    "startedObservedAtUTC": "2026-09-30T23:50:22Z"
+    "startedObservedAtUTC": "2026-09-30T23:50:22Z",
+    "exitCode": 0,
+    "decodedCount": 600,
+    "failedCount": 0,
+    "finalEvidence": "../fixed-two-hour-2026-10-01/proof.json"
   },
   "coverage": [
     "real H264 five-frame fixture full decode",

@@ -1,0 +1,35 @@
+{
+  "checkedAtUTC": "2026-10-01T00:23:08.537779+00:00",
+  "commit": "c9cf3764317104a7b6d1df0ada9f778297341ccf",
+  "entries": [
+    {
+      "path": "Apps/macOS/Prosio/App/AppEnvironment.swift",
+      "committedSHA256": "e0a6ed17feb988ae20d11723ef0ec66b2e39c01e34fb2106e4756d8df4472c12",
+      "integrationSnapshotExists": true,
+      "integrationSnapshotMatchesCommitted": true,
+      "worktreeDiffIsOtherFeatureOnly": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/MenuBar/MenuBarContentView.swift",
+      "committedSHA256": "525542c0eac2eb669fb5c7695518a56dbcb67978e8256ce472624192ebe016a8",
+      "integrationSnapshotExists": true,
+      "integrationSnapshotMatchesCommitted": true,
+      "worktreeDiffIsOtherFeatureOnly": true
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/MenuBar/MenuBarShell.swift",
+      "committedSHA256": "e72920cbb3237ef5b9208e19d7c2d9a148f7ba7d981ffc998d0798d6f7ec7662",
+      "integrationSnapshotExists": true,
+      "integrationSnapshotMatchesCommitted": true,
+      "worktreeDiffIsOtherFeatureOnly": true
+    },
+    {
+      "path": "project.yml",
+      "committedSHA256": "ca9d489f04d55a724a165e8bebcff50df748475cfe14d8dbb1764b34782a1b08",
+      "integrationSnapshotExists": true,
+      "integrationSnapshotMatchesCommitted": true,
+      "worktreeDiffIsOtherFeatureOnly": true
+    }
+  ],
+  "worktreeDiffReview": "All current changes in these four files concern the separate Presentation feature; recording entry/integration has already been committed. Separate edits were preserved."
+}
