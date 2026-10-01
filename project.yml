@@ -29,6 +29,7 @@ targets:
         product: ProsioTranscription
       - package: ProsioKit
         product: ProsioMeeting
+      - sdk: AVKit.framework
     info:
       path: Apps/macOS/Prosio/Resources/Info.plist
       properties:
@@ -59,7 +60,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: app.prosio.mac
         PRODUCT_NAME: Prosio
         MARKETING_VERSION: 0.1.0
-        CURRENT_PROJECT_VERSION: 1
+        CURRENT_PROJECT_VERSION: 2
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_STYLE: Manual
         CODE_SIGN_IDENTITY: "Prosio Local Development" # stable local identity so TCC grants survive rebuilds; see docs/DEV_SIGNING.md
@@ -101,6 +102,7 @@ targets:
     dependencies:
       - package: ProsioKit
         product: ProsioCore
+      - sdk: AVKit.framework
     settings:
       base:
         SWIFT_VERSION: "6.0"

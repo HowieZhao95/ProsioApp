@@ -1,0 +1,11 @@
+{
+  "releaseAppBuildPassed": true,
+  "releaseSelectedSwiftTestingPassed": 25,
+  "selectedSuiteCount": 4,
+  "nativePlayerRegressionActuallyRan": true,
+  "buildLogSHA256": "76a1f44f87aaba75b085c5887911600b52bbc4ada475571b468807219835d458",
+  "testLogSHA256": "ab3b3fbf990ec15a17873db51953931e27ed5df85f61daac999168af3f7b6dde",
+  "buildGuardTestsPassed": 8,
+  "installedUIRetest": "pending menu panel opening; app process confirmed alive",
+  "sourceSnapshot": "HEAD 45bb35f plus explicit AVKit app/test dependencies and CURRENT_PROJECT_VERSION=2; excludes unrelated uncommitted drafts"
+}

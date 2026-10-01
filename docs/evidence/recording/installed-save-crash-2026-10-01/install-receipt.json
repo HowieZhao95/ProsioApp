@@ -1,0 +1,19 @@
+{
+  "installedAtUTC": "2026-10-01T05:24:47.034024+00:00",
+  "installedPath": "/Applications/Prosio.app",
+  "backupPath": "/tmp/prosio-installed-recording-fix-20261001.swilckid/Prosio-build-1-backup.app",
+  "oldExecutableSHA256": "fd925616adca27c13f10c943e76f86111c8892844fcdb5bb60bcc60831b6b4e1",
+  "newExecutableSHA256": "0e2a122e5e33e9cfe7f3e948b2e8a0f8857435b52eb35883a9df5351b0ebc574",
+  "sourceRoot": "/tmp/prosio-installed-recording-fix-20261001.swilckid/source",
+  "build": "2",
+  "applicationWasNotRunningDuringUpdate": true,
+  "designatedRequirementVerifiedSameBeforeInstall": true,
+  "rawMediaSHA256BeforeUpdate": {
+    "media/6BDF9B20-789A-463C-AA7D-8734C01A7E69.m4a": "55bd7bc0f0a64c660abae3de79769116df21a747970a3548a682fbffb71949ef",
+    "media/30A82DF1-12A1-47E9-B6EC-9E373E23628C.m4a": "ab04342a37d90dc6af0c8d4f1ba7c015fec5e733a60b5afe7603a6b60c4ad789",
+    "media/C1008BB7-4111-4120-8791-0990DA1D27DC.mov": "088bf982d85a43fff1969f7051a15169d7435330b33c29e076a8ca6b385c5fe3",
+    "media/37F04804-D32C-4C04-B646-E2CF4FA73139.mov": "aa9aa66a8108473011919a82cce1ef4e568a7bdddf7b8d920bc126cef0d401d7",
+    "media/3149E2DE-9C5E-44A9-925C-29A95123B278.mov": "8659faab68272cede055a9c536f75c9915de48299e7c4b8bb1b14100d8c07f56"
+  },
+  "recordingDirectory": "/Users/guest01/Library/Application Support/Prosio/Recordings/99CF5864-D746-40DB-82BF-0271527A5E4D"
+}

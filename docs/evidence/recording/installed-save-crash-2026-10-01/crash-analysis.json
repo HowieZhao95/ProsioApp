@@ -1,0 +1,159 @@
+{
+  "reportedAtLocal": "2026-10-01 13:07 +08:00",
+  "applicationPath": "/Applications/Prosio.app",
+  "crashReportSHA256": "d51ec22ab1528023919233c229ba25360f908914299ada84508207e58fb0aaa8",
+  "oldBuild": "1",
+  "oldExecutableUUID": "0a3909b1-5457-3f2f-ab65-94998a75d83b",
+  "exception": "EXC_CRASH",
+  "signal": "SIGABRT",
+  "threadQueue": "com.apple.main-thread",
+  "frames": [
+    {
+      "symbol": "__pthread_kill",
+      "image": "libsystem_kernel.dylib"
+    },
+    {
+      "symbol": "pthread_kill",
+      "image": "libsystem_pthread.dylib"
+    },
+    {
+      "symbol": "abort",
+      "image": "libsystem_c.dylib"
+    },
+    {
+      "symbol": "swift::fatalErrorv(unsigned int, char const*, char*)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift::fatalError(unsigned int, char const*, ...)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "getSuperclassMetadata",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "_swift_initClassMetadataImpl(swift::TargetClassMetadata<swift::InProcess, swift::TargetAnyClassMetadataObjCInterop<swift::InProcess>>*, swift::ClassLayoutFlags, unsigned long, swift::TargetTypeLayout<swift::InProcess> const* const*, unsigned long*, bool)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": null,
+      "image": "_AVKit_SwiftUI"
+    },
+    {
+      "symbol": "swift::GenericCacheEntry::tryInitialize(swift::TargetMetadata<swift::InProcess>*, swift::PrivateMetadataState, swift::PrivateMetadataCompletionContext*)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift::MetadataCacheEntryBase<swift::GenericCacheEntry, void const*>::doInitialization(swift::MetadataWaitQueue::Worker&, swift::MetadataRequest)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "std::__1::pair<swift::GenericCacheEntry*, swift::MetadataResponse> swift::LockingConcurrentMap<swift::GenericCacheEntry, swift::LockingConcurrentMapStorage<swift::GenericCacheEntry, (unsigned short)14>>::getOrInsert<swift::MetadataCacheKey, swift::MetadataRequest&, swift::TargetTypeContextDescriptor<swift::InProcess> const*&, void const* const*&>(swift::MetadataCacheKey, swift::MetadataRequest&, swift::TargetTypeContextDescriptor<swift::InProcess> const*&, void const* const*&)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "_swift_getGenericMetadata(swift::MetadataRequest, void const* const*, swift::TargetTypeContextDescriptor<swift::InProcess> const*)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "__swift_instantiateGenericMetadata",
+      "image": "_AVKit_SwiftUI"
+    },
+    {
+      "symbol": "(anonymous namespace)::DecodedMetadataBuilder::createBoundGenericType(swift::TargetContextDescriptor<swift::InProcess> const*, __swift::__runtime::llvm::ArrayRef<swift::MetadataPackOrValue>, swift::MetadataPackOrValue) const",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift::Demangle::__runtime::TypeDecoder<(anonymous namespace)::DecodedMetadataBuilder>::decodeMangledType(swift::Demangle::__runtime::Node*, unsigned int, bool)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledNodeImpl(swift::MetadataRequest, swift::Demangle::__runtime::Demangler&, swift::Demangle::__runtime::Node*, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledNode",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledNameImpl(swift::MetadataRequest, __swift::__runtime::llvm::StringRef, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledName",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getAssociatedTypeWitnessSlowImpl(swift::MetadataRequest, swift::TargetWitnessTable<swift::InProcess>*, swift::TargetMetadata<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getAssociatedTypeWitness",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "(anonymous namespace)::DecodedMetadataBuilder::createDependentMemberType(__swift::__runtime::llvm::StringRef, swift::MetadataPackOrValue, swift::TargetProtocolDescriptorRef<swift::InProcess>) const",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift::Demangle::__runtime::TypeDecoder<(anonymous namespace)::DecodedMetadataBuilder>::decodeMangledType(swift::Demangle::__runtime::Node*, unsigned int, bool)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledNodeImpl(swift::MetadataRequest, swift::Demangle::__runtime::Demangler&, swift::Demangle::__runtime::Node*, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledNode",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledNameImpl(swift::MetadataRequest, __swift::__runtime::llvm::StringRef, void const* const*, std::__1::function<void const* (unsigned int, unsigned int)>, std::__1::function<swift::TargetWitnessTable<swift::InProcess> const* (swift::TargetMetadata<swift::InProcess> const*, unsigned int)>)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getTypeByMangledName",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getAssociatedTypeWitnessSlowImpl(swift::MetadataRequest, swift::TargetWitnessTable<swift::InProcess>*, swift::TargetMetadata<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*, swift::TargetProtocolRequirement<swift::InProcess> const*)",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "swift_getAssociatedTypeWitness",
+      "image": "libswiftCore.dylib"
+    },
+    {
+      "symbol": "ViewResponderFilter.init(inputs:view:)",
+      "image": "SwiftUI"
+    },
+    {
+      "symbol": "PlatformViewRepresentableFeature.modifyViewOutputs<A>(outputs:proxy:)",
+      "image": "SwiftUI"
+    },
+    {
+      "symbol": "static CoreViewRepresentableFeatureBuffer._VTable.modifyViewOutputs<A>(elt:outputs:proxy:)",
+      "image": "SwiftUICore"
+    },
+    {
+      "symbol": "CoreViewRepresentableFeatureBuffer.Element.modifyViewOutputs<A>(outputs:proxy:)",
+      "image": "SwiftUICore"
+    },
+    {
+      "symbol": "static CoreViewRepresentable._makeView(view:inputs:)",
+      "image": "SwiftUICore"
+    },
+    {
+      "symbol": "static View.makeDebuggableView(view:inputs:)",
+      "image": "SwiftUICore"
+    }
+  ],
+  "cause": "Saved-material SwiftUI VideoPlayer superclass metadata initialization aborts in _AVKit_SwiftUI; old installed binary has no direct AVKit dependency. Source already migrated to native AVPlayerView, but installed user application had not been updated.",
+  "rawMediaPhase": "ready with endedAt; all five originals pass metadata audit and complete decode",
+  "hardwareSpecificCrashProven": false,
+  "repair": "Deploy already-implemented native AVPlayerView with explicit AVKit dependency; retain existing signing identity; bump installed build to 2; validate actual installed artifact.",
+  "exactRuntimeMessage": "failed to demangle superclass of VideoPlayerView from mangled name 'So12AVPlayerViewC': unknown error",
+  "runtimeMessageLocalTime": "2026-10-01 13:07:01.329 +08:00",
+  "runtimeMessageLogSHA256": "d474678daad32909f0efaf96bb3d07a2a702a4690740b7398bacd1898f29c60f"
+}

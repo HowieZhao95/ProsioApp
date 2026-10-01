@@ -1,0 +1,48 @@
+{
+  "metadataCheckedCount": 5,
+  "metadataFailedCount": 0,
+  "decodeCheckedCount": 5,
+  "decodePassed": true,
+  "originalPhaseReady": true,
+  "sourceRoles": [
+    "screen",
+    "camera-1",
+    "camera-2",
+    "microphone",
+    "systemAudio"
+  ],
+  "originalCaptureWarnings": "Old build reported writer overload and skipped video frames; independent from the preview crash. Does not certify sync or performance.",
+  "fullDecodeRows": [
+    {
+      "sourceIndex": 0,
+      "exitCode": 0,
+      "errors": false,
+      "seconds": 0.192
+    },
+    {
+      "sourceIndex": 1,
+      "exitCode": 0,
+      "errors": false,
+      "seconds": 0.034
+    },
+    {
+      "sourceIndex": 2,
+      "exitCode": 0,
+      "errors": false,
+      "seconds": 1.013
+    },
+    {
+      "sourceIndex": 3,
+      "exitCode": 0,
+      "errors": false,
+      "seconds": 0.517
+    },
+    {
+      "sourceIndex": 4,
+      "exitCode": 0,
+      "errors": false,
+      "seconds": 1.542
+    }
+  ],
+  "originalSHA256UnchangedAfterInstalledAppLaunch": true
+}
