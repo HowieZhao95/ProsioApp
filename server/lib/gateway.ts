@@ -71,6 +71,7 @@ export interface BatchTranscribeParams {
   vocabulary: string[];
   /** BCP-47 language hints, e.g. ["zh-CN", "en-US"]. Omitted from providerOptions when empty. */
   languageHints: string[];
+  signal?: AbortSignal;
 }
 
 export interface BatchTranscribeResult {
@@ -91,6 +92,7 @@ export async function transcribeBatch(params: BatchTranscribeParams): Promise<Ba
   const result = await transcribe({
     model: gateway.transcriptionModel(BATCH_TRANSCRIBE_MODEL),
     audio: params.audio,
+    abortSignal: AbortSignal.any([...(params.signal ? [params.signal] : []), AbortSignal.timeout(25_000)]),
     providerOptions: {
       google: {
         mode: params.mode === "smart" ? "SMART" : "VERBATIM",

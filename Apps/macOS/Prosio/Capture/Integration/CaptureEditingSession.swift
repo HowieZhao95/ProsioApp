@@ -37,6 +37,11 @@ final class CaptureEditingSession {
     private(set) var outputState = CaptureOutputState()
     private(set) var activeSource: Int?
     private(set) var textEditing = false
+    private(set) var isTranslating = false
+    var translationTarget = UserDefaults.standard.string(forKey: "prosio.capture.translationTarget") ?? "zh-Hans"
+    @ObservationIgnored var translationPipeline: CaptureTranslationPipeline?
+    @ObservationIgnored private var translationTask: Task<Void, Never>?
+    @ObservationIgnored private var translationGeneration = UUID()
     @ObservationIgnored private var history: EditorHistory?
     @ObservationIgnored private var savedHistoryAssets: [CaptureAsset] = []
     @ObservationIgnored private var historyDocumentLoader: ((CaptureAsset) throws -> EditableCaptureDocument)?
@@ -90,6 +95,7 @@ final class CaptureEditingSession {
         guard !finished,!isOutputting,!textEditing, sources.indices.contains(sourceIndex) else { return }
         let next = historyPosition + (older ? 1 : -1)
         guard (0...historyCount).contains(next) else { return }
+        cancelTranslation()
         if next == 0 {
             historyPosition=0
             history=liveHistory
@@ -165,6 +171,7 @@ final class CaptureEditingSession {
     }
     func beginStyleAdjustment() {
         guard !isOutputting, !finished, !isAdjustingStyle else { return }
+        cancelTranslation()
         isAdjustingStyle = true; history?.beginGroupedEdit()
     }
     func endStyleAdjustment() {
@@ -328,6 +335,10 @@ final class CaptureEditingSession {
                     window.isOpaque=true;window.backgroundColor = .black;window.hasShadow=false
                     window.acceptsMouseMovedEvents=true
                     window.sharingType = .none;window.isReleasedWhenClosed=false
+                    #if DEBUG
+                    // Explicit live QA permits the computer-use tool to inspect the frozen canvas.
+                    if CommandLine.arguments.contains("--capture-test") { window.sharingType = .readOnly }
+                    #endif
                     let canvas=CaptureEditingCanvas(frame:CGRect(origin:.zero,size:window.contentLayoutRect.size),sourceIndex:index,session:self,isHistory:historyWindow || source.kind == .window)
                     canvas.autoresizingMask=[.width,.height];window.contentView=canvas
                     (window as? CaptureEditorWindow)?.onClose={ [weak self] in self?.cancel() }
@@ -348,6 +359,7 @@ final class CaptureEditingSession {
     func selectPixelsSource(_ index: Int, pixelRect: CGRect) {
         guard !finished,!isOutputting,sources.indices.contains(index) else { return }
         guard !isBrowsingHistory || historyAnchorSource == index else { return }
+        cancelTranslation()
         if activeSource != index { activeSource=index;history=nil }
         let pixels=pixelRect.standardized.integral.intersection((historySource ?? sources[index]).pixelBounds)
         guard pixels.width>=3,pixels.height>=3 else { return }
@@ -365,18 +377,20 @@ final class CaptureEditingSession {
         guard let index=activeSource else { return }
         let crop=rect.standardized.integral.intersection((historySource ?? sources[index]).pixelBounds)
         guard crop.width>=3,crop.height>=3 else { return }
+        cancelTranslation()
         history?.apply(SetCropCommand(rect:crop)); changed(render:true,autosave:true)
     }
-    func apply(_ command: any DocumentCommand) { guard !isOutputting,!finished else { return };history?.apply(command);changed(render:true,autosave:true) }
+    func apply(_ command: any DocumentCommand) { guard !isOutputting,!finished else { return };cancelTranslation();history?.apply(command);changed(render:true,autosave:true) }
     func selectAnnotation(_ id: UUID?) { guard !isOutputting,!finished else { return };endStyleAdjustment();history?.setSelection(id.map { [$0] } ?? []);changed() }
-    func undo() { guard !isOutputting,!finished else { return };endStyleAdjustment();commitText();history?.undo();changed(render:true,autosave:true) }
-    func redo() { guard !isOutputting,!finished else { return };endStyleAdjustment();commitText();history?.redo();changed(render:true,autosave:true) }
+    func undo() { guard !isOutputting,!finished else { return };cancelTranslation();endStyleAdjustment();commitText();history?.undo();changed(render:true,autosave:true) }
+    func redo() { guard !isOutputting,!finished else { return };cancelTranslation();endStyleAdjustment();commitText();history?.redo();changed(render:true,autosave:true) }
     func deleteSelection() { guard let snapshot else { return };apply(DeleteAnnotationsCommand(annotationIDs:snapshot.selectedAnnotationIDs)) }
-    func registerTextEditor(commit: @escaping ()->Void) { textEditing=true;textCommit=commit;changed() }
+    func registerTextEditor(commit: @escaping ()->Void) { cancelTranslation();textEditing=true;textCommit=commit;changed() }
     func commitText() { let commit=textCommit;textCommit=nil;textEditing=false;commit?();changed() }
     func abortText() { textCommit=nil;textEditing=false;canvases.forEach { $0.removeTextEditor() };changed() }
     func escape() {
         guard !isOutputting,!finished else { return }
+        if isTranslating { cancelTranslation();changed();return }
         endStyleAdjustment()
         if textEditing { abortText();return }
         if canvases.contains(where:{ $0.cancelGesture() }) { return }
@@ -390,6 +404,7 @@ final class CaptureEditingSession {
         return EditableCaptureDocument(baseImage:s.image,snapshot:snapshot,kind:s.kind,sourceName:s.name,sourceRect:s.sourceRect,capturedAt:s.capturedAt)
     }
     func requestOutput(_ action: CaptureOutputAction) {
+        guard !isTranslating else { return }
         endStyleAdjustment();commitText()
         guard let document=try? document(),outputState.begin(),!finished else { return }
         message=nil; changed()
@@ -408,11 +423,46 @@ final class CaptureEditingSession {
     func forceCancel() { outputState.cancelSession();finish() }
     private func finish() {
         guard !finished else { return };finished=true
+        cancelTranslation()
         detectionTasks.forEach { $0.cancel() };detectionTasks.removeAll();renderTask?.cancel();draftTask?.cancel();outputTask?.cancel()
         if let lastDraft { discardDraft(lastDraft) };lastDraft=nil
         textCommit=nil;canvases.forEach { $0.removeTextEditor() }
         windows.forEach { $0.orderOut(nil);$0.contentView=nil;$0.close() };windows.removeAll();canvases.removeAll();NSCursor.arrow.set()
         let continuation=continuation;self.continuation=nil;didFinish();continuation?.resume()
+    }
+    func translateCapture(to target: String? = nil) {
+        guard !finished, !isOutputting, !isTranslating else { return }
+        endStyleAdjustment(); commitText()
+        guard let document = try? document(), let index = activeSource else { return }
+        guard let pipeline = translationPipeline else { message = CaptureTranslationError.unavailable.localizedDescription; changed(); return }
+        if let target { translationTarget = target }
+        UserDefaults.standard.set(translationTarget, forKey: "prosio.capture.translationTarget")
+        let language = translationTarget
+        let id = (historySource ?? sources[index]).id
+        let generation = UUID(); translationGeneration = generation
+        isTranslating = true; message = "正在识别并翻译… 再次点击翻译或按 Esc 可取消"; changed()
+        translationTask = Task { [weak self] in
+            do {
+                let overlays = try await pipeline.overlays(document: document, sourceID: id, target: language)
+                try Task.checkCancellation()
+                guard let self, !finished, translationGeneration == generation else { return }
+                isTranslating = false; translationTask = nil
+                history?.apply(SetCaptureTranslationCommand(annotations: overlays, crop: document.snapshot.cropRect))
+                message = overlays.isEmpty ? "文字已是目标语言，无需覆盖。" : "翻译已覆盖原图 · ⌘Z 可还原"
+                changed(render: true, autosave: true)
+            } catch {
+                guard let self, !finished, translationGeneration == generation else { return }
+                isTranslating = false; translationTask = nil
+                message = error is CancellationError ? nil : "截图翻译失败：\(error.localizedDescription)"
+                changed()
+            }
+        }
+    }
+    func cancelTranslation() {
+        guard isTranslating else { return }
+        translationGeneration = UUID(); translationTask?.cancel(); translationTask = nil
+        isTranslating = false; message = nil
+        changed()
     }
     func renderedImage() -> CGImage? { renderedSourceIndex == activeSource ? renderedCrop : nil }
     func renderedImageMatches(_ snapshot: EditorSnapshot) -> Bool {

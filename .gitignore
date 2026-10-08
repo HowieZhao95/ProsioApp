@@ -8,8 +8,8 @@ xcuserdata/
 node_modules/
 .next/
 .vercel/
-.env*.local
-.env
+.env*
+!.env.example
 eval/audio/*.wav
 eval/results/
 .build-*/

@@ -1,3 +1,6 @@
+import { currentBillingPeriod, modelRequestLimit } from "@/lib/entitlements";
+import { getStore } from "@/lib/store";
+import { readJson } from "@/lib/request-body";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { ApiError, withErrorHandling } from "@/lib/errors";
@@ -24,12 +27,13 @@ export const POST = withErrorHandling(async (req: Request) => {
   const user = await requireUser(req);
   timer.mark("auth");
 
-  const json = await req.json().catch(() => null);
+  const json = await readJson(req);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     throw new ApiError("bad_request", parsed.error.issues[0]?.message ?? "Invalid request body");
   }
   timer.mark("parse");
+  await getStore().consumeModelRequest(user.id, currentBillingPeriod().periodStart, modelRequestLimit());
 
   // classifyIntent never throws by design, but classifier failures must
   // never 5xx no matter what — defense in depth around it too.

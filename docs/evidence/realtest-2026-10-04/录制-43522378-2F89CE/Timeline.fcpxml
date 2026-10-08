@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.10">
+    <resources>
+        <format colorSpace="1-1-1" frameDuration="11/600s" height="1164" id="f0" width="1920"></format>
+        <format colorSpace="1-1-1" frameDuration="11/600s" height="1164" id="f1" width="1920"></format>
+        <format colorSpace="1-1-1" frameDuration="1/75s" height="1164" id="f2" width="1920"></format>
+        <asset duration="60/1s" format="f0" hasAudio="0" hasVideo="1" id="r0" name="Window 27174" start="0s">
+            <media-rep kind="original-media" src="file:///Users/guest01/projectCodeMac2/ProsioApp/docs/evidence/realtest-2026-10-04/%E5%BD%95%E5%88%B6-43522378-2F89CE/Media/D68D5A71-E897-46EC-BC74-D87227B6944D.mov"></media-rep>
+        </asset>
+        <asset duration="7847/200s" format="f1" hasAudio="0" hasVideo="1" id="r1" name="Window 27174" start="0s">
+            <media-rep kind="original-media" src="file:///Users/guest01/projectCodeMac2/ProsioApp/docs/evidence/realtest-2026-10-04/%E5%BD%95%E5%88%B6-43522378-2F89CE/Media/6483E8CD-55CB-4022-B2BE-056AD95BBF62.mov"></media-rep>
+        </asset>
+        <asset duration="20177/600s" format="f2" hasAudio="0" hasVideo="1" id="r2" name="Window 27174" start="0s">
+            <media-rep kind="original-media" src="file:///Users/guest01/projectCodeMac2/ProsioApp/docs/evidence/realtest-2026-10-04/%E5%BD%95%E5%88%B6-43522378-2F89CE/Media/415008C8-E111-4C69-8575-5DE983229AC3.mov"></media-rep>
+        </asset>
+        <media id="multicam" name="2026年10月4日 15:26">
+            <multicam format="f0" tcFormat="NDF" tcStart="0s">
+                <mc-angle angleID="angle0" name="Window 27174">
+                    <gap duration="75163/200000s" name="来源间隙" offset="0s" start="0s"></gap>
+                    <asset-clip duration="60/1s" name="Window 27174" offset="75163/200000s" ref="r0" srcEnable="video" start="0s"></asset-clip>
+                    <gap duration="5663/500000s" name="来源间隙" offset="12075163/200000s" start="0s"></gap>
+                    <asset-clip duration="7847/200s" name="Window 27174" offset="60387141/1000000s" ref="r1" srcEnable="video" start="0s"></asset-clip>
+                    <gap duration="31363/1000000s" name="来源间隙" offset="99622141/1000000s" start="0s"></gap>
+                    <asset-clip duration="33628333/1000000s" name="Window 27174" offset="1557086/15625s" ref="r2" srcEnable="video" start="0s"></asset-clip>
+                </mc-angle>
+            </multicam>
+        </media>
+    </resources>
+    <library>
+        <event name="2026年10月4日 15:26">
+            <project name="2026年10月4日 15:26">
+                <sequence audioLayout="stereo" audioRate="48k" duration="133281837/1000000s" format="f0" tcFormat="NDF" tcStart="0s">
+                    <spine>
+                        <mc-clip duration="133281837/1000000s" name="2026年10月4日 15:26" offset="0s" ref="multicam" start="0s">
+                            <mc-source angleID="angle0" srcEnable="video"></mc-source>
+                        </mc-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>

@@ -34,10 +34,13 @@ final class AppEnvironment {
     let capture: CaptureCoordinator
     let meeting: MeetingCoordinator
     let recording: RecordingCoordinator
+    let presentation: PresentationCoordinator
+    let notes: DailyNotesCoordinator
     let permissions: PermissionsManager
     let focus: FocusContextProvider
     let inserter: TextInserter
     let controller: DictationController
+    let onboarding: OnboardingProgress
     @ObservationIgnored private(set) var hotkey: HotkeyMonitor?
     @ObservationIgnored private(set) var hud: HUDController?
     @ObservationIgnored private let audioCapture: AudioCapture
@@ -49,14 +52,19 @@ final class AppEnvironment {
     /// `isSignedIn` is (init, `onSignInStateChange`, `signIn`/`signOut`) — `nil` when signed out.
     private(set) var signedInEmail: String?
 
+    #if DEBUG
+    @ObservationIgnored private var presentationTestWindow: NSWindow?
+    #endif
     @ObservationIgnored private var onboardingWindow: NSWindow?
     @ObservationIgnored private var onboardingWindowDelegate: OnboardingWindowDelegate?
+    @ObservationIgnored var isTerminating = false
 
-    init() {
-        let support = URL.applicationSupportDirectory.appending(path: "Prosio", directoryHint: .isDirectory)
+    init(supportDirectory: URL? = nil, defaults: UserDefaults = .standard) {
+        let support = supportDirectory ?? URL.applicationSupportDirectory.appending(path: "Prosio", directoryHint: .isDirectory)
         try? FileManager.default.createDirectory(at: support, withIntermediateDirectories: true)
 
-        settings = AppSettings()
+        settings = AppSettings(defaults: defaults)
+        onboarding = OnboardingProgress(defaults: defaults)
         dictionary = DictionaryStore(fileURL: support.appending(path: "dictionary.json"))
         history = HistoryStore(fileURL: support.appending(path: "history.json"))
         // TODO(P1): if `settings.backendURL` changes at runtime, `backend` (and anything holding
@@ -65,12 +73,20 @@ final class AppEnvironment {
         backend = BackendClient(baseURL: settings.backendURL)
         isSignedIn = backend.isSignedIn
         signedInEmail = backend.signedInEmail
+        presentation = PresentationCoordinator(defaults: defaults)
+        notes = DailyNotesCoordinator(root: support.appending(path: "Notes", directoryHint: .isDirectory), defaults: defaults)
         permissions = PermissionsManager()
         capture = CaptureCoordinator(permissions: permissions, rootURL: support.appending(path: "Captures", directoryHint: .isDirectory))
+        let captureBackend = backend
+        capture.translateTexts = { texts, language in
+            try await captureBackend.translateCaptureTexts(texts, targetLanguage: language)
+        }
         meeting = MeetingCoordinator(root: support.appending(path: "Meetings", directoryHint: .isDirectory), permissions: permissions, backend: backend, settings: settings)
         recording = RecordingCoordinator(root: support.appending(path: "Recordings", directoryHint: .isDirectory), permissions: permissions)
         focus = FocusContextProvider()
         inserter = TextInserter(settings: settings)
+        let practiceFocus = focus
+        inserter.practiceTarget = { [weak practiceFocus] in practiceFocus?.practiceTarget }
 
         // Live preview: on-device SpeechAnalyzer. Final text: one /api/transcribe request with the
         // silence-trimmed Ogg/Opus audio + the local transcript; the server decides (Jev) whether
@@ -92,19 +108,52 @@ final class AppEnvironment {
             composer: backend
         )
 
-        let backendRef = backend
-        controller.onSessionCompleted = { [weak backendRef] item in
-            // Only cloud (gateway.*) sessions count against the user's quota.
-            guard item.engineID.hasPrefix("gateway") else { return }
-            Task {
-                try? await backendRef?.reportUsage(UsageReport(
-                    sessionID: item.id,
-                    engineID: item.engineID,
-                    audioSeconds: item.durationSeconds,
-                    startedAt: item.createdAt
-                ))
-            }
+        let feedback = DictationSoundFeedback()
+        controller.onRecordingStarted = {
+            AgentMonitorCoordinator.shared.voice.cancel()
+            feedback.playStart()
         }
+        controller.onRecordingStopped = { feedback.playStop() }
+
+        AgentMonitorCoordinator.shared.voice.factory = { [weak self] target in
+            guard let self else { throw CancellationError() }
+            switch self.controller.phase {
+            case .idle, .finished, .failed: break
+            default: throw ProsioError.audioUnavailable("Voice input is already active")
+            }
+            guard !self.recording.blocksOtherCapture, self.meeting.activeID == nil,
+                  !self.meeting.starting, !self.meeting.finishingRecording else {
+                throw ProsioError.audioUnavailable("Another recording is active")
+            }
+            await self.permissions.request(.microphone)
+            guard !Task.isCancelled, self.permissions.statuses[.microphone] == .granted else { throw CancellationError() }
+            switch self.controller.phase {
+            case .idle, .finished, .failed: break
+            default: throw ProsioError.audioUnavailable("Voice input is already active")
+            }
+            guard !self.recording.blocksOtherCapture, self.meeting.activeID == nil,
+                  !self.meeting.starting, !self.meeting.finishingRecording else {
+                throw ProsioError.audioUnavailable("Another recording is active")
+            }
+            let audio = AudioCapture()
+            let input = try audio.start()
+            let engine = SpeechAnalyzerEngine(locale: Self.previewLocale(for: self.settings))
+            let events = engine.transcribe(audio: input, options: TranscriptionOptions(vocabulary: target.vocabulary, languageHints: self.settings.languageHints))
+            let pair = AsyncThrowingStream<String, Error>.makeStream()
+            let transcription = Task {
+                do {
+                    for try await event in events {
+                        switch event { case .partial(let text), .final(let text): pair.continuation.yield(text) }
+                    }
+                    pair.continuation.finish()
+                } catch { pair.continuation.finish(throwing: error) }
+            }
+            pair.continuation.onTermination = { @Sendable _ in audio.stop(); transcription.cancel() }
+            return AgentVoiceStream(text: pair.stream, stop: { audio.stop() }, cancel: { audio.stop(); transcription.cancel() })
+        }
+
+        // Cloud usage is recorded by the server, never by client reports.
+
     }
 
     /// Fallback locale for the on-device preview; the engine re-resolves from `languageHints` per session.
@@ -141,11 +190,13 @@ final class AppEnvironment {
         }
         recording.canBegin = { [weak self] in
             guard let self, !self.capture.isBusy, self.meeting.activeID == nil,
-                  !self.meeting.starting, !self.meeting.finishingRecording else { return false }
+                  !self.meeting.starting, !self.meeting.finishingRecording,
+                  !AgentMonitorCoordinator.shared.voice.recording, !AgentMonitorCoordinator.shared.voice.finishing else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         meeting.canBegin = { [weak self] in
-            guard let self, !self.capture.isBusy, !self.recording.blocksOtherCapture else { return false }
+            guard let self, !self.capture.isBusy, !self.recording.blocksOtherCapture,
+                  !AgentMonitorCoordinator.shared.voice.recording, !AgentMonitorCoordinator.shared.voice.finishing else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         hotkey = HotkeyMonitor(settings: settings, controller: controller)
@@ -153,6 +204,7 @@ final class AppEnvironment {
         meeting.onRecordingActivity = { [weak self] active in self?.hotkey?.isMeetingSuspended = active }
         capture.onSelectionActivity = { [weak self] active in
             self?.hotkey?.isCaptureSuspended = active
+            self?.presentation.setEnvironmentSuspended(active)
         }
         let captureHotkey = CaptureHotkey { [weak self] in self?.capture.start(.region) }
         capture.hotkey = captureHotkey
@@ -171,8 +223,42 @@ final class AppEnvironment {
         hotkey?.start()
         captureHotkey.start()
 
+        presentation.isControlShortcut = { [weak self] code, flags in
+            guard let shortcut = self?.capture.hotkey?.shortcut,
+                  flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]) == [.maskControl, .maskShift] else { return false }
+            return (shortcut == .controlShift2 && code == 19) || (shortcut == .controlShift3 && code == 20)
+        }
+        presentation.launch()
+        notes.launch()
+        #if DEBUG
+        // Opt-in live QA enters the real ScreenCaptureKit/editor path without a menu-bar click.
+        if CommandLine.arguments.contains("--capture-test") {
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .milliseconds(600))
+                self?.capture.start(.region)
+            }
+        }
+        // Opt-in QA window reuses the exact production views, allowing native UI automation
+        // without relying on a transient menu-bar popover. Normal launches never create it.
+        if ProcessInfo.processInfo.environment["PROSIO_PRESENTATION_TEST_PANEL"] == "1" {
+            let window = NSWindow(contentRect: NSRect(x: 80, y: 120, width: 520, height: 640),
+                                  styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
+            window.title = "Prosio 演示验收"
+            window.isReleasedWhenClosed = false
+            window.contentView = NSHostingView(rootView: TabView {
+                ScrollView { PresentationMenuView(coordinator: presentation, permissions: permissions).padding(.top, 16) }
+                    .tabItem { Text("演示操作") }
+                PresentationSettingsView(coordinator: presentation).tabItem { Text("演示设置") }
+            })
+            presentationTestWindow = window
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate()
+        }
+        #endif
         permissions.refresh()
-        // Each feature requests permissions when the user starts it; voice exposes onboarding.
+        // Permission requests are user-initiated per feature. Presentation-only users need
+        // neither microphone nor screen-recording access; voice exposes its onboarding button.
+        if onboarding.shouldPresentOnLaunch { showOnboarding(resume: true) }
     }
 
     var optionCaptureAvailability: HotkeyRouting.OptionCaptureAvailability {
@@ -206,7 +292,7 @@ final class AppEnvironment {
     }
 
     /// Shows the onboarding window (also used by "Permissions…" menu item).
-    func showOnboarding() {
+    func showOnboarding(resume: Bool = false) {
         permissions.refresh()
 
         if let onboardingWindow {
@@ -214,20 +300,29 @@ final class AppEnvironment {
             onboardingWindow.makeKeyAndOrderFront(nil)
             return
         }
-
+        if !resume { onboarding.reopen() }
+        var size = OnboardingStyle.windowSize
+        #if DEBUG
+        if Bundle.main.object(forInfoDictionaryKey: "ProsioOnboardingValidation") as? Bool == true {
+            size = CGSize(width: 760, height: 610)
+        }
+        #endif
         let hosting = NSHostingController(
             rootView: OnboardingView(environment: self, onFinish: { [weak self] in
                 self?.onboardingWindow?.close()
-            })
+            }, canvasSize: size)
         )
         let window = NSWindow(contentViewController: hosting)
-        window.title = "Welcome to Prosio"
+        window.title = "Prosio · 开始使用"
         window.styleMask = [.titled, .closable, .miniaturizable]
         window.isReleasedWhenClosed = false
+        window.setContentSize(size)
         window.center()
 
         let delegate = OnboardingWindowDelegate { [weak self] in
-            self?.onboardingWindow = nil
+            guard let self else { return }
+            self.onboarding.handleWindowClose(isTerminating: self.isTerminating)
+            self.onboardingWindow = nil
         }
         window.delegate = delegate
         onboardingWindowDelegate = delegate
@@ -302,6 +397,8 @@ final class AppEnvironment {
     #endif
 
     func shutdown() {
+        presentation.shutdown()
+        notes.shutdown()
         capture.shutdown()
         hotkey?.stop()
         controller.cancel()

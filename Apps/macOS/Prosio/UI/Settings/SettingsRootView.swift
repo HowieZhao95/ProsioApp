@@ -1,7 +1,7 @@
 import SwiftUI
 
 private enum SettingsTab: Hashable {
-    case general, dictionary, history, account
+    case general, dictionary, history, account, presentation, notes
 }
 
 /// Settings window: General, Dictionary, History, Account. Owned by mac-ui agent. INIT SIGNATURE FROZEN.
@@ -20,6 +20,14 @@ struct SettingsRootView: View {
             GeneralSettingsView(environment: environment)
                 .tag(SettingsTab.general)
                 .tabItem { Label("General", systemImage: "gearshape") }
+
+            NotesSettingsView(notes: environment.notes)
+                .tag(SettingsTab.notes)
+                .tabItem { Label("便签", systemImage: "note.text") }
+
+            PresentationSettingsView(coordinator: environment.presentation)
+                .tag(SettingsTab.presentation)
+                .tabItem { Label("演示", systemImage: "cursorarrow.rays") }
 
             DictionarySettingsView(dictionary: environment.dictionary)
                 .tag(SettingsTab.dictionary)
@@ -40,14 +48,19 @@ struct SettingsRootView: View {
         .onReceive(NotificationCenter.default.publisher(for: .prosioOpenSettingsHistoryTab)) { _ in
             selectedTab = .history
         }
+        .onReceive(NotificationCenter.default.publisher(for: .prosioOpenSettingsNotesTab)) { _ in
+            selectedTab = .notes
+        }
     }
 
     private func title(for tab: SettingsTab) -> LocalizedStringKey {
         switch tab {
+        case .notes: "便签"
         case .general: "General"
         case .dictionary: "Dictionary"
         case .history: "History"
         case .account: "Account"
+        case .presentation: "演示"
         }
     }
 }

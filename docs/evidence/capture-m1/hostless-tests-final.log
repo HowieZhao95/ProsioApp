@@ -1,0 +1,237 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project Prosio.xcodeproj -scheme Prosio -destination platform=macOS -derivedDataPath /tmp/prosio-capture-test-dd-20260927 -resultBundlePath /tmp/prosio-capture-tests-accepted-20260927.xcresult CODE_SIGNING_ALLOWED=NO
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  ProsioKit: /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+
+Writing result bundle at path:
+	/tmp/prosio-capture-tests-accepted-20260927.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00008103-000655A10E8A001E, name:My Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (8 targets)
+    Target 'ProsioTests' in project 'Prosio'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'Prosio' in project 'Prosio'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioTranscription' in project 'ProsioKit'
+    Target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioTranscription' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioAudio' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /tmp/prosio-capture-test-dd-20260927/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/prosio-capture-test-dd-20260927/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+SwiftDriver ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-capture-test-dd-20260927/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-capture-test-dd-20260927/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/include -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ProsioTests (in target 'ProsioTests' from project 'Prosio')
+
+EmitSwiftModule normal arm64 (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ CaptureStoreTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/CaptureStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ProsioTests (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation\ Requirements ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-capture-test-dd-20260927/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-capture-test-dd-20260927/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/include -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftmodule /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling CaptureStoreTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/prosio-capture-test-dd-20260927/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/PackageFrameworks -F /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/prosio-capture-test-dd-20260927/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -sdk-module-cache-path /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/prosio-capture-test-dd-20260927/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/include -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests normal (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/PackageFrameworks -F/tmp/prosio-capture-test-dd-20260927/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.LinkFileList -Xlinker -rpath -Xlinker /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule @/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -o /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests -Xlinker -add_ast_path -Xlinker /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule @/tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-linker-args.resp
+
+ExtractAppIntentsMetadata (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ProsioTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --bundle-identifier app.prosio.ProsioTests --output /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.0 --binary-file /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --dependency-file /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat --stringsdata-file /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList --metadata-file-list /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyMetadataFileList --static-metadata-file-list /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-27 23:01:38.502 appintentsmetadataprocessor[84801:5019096] Starting appintentsmetadataprocessor export
+2026-09-27 23:01:38.506 appintentsmetadataprocessor[84801:5019096] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --scan-folder /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --scan-folder /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/PlugIns --scan-folder /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/Library/SystemExtensions --scan-folder /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/prosio-capture-test-dd-20260927/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/prosio-capture-test-dd-20260927/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+Test Suite 'All tests' started at 2026-09-27 23:01:39.819.
+Test Suite 'All tests' passed at 2026-09-27 23:01:39.821.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "AXCoordinateConverter" started.
+◇ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" started.
+✔ Test "Flips an AX top-left-origin rect into AppKit bottom-left-origin space" passed after 0.001 seconds.
+◇ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" started.
+✔ Test "A rect flush with the top edge in AX space lands near the top in AppKit space" passed after 0.001 seconds.
+◇ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" started.
+✔ Test "A rect flush with the bottom edge in AX space maps to y = 0 in AppKit space" passed after 0.001 seconds.
+◇ Test "Round-tripping the flip twice with the same height returns the original rect" started.
+✔ Test "Round-tripping the flip twice with the same height returns the original rect" passed after 0.001 seconds.
+✔ Suite "AXCoordinateConverter" passed after 0.028 seconds.
+◇ Suite "Capture geometry" started.
+◇ Test "AppKit points map through each screen's distinct capture and overlay frames" started.
+✔ Test "AppKit points map through each screen's distinct capture and overlay frames" passed after 0.001 seconds.
+◇ Test "Retina preview crops use top-left pixels and invert only AppKit source y" started.
+✔ Test "Retina preview crops use top-left pixels and invert only AppKit source y" passed after 0.001 seconds.
+◇ Test "Fractional scaling expands outwards to preserve selected edge pixels" started.
+✔ Test "Fractional scaling expands outwards to preserve selected edge pixels" passed after 0.001 seconds.
+◇ Test "Reverse drags standardize before scaling" started.
+✔ Test "Reverse drags standardize before scaling" passed after 0.001 seconds.
+◇ Test "Local rect conversion preserves negative display origin and normalizes drag" started.
+✔ Test "Local rect conversion preserves negative display origin and normalizes drag" passed after 0.001 seconds.
+◇ Test "Invalid display dimensions and scale have finite safe defaults" started.
+✔ Test "Invalid display dimensions and scale have finite safe defaults" passed after 0.001 seconds.
+◇ Test "Intersecting display resolution chooses max scale and outside region uses fallback" started.
+✔ Test "Intersecting display resolution chooses max scale and outside region uses fallback" passed after 0.001 seconds.
+✔ Suite "Capture geometry" passed after 0.034 seconds.
+◇ Suite "Capture request planning" started.
+◇ Test "Single-display region uses display-local points and scaled output pixels" started.
+✔ Test "Single-display region uses display-local points and scaled output pixels" passed after 0.001 seconds.
+◇ Test "Regions outside or across display edges are rejected without silently clipping" started.
+✔ Test "Regions outside or across display edges are rejected without silently clipping" passed after 0.001 seconds.
+◇ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" started.
+✔ Test "Current display uses AppKit overlay coordinates rather than Quartz coordinates" passed after 0.001 seconds.
+◇ Test "Disconnected display aborts before submitting screenshot request" started.
+✔ Test "Disconnected display aborts before submitting screenshot request" passed after 0.001 seconds.
+◇ Test "Window targets do not switch to an unrelated reused window ID" started.
+✔ Test "Window targets do not switch to an unrelated reused window ID" passed after 0.001 seconds.
+✔ Suite "Capture request planning" passed after 0.010 seconds.
+◇ Suite "Capture and voice hotkey ownership" started.
+◇ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" started.
+✔ Test "Voice Escape rejects capture IDs and leaves them to the capture handler" passed after 0.001 seconds.
+◇ Test "Neither handler claims an unknown ID or foreign signature" started.
+✔ Test "Neither handler claims an unknown ID or foreign signature" passed after 0.001 seconds.
+◇ Test "A queued voice effect must recheck capture suspension before applying" started.
+✔ Test "A queued voice effect must recheck capture suspension before applying" passed after 0.001 seconds.
+✔ Suite "Capture and voice hotkey ownership" passed after 0.006 seconds.
+◇ Suite "Capture asset persistence" started.
+◇ Test "Fresh store restores stable identity and actual PNG dimensions and color" started.
+✔ Test "Fresh store restores stable identity and actual PNG dimensions and color" passed after 0.033 seconds.
+◇ Test "Reopening sorts by capture time and deleting one leaves the other intact" started.
+✔ Test "Reopening sorts by capture time and deleting one leaves the other intact" passed after 0.004 seconds.
+◇ Test "A file at storage root makes save fail without a successful-looking asset" started.
+✔ Test "A file at storage root makes save fail without a successful-looking asset" passed after 0.010 seconds.
+◇ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" started.
+✔ Test "Missing PNG and incompatible manifests are skipped with recoverable warnings" passed after 0.004 seconds.
+◇ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" started.
+✔ Test "Interrupted pending directory never appears as committed asset or gets destroyed on reopen" passed after 0.002 seconds.
+◇ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" started.
+✔ Test "PNG encoding succeeds but invalid manifest data aborts the entire directory commit" passed after 0.002 seconds.
+◇ Test "A cancelled caller cannot publish a new persisted asset" started.
+✔ Test "A cancelled caller cannot publish a new persisted asset" passed after 0.001 seconds.
+◇ Test "Damaged PNG content is excluded from recent assets with an explicit warning" started.
+✔ Test "Damaged PNG content is excluded from recent assets with an explicit warning" passed after 0.003 seconds.
+◇ Test "PNG header alone is not mistaken for a complete recoverable screenshot" started.
+2026-09-27 23:01:39.970489+0800 xctest[84803:5019105] [xctest] handle_error:268: PNG read error
+2026-09-27 23:01:39.971258+0800 xctest[84803:5019105] [xctest] imagePNG_error_break:384: *** ERROR: imagePNG_error_break
+2026-09-27 23:01:39.971272+0800 xctest[84803:5019105] [xctest] makeImagePlus:3798: *** ERROR: 'PNG '-_reader->initImage[0] failed err=-50
+✔ Test "PNG header alone is not mistaken for a complete recoverable screenshot" passed after 0.004 seconds.
+◇ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" started.
+✔ Test "Cancellation after PNG write cleans pending data and never commits a partial asset" passed after 0.007 seconds.
+◇ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" started.
+✔ Test "Filesystem manifest write failure after a good PNG rolls back only its own pending directory" passed after 0.004 seconds.
+✔ Suite "Capture asset persistence" passed after 0.078 seconds.
+◇ Suite "HotkeyStateMachine" started.
+◇ Test "idle -> start" started.
+✔ Test "idle -> start" passed after 0.001 seconds.
+◇ Test "finished -> start (a fresh press after completion starts a new session)" started.
+✔ Test "finished -> start (a fresh press after completion starts a new session)" passed after 0.001 seconds.
+◇ Test "failed -> start (a fresh press after a failure starts a new session)" started.
+✔ Test "failed -> start (a fresh press after a failure starts a new session)" passed after 0.001 seconds.
+◇ Test "listening -> stop" started.
+✔ Test "listening -> stop" passed after 0.001 seconds.
+◇ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" started.
+✔ Test "answering -> start (a follow-up question; core keeps the card up, no dismiss)" passed after 0.001 seconds.
+◇ Test "finalizing/composing/inserting -> ignore (no queue)" started.
+✔ Test "finalizing/composing/inserting -> ignore (no queue)" passed after 0.001 seconds.
+◇ Test "esc while listening -> cancel" started.
+✔ Test "esc while listening -> cancel" passed after 0.001 seconds.
+◇ Test "esc while answering -> dismissAnswer" started.
+✔ Test "esc while answering -> dismissAnswer" passed after 0.001 seconds.
+◇ Test "esc elsewhere is a no-op" started.
+✔ Test "esc elsewhere is a no-op" passed after 0.001 seconds.
+◇ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" started.
+✔ Test "needsEscMonitor is true exactly where escKeyDown produces an effect" passed after 0.001 seconds.
+✔ Suite "HotkeyStateMachine" passed after 0.003 seconds.
+◇ Suite "TriggerPhysicalState" started.
+◇ Test "First observed down is not a repeat" started.
+✔ Test "First observed down is not a repeat" passed after 0.001 seconds.
+◇ Test "A normal down-then-up sequence is never a repeat" started.
+✔ Test "A normal down-then-up sequence is never a repeat" passed after 0.001 seconds.
+◇ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" started.
+✔ Test "Two consecutive 'down' observations report a repeat (auto-repeat/duplicate, or a missed key-up)" passed after 0.001 seconds.
+◇ Test "Two consecutive 'up' observations report a repeat" started.
+✔ Test "Two consecutive 'up' observations report a repeat" passed after 0.001 seconds.
+◇ Test "Reset returns to the not-down baseline" started.
+✔ Test "Reset returns to the not-down baseline" passed after 0.001 seconds.
+✔ Suite "TriggerPhysicalState" passed after 0.009 seconds.
+✔ Test run with 45 tests in 7 suites passed after 0.172 seconds.
+2026-09-27 23:01:40.284 xcodebuild[84773:5018862] [MT] IDETestOperationsObserverDebug: 1.723 elapsed -- Testing started completed.
+2026-09-27 23:01:40.284 xcodebuild[84773:5018862] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-27 23:01:40.284 xcodebuild[84773:5018862] [MT] IDETestOperationsObserverDebug: 1.723 sec, +1.723 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/prosio-capture-tests-accepted-20260927.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

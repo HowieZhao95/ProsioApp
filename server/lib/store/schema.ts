@@ -13,14 +13,14 @@ export const usageEvents = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    // Client-generated dictation session id; unique so POST /api/usage is idempotent.
+    // Server-accounted dictation session; idempotency is scoped to the user.
     sessionId: uuid("session_id").notNull(),
     engineId: text("engine_id").notNull(),
     audioSeconds: doublePrecision("audio_seconds").notNull(),
     startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [uniqueIndex("usage_events_session_id_key").on(table.sessionId)]
+  (table) => [uniqueIndex("usage_events_user_session_key").on(table.userId, table.sessionId)]
 );
 
 export const dictionaryEntries = pgTable(

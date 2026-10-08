@@ -28,18 +28,22 @@ struct CaptureEditingToolbar: View {
             }
             .frame(maxWidth: .infinity)
 
+            translationButton
             iconButton("xmark", label: "Exit screenshot", hint: "Exit · Esc") { session.cancel() }
             iconButton("pin", label: "Pin screenshot", hint: "Pin screenshot above other windows") {
                 session.requestOutput(.pin)
             }
+            .disabled(session.isTranslating)
             iconButton("square.and.arrow.down", label: "Download JPEG", hint: "Save JPEG · ⌘S") {
                 session.requestOutput(.saveJPEG)
             }
+            .disabled(session.isTranslating)
             iconButton("doc.on.doc", label: "Copy and exit", hint: "Copy and exit · ⌘C / Return") {
                 session.requestOutput(.copy)
             }
             .foregroundStyle(isDark ? surface : Color.white)
             .background(ink, in: Circle())
+            .disabled(session.isTranslating)
         }
         .font(.system(size: 13, weight: .medium))
         .foregroundStyle(ink)
@@ -50,6 +54,39 @@ struct CaptureEditingToolbar: View {
         .background(surface.opacity(0.97), in: Capsule())
         .overlay(Capsule().stroke(ink.opacity(0.12), lineWidth: 1))
         .shadow(color: .black.opacity(isDark ? 0.20 : 0.14), radius: 15, y: 5)
+    }
+
+    private var translationLanguageName: String {
+        switch session.translationTarget {
+        case "zh-Hant": "繁體中文"
+        case "en-US": "English"
+        case "ja-JP": "日本語"
+        case "ko-KR": "한국어"
+        case "fr-FR": "Français"
+        case "de-DE": "Deutsch"
+        default: "简体中文"
+        }
+    }
+    private var translationButton: some View {
+        Button {
+            if session.isTranslating { session.cancelTranslation() }
+            else { session.translateCapture() }
+        } label: {
+            Group {
+                if session.isTranslating { ProgressView().controlSize(.small) }
+                else { Image(systemName: "translate") }
+            }.frame(width: 28, height: 30).contentShape(Rectangle())
+        }
+        .accessibilityLabel(session.isTranslating ? "取消截图翻译" : "翻译并覆盖原图")
+        .help(session.isTranslating ? "取消翻译 · Esc" : "翻译为 \(translationLanguageName)并覆盖原图 · 右键选择语言")
+        .contextMenu {
+            ForEach([("zh-Hans", "简体中文"), ("zh-Hant", "繁體中文"), ("en-US", "English"), ("ja-JP", "日本語"), ("ko-KR", "한국어"), ("fr-FR", "Français"), ("de-DE", "Deutsch")], id: \.0) { code, name in
+                Button { session.translateCapture(to: code) } label: {
+                    if session.translationTarget == code { Label(name, systemImage: "checkmark") }
+                    else { Text(name) }
+                }.disabled(session.isTranslating)
+            }
+        }
     }
 
     private var divider: some View {

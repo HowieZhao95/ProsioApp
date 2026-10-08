@@ -283,6 +283,13 @@ public final class BackendClient: @unchecked Sendable {
     // MARK: - Networking
 
     private func makeRequest(path: String, method: String, body: Data?, requiresAuth: Bool, timeout: TimeInterval? = nil) async throws -> URLRequest {
+        let scheme = baseURL.scheme?.lowercased()
+        let host = baseURL.host?.lowercased()
+        let isLoopback = ["localhost", "127.0.0.1", "::1", "[::1]"].contains(host ?? "")
+        guard (scheme == "https" || (scheme == "http" && isLoopback)),
+              baseURL.user == nil, baseURL.password == nil else {
+            throw ProsioError.network("服务地址需要使用 HTTPS")
+        }
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = method
         if let body {
@@ -918,5 +925,20 @@ extension BackendClient {
         let (data, response) = try await performRequest(request)
         try Self.checkResponse(response, data: data)
         return data
+    }
+}
+
+// MARK: - Screenshot translation (one request per batch, shared authenticated session)
+extension BackendClient {
+    public func translateCaptureTexts(_ texts: [String], targetLanguage: String) async throws -> [String] {
+        struct RequestBody: Encodable { let texts: [String]; let targetLanguage: String }
+        struct ResponseBody: Decodable { let translations: [String] }
+        let body = try Self.makeEncoder().encode(RequestBody(texts: texts, targetLanguage: targetLanguage))
+        let request = try await makeRequest(path: "api/capture/translate", method: "POST", body: body, requiresAuth: true, timeout: 20)
+        let (data, response) = try await performRequest(request)
+        try Self.checkResponse(response, data: data)
+        let result = try Self.makeDecoder().decode(ResponseBody.self, from: data)
+        guard result.translations.count == texts.count else { throw ProsioError.network("Incomplete screenshot translation") }
+        return result.translations
     }
 }

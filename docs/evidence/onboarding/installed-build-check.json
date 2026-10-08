@@ -1,0 +1,1 @@
+{"ok":true,"bundle_id":"app.prosio.mac","version":"0.1.0","build":"2","executable":"Prosio","architectures":[{"architecture":"arm64","uuid":"409D9E61-1701-3C9F-9492-B47A9BB812A8","links_avkit":true}],"codesign_verified":true,"identity_matches_reference":true}

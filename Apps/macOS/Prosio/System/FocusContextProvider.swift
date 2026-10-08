@@ -19,6 +19,17 @@ enum AXCoordinateConverter {
 /// Frontmost app + caret rect + (P1) window title / selected text / browser URL, via
 /// Accessibility. Owned by mac-system agent.
 final class FocusContextProvider: FocusContextProviding {
+    private(set) weak var practiceTarget: (any PracticeTextTarget)?
+    private weak var explicitPracticeTarget: (any PracticeTextTarget)?
+
+    /// AX can invoke the in-app button without bringing its window to the foreground.
+    /// Scope the explicit destination to this synchronous start, leaving hotkeys unchanged.
+    func withPracticeTarget<T>(_ target: any PracticeTextTarget, _ action: () -> T) -> T {
+        let previous = explicitPracticeTarget
+        explicitPracticeTarget = target
+        defer { explicitPracticeTarget = previous }
+        return action()
+    }
     /// This runs synchronously on the main thread at dictation start, so a hung target app must
     /// never be able to stall it noticeably. `AXUIElementSetMessagingTimeout` is per-element (it
     /// does NOT propagate from one element to elements looked up through it), so it has to be set
@@ -45,6 +56,17 @@ final class FocusContextProvider: FocusContextProviding {
         let startTime = Date()
         let deadline = startTime.addingTimeInterval(Self.totalBudget)
         let app = NSWorkspace.shared.frontmostApplication
+        practiceTarget = nil
+        if let target = explicitPracticeTarget, target.practiceAvailable {
+            practiceTarget = target
+            return PracticeTextRouting.context(for: target)
+        }
+        if app?.processIdentifier == ProcessInfo.processInfo.processIdentifier,
+           let target = NSApp.keyWindow?.firstResponder as? any PracticeTextTarget,
+           target.practiceAvailable {
+            practiceTarget = target
+            return PracticeTextRouting.context(for: target)
+        }
 
         var isSecure = IsSecureEventInputEnabled()
         var caretRect: CGRect?

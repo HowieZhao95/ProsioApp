@@ -9,10 +9,18 @@ public enum TriggerKey: String, Codable, CaseIterable, Sendable {
 @MainActor
 @Observable
 public final class AppSettings {
+    private static func bundledBackendURL() -> URL {
+        if let raw = Bundle.main.object(forInfoDictionaryKey: "ProsioBackendURL") as? String,
+           let url = URL(string: raw), url.scheme == "https", url.host != nil {
+            return url
+        }
+        return URL(string: "http://localhost:3000")!
+    }
+
     public var triggerKey: TriggerKey = .fn {
         didSet { defaults.set(triggerKey.rawValue, forKey: Keys.triggerKey) }
     }
-    public var backendURL: URL = URL(string: "http://localhost:3000")! {
+    public var backendURL: URL = AppSettings.bundledBackendURL() {
         didSet { defaults.set(backendURL.absoluteString, forKey: Keys.backendURL) }
     }
     /// BCP-47 hints for transcription. Defaults to the user's preferred system languages (mapped to
@@ -36,8 +44,8 @@ public final class AppSettings {
     }
     /// When on, `DictationController` writes a debug recording (audio.wav + session.json) for
     /// every session under Application Support, for diagnosing accuracy issues. Approved
-    /// additive public API (2026-09-26). Default `true` for now, during testing.
-    public var saveDebugRecordings: Bool = true {
+    /// additive public API (2026-09-26). Disabled by default; users opt in.
+    public var saveDebugRecordings: Bool = false {
         didSet { defaults.set(saveDebugRecordings, forKey: Keys.saveDebugRecordings) }
     }
     /// P1: menu-bar Translate toggle — when on, every `.dictate` session is translated to
@@ -89,9 +97,11 @@ public final class AppSettings {
         if let raw = defaults.string(forKey: Keys.triggerKey), let value = TriggerKey(rawValue: raw) {
             triggerKey = value
         }
+        #if DEBUG
         if let raw = defaults.string(forKey: Keys.backendURL), let url = URL(string: raw) {
             backendURL = url
         }
+        #endif
         if let hints = defaults.array(forKey: Keys.languageHints) as? [String] {
             languageHints = hints
         }

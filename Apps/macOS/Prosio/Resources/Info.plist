@@ -24,13 +24,17 @@
 	<string>public.app-category.productivity</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Prosio 读取系统节假日日历，在便签月历中显示节日名称，不创建或修改日历事件。</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Prosio previews and records only the cameras you select for screen recording.</string>
+	<string>仅在你为录屏选择摄像头时预览与录制画面。</string>
 	<key>NSCameraUseContinuityCameraDeviceType</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Prosio uses your microphone when you start voice input, meeting recording, or screen recording.</string>
+	<string>用于语音输入、录音转写及录屏中的声音。仅在你开始录制时使用。</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Prosio uses on-device speech recognition when you are offline or in private mode.</string>
+	<string>用于在设备上识别语音，支持离线与私密模式。</string>
+	<key>ProsioBackendURL</key>
+	<string>$(PROSIO_BACKEND_URL)</string>
 </dict>
 </plist>

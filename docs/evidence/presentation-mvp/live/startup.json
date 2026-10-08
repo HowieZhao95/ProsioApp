@@ -1,0 +1,38 @@
+{
+  "pids" : [
+    81048
+  ],
+  "screens" : [
+    {
+      "frame" : "{{0, 0}, {1680, 1050}}",
+      "scale" : 2,
+      "visibleFrame" : "{{0, 0}, {1680, 1020}}"
+    }
+  ],
+  "windows" : [
+    {
+      "bounds" : {
+        "Height" : 0,
+        "Width" : 0,
+        "X" : 0,
+        "Y" : 1050
+      },
+      "id" : 19549,
+      "layer" : 25,
+      "name" : "",
+      "onscreen" : false
+    },
+    {
+      "bounds" : {
+        "Height" : 1050,
+        "Width" : 1680,
+        "X" : 0,
+        "Y" : 0
+      },
+      "id" : 19548,
+      "layer" : 25,
+      "name" : "",
+      "onscreen" : false
+    }
+  ]
+}

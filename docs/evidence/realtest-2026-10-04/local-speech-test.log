@@ -1,0 +1,40 @@
+[0/1] Planning build
+Building for debugging...
+[0/2] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (4.60s)
+Test Suite 'Selected tests' started at 2026-10-04 15:38:04.195.
+Test Suite 'ProsioKitPackageTests.xctest' started at 2026-10-04 15:38:04.222.
+Test Suite 'ProsioKitPackageTests.xctest' passed at 2026-10-04 15:38:04.222.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 15:38:04.222.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.027) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CheckoutTimingProbe started.
+◇ Test measureCheckoutCost() started.
+◇ Suite LiveSpeechAnalyzerTests started.
+◇ Test streamsWavThroughSpeechAnalyzer() started.
+PROBE checkout took 2645ms (format=<AVAudioFormat 0xc956480f0:  1 ch,  16000 Hz, Int16>)
+✔ Test measureCheckoutCost() passed after 2.693 seconds.
+✔ Suite CheckoutTimingProbe passed after 2.694 seconds.
+LIVE 3027ms partial: 明
+LIVE 3027ms partial: 明天
+LIVE 3042ms partial: 明天下
+LIVE 3063ms partial: 明天下午
+LIVE 3095ms partial: 明天下午四
+LIVE 3145ms partial: 明天下午4:00
+LIVE 3236ms partial: 明天下午4:00见
+LIVE 3254ms partial: 明天下午4:00见我
+LIVE 3271ms partial: 明天下午4:00见我们
+LIVE 3443ms partial: 明天下午四点见，我们一起
+LIVE 3460ms partial: 明天下午四点见，我们一起讨
+LIVE 3469ms partial: 明天下午四点见，我们一起讨论
+LIVE 3965ms partial: 明天下午四点见，我们一起讨论新
+LIVE 4297ms partial: 明天下午四点见，我们一起讨论新方案
+LIVE 4364ms partial: 明天下午四点见，我们一起讨论新方案
+LIVE 4376ms FINAL: 明天下午四点见，我们一起讨论新方案
+LIVE summary: audio=3.88175s firstPartial=3027ms partials=15 finalAfterAudioEnd=194ms
+✔ Test streamsWavThroughSpeechAnalyzer() passed after 4.388 seconds.
+✔ Suite LiveSpeechAnalyzerTests passed after 4.388 seconds.
+✔ Test run with 2 tests in 2 suites passed after 4.389 seconds.

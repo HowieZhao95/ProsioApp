@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prosio · 分栏切换菜单方案 B</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;color-scheme:dark;font-synthesis:none}
+*{box-sizing:border-box}
+body{--stage:#17191e;--stage2:#252932;--panel:#24272e;--panel-edge:#ffffff1c;--surface:#ffffff0a;--surface-strong:#ffffff13;--text:#f2f3f6;--muted:#a6abb6;--faint:#7d8490;--line:#ffffff16;--blue:#73a9ff;--blue-strong:#4e8eea;--blue-fill:#417bd7;--blue-text:#f7fbff;--danger:#f0959a;--danger-bg:#ed7d801d;--shadow:#060a12a6;margin:0;min-height:100vh;color:var(--text);background:radial-gradient(ellipse 60% 68% at 50% 28%,var(--stage2),var(--stage));display:flex;align-items:center;justify-content:center;padding:34px 26px 42px}
+body.light{color-scheme:light;--stage:#edf0f4;--stage2:#f8f9fb;--panel:#fafbfc;--panel-edge:#ffffffee;--surface:#f2f4f7;--surface-strong:#e9edf2;--text:#1d2530;--muted:#5d6978;--faint:#7b8795;--line:#1a2a3b1c;--blue:#2165c9;--blue-strong:#1760c5;--blue-fill:#2675dc;--blue-text:#fff;--danger:#b94c55;--danger-bg:#df595916;--shadow:#48566b28}
+.stage{display:grid;grid-template-columns:minmax(200px,248px) 352px minmax(200px,248px);align-items:center;gap:54px;width:min(100%,1080px)}
+.side{align-self:center;color:var(--muted);font-size:13px;line-height:1.6}
+.side h1,.side h2{font-size:12px;color:var(--faint);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin:0 0 16px}
+.side .name{font-size:27px;line-height:1.14;letter-spacing:-.04em;color:var(--text);font-weight:650;margin:0 0 16px}
+.side p{margin:0 0 20px}
+.side .rule{width:28px;height:1px;background:var(--blue);margin:24px 0}
+.control-label{display:block;color:var(--faint);font-size:11px;font-weight:650;letter-spacing:.08em;margin:18px 0 8px}
+.control-set{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:11px;width:max-content;background:var(--surface)}
+.control-set button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer}
+.control-set button.on{color:var(--text);background:var(--surface-strong);box-shadow:0 1px 3px #0002}
+.note-line{display:flex;gap:8px;align-items:flex-start;margin:0 0 17px}.note-num{color:var(--blue);font-variant-numeric:tabular-nums;font-weight:700;min-width:18px}
+.menu-wrap{position:relative;padding-top:11px}
+.menu-wrap:before{content:"";position:absolute;top:0;left:27px;width:17px;height:17px;transform:rotate(45deg);border-left:1px solid var(--panel-edge);border-top:1px solid var(--panel-edge);background:var(--panel);border-radius:3px;z-index:1}
+#menu{width:352px;min-height:474px;border-radius:17px;background:var(--panel);border:1px solid var(--panel-edge);box-shadow:0 26px 70px var(--shadow),0 2px 8px #0002;overflow:hidden;position:relative;isolation:isolate}
+.menu-head{display:flex;align-items:center;gap:10px;padding:17px 18px 16px}
+.mark{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:18px;letter-spacing:-.15em;background:var(--surface-strong);border:1px solid var(--line);font-weight:600;padding-right:3px}
+.brand{font-size:15px;font-weight:690;letter-spacing:-.025em}.brand-sub{font-size:11px;color:var(--faint);margin-top:2px}
+.segment-wrap{padding:0 16px 15px}
+.segment{height:36px;padding:3px;display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:9px;gap:2px}
+.segment button{font:600 13px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:var(--muted);border:0;background:transparent;border-radius:6px;cursor:pointer;transition:background .16s,color .16s;outline-offset:2px}
+.segment button.active{color:var(--text);background:var(--surface-strong);box-shadow:0 1px 3px #0002}
+.status-bar{margin:0 16px 14px;padding:10px 11px;border-radius:10px;background:var(--danger-bg);border:1px solid #ed7d8033;display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.35;color:var(--text)}
+.status-bar[hidden],.pane[hidden]{display:none!important}
+.pulse{height:7px;width:7px;flex:none;border-radius:50%;background:#f07c86;box-shadow:0 0 0 3px #f07c8625}
+.status-bar strong{color:var(--danger);font-weight:650}.status-bar small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.pane{padding:0 16px 14px;min-height:292px;animation:rise .18s ease-out}
+@keyframes rise{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:11px;letter-spacing:.015em;font-weight:640;color:var(--faint);margin:0 0 8px}
+.hero{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:15px 14px 14px;min-height:107px}
+.hero-title{font-size:17px;font-weight:660;letter-spacing:-.035em;margin:0 0 6px}.hero-copy{font-size:12px;line-height:1.5;color:var(--muted);margin:0}.kbd{font:600 11px -apple-system,BlinkMacSystemFont,sans-serif;display:inline-block;border:1px solid var(--line);border-bottom-color:#ffffff30;background:var(--surface-strong);border-radius:5px;padding:2px 6px;color:var(--text);vertical-align:1px}
+.hero.voice.live{border-color:#e77b804a;background:linear-gradient(120deg,var(--danger-bg),var(--surface) 54%)}
+.divider{height:1px;background:var(--line);margin:15px 0 14px}
+.row-heading{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--faint);font-weight:650;margin:0 0 9px}
+.text-button,.quiet-button{color:var(--blue);background:none;border:0;font:inherit;font-size:12px;padding:0;cursor:pointer}.text-button:hover,.quiet-button:hover{text-decoration:underline}
+.setting-row{display:flex;align-items:center;gap:10px;min-height:40px}
+.setting-icon{width:30px;height:30px;border-radius:8px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:14px;color:var(--muted)}
+.setting-label{font-size:13px;font-weight:550}.setting-sub{font-size:11px;color:var(--faint);margin-top:2px}
+.switch{margin-left:auto;width:32px;height:20px;border:none;background:var(--surface-strong);border-radius:20px;padding:2px;cursor:pointer;transition:background .15s}.switch.on{background:var(--blue-fill)}.switch:before{content:"";display:block;width:16px;height:16px;background:white;border-radius:50%;box-shadow:0 1px 2px #0004;transition:transform .15s}.switch.on:before{transform:translateX(12px)}
+.recent{width:100%;min-height:39px;border:1px solid var(--line);background:var(--surface);border-radius:9px;display:flex;align-items:center;gap:9px;text-align:left;padding:7px 9px;color:var(--text);cursor:pointer;font:inherit;font-size:12px}.recent:hover{background:var(--surface-strong)}.recent-icon{width:25px;height:25px;border-radius:7px;background:var(--surface-strong);color:var(--muted);display:grid;place-items:center;font-size:13px}.recent-copy{line-height:1.25}.recent-copy small{display:block;color:var(--faint);font-size:11px;margin-top:3px}.recent-arrow{margin-left:auto;color:var(--faint)}
+.primary{display:flex;justify-content:center;align-items:center;gap:9px;width:100%;height:43px;border:1px solid #ffffff23;border-radius:10px;background:var(--blue-fill);color:var(--blue-text);font:640 14px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;cursor:pointer;box-shadow:0 4px 11px #3375d72b}.primary:hover:not(:disabled){background:var(--blue-strong)}.primary:disabled{cursor:not-allowed;opacity:.45;box-shadow:none}.primary-symbol{font-size:18px;line-height:1}
+.capture-hint{font-size:12px;color:var(--muted);line-height:1.5;margin:11px 1px 0}.capture-hint strong{font-weight:600;color:var(--text)}.capture-hint.blocked{color:var(--danger)}
+.menu-footer{border-top:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:2px;background:#00000004}
+.footer-button{border:0;background:none;color:var(--muted);border-radius:7px;padding:6px 8px;font:500 12px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;cursor:pointer}.footer-button:hover{background:var(--surface-strong);color:var(--text)}.footer-space{flex:1}.more-holder{position:relative}.more-menu{position:absolute;right:0;bottom:32px;width:125px;background:var(--panel);border:1px solid var(--panel-edge);border-radius:10px;box-shadow:0 8px 24px var(--shadow);padding:5px;z-index:3}.more-menu[hidden]{display:none}.more-menu button{width:100%;text-align:left;color:var(--text);font:inherit;font-size:12px;border:0;border-radius:6px;background:none;padding:7px 9px;cursor:pointer}.more-menu button:hover{background:var(--surface-strong)}
+.toast{position:absolute;left:18px;right:18px;bottom:55px;background:var(--text);color:var(--panel);border-radius:9px;box-shadow:0 7px 25px #0005;padding:10px 13px;font-size:12px;text-align:center;z-index:5;opacity:0;transform:translateY(7px);pointer-events:none;transition:opacity .16s,transform .16s}.toast.show{opacity:1;transform:none}
+.demo-tag{font-size:11px;color:var(--faint);margin-top:13px;text-align:center;line-height:1.5}
+@media(max-width:980px){.stage{grid-template-columns:1fr 352px;gap:35px}.side.right{grid-column:1/-1;display:flex;gap:22px;justify-content:center;max-width:700px;margin:auto}.side.right h2{display:none}.side.right .note-line{max-width:210px}}
+@media(max-width:650px){body{padding:24px 10px}.stage{display:flex;flex-direction:column;gap:21px}.side{max-width:352px}.side.left{width:352px}.side .name{font-size:21px;margin-bottom:7px}.side p{margin-bottom:11px}.side .rule,.side.right{display:none}.control-label{display:inline-block;margin:0 8px 0 0;vertical-align:middle}.control-set{display:inline-flex;vertical-align:middle;margin:0 9px 0 0}.menu-wrap{width:352px}}
+@media(max-width:375px){#menu,.menu-wrap,.side.left{width:min(352px,calc(100vw - 20px))}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-variant="b">
+<div class="stage">
+  <aside class="side left" aria-label="设计方案与演示控制">
+    <h1>Prosio · 菜单架构探索</h1>
+    <div class="name">B / 分栏切换</div>
+    <p>一个菜单，两种专注场景。顶部切换语音输入与屏幕截图；每页只出现属于它的动作、说明和记录。</p>
+    <div class="rule"></div>
+    <span class="control-label">模拟状态</span>
+    <div class="control-set" role="group" aria-label="模拟状态">
+      <button type="button" class="on" data-state="idle" aria-pressed="true">待机</button><button type="button" data-state="listening" aria-pressed="false">聆听中</button>
+    </div>
+    <span class="control-label">外观</span>
+    <div class="control-set" role="group" aria-label="外观">
+      <button type="button" class="on" data-theme="dark" aria-pressed="true">深色</button><button type="button" data-theme="light" aria-pressed="false">浅色</button>
+    </div>
+  </aside>
+
+  <main class="menu-wrap">
+    <section id="menu" aria-label="Prosio 菜单交互原型">
+      <header class="menu-head">
+        <div class="mark" aria-hidden="true">∿</div>
+        <div><div class="brand">Prosio</div><div class="brand-sub">语音与屏幕，随手可用</div></div>
+      </header>
+      <div class="segment-wrap"><nav class="segment" aria-label="功能切换">
+        <button type="button" id="tab-voice" class="active" role="tab" aria-selected="true" aria-controls="pane-voice">语音输入</button>
+        <button type="button" id="tab-capture" role="tab" aria-selected="false" aria-controls="pane-capture">屏幕截图</button>
+      </nav></div>
+      <div id="cross-status" class="status-bar" hidden><span class="pulse" aria-hidden="true"></span><div><strong>语音输入进行中</strong><small>结束语音后可截图</small></div></div>
+
+      <section id="pane-voice" class="pane" role="tabpanel" aria-labelledby="tab-voice">
+        <div class="eyebrow">语音输入</div>
+        <div class="hero voice" id="voice-hero"><div class="hero-title" id="voice-title">说出来，直接写入。</div><p class="hero-copy" id="voice-copy">按 <span class="kbd">Fn</span> 开始说话，再按一次结束。文字会回到你正在使用的应用。</p></div>
+        <div class="divider"></div>
+        <div class="row-heading">语音偏好</div>
+        <div class="setting-row"><span class="setting-icon" aria-hidden="true">文</span><span><span class="setting-label">翻译</span><span class="setting-sub" id="translation-sub">随语音输入使用 · 目标语言：英语</span></span><button class="switch" id="translate-switch" type="button" role="switch" aria-label="翻译" aria-checked="false"></button></div>
+        <div class="divider"></div>
+        <div class="row-heading"><span>最近语音记录</span><button type="button" class="text-button" data-feedback="语音记录列表仅作演示">查看全部</button></div>
+        <button type="button" class="recent" data-feedback="这是一条演示语音记录，未读取真实历史"><span class="recent-icon" aria-hidden="true">≋</span><span class="recent-copy">这是一条语音记录示例<small>演示内容 · 刚刚</small></span><span class="recent-arrow" aria-hidden="true">›</span></button>
+      </section>
+
+      <section id="pane-capture" class="pane" role="tabpanel" aria-labelledby="tab-capture" hidden>
+        <div class="eyebrow">屏幕截图</div>
+        <div class="hero"><div class="hero-title">框选，标注，完成。</div><p class="hero-copy">冻结眼前画面，在选区内直接标注；复制或保存后返回原应用。</p></div>
+        <div class="divider"></div>
+        <button type="button" class="primary" id="screenshot-button"><span class="primary-symbol" aria-hidden="true">⌗</span>截图</button>
+        <p class="capture-hint" id="capture-hint">快捷键 <strong>⌃⇧2</strong> · 可在设置中修改</p>
+        <div class="divider"></div>
+        <div class="row-heading"><span>最近截图</span><button type="button" class="text-button" data-feedback="截图记录列表仅作演示">查看全部</button></div>
+        <button type="button" class="recent" data-feedback="这是一张演示截图，未读取真实历史"><span class="recent-icon" aria-hidden="true">▧</span><span class="recent-copy">这是一张截图记录示例<small>演示内容 · 刚刚</small></span><span class="recent-arrow" aria-hidden="true">›</span></button>
+      </section>
+
+      <footer class="menu-footer">
+        <button type="button" class="footer-button" data-feedback="设置入口示意；原型不会更改快捷键或权限">设置…</button>
+        <button type="button" class="footer-button" data-feedback="帮助：语音按 Fn 开始、再按 Fn 结束；屏幕截图点击截图">帮助</button>
+        <span class="footer-space"></span>
+        <span class="more-holder"><button type="button" class="footer-button" id="more-button" aria-expanded="false" aria-controls="more-menu">更多 ···</button><span class="more-menu" id="more-menu" hidden><button type="button" data-feedback="退出 Prosio 仅作菜单示意">退出 Prosio</button></span></span>
+      </footer>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+    <div class="demo-tag">交互原型 · 不会录音、截屏或访问个人内容</div>
+  </main>
+
+  <aside class="side right" aria-label="方案说明">
+    <h2>结构要点</h2>
+    <div class="note-line"><span class="note-num">01</span><span>两个等权页面，避免把截图设置挤进语音菜单。</span></div>
+    <div class="note-line"><span class="note-num">02</span><span>翻译只出现在语音页；历史各归其位。</span></div>
+    <div class="note-line"><span class="note-num">03</span><span>切换页面也不隐藏正在聆听的状态，截图保持禁用。</span></div>
+  </aside>
+</div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const state = {tab:'voice', listening:false, translated:false, timer:0};
+  function feedback(message){const toast=$('toast');toast.textContent=message;toast.classList.add('show');clearTimeout(state.timer);state.timer=setTimeout(()=>toast.classList.remove('show'),2900)}
+  function render(){
+    for(const tab of ['voice','capture']){const selected=state.tab===tab;$('tab-'+tab).classList.toggle('active',selected);$('tab-'+tab).setAttribute('aria-selected',String(selected));$('pane-'+tab).hidden=!selected}
+    $('cross-status').hidden=!state.listening||state.tab!=='capture';
+    $('voice-hero').classList.toggle('live',state.listening);
+    $('voice-title').textContent=state.listening?'正在聆听你的声音':'说出来，直接写入。';
+    $('voice-copy').innerHTML=state.listening?'再次按 <span class="kbd">Fn</span> 结束语音输入；按 <span class="kbd">Esc</span> 取消本次。':'按 <span class="kbd">Fn</span> 开始说话，再按一次结束。文字会回到你正在使用的应用。';
+    $('screenshot-button').disabled=state.listening;
+    $('capture-hint').classList.toggle('blocked',state.listening);
+    $('capture-hint').innerHTML=state.listening?'结束语音后可截图。':'快捷键 <strong>⌃⇧2</strong> · 可在设置中修改';
+    $('translate-switch').classList.toggle('on',state.translated);$('translate-switch').setAttribute('aria-checked',String(state.translated));
+    $('translation-sub').textContent=state.translated?'已开启 · 目标语言：英语':'随语音输入使用 · 目标语言：英语';
+  }
+  document.querySelectorAll('[data-state]').forEach(button=>button.addEventListener('click',()=>{state.listening=button.dataset.state==='listening';document.querySelectorAll('[data-state]').forEach(b=>{let on=b===button;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});render()}));
+  document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>{document.body.classList.toggle('light',button.dataset.theme==='light');document.querySelectorAll('[data-theme]').forEach(b=>{let on=b===button;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))})}));
+  for(const tab of ['voice','capture']) $('tab-'+tab).addEventListener('click',()=>{state.tab=tab;render()});
+  $('translate-switch').addEventListener('click',()=>{state.translated=!state.translated;render();feedback(state.translated?'演示：翻译已开启':'演示：翻译已关闭')});
+  $('screenshot-button').addEventListener('click',()=>feedback('演示：已选择截图；不会真的截屏'));
+  $('more-button').addEventListener('click',()=>{const next=$('more-menu').hidden;$('more-menu').hidden=!next;$('more-button').setAttribute('aria-expanded',String(next))});
+  document.querySelectorAll('[data-feedback]').forEach(button=>button.addEventListener('click',()=>{feedback(button.dataset.feedback);$('more-menu').hidden=true;$('more-button').setAttribute('aria-expanded','false')}));
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('more-menu').hidden){$('more-menu').hidden=true;$('more-button').setAttribute('aria-expanded','false')}});
+  render();
+})();
+</script>
+</body>
+</html>

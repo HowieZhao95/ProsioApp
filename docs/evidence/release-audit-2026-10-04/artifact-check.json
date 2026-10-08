@@ -1,0 +1,88 @@
+{
+  "checked_at": "2026-10-03T22:53:16.016153+00:00",
+  "app": "/Users/guest01/projectCodeMac2/ProsioApp/.build-release-audit/Build/Products/Release/Prosio.app",
+  "version": "0.1.0",
+  "build": "2",
+  "minimum_macos": "26.0",
+  "architectures": "x86_64 arm64",
+  "binary_sha256": "9a9a162e4b6c3d2e63479f3465f0fce88bb9673c8338f30a51892f465cadf167",
+  "bundle_checks_passed": false,
+  "scope": "Artifact checks only. Login, billing, privacy policy, live database and device acceptance require separate evidence.",
+  "checks": [
+    {
+      "check": "signature_integrity",
+      "passed": true,
+      "detail": "Strict nested-code signature verification"
+    },
+    {
+      "check": "developer_id",
+      "passed": false,
+      "detail": "Public distribution requires a Developer ID Application identity"
+    },
+    {
+      "check": "hardened_runtime",
+      "passed": true,
+      "detail": "Hardened runtime flag"
+    },
+    {
+      "check": "secure_timestamp",
+      "passed": false,
+      "detail": "Secure signing timestamp must be present"
+    },
+    {
+      "check": "com.apple.security.get-task-allow",
+      "passed": true,
+      "detail": "Release must not carry a development exception"
+    },
+    {
+      "check": "com.apple.security.cs.disable-library-validation",
+      "passed": true,
+      "detail": "Release must not carry a development exception"
+    },
+    {
+      "check": "com.apple.security.cs.allow-unsigned-executable-memory",
+      "passed": true,
+      "detail": "Release must not carry a development exception"
+    },
+    {
+      "check": "production_endpoint",
+      "passed": false,
+      "detail": "Bundle must contain the actual production HTTPS endpoint"
+    },
+    {
+      "check": "NSMicrophoneUsageDescription",
+      "passed": true,
+      "detail": "Permission purpose description"
+    },
+    {
+      "check": "NSCameraUsageDescription",
+      "passed": true,
+      "detail": "Permission purpose description"
+    },
+    {
+      "check": "NSSpeechRecognitionUsageDescription",
+      "passed": true,
+      "detail": "Permission purpose description"
+    },
+    {
+      "check": "NSCalendarsFullAccessUsageDescription",
+      "passed": true,
+      "detail": "Permission purpose description"
+    },
+    {
+      "check": "validation_mode",
+      "passed": true,
+      "detail": "Validation-only launch mode must be absent"
+    },
+    {
+      "check": "notarization_ticket",
+      "passed": false,
+      "detail": "Stapled Apple notarization ticket"
+    },
+    {
+      "check": "gatekeeper",
+      "passed": false,
+      "detail": "Gatekeeper execution assessment"
+    }
+  ]
+}

@@ -14,7 +14,11 @@ function jwtSecret(): Uint8Array {
     // Not a client-facing error: this is a server misconfiguration.
     throw new Error("PROSIO_JWT_SECRET is not set");
   }
-  return new TextEncoder().encode(secret);
+  const bytes = new TextEncoder().encode(secret);
+  if ((process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") && bytes.length < 32) {
+    throw new ApiError("unavailable", "Session signing configuration is invalid");
+  }
+  return bytes;
 }
 
 /** Signs a session token. Claims: sub (user id), email, exp (30 days). */

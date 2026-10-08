@@ -1,0 +1,28 @@
+{
+  "session": "4B1E4A7C-9C89-45F3-AD0A-F4F99647C447",
+  "segmentCount": 4,
+  "fullVideoDecodePassed": true,
+  "timestampPassthrough": true,
+  "results": [
+    {
+      "file": "media/53B649EC-0C29-404B-ACCC-04DDDF883470.mov",
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "file": "media/F2456915-08B9-40CF-BD39-1410C4C1B64C.mov",
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "file": "media/BDB02DA7-80B9-4327-89E9-5ED25259F8D5.mov",
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "file": "media/9654EA51-100A-479C-821A-76F79C3B035B.mov",
+      "exitCode": 0,
+      "errors": ""
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+Building for debugging...
+[0/11] /tmp/prosio-capture-core-test-20260927/arm64-apple-macosx/debug/ProsioKitPackageTests.derived/runner.swift
+[1/11] Write sources
+[8/11] Write swift-version--58304C5D6DBC2206.txt
+[10/26] Compiling ProsioCore AppSettings.swift
+[11/26] Compiling ProsioCore DictionaryStore.swift
+[12/28] Compiling ProsioCore HistoryStore.swift
+[13/28] Compiling ProsioCore JSONFileStore.swift
+[14/28] Compiling ProsioCore DictationLog.swift
+[15/28] Compiling ProsioCore DropDetection.swift
+[16/28] Compiling ProsioCore ProsioLog.swift
+[17/28] Compiling ProsioCore WAVFile.swift
+[18/28] Compiling ProsioCore Contracts.swift
+[19/28] Compiling ProsioCore DebugRecordingWriter.swift
+[20/28] Compiling ProsioCore IntentRules.swift
+[21/28] Compiling ProsioCore SceneResolver.swift
+[22/28] Compiling ProsioCore DictationController.swift
+[23/28] Compiling ProsioCore FallbackTranscriptionEngine.swift
+[24/28] Emitting module ProsioCore
+[25/28] Compiling ProsioCore AudioPreparing.swift
+[26/28] Compiling ProsioCore BackendClient.swift
+[27/58] Compiling ProsioAudio SilenceTrimmingOpusAudioPreparer.swift
+[28/58] Emitting module ProsioAudio
+[29/58] Compiling ProsioAudio OggCRC32.swift
+[30/58] Compiling ProsioAudio AudioSupport.swift
+[31/58] Compiling ProsioAudio SilenceTrimmer.swift
+[32/58] Compiling ProsioAudio OggOpusMuxer.swift
+[33/58] Compiling ProsioCoreTests FallbackTranscriptionEngineTests.swift
+[34/58] Compiling ProsioCoreTests IntentRulesEvalTests.swift
+[35/60] Compiling ProsioCoreTests LiveComposeTests.swift
+[36/60] Compiling ProsioCoreTests SceneResolverTests.swift
+[37/60] Compiling ProsioAudio OggOpusEncoder.swift
+[38/60] Compiling ProsioAudio AudioCapture.swift
+[39/60] Compiling ProsioCoreTests TestIsolationGuardTests.swift
+[40/60] Compiling ProsioCoreTests TestSupport.swift
+[41/60] Compiling ProsioCoreTests SmokeTests.swift
+[42/60] Compiling ProsioCoreTests StoresTests.swift
+[43/64] Compiling ProsioTranscription CloudBatchTranscriptionEngine.swift
+[44/64] Compiling ProsioTranscription SpeculativeFinalizer.swift
+[45/64] Compiling ProsioTranscription AudioSupport.swift
+[46/64] Emitting module ProsioTranscription
+[47/64] Compiling ProsioTranscription SpeechAnalyzerEngine.swift
+/Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioTranscription/SpeechAnalyzerEngine.swift:414:17: warning: no 'async' operations occur within 'await' expression
+412 |         preparingTasks[key] = Task {
+413 |             if let prepared = try? await Self.buildPrepared(locale: locale) {
+414 |                 await self.store(prepared, forKey: key)
+    |                 `- warning: no 'async' operations occur within 'await' expression
+415 |             }
+416 |             await self.clearPreparing(forKey: key)
+
+/Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit/Sources/ProsioTranscription/SpeechAnalyzerEngine.swift:416:13: warning: no 'async' operations occur within 'await' expression
+414 |                 await self.store(prepared, forKey: key)
+415 |             }
+416 |             await self.clearPreparing(forKey: key)
+    |             `- warning: no 'async' operations occur within 'await' expression
+417 |         }
+418 |     }
+[48/75] Compiling ProsioCoreTests IntentRulesTests.swift
+[49/75] Compiling ProsioCoreTests IntentTranscriptVocabularyAndReclassificationTests.swift
+[50/75] Compiling ProsioAudioTests SilenceTrimmerTests.swift
+[51/75] Compiling ProsioAudioTests OggOpusEncoderTests.swift
+[52/75] Compiling ProsioAudioTests OggCRC32Tests.swift
+[53/75] Emitting module ProsioAudioTests
+[54/75] Compiling ProsioTranscriptionTests SmokeTests.swift
+[55/75] Compiling ProsioCoreTests DictationControllerDebugRecordingTests.swift
+[56/75] Compiling ProsioCoreTests DictationControllerIntentClassificationTests.swift
+[57/75] Compiling ProsioTranscriptionTests LiveCloudBatchTests.swift
+[58/75] Compiling ProsioTranscriptionTests LiveSpeechAnalyzerTests.swift
+[59/75] Compiling ProsioTranscriptionTests SpeculativeFinalizationTests.swift
+[60/75] Compiling ProsioTranscriptionTests CloudBatchTranscriptionEngineTests.swift
+[62/75] Compiling ProsioTranscriptionTests TestFixtures.swift
+[65/75] Emitting module ProsioTranscriptionTests
+[66/75] Compiling ProsioTranscriptionTests FakeCloudBatchTranscribing.swift
+[67/75] Compiling ProsioTranscriptionTests LiveAudioFixtures.swift
+[68/75] Compiling ProsioTranscriptionTests LivePipelineTests.swift
+[69/75] Compiling ProsioTranscriptionTests LiveSpeechAnalyzerReadyTimingTests.swift
+[70/76] Compiling ProsioTranscriptionTests TranscriptAccumulatorTests.swift
+[71/76] Emitting module ProsioCoreTests
+[75/78] Compiling ProsioKitPackageTests runner.swift
+[76/78] Emitting module ProsioKitPackageTests
+[76/78] Write Objects.LinkFileList
+[77/78] Linking ProsioKitPackageTests
+Build complete! (14.78s)
+Test Suite 'Selected tests' started at 2026-09-27 22:54:59.803.
+Test Suite 'ProsioKitPackageTests.xctest' started at 2026-09-27 22:54:59.805.
+Test Suite 'ProsioKitPackageTests.xctest' passed at 2026-09-27 22:54:59.805.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-27 22:54:59.805.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.003) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite LanguageHintsDefaultTests started.
+◇ Suite DictationControllerDebugRecordingTests started.
+◇ Suite AppSettingsTests started.
+◇ Suite DictationControllerTests started.
+◇ Suite LiveComposeTests started.
+◇ Test fallsBackToEnglishWhenNothingMaps() started.
+◇ Test fallsBackToEnglishWhenPreferredLanguagesIsEmpty() started.
+◇ Test mapsCommonLanguagesToTheirSupportedTag() started.
+◇ Test preservesPreferenceOrderAndDedupes() started.
+◇ Test capsAtThree() started.
+◇ Test writesAudioAndSessionJSONAfterSuccessfulSession() started.
+◇ Test keysUseProsioPrefix() started.
+◇ Test mapsChineseSimplifiedAndTraditionalDistinctly() started.
+◇ Test missingValuesUseDefaults() started.
+◇ Test askSessionIsRecordedWithComposeFields() started.
+◇ Test marksSuspectedDropWhenCloudMuchShorterThanLocal() started.
+◇ Test persistsAndReloadsAllProperties() started.
+◇ Test recordsRouteSourceLocalWhenServerSkipsGemini() started.
+◇ Test storedLanguageHintsAreNeverOverriddenByTheSystemDefault() started.
+◇ Test doesNotWriteWhenSaveDebugRecordingsIsDisabled() started.
+◇ Test emptyLongAudioFails() started.
+◇ Test offlineFallsBackToLocalTranscriptClassifiedByRules() started.
+◇ Test cancelMidListeningGoesIdleWithoutInserting() started.
+◇ Test emptyShortAudioGoesIdleSilently() started.
+◇ Test localEngineReceivesEveryAudioChunkAndItsTranscriptIsSentAsLocalTranscript() started.
+◇ Test audioStartFailureReportsFailedPhase() started.
+◇ Test format415_RetriesOnceAsWAV() started.
+◇ Test localSource_InsertsLocalTextDirectlyAndSkipsCompose() started.
+◇ Test micOpensBeforeFocusContextIsRead() started.
+◇ Test cancelDuringFinalizingWhileWaitingForCloud() started.
+◇ Test cloudSource_InsertsCloudTextAndUsesCloudEngineID() started.
+◇ Test startIsNoOpWhileBusy() started.
+◇ Test cloudRequestTimesOut_FallsBackToLocalTranscript() started.
+◇ Test cancelDuringInsertionDoesNotResurrectFinishedPhaseOrHistory() started.
+◇ Test nullServerIntent_FallsBackToIntentRulesOnReturnedText() started.
+✔ Test preservesPreferenceOrderAndDedupes() passed after 0.001 seconds.
+✔ Test capsAtThree() passed after 0.001 seconds.
+✔ Test mapsCommonLanguagesToTheirSupportedTag() passed after 0.001 seconds.
+✔ Test fallsBackToEnglishWhenNothingMaps() passed after 0.001 seconds.
+✔ Test fallsBackToEnglishWhenPreferredLanguagesIsEmpty() passed after 0.001 seconds.
+◇ Test composeAskReturnsNonEmptyStreamedAnswer() started.
+✔ Test mapsChineseSimplifiedAndTraditionalDistinctly() passed after 0.001 seconds.
+✔ Suite LanguageHintsDefaultTests passed after 0.001 seconds.
+✔ Test composeAskReturnsNonEmptyStreamedAnswer() passed after 0.001 seconds.
+◇ Test composeEditReturnsNonEmptyStreamedOutput() started.
+✔ Test composeEditReturnsNonEmptyStreamedOutput() passed after 0.001 seconds.
+✔ Suite LiveComposeTests passed after 0.001 seconds.
+✔ Test keysUseProsioPrefix() passed after 0.008 seconds.
+✔ Test persistsAndReloadsAllProperties() passed after 0.013 seconds.
+✔ Test missingValuesUseDefaults() passed after 0.013 seconds.
+✔ Test storedLanguageHintsAreNeverOverriddenByTheSystemDefault() passed after 0.015 seconds.
+✔ Suite AppSettingsTests passed after 0.015 seconds.
+✔ Test micOpensBeforeFocusContextIsRead() passed after 0.025 seconds.
+✔ Test audioStartFailureReportsFailedPhase() passed after 0.027 seconds.
+✔ Test startIsNoOpWhileBusy() passed after 0.030 seconds.
+✔ Test cancelDuringFinalizingWhileWaitingForCloud() passed after 0.031 seconds.
+✔ Test nullServerIntent_FallsBackToIntentRulesOnReturnedText() passed after 0.039 seconds.
+✔ Test offlineFallsBackToLocalTranscriptClassifiedByRules() passed after 0.040 seconds.
+✔ Test format415_RetriesOnceAsWAV() passed after 0.040 seconds.
+✔ Test emptyShortAudioGoesIdleSilently() passed after 0.040 seconds.
+✔ Test emptyLongAudioFails() passed after 0.040 seconds.
+✔ Test localSource_InsertsLocalTextDirectlyAndSkipsCompose() passed after 0.040 seconds.
+✔ Test cancelMidListeningGoesIdleWithoutInserting() passed after 0.040 seconds.
+✔ Test localEngineReceivesEveryAudioChunkAndItsTranscriptIsSentAsLocalTranscript() passed after 0.040 seconds.
+✔ Test cloudSource_InsertsCloudTextAndUsesCloudEngineID() passed after 0.047 seconds.
+✔ Test writesAudioAndSessionJSONAfterSuccessfulSession() passed after 0.049 seconds.
+✔ Test askSessionIsRecordedWithComposeFields() passed after 0.063 seconds.
+✔ Test recordsRouteSourceLocalWhenServerSkipsGemini() passed after 0.064 seconds.
+✔ Test cloudRequestTimesOut_FallsBackToLocalTranscript() passed after 0.093 seconds.
+✔ Test marksSuspectedDropWhenCloudMuchShorterThanLocal() passed after 0.094 seconds.
+✔ Test cancelDuringInsertionDoesNotResurrectFinishedPhaseOrHistory() passed after 0.114 seconds.
+✔ Suite DictationControllerTests passed after 0.114 seconds.
+✔ Test doesNotWriteWhenSaveDebugRecordingsIsDisabled() passed after 0.200 seconds.
+✔ Suite DictationControllerDebugRecordingTests passed after 0.201 seconds.
+✔ Test run with 32 tests in 5 suites passed after 0.201 seconds.

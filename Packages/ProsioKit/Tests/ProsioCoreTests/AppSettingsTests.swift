@@ -24,6 +24,7 @@ import Testing
         #expect(settings.showEdgeGlow == true)
         #expect(settings.restoreClipboard == true)
         #expect(settings.historyEnabled == true)
+        #expect(settings.saveDebugRecordings == false)
         #expect(settings.holdThreshold == 0.3)
     }
 
@@ -38,6 +39,7 @@ import Testing
         settings.showEdgeGlow = false
         settings.restoreClipboard = false
         settings.historyEnabled = false
+        settings.saveDebugRecordings = true
         settings.holdThreshold = 0.75
 
         let reloaded = AppSettings(defaults: defaults)
@@ -47,6 +49,7 @@ import Testing
         #expect(reloaded.showEdgeGlow == false)
         #expect(reloaded.restoreClipboard == false)
         #expect(reloaded.historyEnabled == false)
+        #expect(reloaded.saveDebugRecordings == true)
         #expect(reloaded.holdThreshold == 0.75)
     }
 

@@ -115,8 +115,18 @@ nonisolated enum EditorRenderer {
         context.setLineCap(.round);context.setLineJoin(.round);context.addPath(path);context.strokePath()
     }
     private static func drawText(_ shape:TextShape,style:AnnotationStyle,context:CGContext) {
+        if shape.translationSource != nil {
+            context.setFillColor(shape.fontName == nil ? style.fillColor.cgColor : CaptureTranslationTypography.color(style.fillColor))
+            context.fill(shape.translationSourceRect ?? shape.rect)
+            context.clip(to: shape.rect)
+        }
         // CoreText receives its own y-up frame inside the top-left shape rectangle.
         context.saveGState();context.translateBy(x:shape.rect.minX,y:shape.rect.maxY);context.scaleBy(x:1,y:-1)
+        if shape.translationSource != nil, shape.fontName != nil {
+            CaptureTranslationTextLayout.draw(shape, style: style, context: context)
+            context.restoreGState()
+            return
+        }
         let font=CTFontCreateWithName("Helvetica" as CFString,max(style.fontSize,1),nil)
         let attributes:[NSAttributedString.Key:Any]=[NSAttributedString.Key(kCTFontAttributeName as String):font,NSAttributedString.Key(kCTForegroundColorAttributeName as String):style.strokeColor.cgColor]
         let text=NSAttributedString(string:shape.text,attributes:attributes)

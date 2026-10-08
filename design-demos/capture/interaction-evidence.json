@@ -1,0 +1,1774 @@
+{
+  "draw": {
+    "state": {
+      "rect": {
+        "x": 432,
+        "y": 279,
+        "w": 633.6,
+        "h": 369
+      },
+      "placement": "below",
+      "locks": {
+        "x": null,
+        "y": null
+      },
+      "snapEvents": [],
+      "annotations": 1
+    },
+    "allButtonsReachable": true,
+    "toolbar": {
+      "x": 557.296875,
+      "y": 660,
+      "width": 383,
+      "height": 48,
+      "top": 660,
+      "right": 940.296875,
+      "bottom": 708,
+      "left": 557.296875
+    }
+  },
+  "themeUnchanged": true,
+  "snapEnter": {
+    "rect": {
+      "x": 471.3984375,
+      "y": 431.3984375,
+      "w": 300,
+      "h": 160
+    },
+    "placement": "below",
+    "locks": {
+      "x": {
+        "key": "left",
+        "target": 471.3984375,
+        "d": 4
+      },
+      "y": {
+        "key": "top",
+        "target": 431.3984375,
+        "d": 4
+      }
+    },
+    "snapEvents": [
+      {
+        "axis": "x",
+        "target": 471.3984375,
+        "key": "left"
+      },
+      {
+        "axis": "y",
+        "target": 431.3984375,
+        "key": "top"
+      }
+    ],
+    "annotations": 1
+  },
+  "snapHeld": {
+    "rect": {
+      "x": 471.3984375,
+      "y": 431.3984375,
+      "w": 300,
+      "h": 160
+    },
+    "placement": "below",
+    "locks": {
+      "x": {
+        "key": "left",
+        "target": 471.3984375,
+        "d": 4
+      },
+      "y": {
+        "key": "top",
+        "target": 431.3984375,
+        "d": 4
+      }
+    },
+    "snapEvents": [
+      {
+        "axis": "x",
+        "target": 471.3984375,
+        "key": "left"
+      },
+      {
+        "axis": "y",
+        "target": 431.3984375,
+        "key": "top"
+      }
+    ],
+    "annotations": 1
+  },
+  "snapReleased": {
+    "rect": {
+      "x": 491.3984375,
+      "y": 450.875,
+      "w": 300,
+      "h": 160
+    },
+    "placement": "below",
+    "locks": {
+      "x": null,
+      "y": {
+        "key": "bottom",
+        "target": 610.875,
+        "d": -0.5234375
+      }
+    },
+    "snapEvents": [
+      {
+        "axis": "x",
+        "target": 471.3984375,
+        "key": "left"
+      },
+      {
+        "axis": "y",
+        "target": 431.3984375,
+        "key": "top"
+      },
+      {
+        "axis": "y",
+        "target": 610.875,
+        "key": "bottom"
+      }
+    ],
+    "annotations": 1
+  },
+  "handles": {
+    "n": {
+      "x": 400,
+      "y": 233.3984375,
+      "w": 300,
+      "h": 196.6015625
+    },
+    "ne": {
+      "x": 400,
+      "y": 233.3984375,
+      "w": 310,
+      "h": 196.6015625
+    },
+    "e": {
+      "x": 400,
+      "y": 250,
+      "w": 310,
+      "h": 180
+    },
+    "se": {
+      "x": 400,
+      "y": 250,
+      "w": 310,
+      "h": 190
+    },
+    "s": {
+      "x": 400,
+      "y": 250,
+      "w": 300,
+      "h": 190
+    },
+    "sw": {
+      "x": 390,
+      "y": 250,
+      "w": 310,
+      "h": 190
+    },
+    "w": {
+      "x": 390,
+      "y": 250,
+      "w": 310,
+      "h": 180
+    },
+    "nw": {
+      "x": 390,
+      "y": 233.3984375,
+      "w": 310,
+      "h": 196.6015625
+    }
+  },
+  "edges": {
+    "tl": {
+      "state": {
+        "rect": {
+          "x": 8,
+          "y": 102,
+          "w": 280,
+          "h": 180
+        },
+        "placement": "below",
+        "locks": {
+          "x": {
+            "key": "left",
+            "target": 8,
+            "d": 0
+          },
+          "y": {
+            "key": "top",
+            "target": 102,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 12,
+        "y": 294,
+        "width": 383,
+        "height": 48,
+        "top": 294,
+        "right": 395,
+        "bottom": 342,
+        "left": 12
+      }
+    },
+    "tr": {
+      "state": {
+        "rect": {
+          "x": 1152,
+          "y": 102,
+          "w": 280,
+          "h": 180
+        },
+        "placement": "below",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "top",
+            "target": 102,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 1045,
+        "y": 294,
+        "width": 383,
+        "height": 48,
+        "top": 294,
+        "right": 1428,
+        "bottom": 342,
+        "left": 1045
+      }
+    },
+    "bl": {
+      "state": {
+        "rect": {
+          "x": 8,
+          "y": 712,
+          "w": 280,
+          "h": 180
+        },
+        "placement": "above",
+        "locks": {
+          "x": {
+            "key": "left",
+            "target": 8,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 12,
+        "y": 652,
+        "width": 383,
+        "height": 48,
+        "top": 652,
+        "right": 395,
+        "bottom": 700,
+        "left": 12
+      }
+    },
+    "br": {
+      "state": {
+        "rect": {
+          "x": 1152,
+          "y": 712,
+          "w": 280,
+          "h": 180
+        },
+        "placement": "above",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 1045,
+        "y": 652,
+        "width": 383,
+        "height": 48,
+        "top": 652,
+        "right": 1428,
+        "bottom": 700,
+        "left": 1045
+      }
+    }
+  },
+  "layouts": {
+    "tiny": {
+      "state": {
+        "rect": {
+          "x": 700,
+          "y": 500,
+          "w": 24,
+          "h": 24
+        },
+        "placement": "below",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 520.5,
+        "y": 536,
+        "width": 383,
+        "height": 48,
+        "top": 536,
+        "right": 903.5,
+        "bottom": 584,
+        "left": 520.5
+      }
+    },
+    "full": {
+      "state": {
+        "rect": {
+          "x": 8,
+          "y": 102,
+          "w": 1424,
+          "h": 790
+        },
+        "placement": "clamped",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 528.5,
+        "y": 840,
+        "width": 383,
+        "height": 48,
+        "top": 840,
+        "right": 911.5,
+        "bottom": 888,
+        "left": 528.5
+      }
+    },
+    "right": {
+      "state": {
+        "rect": {
+          "x": 500,
+          "y": 102,
+          "w": 200,
+          "h": 790
+        },
+        "placement": "right",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 712,
+        "y": 473,
+        "width": 383,
+        "height": 48,
+        "top": 473,
+        "right": 1095,
+        "bottom": 521,
+        "left": 712
+      }
+    },
+    "left": {
+      "state": {
+        "rect": {
+          "x": 900,
+          "y": 102,
+          "w": 200,
+          "h": 790
+        },
+        "placement": "left",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 505,
+        "y": 473,
+        "width": 383,
+        "height": 48,
+        "top": 473,
+        "right": 888,
+        "bottom": 521,
+        "left": 505
+      }
+    },
+    "bottom": {
+      "state": {
+        "rect": {
+          "x": 500,
+          "y": 712,
+          "w": 300,
+          "h": 180
+        },
+        "placement": "above",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 458.5,
+        "y": 652,
+        "width": 383,
+        "height": 48,
+        "top": 652,
+        "right": 841.5,
+        "bottom": 700,
+        "left": 458.5
+      }
+    }
+  },
+  "narrow": {
+    "tl": {
+      "state": {
+        "rect": {
+          "x": 8,
+          "y": 102,
+          "w": 100,
+          "h": 100
+        },
+        "placement": "below",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 12,
+        "y": 214,
+        "width": 511.5,
+        "height": 48,
+        "top": 214,
+        "right": 523.5,
+        "bottom": 262,
+        "left": 12
+      }
+    },
+    "tr": {
+      "state": {
+        "rect": {
+          "x": 792,
+          "y": 102,
+          "w": 100,
+          "h": 100
+        },
+        "placement": "below",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 376.5,
+        "y": 214,
+        "width": 511.5,
+        "height": 48,
+        "top": 214,
+        "right": 888,
+        "bottom": 262,
+        "left": 376.5
+      }
+    },
+    "bl": {
+      "state": {
+        "rect": {
+          "x": 8,
+          "y": 652,
+          "w": 100,
+          "h": 100
+        },
+        "placement": "above",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 12,
+        "y": 592,
+        "width": 511.5,
+        "height": 48,
+        "top": 592,
+        "right": 523.5,
+        "bottom": 640,
+        "left": 12
+      }
+    },
+    "br": {
+      "state": {
+        "rect": {
+          "x": 792,
+          "y": 652,
+          "w": 100,
+          "h": 100
+        },
+        "placement": "above",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 376.5,
+        "y": 592,
+        "width": 511.5,
+        "height": 48,
+        "top": 592,
+        "right": 888,
+        "bottom": 640,
+        "left": 376.5
+      }
+    },
+    "tiny": {
+      "state": {
+        "rect": {
+          "x": 420,
+          "y": 350,
+          "w": 24,
+          "h": 24
+        },
+        "placement": "below",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 176.25,
+        "y": 386,
+        "width": 511.5,
+        "height": 48,
+        "top": 386,
+        "right": 687.75,
+        "bottom": 434,
+        "left": 176.25
+      }
+    },
+    "full": {
+      "state": {
+        "rect": {
+          "x": 8,
+          "y": 102,
+          "w": 884,
+          "h": 650
+        },
+        "placement": "clamped",
+        "locks": {
+          "x": {
+            "key": "right",
+            "target": 1432,
+            "d": 0
+          },
+          "y": {
+            "key": "bottom",
+            "target": 892,
+            "d": 0
+          }
+        },
+        "snapEvents": [
+          {
+            "axis": "x",
+            "target": 471.3984375,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 431.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 610.875,
+            "key": "bottom"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "y",
+            "target": 233.3984375,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 102,
+            "key": "top"
+          },
+          {
+            "axis": "x",
+            "target": 8,
+            "key": "left"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          },
+          {
+            "axis": "x",
+            "target": 1432,
+            "key": "right"
+          },
+          {
+            "axis": "y",
+            "target": 892,
+            "key": "bottom"
+          }
+        ],
+        "annotations": 1
+      },
+      "allButtonsReachable": true,
+      "toolbar": {
+        "x": 194.25,
+        "y": 700,
+        "width": 511.5,
+        "height": 48,
+        "top": 700,
+        "right": 705.75,
+        "bottom": 748,
+        "left": 194.25
+      }
+    }
+  },
+  "errors": [],
+  "globalAnnotationAlignment": {
+    "before": {
+      "x": 468.5,
+      "y": 388.5,
+      "width": 400,
+      "height": 125,
+      "top": 388.5,
+      "right": 868.5,
+      "bottom": 513.5,
+      "left": 468.5
+    },
+    "afterMove": {
+      "x": 468.4921875,
+      "y": 388.5,
+      "width": 400,
+      "height": 125,
+      "top": 388.5,
+      "right": 868.4921875,
+      "bottom": 513.5,
+      "left": 468.4921875
+    },
+    "afterResize": {
+      "x": 468.4921875,
+      "y": 388.5,
+      "width": 400,
+      "height": 125,
+      "top": 388.5,
+      "right": 868.4921875,
+      "bottom": 513.5,
+      "left": 468.4921875
+    },
+    "sameAfterMove": false,
+    "sameAfterResize": false,
+    "toleranceCssPx": 0.02,
+    "maxCoordinateDeltaCssPx": 0.0078125,
+    "alignedAfterMove": true,
+    "alignedAfterResize": true
+  }
+}

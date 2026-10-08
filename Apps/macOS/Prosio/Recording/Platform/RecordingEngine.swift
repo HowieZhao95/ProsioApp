@@ -35,7 +35,7 @@ final class RecordingEngine: RecordingEngineControlling, RecordingCameraPreviewP
             let name = NSScreen.screens.first { ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value == display.displayID }?.localizedName ?? "显示器 \(display.displayID)"
             return RecordingDisplayChoice(id: display.displayID, name: name, frame: display.frame, width: display.width, height: display.height)
         }
-        let windows = content.windows.filter { $0.isOnScreen && $0.frame.width > 1 && $0.frame.height > 1 && $0.owningApplication?.bundleIdentifier != Bundle.main.bundleIdentifier }.map {
+        let windows = content.windows.filter { $0.isOnScreen && $0.windowLayer == 0 && $0.frame.width > 1 && $0.frame.height > 1 && $0.owningApplication?.bundleIdentifier != Bundle.main.bundleIdentifier }.map {
             RecordingWindowChoice(id: $0.windowID, name: [ $0.owningApplication?.applicationName, $0.title ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "), frame: $0.frame, width: Int($0.frame.width), height: Int($0.frame.height))
         }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         return RecordingSourceInventory(displays: displays, windows: windows, cameras: discoverCameras(), microphones: discoverMicrophones())

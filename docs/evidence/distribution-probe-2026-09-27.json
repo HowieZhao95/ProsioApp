@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-27",
+  "os": "macOS 26.3.1 (a), arm64",
+  "method": "Locally signed app bundles launched as development-host child processes; existing host TCC authorization; background fixture; PID-addressed paste",
+  "results": [
+    {
+      "accessibilityTrusted": true,
+      "activeEventTapCreated": true,
+      "activeEventTapEnabled": true,
+      "focusedElementError": 0,
+      "listenEventAccess": true,
+      "mode": "unsandboxed",
+      "outsideSandboxRead": "allowed",
+      "pasteAttempted": true,
+      "postEventAccess": true,
+      "selectedTextError": 0,
+      "selectedTextMatchesFixture": true,
+      "fixturePasteReceived": true
+    },
+    {
+      "accessibilityTrusted": true,
+      "activeEventTapCreated": true,
+      "activeEventTapEnabled": true,
+      "focusedElementError": -25204,
+      "listenEventAccess": true,
+      "mode": "sandbox",
+      "outsideSandboxRead": "denied (NSCocoaErrorDomain 257 / EPERM)",
+      "pasteAttempted": true,
+      "postEventAccess": true,
+      "selectedTextError": -1,
+      "selectedTextMatchesFixture": false,
+      "fixturePasteReceived": true
+    }
+  ]
+}

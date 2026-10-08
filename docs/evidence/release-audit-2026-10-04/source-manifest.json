@@ -1,0 +1,1183 @@
+{
+  "git_head": "77113fd7583b5ca7859e1763f47fe83b95a06257",
+  "working_tree_dirty": true,
+  "note": "Scope snapshot including existing uncommitted features. Not a tagged release or publication.",
+  "files": [
+    {
+      "path": "Apps/macOS/Prosio/Agents/Domain/AgentCommand.swift",
+      "sha256": "55f61d30cd1649e64e47548ec209cc2546e0c7c4ffc47cea6e52b978b3004124"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/Domain/AgentTask.swift",
+      "sha256": "516dfad18789c6ce9fb8483d9e911345ab6df8215aef55fc50044d9005463b87"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/Domain/CodexDesktopState.swift",
+      "sha256": "b34d57b3b51e3a10e2f996d5cf8b9015d132dd3f932a1dcef797081660f05c9f"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/Domain/CodexEventReducer.swift",
+      "sha256": "d66de45e7e8e62d1c48c5ada244c9f8d114e532976eb61adca9f05df6ccd98c4"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/Platform/CodexDesktopIPC.swift",
+      "sha256": "174d106e469da591bcc7cd8905c398a96705ec98b259ba6d40c2d764d9caf6fa"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/Platform/CodexLogObserver.swift",
+      "sha256": "8a831fcacf164138237d0fa21b0d950f92a17904d5623cffd14f3c53d425f214"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/Platform/CodexRuntimeReader.swift",
+      "sha256": "0566238bcc38660cb8d4108a122c9ede048fcb01665f5beccb9a89e3aadb3017"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/UI/AgentMenuPane.swift",
+      "sha256": "4a25c8f78a8fcbab1ca38eab838159ec0684d8d71ca2e3109f57a79695cb1153"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/UI/AgentMonitorCoordinator.swift",
+      "sha256": "724d2cf428336b04cefcb9d375d56f81f328db1c7207b0fc5f3c8e04ccd75726"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/UI/AgentMonitorView.swift",
+      "sha256": "c642deacf59becebdaa8567bf2f6a4865d6d171e274f3257284170e84dc1f34e"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Agents/UI/AgentVoiceInput.swift",
+      "sha256": "1311f884ec2bbafbea1b49534e4768723dcf844e55364c36959814da903315d9"
+    },
+    {
+      "path": "Apps/macOS/Prosio/App/AppEnvironment.swift",
+      "sha256": "62a6c5e7b247e903dc068324864f2bc77370813adb3f33b5541449c130196189"
+    },
+    {
+      "path": "Apps/macOS/Prosio/App/ProsioApp.swift",
+      "sha256": "a8a928fafe4039a3620fb4e4b3c5b24817eadf71d29842d8110f7f572c9a3c39"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Domain/CaptureGeometry.swift",
+      "sha256": "bcc4397fed0cccd748b04456d98b9f8dd6fe1349db342040f3fcc92699642329"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Domain/CaptureModels.swift",
+      "sha256": "6e657ab42af1af19446fcba1193eba9232ccc19f838fbcb76e40b13d18e2e149"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/CaptureKeyRouting.swift",
+      "sha256": "8a46ac344f7920b632685ef5203a4abe76f883c957a61917fbcbf062f24100bb"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/CaptureOutputTransaction.swift",
+      "sha256": "a5aec83595075f3a36921f724f35666276914ecf72a3f3a0bd2be8ce2d825106"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/CaptureTranslation.swift",
+      "sha256": "9ddd86440d299fcf87a472676956dfc252c6cfea9a70f7c50be4e2193944b2df"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/EditableCaptureDocument.swift",
+      "sha256": "c3370e64082829fdedd06579260825a8a707db298bcfba4b44568e8d7f4fea95"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/EditorCommands.swift",
+      "sha256": "c1e525d08c054c89b224a958038bd03b6f55dd36e757d210577b0a32573de7d8"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/EditorModel.swift",
+      "sha256": "fa355c909df8408744b05cae62a6e302a622022788cd0eb8246b2e3541583ba6"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Editing/EditorRenderer.swift",
+      "sha256": "cead4adfbe16fb38e4b80300819f087fdfad0d7b6b24323c90f5cfb660252d31"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Integration/CaptureCoordinator.swift",
+      "sha256": "359b84a87f12109d92cd4de518820ae106a8b1b6f5f3e25af234ca1eb4ff8f1a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Integration/CaptureEditingSession.swift",
+      "sha256": "dc193a8a11393b1e0a6ec57b1835a9d06cb89edf07efbbba8289b12e2319d99a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Integration/CaptureHotkey.swift",
+      "sha256": "7d09dc6bc0f3ffb182f47e70c7e6a3490af2eeb4c8e64c08eb9fc2b08e433c59"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Interaction/CaptureInteractionGeometry.swift",
+      "sha256": "bfca2db97a494b073e313a55a2a1c01e0159bc53b0fa38e16c70fa1d5367603a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Interaction/CapturePixelLoupe.swift",
+      "sha256": "15fcc2904bdbb36375a427a1f203ed5191c4bcbec84ed50f80961294729f417d"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Platform/ScreenCapturePlatform.swift",
+      "sha256": "e2c6ab980f15478efa530cd4da623608212a8e14b62c04ba1729f1d62d69203b"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Screenshot/ScreenCaptureService.swift",
+      "sha256": "3b235bfa52f02888feeb00f08f0b33146d92dd0f3e80b0121ef705b852c404cc"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Snapping/CaptureAXBoundaryProvider.swift",
+      "sha256": "2792d17f972ff719513ccc14393fcdb0d0190c991def03e52661aea5fc87d106"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Snapping/CaptureContentBoundaryDetector.swift",
+      "sha256": "684e01a04c93c423681f605a908591df472cf10ca5b03d1137909b8313665ce2"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Snapping/CaptureSnapCandidates.swift",
+      "sha256": "7b2a800d77ee6419dd29768eec635d1e51b95d273d93fddf21dcd8394c5f5573"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Capture/Storage/CaptureAssetStore.swift",
+      "sha256": "0684aeefff7f903d70cc3d0522c8a1cd24c100ec63f538ee5fc62fcf2f04e4e7"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Meeting/MeetingCoordinator.swift",
+      "sha256": "6a70030ca835b3cc0db9d8bf879525cf3c51b3fa9af74e8e1953d7b445f28738"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Meeting/MeetingLibraryView.swift",
+      "sha256": "41e80715922ba8eb09ba1923e443307319d27475a6e71e40b3932f464699d6cf"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Meeting/MeetingStore.swift",
+      "sha256": "b069be0b9e575376ad348d67da1188eeced825732a4346a5f42346298346b721"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/DailyNotesCoordinator.swift",
+      "sha256": "2c8d7164f57fb3c3d827b9fa2236bf6a14d6669ab976a96367306c4238dec10a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/Domain/NoteDay.swift",
+      "sha256": "171a02d17d7251f0885027b4bbdfb93e2dcc317693964a8489bf4877e9fdcb68"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/Domain/NoteHoliday.swift",
+      "sha256": "dc50d531761ca9f7578d192d2e327faa217c25ab642f69b369ff991468267245"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/Domain/NoteTasks.swift",
+      "sha256": "95f271108f24c1f655197d378531a516a2530c8b54f4cf61d10e2df01f17f977"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/NotesHolidays.swift",
+      "sha256": "a90f87ab9bfc85db7273a272a84efc6caa8382bad0f302a9aee9e1d6ea531c73"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/NotesHotkey.swift",
+      "sha256": "eafd7e2bc69bedd1aea6729595893601cd145267e6466c4c1ce4c6d1a496325e"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/Storage/DailyNoteStore.swift",
+      "sha256": "e656b573ba133d566025cbef10f5a0b675c242f3dee9c503ebe468c7fc8b5ec3"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/UI/NoteEditorBridge.swift",
+      "sha256": "4ae07bc4c6fc744a302a1311d6bac435088048a2101c3bff5d0ca13f7188a2a0"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Notes/UI/NotesViews.swift",
+      "sha256": "923102a21e4694383f8b8cee5749dec7226de6042d2ce22019e5e85f460d1c3d"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Domain/PresentationPreferences.swift",
+      "sha256": "3981474a1bc0c5667d0e774a637816eed0e6fa4a618e48e8fc11b868f7664251"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Domain/PresentationState.swift",
+      "sha256": "f06438bb2e2c5630c483be8bf1e897021806423317083a49d9df01554cc7fc3f"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Integration/PresentationCoordinator.swift",
+      "sha256": "90c8213385417bbf9c21f98e443c295c641ec3e6a376ad40c7660e4ade56f1a7"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Platform/AwakeService.swift",
+      "sha256": "e0589740576428d5bef2d827164e2b473214becc305eeb2f07bdc2203e54283d"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Platform/PresentationClock.swift",
+      "sha256": "f2113efb93f247c6177e19af0df70a2b20c586c65a76467d7c75737db4708b30"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Platform/PresentationInputMonitor.swift",
+      "sha256": "7d122aec2dfa558a3ee03254f496e51beaac6df62eba66ea59f4325c881ca967"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/Platform/PresentationOverlays.swift",
+      "sha256": "747b5cbb37fe88f168dab0c473b24c2ac0f901269c4f8375b6c253666d771d53"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Presentation/UI/PresentationViews.swift",
+      "sha256": "b4359e65a97dfbb1aab5357a2f3f82afeeecbac8448804f80d7dc664f1a0c6d7"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Domain/RecordingModels.swift",
+      "sha256": "aad8cf91f46020054b4f4dba1c054c26ea6a44c6137bffd2db85246b06d62ca6"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingEditorHandoff.swift",
+      "sha256": "20f4d176c7b79308ece317afad0c1dc8a6e623f2925af8c46c7d44570ed442fe"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingExportSupport.swift",
+      "sha256": "8a56f12708da3de9ce8f242b8d9f3088b3211bf9f273e3423523250cb32f16e0"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingJianyingAdapter.swift",
+      "sha256": "4a15ef1d7a19b27146cb17db3e11001c6607755f69ac71e82e1660a8fd4cd133"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingPremiereMulticamAdapter.swift",
+      "sha256": "f4d0df7a1372697f245b4767e287db462efbc3238297370279ecfd87ffd3b6ed"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingProjectExporter.swift",
+      "sha256": "b9310c49e0ddbf4b89a5dbb3e10705f163e81a66a432ff291ec9b212ace19f17"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Export/RecordingVideoExporter.swift",
+      "sha256": "46fc504238086027c7f444f550e38c58202cd165437263da8430193eeef8bae1"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift",
+      "sha256": "4ccfbca80ccbe1e923e08c24caa03734d6f085146e7b17c77d2c48920a96612a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Integration/RecordingEngineControlling.swift",
+      "sha256": "cc1bf95b7eaa2034b01fd3dab6142a6d26f5f89473a7ec9ed8f79605876a4e6f"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Integration/RecordingRecovery.swift",
+      "sha256": "d5112c2185594d3da8c8fad1b6f3abc6a2513b14b3ae88fa8142505b80c2db9a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingCameraPreviewController.swift",
+      "sha256": "be27756e9839f3971074def84924c0adeb2c7cdf6ac08be793cc61ee69efba6b"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift",
+      "sha256": "f5b91495d5bab24abb9be2d9a6a0f9cf57530b31ad2ccadc9d18b7bf9f5a93ec"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift",
+      "sha256": "aed35b1f2bfb2f4f222f76c99b18ae14bc2a9f54450d153f00fc5bbf4d40ac86"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift",
+      "sha256": "3bef0e4570cfb23f844edb84a3c64b1fbaf2796cd330d1dc72cf82c127cd930c"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift",
+      "sha256": "f910d96278fe1d12dd547cb2c90d68cde4fb3489c0b0e69b6f95909b63f25c97"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Platform/RecordingTimeline.swift",
+      "sha256": "1cbc93b72f382444e58c3bbda41744844702def6731c152c9c4dd6f66406499e"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Recording/Storage/RecordingStore.swift",
+      "sha256": "5ced0b1177aa68cd9a919a5f15a5b6b34fdc27e46564057f4dd506d3acfd5254"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Resources/Info.plist",
+      "sha256": "51e304d25575cedc1d026a69b6d40303b94ea5f5a2645da8a53fab9b9ea924eb"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Resources/Prosio.Release.entitlements",
+      "sha256": "75b232723e3d69717c885087856abbe3f643f67f8eaa51d08ce0a04828824bf5"
+    },
+    {
+      "path": "Apps/macOS/Prosio/Resources/Prosio.entitlements",
+      "sha256": "24d5522d3d2bdf6944586cd14299301a5bf1a2379c5e66b012075942e0339fe3"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/DictationSoundFeedback.swift",
+      "sha256": "732dcbb8bfd617c43d6e83db8b34dfc913ef5788bca035888079a522bc12f074"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/FocusContextProvider.swift",
+      "sha256": "aba1d4a8f15481f61a19933d9248458db9ea3c0de07e04fc1b4d8cc36591092f"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/HotkeyMonitor.swift",
+      "sha256": "7654d765489be3a315d6527bda0806aab2485b8c7f29656b7e5156160e49c7ac"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/HotkeyRouting.swift",
+      "sha256": "0642e4b7fd3d56ad1d2455fe3151ceb58b7216f70c15feb2c1df821cfe418f00"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/HotkeyStateMachine.swift",
+      "sha256": "a0c7bc557b217f2a5a6038743232e35adbc43f2ce3f130c650c87ee170058fff"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/PermissionsManager.swift",
+      "sha256": "335e7d0317cbdb71a8a1b789cd1d5f41fd41cb2c659a23cbfea75c6dc17645c4"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/PracticeTextTarget.swift",
+      "sha256": "2c804e8f2ec2f78815ca5ad2f1f746acc8beba875a696748a2b0d376e60c8b90"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/ProsioLog.swift",
+      "sha256": "43ea5d0154acdc2f6fe6c33390d589c44bc706d417a7b58a9103e42983c696a0"
+    },
+    {
+      "path": "Apps/macOS/Prosio/System/TextInserter.swift",
+      "sha256": "f878e8bcbf99506f477d4ba1280293be67323c925a8bf5ca553358514bc09581"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Answer/AnswerCardController.swift",
+      "sha256": "e15a8f42e803159010392fcb258c297787581cb6e15cf04d9999bacfdff2e07d"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Answer/AnswerCardView.swift",
+      "sha256": "9293f76015bcd26f4529eaec199e3a1fad2bcb7394297b1694cc48026097bf1c"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Editor/CaptureEditingCanvas.swift",
+      "sha256": "71786f47979896dd3a78fc60c4f2365cb2d244e9413542ba231cd9b7bbafc711"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Editor/CaptureEditingToolbar.swift",
+      "sha256": "dba2c1299216f3c9e1957620998884bdcaa6b9e26c2e2a760df1285f26ba50fe"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Editor/CapturePinnedWindow.swift",
+      "sha256": "5bcabbe213521c5b88153f74eeac9567ae11a686f8db4fd40c80335941ac56f2"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/HUD/HUDCapsuleView.swift",
+      "sha256": "0ef535b3785cd3e417a7bbf5ebd8121046a8132159aecd1ca825efefbcabe49d"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/HUD/HUDController.swift",
+      "sha256": "65f179dc584ed2b42d98b71054f3bfc07777252e195d5152f712fe2bf9df4e98"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/HUD/HUDPanel.swift",
+      "sha256": "b0fb1e1d6924df87d1c319c7caa4ca6f0a3457ece6df3714fb3cf69d8245f20b"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/HUD/HUDViewState.swift",
+      "sha256": "53c4e3511093d7a6e7a0ec23e6bb041547477f81efd759be0c7205b47c2cb1a1"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/HUD/ProsioPalette.swift",
+      "sha256": "4ce70287e260d4032a32c6eb50f36cf887104960b91100bae3e8424da95ae2db"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Library/CaptureLibraryView.swift",
+      "sha256": "e4fa89d380dcc5ac4aa97c56b838abba0a7b812f7f176bdd02882ebbbf145cb3"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/MenuBar/MenuBarContentView.swift",
+      "sha256": "8df12c0df15f4c1a7ce90bd0cecccdd5798d4681bbb5fcfcde258fa654635ff2"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/MenuBar/MenuBarShell.swift",
+      "sha256": "74efbdf761b635daf91472f332a2f5e9a97675e910addcf3b826e0c82dcb5b3e"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Onboarding/OnboardingPermissionGuide.swift",
+      "sha256": "c36918d47ec17c2b0fe93427c8d1bc0ca7ae250597e57464ddabdcbde4e5ee67"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Onboarding/OnboardingPracticeEditor.swift",
+      "sha256": "135871e631d098132b98d2b069d4bdc621702e29c9e19d43a8ffcafedff677a6"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Onboarding/OnboardingProgress.swift",
+      "sha256": "3e46da68c9650fb963e5254ccada57003f94f9afd86a96f765edae695bc88ade"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Onboarding/OnboardingRenderer.swift",
+      "sha256": "394be02875c41d6cac97c5eb347dcffaa9d46410ce16e7d118b60074a0178452"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Onboarding/OnboardingView.swift",
+      "sha256": "3a386e3ec0b0cfc4eac7d0b02dfb719c91d4fb310a7ea154de54d8b6747a4509"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingDesktopSelectionController.swift",
+      "sha256": "b1a72c532162b9e9e167b3d182421f12c63b0cb73138cb174f02dcbca378a1da"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingPreviewController.swift",
+      "sha256": "024adac18eb202d98e6f95ce8dd3450378cbcff1d0f9de99c4b1524abd983b8f"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingRegionSelector.swift",
+      "sha256": "593155eed9fc2e3a15aadfb50b5e20b6c4283bbecc30c618404c1c5d6eabf28a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingSelectionToolbarView.swift",
+      "sha256": "16f7b4b280a2a915283c3f021bbc786557a9cffb60e755d33bccbefb9d86885a"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift",
+      "sha256": "4752622c6f0aafc0230b3f9c89363c85a7a01b7e934c7dcc5e5e984cdc435efd"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Settings/AccountSettingsView.swift",
+      "sha256": "88890c56ed58175c8969b70df42f7b9313bdd807cf406c6737ff23e20855b77e"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Settings/DictionarySettingsView.swift",
+      "sha256": "e771e5138cb6371db678f4e9e7cbe9dafe2d8bc031787de5969997c44b6153c0"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Settings/GeneralSettingsView.swift",
+      "sha256": "b57cf1f2bdcc4dc2b7e11e63f24036c7e27d3c584be468c4c6e84dd2a9b5ac4b"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Settings/HistorySettingsView.swift",
+      "sha256": "365e5fecad68a1a71c4261f4139b91470581a9aa7c083e05973134093de3e534"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Settings/SettingsRootView.swift",
+      "sha256": "73570916d3e57c4b315fac37c8621863296c0a1da014080fb95e81e337025475"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Support/HistoryRowView.swift",
+      "sha256": "b6f555f92db5f04132d81ce6b00481dc59b37dd90a035d266e8e3676982ee2ab"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Support/TranslateLanguages.swift",
+      "sha256": "8eaa1a5aa8583dc917eeacc9d63fc87b8818d49a31cedccb78c551564987d342"
+    },
+    {
+      "path": "Apps/macOS/Prosio/UI/Support/TriggerKeyDisplay.swift",
+      "sha256": "ead64e2c40804ed9ae158458f55d63781e94d3cd1f6ef52a823e955e0e709dc1"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/AXCoordinateConverterTests.swift",
+      "sha256": "733a1ddd87eb05b2d7dbc3886b27d601fc5844ffaf8fd634fd873137ca0db3e2"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureEditableStoreTests.swift",
+      "sha256": "211ad69f02b7656de0711da9dfba93798f55b2f476abeb25bc7fec8a42cf52c9"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureEditorTests.swift",
+      "sha256": "5bc9bcc7566fa87c3ee5eb23c59f0bab0b8787a4b06b6c9720e52112775ec3fe"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureGeometryTests.swift",
+      "sha256": "73099837bb6639faa315b601d17e6142cb6d480e554e4d274aa2f6b79472ede8"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureInteractionTests.swift",
+      "sha256": "fde443cf64047f4671dcfcda9f376a922eecc5fc0dc92555a9a0bd50afcc9775"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureNativeCanvasTests.swift",
+      "sha256": "4b29497c3e2ba3006d6458c567e092a63f8cfe5d00404edd5912a01788b830b0"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureOptionTapTests.swift",
+      "sha256": "f392224a7ac14aeda9eb68145b8aebba162a0bb1f7e9214243ccc75eecfd4699"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CapturePinnedWindowTests.swift",
+      "sha256": "e356b6270672e6ced45e48de6db11867513ed452dabbd8aa59bb7896f9327e25"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureServiceTests.swift",
+      "sha256": "d4e26ecf2d8bf1360d7f42ee88174540f6935dd3f8151a913fa989157c9f1d88"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureStoreTests.swift",
+      "sha256": "2a349ad94b63e6687846397c102e8dd2a479764ae837085426e696702b9565ab"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/CaptureTranslationTests.swift",
+      "sha256": "0c7585d08d9dc621df5d86021bbe65e4f4a4f3c29a9a1f75720e7410c4a3515d"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/DailyNoteStoreTests.swift",
+      "sha256": "184053821a41a7946064eb7f7bd7742178f90947616dfdc76fc1a649fdb4a5da"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/HotkeyStateMachineTests.swift",
+      "sha256": "a5e14f7b0d150f9506052f3aaafab47646d8ebf604cd6bfe2f8c776b5a44d952"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/MeetingStoreTests.swift",
+      "sha256": "d2ef7b23ec62a9bb1c6bfad79c0860d9295f9070705245ba86f0ad9a048c97ff"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/OnboardingTests.swift",
+      "sha256": "d876682d955c076bdecd638a33371358e202bfc342f0046fa5734dbd837b1d4b"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/PresentationTests.swift",
+      "sha256": "615e6a3511c80da7b746a5ab03664ebc645a0a604ef6f8ef12537b5845e1bdb8"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingCameraPreviewTests.swift",
+      "sha256": "9473b8e0adc4ecf96d1ae139fa82576e48002d4552917ce3ad489884b0ab9b6c"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingCoordinatorTests.swift",
+      "sha256": "c44e7d963e77d7de21d668cdcef03b1c54ae2ecbe9f3b6ec1dee70e5d3b14d42"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingDesktopSelectionTests.swift",
+      "sha256": "3e0be0111b8a38c41c7201d7c3b1aeb2ccc8cdc11069d63dccd19027105e0686"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingEditorHandoffTests.swift",
+      "sha256": "514d674f8561a516d8f9cb439da3b6f8724816918993c3c45621b51964422a38"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift",
+      "sha256": "6ad1991b3f8413223e67f4eb5e662f597a359cf63ed495b787c97bbe7e70d484"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingExportTests.swift",
+      "sha256": "57aac1f5f3335ce409a9ef3bd079603be6de928e2ea3908749d3aba87606f5f6"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingImmersiveWorkflowTests.swift",
+      "sha256": "ca02f44c8a688a885695069454d9bb58a3603679026675b80e03799950e937c6"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingNativeViewTests.swift",
+      "sha256": "87ab44c7fe2eb853bec6ac951ea40d8735f686c797235cb497989f3be4fbe38d"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingPlatformTests.swift",
+      "sha256": "ecfd56d3b4462245c698dce70c141bc1290b18a82983fe7908c984f0a570cfc2"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingPreviewTests.swift",
+      "sha256": "ee375911bf8a852530e8e9ae22bddd0140355f25c0733a32bef5c0dcf1a3111a"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingRecoveryTests.swift",
+      "sha256": "5861daee492d3c2b458d0ace2be06e2ad0215bb85bbd46e8d0a7553124f8d8f5"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingStoreTests.swift",
+      "sha256": "0c3388c4f462643001c457937c46f6aff6ef5af2de60d113e514d65df2c42050"
+    },
+    {
+      "path": "Apps/macOS/ProsioTests/RecordingTerminationTests.swift",
+      "sha256": "bed77a08ce9d63efee84bd52e7f9af8e874e27e01cd0d3d48af3af616015f01c"
+    },
+    {
+      "path": "Packages/ProsioKit/Package.swift",
+      "sha256": "d37506e735bf52bff87e4bbc9819556f105a699ac8e578a096ab05e87a297e3a"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/AudioCapture.swift",
+      "sha256": "3ad6570b951e31ef3d95a76d8b7f79dfd39821112c669576f725aef822764862"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/AudioSupport.swift",
+      "sha256": "6f276a9035a03335b31c4e584b1b587e1c39e3e8444dc90f9c4907b152a36d3f"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/OggCRC32.swift",
+      "sha256": "6b6e0039d71a3d567b35e3b43b7abbe48b871f4806513b674ebc882c2d373b02"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/OggOpusEncoder.swift",
+      "sha256": "af980bb7d1072dd1b2dd147e7905ac8446701f2bbdcd2628f8802772c962d23e"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/OggOpusMuxer.swift",
+      "sha256": "6ac6dff27d3d01d2305117dfad9ed5930430c1f35907bc4c1ae977ff70da788b"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/SilenceTrimmer.swift",
+      "sha256": "11e38b265907bb5c27282a59682b632a068a302ae34e1363a21677286aa8adf5"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioAudio/SilenceTrimmingOpusAudioPreparer.swift",
+      "sha256": "d6a984fa64d45d9914eaa2445bb6bf25add9a2001ff123bfeddca06b8b96632d"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Audio/AudioPreparing.swift",
+      "sha256": "084b946b772089b7dfe32980ab20f7727aa575f37bb914e44fd20bb0c958cb0c"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Backend/BackendClient.swift",
+      "sha256": "bf2d92fef55d1e92abffbfe0048058cf53ee2cc08fe120adfbadb89b114a7a7f"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Compose/IntentRules.swift",
+      "sha256": "10a00a905bd9642cb79cc029a288f344d6587fbf2dc9e71be97e98c0a27f258e"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Compose/SceneResolver.swift",
+      "sha256": "d8c3b120b7661f1737239377b9bd1fb1a4417376a85a95298acfcef65ec5f8d3"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Contracts/Contracts.swift",
+      "sha256": "f724cb2c54c7737e42c242f6154d6698614f163b01d041b06cda1af0302c3845"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DebugRecordingWriter.swift",
+      "sha256": "6afe68645fb2e6a96ab3f0610de4c996261454625765e7d1103aabfafb602552"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DictationLog.swift",
+      "sha256": "f1d0ac88d045a5e550af23d012eb98f3ac08d6c206ef9405af81c43b0225c76d"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Diagnostics/DropDetection.swift",
+      "sha256": "39694941b55ef869509af9fddd6b1ec983a6c0aa2240441250fbcacb4a16d08d"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Diagnostics/ProsioLog.swift",
+      "sha256": "2f71549b92387a2b99335b109823959b8671a50b9441f31c4cd57bb299c3e05c"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Diagnostics/WAVFile.swift",
+      "sha256": "3632e0f8990d78cb29c0c7eccaccdfa038aba46b5bd4c3cfe3f230b4664b1a82"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Session/DictationController.swift",
+      "sha256": "7c685aa67a73dffb4be0eb90793f7efc0649130e4fc9ff5c12142150e71ce955"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Session/FallbackTranscriptionEngine.swift",
+      "sha256": "43cbd7ee86b37fe8d8f1ad9166634af184ce0687c9829f5a4a489554b30916c5"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Settings/AppSettings.swift",
+      "sha256": "5d6369c9a0ee80be68cb390a0c32d375e24253edd73fcbd174cdf8e568914a90"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Stores/DictionaryStore.swift",
+      "sha256": "8fab994806e5805eda67d8b597b941aa4961fb174c8bdd517c490d635a1348a2"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Stores/HistoryStore.swift",
+      "sha256": "9fd868b1a74cfbb31cd2c4fe93136f3f0a32b1d1d4e48084da0101eedc6a1553"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioCore/Stores/JSONFileStore.swift",
+      "sha256": "5bb42c3ecb5a6e56f2f8f18db00f7c3a4c817d017e3e6a90003b3580087d4905"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioMeeting/MeetingCloudAudio.swift",
+      "sha256": "9f8449eadb2f53cac8dc45e786422a543c63fe0a6d97628ccc22d7081611203d"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioMeeting/MeetingLiveCaptions.swift",
+      "sha256": "ac9d6da8a6a10b02084c0cc7ce3efc7ceda951d9527c2a752872246c183feaed"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioMeeting/MeetingProcessor.swift",
+      "sha256": "001980bcafec9a9198ccd6124169e4eee98d17e3e21a6673625cff2f66213acd"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioMeeting/MeetingRecorder.swift",
+      "sha256": "081baf21490e03f0ec10d6874c312cfa674b00219c7e470975070f8e824b167d"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioTranscription/AudioSupport.swift",
+      "sha256": "9c701652e75a79af7fe8ff856a3546ed2c38b33e718f913f4659174200c264fb"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioTranscription/CloudBatchTranscriptionEngine.swift",
+      "sha256": "93f2f37fa00dbfe9d2cf9d8e8da6ae750c4609693cffd37ee2af02361eb9a64d"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioTranscription/SpeculativeFinalizer.swift",
+      "sha256": "1228dfb69c6fcfd0ceed4a5058aad80f59a3080e368242f539f1dc0a9b969385"
+    },
+    {
+      "path": "Packages/ProsioKit/Sources/ProsioTranscription/SpeechAnalyzerEngine.swift",
+      "sha256": "6f45bae56cff03aa6a8cbd7b2c91f34020089ebb744c83f3d49f3de33bcb8251"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioAudioTests/OggCRC32Tests.swift",
+      "sha256": "98cffd45c896b66270e14893ea5c29d86d2f8dae609316b05000d4c94c75c39e"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioAudioTests/OggOpusEncoderTests.swift",
+      "sha256": "ddf60183918f8ce89ab34dc24fa8885e0bf294cd3fa76e69a5b3f80675482934"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioAudioTests/SilenceTrimmerTests.swift",
+      "sha256": "cb20e0b8eb2c183d165659c38c4da4af999802283bc9330f7c124a915c8cb957"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/AppSettingsTests.swift",
+      "sha256": "84f82d9b7d02fffb7db45e488cd2df4333674759aa615cf939562db16e534b87"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/BackendClientTests.swift",
+      "sha256": "f8e18553336b6d6953151813e57d252fb5b3afe74d6dba04b8b178d1997e1021"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/DiagnosticsTests.swift",
+      "sha256": "cac97604a8fd37c9c57552f04809dfde8f9e32741d34f79d9095ff9c7d5ee2c2"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/DictationControllerComposeTests.swift",
+      "sha256": "55106cd696084f7e00951fcb30f6448a33e0a844db3d3d2eaccacbe5766d10aa"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/DictationControllerDebugRecordingTests.swift",
+      "sha256": "e8a5b2048737de20fe53de897a04a07a76d0e164799763ff1ee7aed7d4d253b3"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/DictationControllerIntentClassificationTests.swift",
+      "sha256": "200a6c7a263759bd3e828acb0bd71bae78f097a1dbe1b5f253eace9310264e35"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/DictationControllerTests.swift",
+      "sha256": "07f2e61ae6f6993285b39d1c040799795897f4e487dc88077b692828e891e685"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/DictationControllerWriteTests.swift",
+      "sha256": "8b8abb14ac04dd9475464aedaee494bc69802dc06d8d2f365ccc9913faccb042"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/FallbackTranscriptionEngineTests.swift",
+      "sha256": "6814d17cb0345436138539af766827f77e7fac3130c8903015e51e522c0b315c"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/IntentRulesEvalTests.swift",
+      "sha256": "505e724e60a3da987bb70a4e9dc92ddbc0d1626d4b2c5a239df0c1adb5c5937f"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/IntentRulesTests.swift",
+      "sha256": "7026498d979ac2769f942036066bee232e80537f8bf464d14fe07cc4e5e73174"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/IntentTranscriptVocabularyAndReclassificationTests.swift",
+      "sha256": "a7434c042a254df4f7f9a9392eec9cc85dda1cf9d64d9dcfded4f0edf372bb70"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/LiveComposeTests.swift",
+      "sha256": "1bd6a4088f282ebba614bc6bd6ed00a164721dc0b8c6f21638cfe634648315fd"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/SceneResolverTests.swift",
+      "sha256": "cad33af7cc33ee6f140e34cb68c648d296a99534d99fa3c4d3e9d42d6d779ef8"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/SmokeTests.swift",
+      "sha256": "f3a269982e174f0d4dc3714e4e740deb3b5baa3ae84d14184e380c4430d2fc6b"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/StoresTests.swift",
+      "sha256": "3d0178fa9f8c9069ab7813b309dffb299566a49285cb40851a00fdbec9763db7"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/TestIsolationGuardTests.swift",
+      "sha256": "7758daa8a61877e1f3322e8fa82cdf5c589d52c9cbc89d3c9ca157f269ae25fb"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioCoreTests/TestSupport.swift",
+      "sha256": "9f6ecf5e81e34699566a58985ec9c9a558d683adc63c062011140262fcc3a4f9"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioMeetingTests/MeetingCloudAudioTests.swift",
+      "sha256": "9d53254ac80a2a30aee8d753f16e5877b126b1adb0f26bc727138d288023fedc"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/CloudBatchTranscriptionEngineTests.swift",
+      "sha256": "fb7f3174a916643e83fb38cc65004ad76fcd44689f4ecd34483b68982846ff9d"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/LiveCloudBatchTests.swift",
+      "sha256": "c1b66caa1043790e36ede96dddf6329545a54fba7d50a16d471bbe7c5fb74493"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/LivePipelineTests.swift",
+      "sha256": "27202b84b1283d88a3c6ea57999cb580bf24e16a4d8a98947f25d508bfb0dc1b"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/LiveSpeechAnalyzerReadyTimingTests.swift",
+      "sha256": "c5a7c655bef9ff318c49825e77926313c9c9f0df0f02d2221ca047384a9e07fa"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/LiveSpeechAnalyzerTests.swift",
+      "sha256": "1594fdb6d9b3f3117ef26e1c7252f2e2910771089d8baabcb55fe03e17415ae8"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/SmokeTests.swift",
+      "sha256": "f29e334423138a6aba07736400d6b1f51b93c3a3210660e8f6a0a59142504e69"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/SpeculativeFinalizationTests.swift",
+      "sha256": "e93969e11eb0b2c2b22153e68dfe41026241357ba7716926c79800406a687a57"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/TestSupport/FakeCloudBatchTranscribing.swift",
+      "sha256": "27ca47809bf2927dc21f034f27efc552402387bbc7a8b59698dcba5acdec5086"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/TestSupport/LiveAudioFixtures.swift",
+      "sha256": "20c0fa347631ee0f3b30277ff28ea1bf5d27dd70f85f1f5bd8e199544bc5488e"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/TestSupport/TestFixtures.swift",
+      "sha256": "b32c8924ceb25aa4f44464b93272f770c435bf69e7c5c80705a154276c376b91"
+    },
+    {
+      "path": "Packages/ProsioKit/Tests/ProsioTranscriptionTests/TranscriptAccumulatorTests.swift",
+      "sha256": "56431969539c6094d5e50b5800f39ac7e4939078e78bb44ed9ccbf2bcb8689ac"
+    },
+    {
+      "path": "project.yml",
+      "sha256": "bcef0f67b0d7aa783be0c1b236b049d8be80172537419774693b7a642ae4c11f"
+    },
+    {
+      "path": "server/.env.example",
+      "sha256": "d32ec5139aedc8e244ed35ebc1f7f9d0477e0a6946685e8109bce4a608bbc8db"
+    },
+    {
+      "path": "server/app/api/auth/dev/route.ts",
+      "sha256": "860d0ee18b06afee3b324744a639648d2321e0abaaf4a50e66d6ffc15bdb321f"
+    },
+    {
+      "path": "server/app/api/capture/translate/route.ts",
+      "sha256": "7fa0a2759e4a656f97d9ee407bda4386dff1a65bd79b9311f618bd42adb7e3ec"
+    },
+    {
+      "path": "server/app/api/compose/route.ts",
+      "sha256": "50c28bc6d56316d605f21fc4bd253b2e1cf12d6b1ffce54589f1f44316313326"
+    },
+    {
+      "path": "server/app/api/dictionary/route.ts",
+      "sha256": "796058bd62b617de7e7d71ae18643624ea168d21196e148887cf2a51fbdded88"
+    },
+    {
+      "path": "server/app/api/health/route.ts",
+      "sha256": "654711cda1bee02f814814a2b8f1ec6479740b1782636e0a1d6339a1d30a6f04"
+    },
+    {
+      "path": "server/app/api/intent/route.ts",
+      "sha256": "01fa8782c44e74e6acb354914eecafb1d6b13aacab7c00be547da76ce498fb21"
+    },
+    {
+      "path": "server/app/api/meetings/jobs/[id]/complete/route.ts",
+      "sha256": "2e087a5d8b0534bf935c903ef2ad11a82fa8bc5aca09b450c2653f3ee76e6841"
+    },
+    {
+      "path": "server/app/api/meetings/jobs/[id]/parts/route.ts",
+      "sha256": "23550a2a6684ca6c656a2dc7c74175ab28c30ee0516b3a76afa0363de3f8920e"
+    },
+    {
+      "path": "server/app/api/meetings/jobs/[id]/route.ts",
+      "sha256": "b391e471b4bd408c09420d1813b43a0d7a9907b4b7252313b0e27dfdd4900beb"
+    },
+    {
+      "path": "server/app/api/meetings/jobs/route.ts",
+      "sha256": "1bcdbd434305f52b9126b22ca2c2f2909f9e51396497b2b6a1b1b51786c17ecd"
+    },
+    {
+      "path": "server/app/api/meetings/maintenance/route.ts",
+      "sha256": "28cf13ac7ae72036122b7c0c232228cc5604788aab661700c3f7424801b9cc51"
+    },
+    {
+      "path": "server/app/api/route/route.ts",
+      "sha256": "794a3f836d0d4907e95226b05bf899992ab4500c95855986c12192d7d12f67d7"
+    },
+    {
+      "path": "server/app/api/transcribe/route.ts",
+      "sha256": "2092881eb886545bb1efdac8d6aaf74e8957dd1af7e28b2587e85f6151ad0fbd"
+    },
+    {
+      "path": "server/app/api/usage/route.ts",
+      "sha256": "db655053cfa91f7da0bbad472be1ac46aeff263676fdc65a73afb299c0e407d3"
+    },
+    {
+      "path": "server/lib/auth.ts",
+      "sha256": "5afc920387aaaec8373c1492e40ef669a499d0cb24d52709788ea363169390f8"
+    },
+    {
+      "path": "server/lib/entitlements.ts",
+      "sha256": "2fd79928b9373de8e7d2132d4a3e9b0f32ae3055c241f4a0c858d61f08033686"
+    },
+    {
+      "path": "server/lib/errors.ts",
+      "sha256": "44804ba70cfbb24707f399a5ad4d9a77ca0fca79c33f8640b07f60141822eaf9"
+    },
+    {
+      "path": "server/lib/eval/cer.ts",
+      "sha256": "f1b1d83c009f46bfc2876170f2f10b7a6e618086428260fc5d01e0cb17b0d692"
+    },
+    {
+      "path": "server/lib/eval/heuristics.ts",
+      "sha256": "f759ad16a0e3f8bef1314339c62c178172a89ba4d7c6a20a7c59f65b60afebe5"
+    },
+    {
+      "path": "server/lib/eval/normalize.ts",
+      "sha256": "8a17a9bb63912e68dbfe3125c51e06697ffa458dfb5ff299288ac0ba5cef1f86"
+    },
+    {
+      "path": "server/lib/eval/types.ts",
+      "sha256": "d54f75d2d622fef8682d3f58eac14d953321fce0763986f5d76ed6f88f27a9df"
+    },
+    {
+      "path": "server/lib/gateway.ts",
+      "sha256": "c602a3741b54e11a6bb67d3127319e7bf976a780b614beecc2bd594b23044fbc"
+    },
+    {
+      "path": "server/lib/intent.ts",
+      "sha256": "1078efab0100d2ff6b3b49e09412691e477c4a49d8c231207736327d3ce0e422"
+    },
+    {
+      "path": "server/lib/jev.ts",
+      "sha256": "be152cd2b166760dc4a233cb455275063cb663f074f12622ef2e6b75d9eb072b"
+    },
+    {
+      "path": "server/lib/list-guard.ts",
+      "sha256": "9ee3c8817bf5c9f82ab009a907202963554040789168721307290b20bc3c6ec5"
+    },
+    {
+      "path": "server/lib/list-repair.ts",
+      "sha256": "a9d55be231863a854d34fae1b3febef5257adff485315743ca73c3e4ddd6b520"
+    },
+    {
+      "path": "server/lib/meetings/db.ts",
+      "sha256": "ee11a7079f2d3d4a247672947a4e4f817dd1e0cd4f2df67f7f099cae095ea634"
+    },
+    {
+      "path": "server/lib/meetings/soniox.ts",
+      "sha256": "ec530d878fb0a9830281791e0a291297e1b4a64a2205007723b420a3759021f1"
+    },
+    {
+      "path": "server/lib/meetings/storage.ts",
+      "sha256": "eb686dc4ceb8f9f4ea7e4995d031fa04c69625e6e360344e45862f83cfce9d35"
+    },
+    {
+      "path": "server/lib/model-options.ts",
+      "sha256": "12ec02f26fdfcd4b443257ab637ffcca6668b252f31dc20788891c159484d327"
+    },
+    {
+      "path": "server/lib/ogg-opus.ts",
+      "sha256": "21f73d3bd0b8876056eb45c110af116cc7bfdf1bf8cde7a8c0e437bd872eeee7"
+    },
+    {
+      "path": "server/lib/prompts.ts",
+      "sha256": "613a29056241492b60e7d836817697b7c480825b468d29b502937439c0e1ae73"
+    },
+    {
+      "path": "server/lib/request-body.ts",
+      "sha256": "f20d2c3530750fc4e3daf69d6e079db48c3b3f3a8a10f889c158d89586965371"
+    },
+    {
+      "path": "server/lib/router.ts",
+      "sha256": "bbe14a85e5c95b7fa285871fbba2f26fa461adb1f56bf64c1e3509655679ce50"
+    },
+    {
+      "path": "server/lib/schemas.ts",
+      "sha256": "27d627c08d16e8ac5c8dbf0c2ae55f43858f774d29e89e9ad3053e62c68252d1"
+    },
+    {
+      "path": "server/lib/store/cloud-types.ts",
+      "sha256": "8bdaa15f4c6e583fc8aedd811efb6f3e0d0cb22f19bc81e2d4de3fd9af00a0cd"
+    },
+    {
+      "path": "server/lib/store/index.ts",
+      "sha256": "c4ad88d115590356b3bf8c61191aa3dc9abd50076fb41b4a04528e8ba2d38d91"
+    },
+    {
+      "path": "server/lib/store/memory.ts",
+      "sha256": "5e8798c8eaaf44e19671aa047fe3098bc9c96806a8729fe00208bdeafa4d51f9"
+    },
+    {
+      "path": "server/lib/store/postgres.ts",
+      "sha256": "9ba3880183c15d19ac33ef31fb2dbb1fc1e352556e74e990e0ec1a529d5f9444"
+    },
+    {
+      "path": "server/lib/store/schema.ts",
+      "sha256": "868a6da0c04b372566e03bffb4be5b5ac05f0d040d52bbdff148378c27572088"
+    },
+    {
+      "path": "server/lib/store/types.ts",
+      "sha256": "9302f71f302a417923f047202518643cd1d8992011fffeef5b5e8909a0cee110"
+    },
+    {
+      "path": "server/lib/text-format.ts",
+      "sha256": "90784e2fe4cd4492a47f7fbd0b2cb3b3cbedef963c0fbcaf4cf4100c561efbc0"
+    },
+    {
+      "path": "server/lib/timing.ts",
+      "sha256": "f3eb4d9093f2de0ed66c9f09394350acd95df046895878e03f77e96bf26ed7dc"
+    },
+    {
+      "path": "server/lib/transcribe-routing.ts",
+      "sha256": "85ec6fb174d4f299fe9cfc46dd3f3c9c66f824d4bd77cc080864219501d6bf77"
+    },
+    {
+      "path": "server/lib/wav.ts",
+      "sha256": "3ddf9be98466134b50726ab39b20956517451d07fc219928371e61a60da45b85"
+    },
+    {
+      "path": "server/package-lock.json",
+      "sha256": "a7d8145c4f9d8c6fdbf7f068cb3b9cd5418aa5371d366a95153da8fb898ee2e7"
+    },
+    {
+      "path": "server/package.json",
+      "sha256": "f980fbd915d8d5a77493f2b4b3f41126fd0cbc803e48a4f2166764889deaf91f"
+    },
+    {
+      "path": "server/scripts/commercialization-audit.config.ts",
+      "sha256": "b0b4c77cb26f6e0d15205b5e035cddd9bc8d156a191460c6e6fd6b0d518d6d59"
+    },
+    {
+      "path": "server/scripts/commercialization.audit.ts",
+      "sha256": "e9ffa9587f9f5d43681da6a2da282c22641dcf0574f29638e75717931c7825c3"
+    },
+    {
+      "path": "server/scripts/compose-bakeoff.ts",
+      "sha256": "035f60428a7ccbb14b4b5fa4d34c771dbd62c3b69e732f71a7a0317ffd34525c"
+    },
+    {
+      "path": "server/scripts/compose-eval.ts",
+      "sha256": "88c86d0ee1c5599dfd3326f8b62a97f859dc8666df6b3ae6d388765619b7bb4e"
+    },
+    {
+      "path": "server/scripts/format-eval.ts",
+      "sha256": "49856d25ca72c0fc9f7cd2e79e811d9708f30082ac7b0448e37ffe6fd1c8609e"
+    },
+    {
+      "path": "server/scripts/intent-eval.ts",
+      "sha256": "88f3401a7115ec4298dbe14dea27f813e61bd76432ab0824ae458aad860d44b4"
+    },
+    {
+      "path": "server/scripts/intent-rules.ts",
+      "sha256": "91254132cadd60003e97710c130b90e7e73780e57a1f54e440fbdd3236c7b08f"
+    },
+    {
+      "path": "server/scripts/latency-bench.ts",
+      "sha256": "a8b708068d707e119ab6764711862f8fb6a55faec2d0a89cf18c71b20643cc6f"
+    },
+    {
+      "path": "server/scripts/route-eval.ts",
+      "sha256": "3fa24b47ffaf51d5ec52b7046270976832f7b00d781e31b61cd37c3bea883cf2"
+    },
+    {
+      "path": "server/scripts/smart-eval.ts",
+      "sha256": "b4747021a1665eca0c99d06fe75dca9c2e11b06aa3dc9aa972f4ae78b087a745"
+    },
+    {
+      "path": "server/sql/cloud_operations.sql",
+      "sha256": "5db232ac6423286bcb970e0a3ac7329f44d7b0c3f5c7659275068288b051ae25"
+    },
+    {
+      "path": "server/sql/meeting_jobs.sql",
+      "sha256": "ed83b53861049d68cc5988132e987a5dae83ca82ac740fcfe2d8ca5b92c1c522"
+    },
+    {
+      "path": "server/tests/auth-dev.test.ts",
+      "sha256": "fc77119f6a5b5886cba30e0fc5aa7183d5918c3ac1f1702674f254fd25484e98"
+    },
+    {
+      "path": "server/tests/capture-translate.test.ts",
+      "sha256": "f25e8c5b84044b0e5e516b34322f6d8f17b2022ccb9421bbb7d29923fe2124f9"
+    },
+    {
+      "path": "server/tests/cloud-ledger-sql.test.ts",
+      "sha256": "46eaf85939267e7ca086eaf24692f2ce2daf3b5dc1cb3004704d57c36f41d6f5"
+    },
+    {
+      "path": "server/tests/compose.test.ts",
+      "sha256": "9b7dcd34f95b9596bb22d10552607076796e1416241abdafb3b90053d54a8272"
+    },
+    {
+      "path": "server/tests/dictionary.test.ts",
+      "sha256": "8b79e9bf31c06e3c543a59ee7a4cafe8d8c21d919286b6da073aa5013cc33888"
+    },
+    {
+      "path": "server/tests/eval-cer.test.ts",
+      "sha256": "468656334d4658e7949186af9f02e6ae71fdde421324507ff45c3484c47f8d5d"
+    },
+    {
+      "path": "server/tests/eval-heuristics.test.ts",
+      "sha256": "64c6f4cde9006fc740d058f0a3db255cd8a2c2764d0df85cfb3949bbf5bdd528"
+    },
+    {
+      "path": "server/tests/eval-normalize.test.ts",
+      "sha256": "dcbc172055dd4ce1de80fb816b4c2fa22297a3558a93d7f4090279cf17d72cfa"
+    },
+    {
+      "path": "server/tests/health.test.ts",
+      "sha256": "f051c0f7d29f347bf705ca80ecfaf5a7b6a621bd50a906499018ed65f9963d43"
+    },
+    {
+      "path": "server/tests/helpers.ts",
+      "sha256": "001e3b7cc5fa4e43e2eb8a2b3948d07899b6cfb30d3e3232be55ff5d0ad6489e"
+    },
+    {
+      "path": "server/tests/intent.test.ts",
+      "sha256": "8ec405d55ec6e8eb186a9cdf3c6206987ea5764ad3790b668ec8b96d9db06c0e"
+    },
+    {
+      "path": "server/tests/list-guard.test.ts",
+      "sha256": "f1871ed3e1ebb3b4b64c132febfbeeed73490342db702f8c3bbab018ae938c60"
+    },
+    {
+      "path": "server/tests/list-repair.test.ts",
+      "sha256": "133b6e28f5877e886273f1a2a943baf60ca4e00d6023d3a0aba2e74ac08ce326"
+    },
+    {
+      "path": "server/tests/meeting-jobs.test.ts",
+      "sha256": "6bd349bcbf9769bf624b4e9c8793b58425584f6d0f137c02b777f4c4be83cf0c"
+    },
+    {
+      "path": "server/tests/ogg-opus.test.ts",
+      "sha256": "efd74b275bb94aef735ab011a35f71cf31df22064f3cefab4956664c8a0a5cfc"
+    },
+    {
+      "path": "server/tests/prompts-verbatim.test.ts",
+      "sha256": "6fca3ec8356ff1631de182dd70d1560cc6acd294cab7ba99687e53ffb0d1cd48"
+    },
+    {
+      "path": "server/tests/prompts.test.ts",
+      "sha256": "9cb58e5539e7ce43d10f7f998cad49db20c003c004e8a86288aa203f75c548e0"
+    },
+    {
+      "path": "server/tests/release-security.test.ts",
+      "sha256": "839ca37c097cd102fcc3c15d42afcfb577c194b3c2fdff42699416661151b8a9"
+    },
+    {
+      "path": "server/tests/route.test.ts",
+      "sha256": "05eebe31c3029189c9dcf33e8de5acd6ff999114fdf00818b3aa62efe00804f5"
+    },
+    {
+      "path": "server/tests/setup.ts",
+      "sha256": "a2f25e2da3491382ceef64c4dcfed244aa73c3a6aa2b90a0879585fc95638520"
+    },
+    {
+      "path": "server/tests/text-format.test.ts",
+      "sha256": "adee960247952c9171ccabf913c561c4a75bbd7bd0adf0adc3be6cab66f863f5"
+    },
+    {
+      "path": "server/tests/transcribe-batch.test.ts",
+      "sha256": "310776aba86f1aac9aa8ecbe3da963b0077c195b2b4b1e3acf192aacdb076514"
+    },
+    {
+      "path": "server/tests/transcribe-routing.test.ts",
+      "sha256": "07fb7a85c3b204b319aa915da81543aeebe4088141d30608a86833a47f641c7b"
+    },
+    {
+      "path": "server/tests/usage.test.ts",
+      "sha256": "b85ba05ea94457cb5047753dfdd1f5a90aa3eaf8d12cab678de3345452f89d33"
+    },
+    {
+      "path": "server/tests/wav.test.ts",
+      "sha256": "4d13c85f677b8c70369ceb97653252023d546fad58e78afaa6c5b6b5630754a4"
+    },
+    {
+      "path": "tools/release-readiness/check.py",
+      "sha256": "791114bd495966f684dc3cea373ecec627a538ff56a39ae62364f97f18d76d29"
+    }
+  ]
+}

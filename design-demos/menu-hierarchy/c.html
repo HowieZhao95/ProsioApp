@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prosio · 极简启动器</title>
+  <!-- 方向 C：主菜单只承担语音提示与单一截图启动；深层偏好和记录按需展开。所有内容为交互演示。 -->
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", sans-serif; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      --page: #101317; --page-halo: rgba(83, 103, 131, .10);
+      --panel: #202227; --panel-deep: #1c1e23; --surface: #292c33; --surface-hover: #32363e;
+      --text: #f3f4f6; --secondary: #b8bdc7; --muted: #858d9b;
+      --line: rgba(255,255,255,.095); --blue: #84adff; --blue-soft: rgba(102,150,255,.16);
+      --shadow: 0 24px 72px rgba(0,0,0,.38), 0 2px 10px rgba(0,0,0,.18);
+      margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% 32%, var(--page-halo), transparent 52%), var(--page);
+      color: var(--text); display: grid; place-items: center; padding: 48px 20px; transition: background-color .2s;
+    }
+    body[data-theme="light"] {
+      color-scheme: light; --page: #e9ebef; --page-halo: rgba(255,255,255,.54);
+      --panel: #fafafb; --panel-deep: #f5f6f8; --surface: #f0f2f6; --surface-hover: #e6eaf1;
+      --text: #1e2531; --secondary: #515a69; --muted: #77808e;
+      --line: rgba(42,57,77,.10); --blue: #326dcc; --blue-soft: rgba(61,112,209,.11);
+      --shadow: 0 24px 68px rgba(49,60,76,.16), 0 2px 9px rgba(49,60,76,.07);
+    }
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .demo { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+    .demo-label { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+    #menu {
+      width: 348px; max-width: calc(100vw - 32px); border: 1px solid var(--line); border-radius: 18px;
+      background: var(--panel); box-shadow: var(--shadow); overflow: hidden; position: relative;
+      -webkit-font-smoothing: antialiased; transition: background .18s, box-shadow .18s;
+    }
+    .brand { height: 54px; display: flex; align-items: center; padding: 0 19px; gap: 9px; border-bottom: 1px solid var(--line); }
+    .brand-mark { display: grid; place-items: center; width: 24px; height: 24px; color: var(--blue); }
+    .brand strong { font-size: 14px; letter-spacing: -.02em; font-weight: 670; }
+    .brand .mini { margin-left: auto; color: var(--muted); font-size: 11px; letter-spacing: .02em; }
+    .actions { padding: 9px 9px 7px; }
+    .primary-row { border-radius: 12px; display: flex; align-items: center; gap: 11px; min-height: 77px; padding: 10px 10px 10px 11px; position: relative; }
+    .primary-row + .primary-row { margin-top: 3px; }
+    .primary-row.voice { background: transparent; }
+    .primary-row.voice.is-listening { background: var(--blue-soft); }
+    .primary-row.capture { width: 100%; border: 0; color: var(--text); text-align: left; background: var(--surface); }
+    .primary-row.capture:not(:disabled):hover { background: var(--surface-hover); }
+    .primary-row.capture:active:not(:disabled) { transform: scale(.992); }
+    .primary-row.capture:disabled { opacity: .55; cursor: not-allowed; }
+    .icon-tile { width: 34px; height: 34px; flex: none; border-radius: 9px; display: grid; place-items: center; background: var(--surface); color: var(--secondary); }
+    .voice.is-listening .icon-tile { color: var(--blue); background: rgba(109,157,255,.13); }
+    .capture .icon-tile { color: var(--blue); background: var(--blue-soft); }
+    .icon-tile svg, .chevron svg, .recent-icon svg { display: block; }
+    .row-copy { min-width: 0; flex: 1; }
+    .row-title { display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 640; line-height: 1.3; white-space: nowrap; }
+    .row-sub { color: var(--muted); font-size: 12px; line-height: 1.35; margin-top: 3px; white-space: nowrap; }
+    .voice .row-sub { color: var(--secondary); }
+    .dot { display: none; width: 6px; height: 6px; background: var(--blue); border-radius: 50%; box-shadow: 0 0 0 3px var(--blue-soft); }
+    .voice.is-listening .dot, .voice.is-working .dot { display: inline-block; }
+    .voice.is-working .dot { background: var(--muted); box-shadow: none; }
+    kbd { flex: none; min-width: 28px; text-align: center; border: 1px solid var(--line); border-bottom-color: rgba(255,255,255,.17); border-radius: 6px; padding: 4px 5px 3px; color: var(--secondary); background: var(--panel-deep); font-size: 11px; font-weight: 590; line-height: 1; white-space: nowrap; }
+    .capture kbd { font-size: 11px; letter-spacing: -.01em; }
+    .chevron { width: 26px; height: 28px; padding: 0; border: 0; border-radius: 7px; display: grid; place-items: center; background: transparent; color: var(--muted); }
+    .chevron:hover { color: var(--text); background: var(--surface); }
+    .chevron[aria-expanded="true"] svg, .recent-toggle[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+    .chevron svg, .recent-toggle .arrow { transition: transform .18s; }
+    .busy-hint { display: none; margin: 2px 12px 6px 57px; color: var(--secondary); font-size: 12px; }
+    body[data-state="listening"] .busy-hint, body[data-state="working"] .busy-hint { display: block; }
+    .disclosure { border-top: 1px solid var(--line); }
+    .preferences { margin: 2px 8px 8px 56px; padding: 11px 9px 8px 0; border-top: 1px solid var(--line); }
+    .preferences[hidden], .recent-content[hidden], .howto[hidden], .more-menu[hidden], .toast[hidden] { display: none !important; }
+    .pref-line { display: flex; align-items: center; gap: 8px; min-height: 31px; color: var(--secondary); font-size: 12px; }
+    .pref-line strong { color: var(--text); font-weight: 560; }
+    .switch { margin-left: auto; border: 0; width: 31px; height: 18px; border-radius: 30px; padding: 2px; background: var(--muted); transition: background .15s; }
+    .switch::after { content: ""; display: block; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+    .switch[aria-checked="true"] { background: var(--blue); }
+    .switch[aria-checked="true"]::after { transform: translateX(13px); }
+    .target { border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 12px; border-radius: 6px; padding: 3px 6px; min-width: 78px; margin-left: auto; }
+    .target:disabled { opacity: .48; }
+    .pref-link { background: transparent; color: var(--secondary); font-size: 12px; border: 0; padding: 5px 0; }
+    .pref-link:hover { color: var(--text); }
+    .pref-spacer { margin-left: auto; }
+    .howto { margin: 4px 0 3px; border-radius: 8px; background: var(--surface); color: var(--secondary); font-size: 12px; line-height: 1.55; padding: 9px 10px; }
+    .recent-toggle { border: 0; background: transparent; color: var(--text); display: flex; align-items: center; width: 100%; height: 45px; padding: 0 18px; gap: 9px; text-align: left; }
+    .recent-toggle:hover { background: var(--surface); }
+    .recent-icon { color: var(--muted); }
+    .recent-toggle strong { font-size: 13px; font-weight: 575; }
+    .recent-toggle .arrow { margin-left: auto; color: var(--muted); }
+    .recent-content { padding: 0 14px 12px; }
+    .segment { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); padding: 3px; border-radius: 9px; }
+    .segment button { border: 0; border-radius: 6px; background: transparent; color: var(--muted); padding: 5px; font-size: 12px; }
+    .segment button[aria-selected="true"] { color: var(--text); background: var(--panel); box-shadow: 0 1px 3px rgba(0,0,0,.1); font-weight: 600; }
+    .history-item { margin-top: 8px; border-radius: 8px; padding: 9px 10px; background: var(--surface); font-size: 12px; color: var(--secondary); line-height: 1.35; }
+    .history-item strong { display: block; font-weight: 560; color: var(--text); margin-bottom: 3px; }
+    .history-item span { color: var(--muted); }
+    footer { height: 46px; display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--line); background: var(--panel-deep); position: relative; }
+    footer > button { color: var(--secondary); background: transparent; border: 0; font-size: 12px; font-weight: 550; }
+    footer > button:hover { color: var(--text); background: var(--surface); }
+    footer > button + button { border-left: 1px solid var(--line); }
+    .more-menu { position: absolute; right: 9px; bottom: 42px; width: 137px; padding: 5px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow); z-index: 3; }
+    .more-menu button { display: block; width: 100%; border: 0; border-radius: 5px; background: transparent; color: var(--text); font-size: 12px; text-align: left; padding: 7px 8px; }
+    .more-menu button:hover { background: var(--surface); }
+    .toast { position: absolute; left: 10px; right: 10px; bottom: 51px; z-index: 4; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); box-shadow: 0 8px 22px rgba(0,0,0,.17); padding: 9px 11px; color: var(--text); font-size: 12px; line-height: 1.4; }
+    .controls { width: 348px; max-width: calc(100vw - 32px); display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 12px; }
+    .controls .group { display: inline-flex; gap: 4px; padding: 3px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; }
+    .controls button { border: 0; padding: 5px 8px; border-radius: 5px; color: var(--secondary); background: transparent; font-size: 12px; }
+    .controls button[aria-pressed="true"] { color: var(--text); background: var(--surface); }
+    .note { text-align: center; color: var(--muted); font-size: 11px; max-width: 348px; line-height: 1.5; }
+    @media(max-width: 420px) { body { padding: 26px 12px; } .controls { flex-wrap: wrap; justify-content: center; } }
+    @media(prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+</head>
+<body data-variant="c" data-theme="dark" data-state="ready">
+  <main class="demo">
+    <div class="demo-label">C / 极简启动器</div>
+    <section id="menu" aria-label="Prosio 菜单原型">
+      <header class="brand">
+        <span class="brand-mark" aria-hidden="true"><svg width="20" height="18" viewBox="0 0 20 18" fill="none"><path d="M2 7v4M6 3v12M10 1v16M14 4v10M18 7v4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+        <strong>Prosio</strong>
+        <span class="mini">快捷启动</span>
+      </header>
+      <div class="actions">
+        <div id="voice-row" class="primary-row voice">
+          <span class="icon-tile" aria-hidden="true"><svg width="19" height="18" viewBox="0 0 20 18" fill="none"><path d="M2 7v4M6 4v10M10 1v16M14 5v8M18 7v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <span class="row-copy"><span class="row-title"><span class="dot" aria-hidden="true"></span><span>语音输入</span></span><span id="voice-sub" class="row-sub">按 Fn 开始，再按一次结束</span></span>
+          <kbd>Fn</kbd>
+          <button id="voice-toggle" class="chevron" type="button" aria-expanded="false" aria-controls="voice-prefs" aria-label="展开语音偏好"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="m3.5 6 4.5 4 4.5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <div id="voice-prefs" class="preferences" hidden>
+          <div class="pref-line"><strong>翻译</strong><span>仅用于语音输入</span><button id="translate-switch" class="switch" type="button" role="switch" aria-checked="false" aria-label="开启翻译"></button></div>
+          <div class="pref-line"><span>目标语言</span><select id="translate-target" class="target" aria-label="翻译目标语言" disabled><option>中文</option><option>英语</option><option>日语</option></select></div>
+          <div class="pref-line"><button id="howto-toggle" class="pref-link" type="button" aria-expanded="false" aria-controls="howto">使用说明 ▾</button><button id="voice-history-link" class="pref-link pref-spacer" type="button">语音记录 ↗</button></div>
+          <div id="howto" class="howto" hidden>按 Fn 开始语音输入，再按一次结束。按 Esc 可取消。翻译只作用于语音，不影响屏幕截图。</div>
+        </div>
+        <button id="capture" class="primary-row capture" type="button" aria-label="屏幕截图，快捷键 Control Shift 2">
+          <span class="icon-tile" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2.5 7V4.5a2 2 0 0 1 2-2H7M13 2.5h2.5a2 2 0 0 1 2 2V7M17.5 13v2.5a2 2 0 0 1-2 2H13M7 17.5H4.5a2 2 0 0 1-2-2V13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="row-copy"><span class="row-title">屏幕截图</span><span class="row-sub">拖动选取，随手标注</span></span>
+          <kbd>⌃ ⇧ 2</kbd>
+        </button>
+        <div class="busy-hint" id="busy-hint">结束语音后可截图</div>
+      </div>
+      <div class="disclosure">
+        <button id="recent-toggle" class="recent-toggle" type="button" aria-expanded="false" aria-controls="recent-content">
+          <span class="recent-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.65" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6v3.7l2.6 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+          <strong>最近记录</strong>
+          <span class="arrow" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="m3.5 6 4.5 4 4.5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div id="recent-content" class="recent-content" hidden>
+          <div class="segment" role="tablist" aria-label="最近记录类型"><button id="tab-voice" type="button" role="tab" aria-selected="true">语音</button><button id="tab-capture" type="button" role="tab" aria-selected="false">截图</button></div>
+          <div id="history-item" class="history-item" role="tabpanel"></div>
+        </div>
+      </div>
+      <footer>
+        <button id="settings" type="button">设置</button>
+        <button id="help" type="button">帮助</button>
+        <button id="more" type="button" aria-expanded="false" aria-controls="more-menu">更多 ···</button>
+        <div id="more-menu" class="more-menu" hidden><button id="about" type="button">关于 Prosio</button><button id="quit" type="button">退出 Prosio</button></div>
+      </footer>
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    </section>
+    <div class="controls" aria-label="原型模拟控制">
+      <span>模拟状态</span>
+      <div class="group" role="group" aria-label="切换语音状态"><button type="button" data-demo-state="ready" aria-pressed="true">就绪</button><button type="button" data-demo-state="listening" aria-pressed="false">聆听</button><button type="button" data-demo-state="working" aria-pressed="false">处理中</button></div>
+      <div class="group" role="group" aria-label="切换主题"><button type="button" data-demo-theme="dark" aria-pressed="true">深色</button><button type="button" data-demo-theme="light" aria-pressed="false">浅色</button></div>
+    </div>
+    <p class="note">交互原型 · 状态切换仅供比较排版，不会实际录音或截图。</p>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const body = document.body;
+    const stateButtons = [...document.querySelectorAll('[data-demo-state]')];
+    const themeButtons = [...document.querySelectorAll('[data-demo-theme]')];
+    let toastTimer;
+
+    function toast(message) {
+      const el = $('toast');
+      el.textContent = message; el.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { el.hidden = true; }, 3600);
+    }
+    function setExpanded(button, content, expanded) {
+      button.setAttribute('aria-expanded', String(expanded));
+      content.hidden = !expanded;
+    }
+    function setState(state) {
+      body.dataset.state = state;
+      stateButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.demoState === state)));
+      const row = $('voice-row');
+      row.classList.toggle('is-listening', state === 'listening');
+      row.classList.toggle('is-working', state === 'working');
+      $('voice-sub').textContent = state === 'listening' ? '正在聆听 · 再按 Fn 结束，Esc 取消'
+        : state === 'working' ? '正在处理语音 · 请稍候'
+        : '按 Fn 开始，再按一次结束';
+      $('capture').disabled = state !== 'ready';
+      $('capture').setAttribute('aria-describedby', state === 'ready' ? '' : 'busy-hint');
+      $('busy-hint').textContent = state === 'working' ? '语音处理完成后可截图' : '结束语音后可截图';
+    }
+    function showHistory(kind) {
+      const voice = kind === 'voice';
+      $('tab-voice').setAttribute('aria-selected', String(voice));
+      $('tab-capture').setAttribute('aria-selected', String(!voice));
+      $('history-item').innerHTML = voice
+        ? '<strong>语音记录示例</strong><span>这是一条语音记录示例 · 不展示私人内容</span>'
+        : '<strong>截图记录示例</strong><span>这是一条截图记录示例 · 无真实画面</span>';
+    }
+    $('voice-toggle').addEventListener('click', () => setExpanded($('voice-toggle'), $('voice-prefs'), $('voice-prefs').hidden));
+    $('translate-switch').addEventListener('click', () => {
+      const enabled = $('translate-switch').getAttribute('aria-checked') !== 'true';
+      $('translate-switch').setAttribute('aria-checked', String(enabled));
+      $('translate-target').disabled = !enabled;
+      toast(enabled ? '演示：语音翻译已开启' : '演示：语音翻译已关闭');
+    });
+    $('translate-target').addEventListener('change', () => toast('演示：语音翻译目标已更改为' + $('translate-target').value));
+    $('howto-toggle').addEventListener('click', () => setExpanded($('howto-toggle'), $('howto'), $('howto').hidden));
+    $('voice-history-link').addEventListener('click', () => { setExpanded($('recent-toggle'), $('recent-content'), true); showHistory('voice'); $('recent-toggle').scrollIntoView({block:'nearest',behavior:'smooth'}); });
+    $('capture').addEventListener('click', () => { if (! $('capture').disabled) toast('演示：将打开选区截图，当前原型不会拍摄屏幕。'); });
+    $('recent-toggle').addEventListener('click', () => setExpanded($('recent-toggle'), $('recent-content'), $('recent-content').hidden));
+    $('tab-voice').addEventListener('click', () => showHistory('voice'));
+    $('tab-capture').addEventListener('click', () => showHistory('capture'));
+    $('settings').addEventListener('click', () => toast('演示：正式应用将在此打开设置。'));
+    $('help').addEventListener('click', () => { setExpanded($('voice-toggle'), $('voice-prefs'), true); setExpanded($('howto-toggle'), $('howto'), true); toast('使用方法已展开在语音输入下方。'); });
+    $('more').addEventListener('click', () => setExpanded($('more'), $('more-menu'), $('more-menu').hidden));
+    $('about').addEventListener('click', () => { setExpanded($('more'), $('more-menu'), false); toast('Prosio · 语音输入与屏幕截图'); });
+    $('quit').addEventListener('click', () => { setExpanded($('more'), $('more-menu'), false); toast('演示：不会退出真实 Prosio。'); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { setExpanded($('more'), $('more-menu'), false); $('toast').hidden = true; } });
+    stateButtons.forEach(button => button.addEventListener('click', () => setState(button.dataset.demoState)));
+    themeButtons.forEach(button => button.addEventListener('click', () => { body.dataset.theme = button.dataset.demoTheme; themeButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button))); }));
+    showHistory('voice');
+    setState('ready');
+  </script>
+</body>
+</html>

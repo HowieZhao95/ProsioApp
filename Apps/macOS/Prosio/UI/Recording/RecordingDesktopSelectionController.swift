@@ -250,6 +250,31 @@ final class RecordingDesktopSelectionController {
         redraw()
     }
 
+    /// Keyboard and assistive-technology alternative to clicking the desktop overlay.
+    @discardableResult func selectWindow(_ id: UInt32) -> Bool {
+        guard isPresented, !isTemporarilyHidden, countdown == nil else { return false }
+        guard let hit = RecordingDesktopSelectionGeometry.liveWindow(id: id, frontToBack: windowOrder(),
+                  available: inventory.windows, excludingPID: ProcessInfo.processInfo.processIdentifier) else {
+            state.reset()
+            windowFrame = nil
+            publish()
+            redraw()
+            return false
+        }
+        mode = .window
+        regionRect = nil
+        windowFrame = hit.frame
+        activeDisplayID = surfaces.max {
+            let lhs = $0.display.frame.intersection(hit.frame)
+            let rhs = $1.display.frame.intersection(hit.frame)
+            return (lhs.isNull ? 0 : lhs.width * lhs.height) < (rhs.isNull ? 0 : rhs.width * rhs.height)
+        }?.display.id
+        state.click(.window(id))
+        publish()
+        redraw()
+        return true
+    }
+
     func updateInventory(_ inventory: RecordingSourceInventory) {
         self.inventory = inventory
         if let target = state.target {

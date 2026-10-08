@@ -1,3 +1,4 @@
+import type { CachedCloudResponse, CloudClaim, CloudReservation } from "./cloud-types";
 export interface User {
   id: string;
   email: string;
@@ -25,6 +26,14 @@ export interface DictionaryEntry {
  * backs real deployments.
  */
 export interface Store {
+  /** Atomic quota reservation and replay lookup, scoped to user + session. */
+  reserveCloud(request: CloudReservation): Promise<CloudClaim>;
+  /** Commits the response and successful audio usage together; failures cache the error only. */
+  finishCloud(userId: string, sessionID: string, response: CachedCloudResponse, succeeded: boolean): Promise<void>;
+  /** Counts accepted model operations, including failed/cancelled generations. */
+  consumeModelRequest(userId: string, periodStart: Date, limit: number): Promise<void>;
+  sumModelRequests(userId: string, periodStart: Date): Promise<number>;
+
   /** Finds a user by email, creating one if it doesn't exist yet (dev auth). */
   findOrCreateUser(email: string): Promise<User>;
 

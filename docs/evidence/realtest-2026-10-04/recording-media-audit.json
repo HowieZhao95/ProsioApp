@@ -1,0 +1,202 @@
+{
+  "auditScope" : "finalizedMediaMetadata",
+  "auditedCount" : 4,
+  "crossSourceSpansMicroseconds" : {
+    "screen" : [
+      424836,
+      166264656
+    ]
+  },
+  "evidenceLimit" : "AVFoundation isPlayable and track metadata checks do not decode every frame or prove real-device lip-sync, two-hour drift, or editor import acceptance.",
+  "failedCount" : 0,
+  "informationalGapCount" : 2,
+  "inputCompleted" : true,
+  "inputFailures" : [
+
+  ],
+  "inputKind" : "manifest",
+  "inputPath" : "\/Users\/guest01\/Library\/Application Support\/Prosio\/Recordings\/4B1E4A7C-9C89-45F3-AD0A-F4F99647C447\/manifest.json",
+  "inputWarnings" : [
+
+  ],
+  "mediaRoot" : "\/Users\/guest01\/Library\/Application Support\/Prosio\/Recordings\/4B1E4A7C-9C89-45F3-AD0A-F4F99647C447",
+  "noCompletedMedia" : false,
+  "passedCount" : 4,
+  "segmentCount" : 4,
+  "segments" : [
+    {
+      "assetDurationSeconds" : 60,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        60000000
+      ],
+      "id" : "53B649EC-0C29-404B-ACCC-04DDDF883470",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/53B649EC-0C29-404B-ACCC-04DDDF883470.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        424836,
+        60424836
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1164,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1164,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 28.654728,
+          "rangeToleranceSeconds" : 0.03489825491419013,
+          "timeRange" : {
+            "durationSeconds" : 60,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 60,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        60000000
+      ],
+      "id" : "F2456915-08B9-40CF-BD39-1410C4C1B64C",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/F2456915-08B9-40CF-BD39-1410C4C1B64C.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        60456511,
+        120456511
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1164,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1164,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 28.711084,
+          "rangeToleranceSeconds" : 0.034829753807195794,
+          "timeRange" : {
+            "durationSeconds" : 60,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 5.163333333333333,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        5163333
+      ],
+      "id" : "BDB02DA7-80B9-4327-89E9-5ED25259F8D5",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/BDB02DA7-80B9-4327-89E9-5ED25259F8D5.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        120467778,
+        125631111
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1164,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1164,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 26.137465,
+          "rangeToleranceSeconds" : 0.038259258051138396,
+          "timeRange" : {
+            "durationSeconds" : 5.163333333333333,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    },
+    {
+      "assetDurationSeconds" : 40.645,
+      "declaredMediaRangeMicroseconds" : [
+        0,
+        40645000
+      ],
+      "id" : "9654EA51-100A-479C-821A-76F79C3B035B",
+      "isPlayable" : true,
+      "issues" : [
+
+      ],
+      "relativePath" : "media\/9654EA51-100A-479C-821A-76F79C3B035B.mov",
+      "sourceID" : "screen",
+      "status" : "passed",
+      "timelineRangeMicroseconds" : [
+        125619656,
+        166264656
+      ],
+      "tracks" : [
+        {
+          "codec" : "avc1",
+          "encodedHeight" : 1164,
+          "encodedWidth" : 1920,
+          "mediaType" : "vide",
+          "naturalHeight" : 1164,
+          "naturalWidth" : 1920,
+          "nominalFrameRate" : 28.407461,
+          "rangeToleranceSeconds" : 0.03520201943225491,
+          "timeRange" : {
+            "durationSeconds" : 40.645,
+            "startSeconds" : 0
+          }
+        }
+      ]
+    }
+  ],
+  "snapshotIsPartial" : false,
+  "sources" : [
+    {
+      "firstStartMicroseconds" : 424836,
+      "gapCount" : 2,
+      "invalidRangeCount" : 0,
+      "lastEndMicroseconds" : 166264656,
+      "overlapCount" : 1,
+      "segmentCount" : 4,
+      "sourceID" : "screen",
+      "timelineIssues" : [
+        {
+          "deltaMicroseconds" : 31675,
+          "kind" : "gap",
+          "nextSegmentID" : "F2456915-08B9-40CF-BD39-1410C4C1B64C",
+          "previousSegmentID" : "53B649EC-0C29-404B-ACCC-04DDDF883470"
+        },
+        {
+          "deltaMicroseconds" : 11267,
+          "kind" : "gap",
+          "nextSegmentID" : "BDB02DA7-80B9-4327-89E9-5ED25259F8D5",
+          "previousSegmentID" : "F2456915-08B9-40CF-BD39-1410C4C1B64C"
+        },
+        {
+          "deltaMicroseconds" : -11455,
+          "kind" : "overlap",
+          "nextSegmentID" : "9654EA51-100A-479C-821A-76F79C3B035B",
+          "previousSegmentID" : "BDB02DA7-80B9-4327-89E9-5ED25259F8D5"
+        }
+      ]
+    }
+  ],
+  "timelineErrorCount" : 1,
+  "tool" : "ProsioRecordingMediaAudit\/1"
+}

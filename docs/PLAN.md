@@ -1,5 +1,7 @@
 # Prosio P0 骨架实施计划
 
+P1 商业化验证与推荐路线见 [P1-COMMERCIALIZATION.md](P1-COMMERCIALIZATION.md)（2026-09-27，本机沙盒对照与后端计费审计）。
+
 ## 目标
 Mac 端 P0 可运行骨架：按住/轻点热键 → 录音 → 本地 SpeechAnalyzer 实时预览 + 云端批量 `google/gemini-3.5-transcribe`（SMART） → 流光 HUD 实时预览 → 插入光标 → 历史/词典；Vercel 后端处理批量转写；SMART 中英评测脚本。
 

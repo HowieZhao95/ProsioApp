@@ -1,7 +1,8 @@
+import { readJson } from "@/lib/request-body";
 import { createTextStreamResponse, streamText } from "ai";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
-import { currentBillingPeriod, getEntitlement } from "@/lib/entitlements";
+import { currentBillingPeriod, getEntitlement, modelRequestLimit } from "@/lib/entitlements";
 import { ApiError, withErrorHandling } from "@/lib/errors";
 import { gateway } from "@/lib/gateway";
 import { callOptionsFor, DEFAULT_COMPOSE_MODEL } from "@/lib/model-options";
@@ -16,6 +17,7 @@ import {
   type ComposeMode,
   type ComposePrompt,
 } from "@/lib/prompts";
+import { appContextSchema } from "@/lib/schemas";
 import { getStore } from "@/lib/store";
 import { stripInventedWriteSignature } from "@/lib/text-format";
 import { RequestTimer } from "@/lib/timing";
@@ -45,19 +47,11 @@ const DEFAULT_FALLBACK_MODEL = "openai/gpt-5.4-mini";
 // falls back to this when the client doesn't send one.
 const DEFAULT_TRANSLATE_COMMAND_LANGUAGE = "en-US";
 
-const appSchema = z
-  .object({
-    bundleID: z.string().nullable().optional(),
-    appName: z.string().nullable().optional(),
-    windowTitle: z.string().nullable().optional(),
-    url: z.string().nullable().optional(),
-  })
-  .nullable()
-  .optional();
+const appSchema = appContextSchema;
 
 const historyTurnSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  text: z.string(),
+  text: z.string().max(8000),
 });
 
 const bodySchema = z
@@ -66,9 +60,9 @@ const bodySchema = z
     text: z.string().min(1).max(8000),
     selection: z.string().max(20000).nullable().optional(),
     scene: z.enum(["general", "email", "chat", "code", "document"]).default("general"),
-    targetLanguage: z.string().nullable().optional(),
+    targetLanguage: z.string().max(64).nullable().optional(),
     app: appSchema,
-    vocabulary: z.array(z.string()).default([]),
+    vocabulary: z.array(z.string().max(100)).max(1000).default([]),
     history: z.array(historyTurnSchema).max(20).default([]),
     // Write only (docs/PROMPTS.md §4b): defaults to buffered, like every
     // other non-ask mode. Core sets this when a selection exists so the
@@ -173,7 +167,7 @@ interface NonAskResult {
   error?: string;
 }
 
-async function runNonAsk(modelId: string, mode: ComposeMode, prompt: ComposePrompt, temperature: number): Promise<NonAskResult> {
+async function runNonAsk(modelId: string, mode: ComposeMode, prompt: ComposePrompt, temperature: number, signal: AbortSignal): Promise<NonAskResult> {
   const abortController = new AbortController();
   const timeout = setTimeout(() => abortController.abort(), NON_ASK_TIMEOUT_MS);
   try {
@@ -181,7 +175,8 @@ async function runNonAsk(modelId: string, mode: ComposeMode, prompt: ComposeProm
       model: gateway(modelId),
       system: prompt.system,
       messages: prompt.messages,
-      abortSignal: abortController.signal,
+      abortSignal: AbortSignal.any([signal, abortController.signal]),
+      maxOutputTokens: 8000,
       ...callOptionsFor(modelId, temperature),
     });
     let full = "";
@@ -200,17 +195,14 @@ export const POST = withErrorHandling(async (req: Request) => {
   const user = await requireUser(req);
   timer.mark("auth");
 
-  const json = await req.json().catch(() => null);
+  const json = await readJson(req);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     throw new ApiError("bad_request", parsed.error.issues[0]?.message ?? "Invalid request body");
   }
   const body = parsed.data;
 
-  // Same quota gate as POST /api/transcribe (docs/API.md lists 402 among
-  // compose's errors) — there's no separate "compose credits" concept yet,
-  // so this reuses the monthly audio-seconds entitlement as a blanket
-  // over-quota gate.
+  // Keep the audio entitlement gate and enforce a separate model-request abuse cap.
   const store = getStore();
   const entitlement = await getEntitlement(user.id);
   const { periodStart, periodEnd } = currentBillingPeriod();
@@ -219,6 +211,7 @@ export const POST = withErrorHandling(async (req: Request) => {
     throw new ApiError("quota_exceeded", "Monthly quota exhausted");
   }
 
+  await store.consumeModelRequest(user.id, periodStart, modelRequestLimit());
   const prompt = buildPrompt(body);
   timer.mark("prompt");
 
@@ -240,7 +233,8 @@ export const POST = withErrorHandling(async (req: Request) => {
       model: gateway(modelId),
       system: prompt.system,
       messages: prompt.messages,
-      abortSignal: abortController.signal,
+      abortSignal: AbortSignal.any([req.signal, abortController.signal]),
+      maxOutputTokens: 8000,
       ...callOptionsFor(modelId, temperature),
     });
 
@@ -287,7 +281,7 @@ export const POST = withErrorHandling(async (req: Request) => {
   let usedModelId = modelId;
   let fallbackReason: "empty" | "drift" | null = null;
 
-  let outcome = await runNonAsk(modelId, body.mode, prompt, temperature);
+  let outcome = await runNonAsk(modelId, body.mode, prompt, temperature, req.signal);
   if (outcome.error) {
     throw new ApiError("upstream_error", `Compose failed: ${outcome.error}`);
   }
@@ -297,7 +291,7 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   if (isBlank(outcome.text) || isDrift) {
     const fbModel = fallbackModelId();
-    const retry = await runNonAsk(fbModel, body.mode, prompt, temperature);
+    const retry = await runNonAsk(fbModel, body.mode, prompt, temperature, req.signal);
     timer.mark("fallback");
 
     const retryStillBad =

@@ -1,0 +1,51 @@
+{
+  "environment": "isolated local Next production build; synthetic JWT; no DB/provider credentials; no model calls",
+  "passed": true,
+  "checks": [
+    {
+      "check": "health",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "check": "production_dev_auth_disabled",
+      "status": 404,
+      "expected": 404,
+      "passed": true
+    },
+    {
+      "check": "anonymous_usage",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "anonymous_compose",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "check": "missing_database_fails_closed",
+      "status": 503,
+      "expected": 503,
+      "passed": true,
+      "safe_error": true
+    },
+    {
+      "check": "public_meeting_disabled",
+      "status": 503,
+      "expected": 503,
+      "passed": true,
+      "safe_error": true
+    },
+    {
+      "check": "compose_without_persistence",
+      "status": 503,
+      "expected": 503,
+      "passed": true,
+      "safe_error": true
+    }
+  ]
+}

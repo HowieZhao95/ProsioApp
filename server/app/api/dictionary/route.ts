@@ -1,3 +1,4 @@
+import { readJson } from "@/lib/request-body";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { ApiError, withErrorHandling } from "@/lib/errors";
@@ -30,7 +31,7 @@ export const GET = withErrorHandling(async (req: Request) => {
 export const PUT = withErrorHandling(async (req: Request) => {
   const user = await requireUser(req);
 
-  const json = await req.json().catch(() => null);
+  const json = await readJson(req);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     throw new ApiError("bad_request", parsed.error.issues[0]?.message ?? "Invalid dictionary payload");

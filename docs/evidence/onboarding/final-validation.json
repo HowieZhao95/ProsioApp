@@ -1,0 +1,11 @@
+{
+  "nativeTests": 262,
+  "packageTests": 249,
+  "serverTests": 392,
+  "totalTests": 903,
+  "serverTypecheck": "passed",
+  "installedPath": "/Applications/Prosio.app",
+  "installedExecutableSHA256": "1395b9f09e605859a942552eb99ffc3fbf73b21478f8b0606850f19880bb9db5",
+  "permissionDescriptionsChinese": true,
+  "liveCloudDictation": "not_submitted"
+}

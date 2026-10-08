@@ -808,3 +808,25 @@ add one pointing `schema` at `lib/store/schema.ts` and `dbCredentials.url` at
 `DATABASE_URL` before running `drizzle-kit push`/`generate`).
 
 The retired streaming token warm-up was replaced with a plain HTTPS HEAD to the Gateway origin on 2026-09-27. The measurements above describe the earlier implementation; latency of this replacement has not been measured live.
+
+## Meeting transcription (Soniox Async)
+
+The Mac app always writes its two original audio tracks locally and produces an Apple/FluidAudio draft. Cloud enhancement is opt-in and uses a single Soniox `stt-async-v5` job per meeting. The Mac client never receives the Soniox API key.
+
+Before enabling cloud enhancement, apply `sql/meeting_jobs.sql` to the Postgres database, configure `SONIOX_API_KEY`, `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, and optionally `S3_ENDPOINT` for S3-compatible storage. The bucket must be private. Configure `CRON_SECRET` for the daily expired-job cleanup route. The app uploads a derived M4A through signed 8 MiB multipart URLs; the backend signs a one-hour read URL only for Soniox. Completing or failing a job deletes its cloud audio object. The local tracks stay on the Mac.
+
+`POST /api/meetings/jobs` reserves the full meeting duration atomically in Postgres with `meetingID` as the idempotency key. `POST /api/meetings/jobs/:id/parts` signs an upload part, `POST /api/meetings/jobs/:id/complete` submits Soniox, and `GET /api/meetings/jobs/:id` fetches or refreshes the final result. `DELETE` cancels. A Soniox failure releases the reserved quota. An expired, abandoned job is released by `/api/meetings/maintenance`.
+
+The live provider path cannot be validated without Soniox, S3, and Postgres credentials. A real account and meeting sample are required before production rollout. See `docs/MEETING-TRANSCRIPTION-PLAN.md` for the remaining long-session acceptance checks.
+
+## 2026-10-04 release security boundary
+
+`/api/auth/dev` is always disabled in NODE_ENV=production or VERCEL_ENV=production, even when PROSIO_DEV_AUTH=1. Production requires a persistent DATABASE_URL, a JWT signing secret of at least 32 bytes, and an explicit positive PROSIO_MODEL_REQUESTS_LIMIT (<=100000). The 3600-second trial remains a development entitlement, not a paid subscription.
+
+Apply main users/usage_events schema, sql/meeting_jobs.sql, then sql/cloud_operations.sql as one coordinated deployment. Do not use drizzle-kit push to drop tables/functions or run old usage-writing services alongside the new ledger. The server reserves audio duration before inference and atomically stores successful usage plus the response. Replays return the stored status/body without another model call; a mismatched payload or pending task returns 409. A completed failed attempt is replayed as an error without charging audio; a new explicit attempt requires a new session ID. Uncertain pending jobs remain reserved until reconciliation, rather than automatically causing duplicate inference. This policy needs operational recovery and retention acceptance before launch.
+
+POST /api/usage is now a validated compatibility acknowledgement only (204); it cannot write billable usage. GET includes modelRequestsUsed/modelRequestsLimit alongside audio usage. Compose, capture translation, independent route/intent evaluation, and accepted transcription operations all count toward the separate model-operation cap, including failed/cancelled inference. It is an abuse guard, not a pricing promise. Buffered compose and transcription honor client cancellation, generation has output/time bounds, and body parsing limits actual bytes including chunked uploads.
+
+Cloud meeting creation is blocked in production pending trusted validation of uploaded audio duration before provider inference. The present client-reported duration can understate cost despite exact byte-count validation. Local meeting recording/transcription is unaffected. Soniox/S3 live integration remains an explicit beta acceptance gate.
+
+New tests execute the SQL functions in an isolated PGlite PostgreSQL runtime. It has a single connection; real Neon concurrency/restart/network-failure acceptance is still required. See ../docs/RELEASE-AUDIT-2026-10-04.md.

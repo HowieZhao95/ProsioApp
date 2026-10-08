@@ -84,9 +84,9 @@ enum DebugRecordingWriter {
         do {
             try fileManager.createDirectory(at: sessionDir, withIntermediateDirectories: true)
             let wavData = WAVFile.make(pcm16: pcm16, sampleRate: sampleRate)
-            try wavData.write(to: sessionDir.appendingPathComponent("audio.wav"))
+            try wavData.write(to: sessionDir.appendingPathComponent("audio.wav"), options: .atomic)
             let jsonData = try makeEncoder().encode(record)
-            try jsonData.write(to: sessionDir.appendingPathComponent("session.json"))
+            try jsonData.write(to: sessionDir.appendingPathComponent("session.json"), options: .atomic)
         } catch {
             // Best-effort diagnostics aid — a write failure must never affect the app.
             DictationLog.logger.error("failed to write debug recording: \(String(describing: error), privacy: .public)")

@@ -86,6 +86,8 @@ struct AccountSettingsView: View {
                 TextField("Backend URL", text: backendURLBinding)
                     .textFieldStyle(.roundedBorder)
                     .disableAutocorrection(true)
+                Text("更改服务地址后，请重新启动 Prosio。")
+                    .font(.caption).foregroundStyle(.secondary)
             }
             #endif
         }

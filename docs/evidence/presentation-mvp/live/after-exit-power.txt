@@ -1,0 +1,25 @@
+2026-09-30 16:45:46 +0800 
+Assertion status system-wide:
+   BackgroundTask                 0
+   ApplePushServiceTask           0
+   UserIsActive                   1
+   PreventUserIdleDisplaySleep    0
+   SoftwareUpdateTask             0
+   PreventSystemSleep             0
+   ExternalMedia                  0
+   InternalPreventDisplaySleep    1
+   PreventUserIdleSystemSleep     1
+   NetworkClientActive            0
+Listed by owning process:
+   pid 77875(caffeinate): [0x0008b95500018e5c] 00:42:44 PreventUserIdleSystemSleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting on behalf of 'tools/recording-stress/run.sh' (pid 77874)
+	Localized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.
+   pid 107(powerd): [0x0008bb8400018fa8] 00:33:26 PreventUserIdleSystemSleep named: "Powerd - Prevent sleep while display is on"  
+   pid 107(powerd): [0x0008bcad001082be] 00:00:00 InternalPreventDisplaySleep named: "com.apple.powermanagement.delayDisplayOff"  
+	Timeout will fire in 300 secs Action=TimeoutActionTurnOff
+   pid 98607(Claude): [0x000643cb0001a767] 50:19:39 NoIdleSleepAssertion named: "Electron"  
+   pid 166(WindowServer): [0x0008bb8300098fa7] 00:03:51 UserIsActive named: "com.apple.iohideventsystem.queue.tickle serviceID:10000092e service:AppleHIDKeyboardEventDriverV2 product:Apple Internal Keyboard / Trackpad eventType:3"  
+	Timeout will fire in 968 secs Action=TimeoutActionRelease
+   pid 410(sharingd): [0x0008c26f000193f9] 00:03:55 PreventUserIdleSystemSleep named: "Handoff"  
+Kernel Assertions: 0x100=MAGICWAKE
+   id=538  level=255 0x100=MAGICWAKE creat=2026/9/18 21:31  mod=2026/9/29 18:16 description=en0 owner=IOSkywalkNetworkBSDClient

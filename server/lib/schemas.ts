@@ -7,10 +7,10 @@ import { z } from "zod";
  */
 export const appContextSchema = z
   .object({
-    bundleID: z.string().nullable().optional(),
-    appName: z.string().nullable().optional(),
-    windowTitle: z.string().nullable().optional(),
-    url: z.string().nullable().optional(),
+    bundleID: z.string().max(256).nullable().optional(),
+    appName: z.string().max(256).nullable().optional(),
+    windowTitle: z.string().max(2048).nullable().optional(),
+    url: z.string().max(4096).nullable().optional(),
   })
   .nullable()
   .optional();

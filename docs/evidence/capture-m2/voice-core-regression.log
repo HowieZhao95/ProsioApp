@@ -1,0 +1,88 @@
+[0/1] Planning build
+Building for debugging...
+[0/2] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.26s)
+Test Suite 'Selected tests' started at 2026-09-28 00:11:48.477.
+Test Suite 'ProsioKitPackageTests.xctest' started at 2026-09-28 00:11:48.482.
+Test Suite 'ProsioKitPackageTests.xctest' passed at 2026-09-28 00:11:48.482.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-28 00:11:48.482.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.005) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite LanguageHintsDefaultTests started.
+◇ Suite DictationControllerTests started.
+◇ Suite LiveComposeTests started.
+◇ Suite DictationControllerDebugRecordingTests started.
+◇ Test preservesPreferenceOrderAndDedupes() started.
+◇ Test capsAtThree() started.
+◇ Suite AppSettingsTests started.
+◇ Test mapsChineseSimplifiedAndTraditionalDistinctly() started.
+◇ Test cloudSource_InsertsCloudTextAndUsesCloudEngineID() started.
+◇ Test mapsCommonLanguagesToTheirSupportedTag() started.
+◇ Test fallsBackToEnglishWhenPreferredLanguagesIsEmpty() started.
+◇ Test cloudRequestTimesOut_FallsBackToLocalTranscript() started.
+◇ Test format415_RetriesOnceAsWAV() started.
+◇ Test emptyShortAudioGoesIdleSilently() started.
+◇ Test startIsNoOpWhileBusy() started.
+◇ Test nullServerIntent_FallsBackToIntentRulesOnReturnedText() started.
+◇ Test offlineFallsBackToLocalTranscriptClassifiedByRules() started.
+◇ Test localEngineReceivesEveryAudioChunkAndItsTranscriptIsSentAsLocalTranscript() started.
+◇ Test fallsBackToEnglishWhenNothingMaps() started.
+◇ Test cancelDuringInsertionDoesNotResurrectFinishedPhaseOrHistory() started.
+◇ Test emptyLongAudioFails() started.
+◇ Test cancelMidListeningGoesIdleWithoutInserting() started.
+◇ Test audioStartFailureReportsFailedPhase() started.
+◇ Test localSource_InsertsLocalTextDirectlyAndSkipsCompose() started.
+◇ Test composeAskReturnsNonEmptyStreamedAnswer() started.
+◇ Test cancelDuringFinalizingWhileWaitingForCloud() started.
+◇ Test micOpensBeforeFocusContextIsRead() started.
+◇ Test marksSuspectedDropWhenCloudMuchShorterThanLocal() started.
+◇ Test askSessionIsRecordedWithComposeFields() started.
+◇ Test recordsRouteSourceLocalWhenServerSkipsGemini() started.
+◇ Test keysUseProsioPrefix() started.
+◇ Test doesNotWriteWhenSaveDebugRecordingsIsDisabled() started.
+◇ Test missingValuesUseDefaults() started.
+◇ Test storedLanguageHintsAreNeverOverriddenByTheSystemDefault() started.
+◇ Test persistsAndReloadsAllProperties() started.
+◇ Test writesAudioAndSessionJSONAfterSuccessfulSession() started.
+✔ Test fallsBackToEnglishWhenNothingMaps() passed after 0.001 seconds.
+✔ Test fallsBackToEnglishWhenPreferredLanguagesIsEmpty() passed after 0.001 seconds.
+✔ Test mapsChineseSimplifiedAndTraditionalDistinctly() passed after 0.001 seconds.
+✔ Test preservesPreferenceOrderAndDedupes() passed after 0.001 seconds.
+✔ Test capsAtThree() passed after 0.001 seconds.
+✔ Test mapsCommonLanguagesToTheirSupportedTag() passed after 0.001 seconds.
+✔ Suite LanguageHintsDefaultTests passed after 0.001 seconds.
+✔ Test composeAskReturnsNonEmptyStreamedAnswer() passed after 0.001 seconds.
+◇ Test composeEditReturnsNonEmptyStreamedOutput() started.
+✔ Test composeEditReturnsNonEmptyStreamedOutput() passed after 0.001 seconds.
+✔ Suite LiveComposeTests passed after 0.002 seconds.
+✔ Test startIsNoOpWhileBusy() passed after 0.009 seconds.
+✔ Test audioStartFailureReportsFailedPhase() passed after 0.023 seconds.
+✔ Test micOpensBeforeFocusContextIsRead() passed after 0.024 seconds.
+✔ Test cancelDuringFinalizingWhileWaitingForCloud() passed after 0.026 seconds.
+✔ Test keysUseProsioPrefix() passed after 0.027 seconds.
+✔ Test missingValuesUseDefaults() passed after 0.030 seconds.
+✔ Test storedLanguageHintsAreNeverOverriddenByTheSystemDefault() passed after 0.031 seconds.
+✔ Test persistsAndReloadsAllProperties() passed after 0.032 seconds.
+✔ Suite AppSettingsTests passed after 0.033 seconds.
+✔ Test nullServerIntent_FallsBackToIntentRulesOnReturnedText() passed after 0.045 seconds.
+✔ Test offlineFallsBackToLocalTranscriptClassifiedByRules() passed after 0.045 seconds.
+✔ Test format415_RetriesOnceAsWAV() passed after 0.046 seconds.
+✔ Test emptyLongAudioFails() passed after 0.045 seconds.
+✔ Test cancelMidListeningGoesIdleWithoutInserting() passed after 0.045 seconds.
+✔ Test localSource_InsertsLocalTextDirectlyAndSkipsCompose() passed after 0.046 seconds.
+✔ Test emptyShortAudioGoesIdleSilently() passed after 0.045 seconds.
+✔ Test localEngineReceivesEveryAudioChunkAndItsTranscriptIsSentAsLocalTranscript() passed after 0.046 seconds.
+✔ Test cloudSource_InsertsCloudTextAndUsesCloudEngineID() passed after 0.052 seconds.
+✔ Test recordsRouteSourceLocalWhenServerSkipsGemini() passed after 0.068 seconds.
+✔ Test askSessionIsRecordedWithComposeFields() passed after 0.070 seconds.
+✔ Test writesAudioAndSessionJSONAfterSuccessfulSession() passed after 0.071 seconds.
+✔ Test cloudRequestTimesOut_FallsBackToLocalTranscript() passed after 0.096 seconds.
+✔ Test marksSuspectedDropWhenCloudMuchShorterThanLocal() passed after 0.096 seconds.
+✔ Test cancelDuringInsertionDoesNotResurrectFinishedPhaseOrHistory() passed after 0.118 seconds.
+✔ Suite DictationControllerTests passed after 0.118 seconds.
+✔ Test doesNotWriteWhenSaveDebugRecordingsIsDisabled() passed after 0.205 seconds.
+✔ Suite DictationControllerDebugRecordingTests passed after 0.206 seconds.
+✔ Test run with 32 tests in 5 suites passed after 0.207 seconds.

@@ -601,6 +601,11 @@ final class CaptureEditingCanvas: NSView {
         }
     }
     private func beginText(rect:CGRect,text:String,id:UUID?,existingStyle:AnnotationStyle?=nil) {
+        let originalShape = session.snapshot?.annotations.first(where: { $0.id == id }).flatMap { annotation -> TextShape? in
+            if case .text(let shape) = annotation.kind { return shape }
+            return nil
+        }
+        let translationSource = originalShape?.translationSource
         let textStyle=existingStyle ?? style
         editingTextStyle=textStyle
         // The input area can grow to the crop edge; the committed bounds are measured from text.
@@ -619,7 +624,7 @@ final class CaptureEditingCanvas: NSView {
         editor.isContinuousSpellCheckingEnabled = false
         editor.isAutomaticQuoteSubstitutionEnabled = false
         editor.isAutomaticDashSubstitutionEnabled = false
-        editor.textColor=textStyle.strokeColor.withAlpha(textStyle.strokeColor.alpha*textStyle.opacity).nsColor;editor.font=NSFont(name:"Helvetica",size:textStyle.fontSize*imageFrame.width/CGFloat(source.image.width))
+        editor.textColor=textStyle.strokeColor.withAlpha(textStyle.strokeColor.alpha*textStyle.opacity).nsColor;editor.font=NSFont(name:originalShape?.fontName ?? "Helvetica",size:textStyle.fontSize*imageFrame.width/CGFloat(source.image.width))
         editor.textContainerInset = .zero;editor.textContainer?.lineFragmentPadding=0
         editor.isVerticallyResizable=true;editor.isHorizontallyResizable=false
         editor.textContainer?.widthTracksTextView=true;editor.textContainer?.heightTracksTextView=false
@@ -641,9 +646,18 @@ final class CaptureEditingCanvas: NSView {
                 shapeRect.size = CGSize(width: max(1, ceil(used.maxX*scale)+1),
                                         height: max(1, ceil(used.maxY*scale)+1))
             }
+            if translationSource != nil { shapeRect = rect }
             if !value.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty {
-                let committedStyle=self.editingTextStyle ?? textStyle
-                let annotation=Annotation(id:id ?? UUID(),kind:.text(TextShape(rect:shapeRect,text:value)),style:committedStyle)
+                var committedStyle=self.editingTextStyle ?? textStyle
+                if translationSource != nil {
+                    if let name = originalShape?.fontName {
+                        let fitted = CaptureTranslationTextLayout.fit(text: value, fontName: name, preferredSize: committedStyle.fontSize,
+                            original: originalShape?.translationSourceRect ?? shapeRect, available: shapeRect)
+                        committedStyle.fontSize = fitted.size; shapeRect = fitted.rect
+                    } else { committedStyle.fontSize = CaptureTranslationOCR.fontSize(text: value, rect: shapeRect) }
+                }
+                let annotation=Annotation(id:id ?? UUID(),kind:.text(TextShape(rect:shapeRect,text:value,automaticallySizesToText:translationSource == nil,translationSource:translationSource,
+                    fontName:originalShape?.fontName,translationSourceRect:originalShape?.translationSourceRect)),style:committedStyle)
                 if id != nil { session.apply(UpdateAnnotationCommand(annotation:annotation)) } else { session.apply(AddAnnotationCommand(annotation:annotation)) }
             }
             else if let id { session.apply(DeleteAnnotationsCommand(annotationIDs:[id])) }

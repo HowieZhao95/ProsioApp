@@ -1,0 +1,67 @@
+{
+  "decision": "BLOCKED_PUBLIC_RELEASE",
+  "date": "2026-10-04",
+  "tests_executed": 990,
+  "checks": [
+    {
+      "check": "native",
+      "passed": true,
+      "tests": 320,
+      "source_log": "/tmp/prosio-audit-native-final.log",
+      "counting_note": "Corrected from Swift Testing-only count to complete xcresult including XCTest; original run, not rerun."
+    },
+    {
+      "check": "package",
+      "passed": true,
+      "tests": 250,
+      "source_log": "/tmp/prosio-audit-package-final.log"
+    },
+    {
+      "check": "server",
+      "passed": true,
+      "tests": 414,
+      "source_log": "/tmp/prosio-audit-server-final.log"
+    },
+    {
+      "check": "commercialization",
+      "passed": true,
+      "tests": 6,
+      "source_log": "/tmp/prosio-audit-commercial-final.log"
+    },
+    {
+      "check": "types",
+      "passed": true,
+      "tests": null,
+      "source_log": "/tmp/prosio-audit-types-final.log"
+    },
+    {
+      "check": "backend_build",
+      "passed": true,
+      "tests": null,
+      "source_log": "/tmp/prosio-audit-backend-build-final.log"
+    },
+    {
+      "check": "release_build",
+      "passed": true,
+      "tests": null,
+      "source_log": "/tmp/prosio-release-build-final.log"
+    }
+  ],
+  "dependency_vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "artifact_gate": false,
+  "public_blockers": [
+    "verified production login/session lifecycle",
+    "production HTTPS endpoint and multi-worker database acceptance",
+    "Developer ID/timestamp/notarization/Gatekeeper",
+    "privacy retention/account deletion",
+    "commercial billing if sold",
+    "real device and provider acceptance for advertised features"
+  ]
+}

@@ -1,0 +1,6 @@
+Test Case '-[ProsioTests.RecordingPlatformTests testDroppedVideoWithInvalidDurationDoesNotInspectAudioFormat]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testDroppedVideoWithInvalidDurationDoesNotInspectAudioFormat]' passed (0.012 seconds).
+◇ Test independentSessionsPersistSegmentsAndDerivedDuration() started.
+✔ Test independentSessionsPersistSegmentsAndDerivedDuration() passed after 0.004 seconds.
+✔ Test run with 262 tests in 38 suites passed after 26.610 seconds.
+** TEST SUCCEEDED **

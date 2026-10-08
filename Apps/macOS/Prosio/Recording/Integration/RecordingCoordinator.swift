@@ -244,6 +244,13 @@ final class RecordingCoordinator {
         desktopSelection?.setMode(mode)
     }
 
+    func selectWindow(_ id: UInt32) {
+        guard selectionActive, !isBusy else { return }
+        if desktopSelection?.selectWindow(id) == true { message = nil }
+        else { message = "所选窗口已关闭或不可用，请重新选择。" }
+        updateSelectionPanelSize()
+    }
+
     func dismissSelection() {
         guard selectionActive else { return }
         selectionActive = false
@@ -273,6 +280,14 @@ final class RecordingCoordinator {
     }
 
     var selectedCameraIDs: [String] { [cameraOneID, cameraTwoID].filter { !$0.isEmpty } }
+    var selectionTargetDescription: String {
+        guard selectionTargetReady else { return "请先选择录制目标" }
+        switch screenMode {
+        case "window": return "窗口：\(inventory?.windows.first { $0.id == windowID }?.name ?? "所选窗口")"
+        case "region": return "区域：\(inventory?.displays.first { $0.id == displayID }?.name ?? "所选屏幕")"
+        default: return "屏幕：\(inventory?.displays.first { $0.id == displayID }?.name ?? "所选屏幕")"
+        }
+    }
     var selectedCameraSources: [RecordingSource] {
         let ids = selectedCameraIDs
         return ids.compactMap { id in inventory?.cameras.first { $0.id == id } }

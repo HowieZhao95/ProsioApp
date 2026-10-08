@@ -16,7 +16,7 @@ tools/recording-device-validation/run.sh --dry-run
 tools/recording-device-validation/run.sh --test
 ```
 
-默认只构建并签名两款独立应用，不启动任何应用，不请求权限、不启动 fixture、不进行捕获、不打开剪辑软件。`--test` 只运行无宿主合成媒体测试。
+默认只构建并签名两款独立应用，不启动任何应用，不请求权限、不启动 fixture、不进行捕获、不打开剪辑软件。`--test` 只运行无宿主合成媒体与失败收尾测试，采用 Release 配置并启用 Swift 排他访问检查。
 
 产物留在 `/tmp/prosio-recording-device-validation.*/build/Build/Products/Release/RecordingDeviceValidation.app`。fixture 打包在主工具的 `Contents/Helpers` 中，先签名 fixture 再签名主工具。默认 ad-hoc 签名；如已有稳定开发签名，可通过 `--identity "Prosio Local Development"` 指定。不会创建证书或更改系统信任。
 
@@ -27,6 +27,8 @@ tools/recording-device-validation/run.sh --test
 ```
 
 该模式只读取权限状态和系统识别的摄像头、麦克风，不初始化 GUI、不请求权限、不创建录制会话、不启动 fixture、不捕获。
+
+注意：从终端或代理启动的命令行进程，系统权限归属可能与独立启动的 GUI 应用不同。预检显示已授权不代表 GUI 已授权；必须以实际 GUI 权限状态及真实捕获报告为准。2026-10-04 实测曾出现 CLI 屏幕已授权而 GUI 未授权，未将该预检计为设备验收通过。
 
 ## 用户主动验收
 

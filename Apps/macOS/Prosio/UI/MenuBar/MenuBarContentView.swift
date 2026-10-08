@@ -19,7 +19,9 @@ struct MenuBarContentView: View {
                 case .voice: voicePane
                 case .capture: capturePane
                 case .meeting: meetingPane
+                case .presentation: PresentationMenuView(coordinator: environment.presentation, permissions: environment.permissions)
                 case .recording: recordingPane
+                case .agents: AgentMenuPane(coordinator: .shared)
                 }
             }
         } footer: {
@@ -28,9 +30,10 @@ struct MenuBarContentView: View {
     }
 
     private var voiceBusy: Bool {
+        if AgentMonitorCoordinator.shared.voice.recording || AgentMonitorCoordinator.shared.voice.finishing { return true }
         switch environment.controller.phase {
-        case .idle, .finished, .failed: false
-        default: true
+        case .idle, .finished, .failed: return false
+        default: return true
         }
     }
 
@@ -440,10 +443,26 @@ struct MenuBarContentView: View {
     }
 
     private var footer: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Button { environment.notes.show(); dismiss() } label: {
+                    HStack { Label("便签", systemImage: "note.text"); Spacer(); Text(environment.notes.shortcut.selection.label).foregroundStyle(.secondary) }
+                }.buttonStyle(.plain).font(.system(size: 13))
+                Button("便签设置…") {
+                    openSettings()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        NotificationCenter.default.post(name: .prosioOpenSettingsNotesTab, object: nil)
+                    }
+                }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(.secondary)
+            }.frame(height: 26)
+            Divider()
         HStack(spacing: 12) {
             SettingsLink { Text("设置…") }
                 .buttonStyle(.plain)
                 .keyboardShortcut(",", modifiers: .command)
+            Button("启动导引") { dismiss(); environment.showOnboarding() }
+                .buttonStyle(.plain)
+                .font(.system(size: 11))
             Button("帮助") { showingHelp = true }
                 .buttonStyle(.plain)
                 .popover(isPresented: $showingHelp) {
@@ -457,9 +476,17 @@ struct MenuBarContentView: View {
                             Text("点击截图或使用当前快捷键，在冻结画面上框选并标注。复制或保存后返回原应用。")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
+                        } else if selectedPane == .presentation {
+                            Text("演示与专注").font(.system(size: 13, weight: .semibold))
+                            Text("在设置中调整下次会话预设。暂停视觉保留保活；急停清空按键。整屏共享后请在观众端确认浮层。")
+                                .font(.system(size: 12)).foregroundStyle(.secondary)
                         } else if selectedPane == .recording {
                             Text("屏幕录制").font(.system(size: 13, weight: .semibold))
                             Text("选择屏幕与最多两个机位，麦克风和系统声音独立保存。结束后可预览、裁剪导出，或将原片与项目交给剪辑软件。")
+                                .font(.system(size: 12)).foregroundStyle(.secondary)
+                        } else if selectedPane == .agents {
+                            Text("Agent 任务").font(.system(size: 13, weight: .semibold))
+                            Text("菜单栏显示执行和待处理数量，点击任务查看详情。关闭详情窗口后继续监控；暂停监控可停止读取。")
                                 .font(.system(size: 12)).foregroundStyle(.secondary)
                         } else {
                             Text("会议转写")
@@ -487,6 +514,8 @@ struct MenuBarContentView: View {
             .fixedSize()
         }
         .font(.system(size: 12))
+        }
+
     }
 }
 

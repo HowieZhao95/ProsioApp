@@ -12,7 +12,7 @@ Error shape for every non-2xx: `{ "error": { "code": "<code>", "message": "<huma
 Codes: `unauthorized` (401), `forbidden` (403), `quota_exceeded` (402), `bad_request` (400), `payload_too_large` (413), `unsupported_media_type` (415), `upstream_error` (502), `not_found` (404).
 
 ### `POST /api/auth/dev`
-Only when `PROSIO_DEV_AUTH=1`, else 404.
+Only in non-production with `PROSIO_DEV_AUTH=1`, else 404.
 Request `{ "email": "a@b.com" }` → `200 { "sessionToken": "…", "user": { "id": "…", "email": "…" } }`
 
 ### `GET /api/health`
@@ -93,8 +93,9 @@ Both endpoints — plus `POST /api/intent` and the combined check — share one 
 ## Usage
 
 ### `POST /api/usage`
-Request `{ "sessionID": "uuid", "engineID": "cloud.gemini-3.5-transcribe", "audioSeconds": 12.3, "startedAt": "…" }`
-→ `204`. Idempotent on `sessionID`.
+
+Authenticated, validated compatibility acknowledgement. Returns 204. Client-provided session IDs, durations and timestamps never modify billable usage. Authoritative cloud usage is committed by the transcribe operation ledger.
+
 
 ### `GET /api/usage`
 → `200 { "periodStart": "…", "periodEnd": "…", "audioSecondsUsed": 123.4, "audioSecondsLimit": 3600 | null }`
@@ -107,3 +108,23 @@ Entry shape (matches Swift `DictionaryEntry`): `{ "id": "uuid", "term": "Prosio"
 ### `PUT /api/dictionary`
 Request `{ "entries": [Entry] }` — full replace, last-write-wins by `updatedAt` per id. → `200 { "entries": [Entry] }`
 Limit 1000 entries, term ≤ 100 chars.
+
+## Screenshot translation
+
+### `POST /api/capture/translate`
+Authenticated, buffered batch translation for locally recognized screenshot text. Request:
+`{ "texts": ["Hello", "Save screenshot"], "targetLanguage": "zh-Hans" }`
+→ `200 { "translations": ["你好", "保存截图"] }`, preserving input order and count.
+
+Supported targets: `zh-Hans`, `zh-Hant`, `en-US`, `ja-JP`, `ko-KR`, `fr-FR`, `de-DE`.
+Each batch contains 1–40 nonempty strings, at most 3500 UTF-16 code units total. Malformed requests return 400; incomplete/empty/malformed model output returns 502 without a partial result. Reuses compose model options, the authenticated session, the pooled Gateway connection, and the existing monthly quota gate (402). The model has a 15-second timeout, combined with request cancellation; the client has a 20-second timeout. No automatic model retry.
+
+The macOS editor recognizes selected visible pixels with Vision on a worker task, skips regions intersecting redactions, deduplicates text, sends at most two batches concurrently, and caches recognition/translation/layout only within the editing session. Images and pixel geometry are never sent to this endpoint; logs contain only timings and segment counts. This endpoint must be included when updating the backend used by the app.
+
+### Release security addendum (2026-10-04)
+
+Audio quota includes the duration of the incoming request and all pending audio/meeting reservations before inference. Per-user/session replay returns a cached status/body; conflicting input or in-flight duplicate returns 409. Successful response and audio usage commit together. Failed attempts cache their error, release audio reservation and require a new session ID for an explicit new attempt. No automatic pending-job expiry/re-inference is allowed. The operation ledger may retain transcript text; production retention and account deletion must be finalized.
+
+All accepted model operations also consume a separate monthly technical request allowance (production requires PROSIO_MODEL_REQUESTS_LIMIT). GET /api/usage adds modelRequestsUsed/modelRequestsLimit. Compose, capture translation, independent route/intent and accepted transcribe calls are covered; replay does not consume a new request. This does not define subscription pricing. Maximum actual JSON body is 512 KiB for ordinary routes, 5.5 MB for transcription (hosting limits can be lower). Compose bounds vocabulary/history/context, output tokens and cancellation. Production errors do not expose upstream/database details.
+
+Production meeting creation returns 503 until trusted uploaded duration validation is implemented. Production dev auth always returns 404. HEAD /api/transcribe is an unauthenticated connection warm-up without model inference.

@@ -118,6 +118,44 @@ private func bodyData(from request: URLRequest) -> Data? {
 @Suite(.serialized)
 struct BackendClientTests {
 
+    @Test func refusesToSendCredentialsOrContentOverRemoteHTTP() async throws {
+        let capture = RequestCapture()
+        StubURLProtocol.handler = { request in
+            capture.record(request)
+            return jsonResponse(request.url!, status: 204, body: "")
+        }
+        defer { StubURLProtocol.handler = nil }
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "transport-test", account: "session")
+        let client = BackendClient(baseURL: URL(string: "http://remote.example.com")!, session: makeStubbedSession(), keychainService: "transport-test", keychain: keychain)
+        await #expect(throws: ProsioError.self) { try await client.translateCaptureTexts(["Private content"], targetLanguage: "zh-Hans") }
+        #expect(capture.all().isEmpty)
+    }
+
+    @Test func screenshotTranslationBatchesUseAuthenticatedSessionAndValidateMapping() async throws {
+        let keychain = InMemoryKeychain()
+        keychain.write(Data("session-token".utf8), service: "svc", account: "session")
+        let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)
+        _ = await client.loadedIsSignedIn()
+        let capture = RequestCapture()
+        StubURLProtocol.handler = { request in
+            capture.record(request)
+            #expect(request.url?.path == "/api/capture/translate")
+            #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer session-token")
+            #expect(request.timeoutInterval == 20)
+            let body = try #require(bodyData(from: request))
+            let json = try #require(JSONSerialization.jsonObject(with: body) as? [String: Any])
+            #expect(json["texts"] as? [String] == ["Hello", "Save"])
+            #expect(json["targetLanguage"] as? String == "zh-Hans")
+            return jsonResponse(request.url!, status: 200, body: #"{"translations":["你好","保存"]}"#)
+        }
+        defer { StubURLProtocol.handler = nil }
+        #expect(try await client.translateCaptureTexts(["Hello", "Save"], targetLanguage: "zh-Hans") == ["你好", "保存"])
+        #expect(capture.all().count == 1)
+        StubURLProtocol.handler = { request in jsonResponse(request.url!, status: 200, body: #"{"translations":["你好"]}"#) }
+        await #expect(throws: ProsioError.self) { try await client.translateCaptureTexts(["Hello", "Save"], targetLanguage: "zh-Hans") }
+    }
+
     @Test func devSignInStoresTokenInInMemoryKeychain() async throws {
         let keychain = InMemoryKeychain()
         let client = BackendClient(baseURL: URL(string: "https://api.prosio.test")!, session: makeStubbedSession(), keychainService: "svc", keychain: keychain)

@@ -13,7 +13,22 @@ struct RecordingSelectionToolbarView: View {
                     .keyboardShortcut(.escape, modifiers: [])
                 divider
                 ForEach([RecordingSelectionMode.display, .window, .region], id: \.rawValue) { mode in
-                    iconButton(symbol(mode), title: title(mode)) { coordinator.setSelectionMode(mode) }
+                    Group {
+                        if mode == .window {
+                            Menu {
+                                Button("在屏幕上选择") { coordinator.setSelectionMode(.window) }
+                                Divider()
+                                ForEach(coordinator.inventory?.windows ?? []) { window in
+                                    Button(window.name) { coordinator.selectWindow(window.id) }
+                                }
+                            } label: {
+                                Image(systemName: symbol(mode)).frame(width: 32, height: 32)
+                            }
+                            .help(title(mode)).accessibilityLabel(title(mode))
+                        } else {
+                            iconButton(symbol(mode), title: title(mode)) { coordinator.setSelectionMode(mode) }
+                        }
+                    }
                         .disabled(coordinator.isBusy)
                         .background(coordinator.screenMode == mode.rawValue ? Color.primary.opacity(0.10) : .clear,
                                     in: RoundedRectangle(cornerRadius: 8))
@@ -73,6 +88,8 @@ struct RecordingSelectionToolbarView: View {
                 }
                 .keyboardShortcut(.return, modifiers: [])
                 .disabled(coordinator.isBusy || !coordinator.selectionTargetReady || coordinator.loadingSources)
+                .accessibilityLabel("录制")
+                .accessibilityValue(coordinator.selectionTargetDescription)
                 .help("开始录制")
             }
             .buttonStyle(.plain)

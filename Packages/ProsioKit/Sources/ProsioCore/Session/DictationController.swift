@@ -45,6 +45,10 @@ public final class DictationController {
     /// Called on the main actor after every completed (inserted or copied) dictation, e.g. to report usage.
     public var onSessionCompleted: ((HistoryItem) -> Void)?
 
+    /// Immediate feedback for accepted microphone transitions, delivered on the main actor.
+    public var onRecordingStarted: (() -> Void)?
+    public var onRecordingStopped: (() -> Void)?
+
     /// How long `stop()` waits for `localEngine`'s own `.final` before proceeding with whatever's
     /// on screen (its last partial) as the local transcript sent to the server. Local is on-device
     /// and expected to finish quickly once audio ends. Overridable via `@testable import`.
@@ -312,6 +316,7 @@ public final class DictationController {
         }
         tMicOpen = Date()
         phase = .listening
+        onRecordingStarted?()
 
         let capturedContext = contextProvider.currentContext()
         context = capturedContext
@@ -385,6 +390,7 @@ public final class DictationController {
         tStopCalled = Date()
         audio.stop()
         phase = .finalizing
+        onRecordingStopped?()
 
         stopTask = Task { @MainActor [weak self] in
             guard let self else { return }

@@ -1,3 +1,4 @@
+import { readJson } from "@/lib/request-body";
 import { z } from "zod";
 import { signSessionToken } from "@/lib/auth";
 import { ApiError, withErrorHandling } from "@/lib/errors";
@@ -10,12 +11,12 @@ const bodySchema = z.object({
 });
 
 export const POST = withErrorHandling(async (req: Request) => {
-  if (process.env.PROSIO_DEV_AUTH !== "1") {
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production" || process.env.PROSIO_DEV_AUTH !== "1") {
     // Per docs/API.md: "Only when PROSIO_DEV_AUTH=1, else 404."
     return Response.json({ error: { code: "not_found", message: "Not found" } }, { status: 404 });
   }
 
-  const json = await req.json().catch(() => null);
+  const json = await readJson(req);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     throw new ApiError("bad_request", "Body must be { email: string }");

@@ -1,8 +1,9 @@
-import { after } from "next/server";
+import { readJson } from "@/lib/request-body";
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
-import { currentBillingPeriod, getEntitlement } from "@/lib/entitlements";
-import { ApiError, withErrorHandling } from "@/lib/errors";
+import { currentBillingPeriod, getEntitlement, modelRequestLimit } from "@/lib/entitlements";
+import { ApiError, toErrorResponse, withErrorHandling } from "@/lib/errors";
 import { warmGatewayConnection as prewarmGateway, transcribeBatch } from "@/lib/gateway";
 import { classifyIntent, type IntentDecision } from "@/lib/intent";
 import { repairListFormatting } from "@/lib/list-repair";
@@ -44,13 +45,13 @@ function isAudioFormat(value: string): value is AudioFormat {
 }
 
 const bodySchema = z.object({
-  audio: z.string().min(1, "audio must be a non-empty base64 string"),
+  audio: z.string().min(1, "audio must be a non-empty base64 string").max(5_300_000),
   // Not a z.enum(): an unrecognized value must produce 415, not 400 —
   // validated (and cast) manually right after parsing, see isAudioFormat().
   audioFormat: z.string().default("wav"),
   mode: z.enum(["smart", "verbatim"]).default("smart"),
   vocabulary: z.array(z.string().max(MAX_TERM_LENGTH)).max(MAX_VOCABULARY_TERMS).default([]),
-  languageHints: z.array(z.string()).default([]),
+  languageHints: z.array(z.string().max(64)).max(16).default([]),
   sessionID: z.string().uuid(),
   // P1.2: the on-device transcript, for the combined route+intent check
   // (lib/transcribe-routing.ts). Optional/nullable for backward
@@ -92,22 +93,6 @@ function leadingTextDiffers(a: string, b: string): boolean {
   return leadingSignature(a) !== leadingSignature(b);
 }
 
-/**
- * Runs `fn` after the response has been sent (via next/server's `after()`),
- * so a slow usage write never adds to client-observed latency. Falls back
- * to awaiting `fn` inline when called outside a Next.js request scope
- * (e.g. tests that invoke the route handler directly, or a future runtime
- * where `after()` isn't available) — `after()` throws synchronously in that
- * case, before `fn` ever runs, so this is a safe, side-effect-free probe.
- */
-async function runAfterResponse(fn: () => Promise<void>): Promise<void> {
-  try {
-    after(fn);
-  } catch {
-    await fn();
-  }
-}
-
 export const POST = withErrorHandling(async (req: Request) => {
   const timer = new RequestTimer();
   let outcome: "ok" | "error" = "ok";
@@ -116,7 +101,7 @@ export const POST = withErrorHandling(async (req: Request) => {
     const user = await requireUser(req);
     timer.mark("auth");
 
-    const json = await req.json().catch(() => null);
+    const json = await readJson(req, 5_500_000);
     const parsed = bodySchema.safeParse(json);
     if (!parsed.success) {
       throw new ApiError("bad_request", parsed.error.issues[0]?.message ?? "Invalid request body");
@@ -171,145 +156,137 @@ export const POST = withErrorHandling(async (req: Request) => {
         );
       }
     }
+    if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) throw new ApiError("bad_request", "Audio must contain samples");
     timer.mark("audio");
 
     const store = getStore();
     const entitlement = await getEntitlement(user.id);
     const { periodStart, periodEnd } = currentBillingPeriod();
-    const audioSecondsUsed = await store.sumUsage(user.id, periodStart, periodEnd);
-    if (audioSecondsUsed >= entitlement.audioSecondsLimit) {
-      throw new ApiError("quota_exceeded", "Monthly audio quota exhausted");
-    }
+    const claim = await store.reserveCloud({ userId: user.id, sessionID,
+      fingerprint: createHash("sha256").update(JSON.stringify(parsed.data)).digest("hex"),
+      seconds: durationSeconds, limit: entitlement.audioSecondsLimit, periodStart, periodEnd });
+    if (claim.kind === "replay") return Response.json(claim.response.body, { status: claim.response.status });
     timer.mark("quota");
+    const respond = async (body: unknown) => {
+      await store.finishCloud(user.id, sessionID, { body, status: 200 }, true);
+      return Response.json(body, { headers: { "Server-Timing": timer.toServerTimingHeader() } });
+    };
 
-    // Usage is metered by audio duration regardless of which path below is
-    // taken (docs/P1.2-AUDIO-ROUTING.md §3) — the local fast path still
-    // costs the user's quota minutes even though it costs no Gemini tokens.
-    // Deferred past the response either way; see runAfterResponse's doc
-    // comment.
-    const recordUsage = () =>
-      runAfterResponse(async () => {
-        const usageTimer = new RequestTimer();
-        await store.recordUsage(user.id, {
-          sessionID,
-          engineID: "cloud.gemini-3.5-transcribe",
-          audioSeconds: durationSeconds,
-          startedAt: new Date().toISOString(),
-        });
-        usageTimer.mark("usage");
-        console.log("[transcribe] usage recorded post-response", { sessionID, ...usageTimer.toObject() });
-      });
-
-    // --- P1.2 combined route+intent check on the local transcript ---------
-    let local: LocalCheckDecision | null = null;
-    if (localTranscript) {
-      local = await checkLocalTranscript({
-        transcript: localTranscript,
-        vocabulary,
-        languageHints,
-        hasSelection,
-        appName: app?.appName ?? null,
-      });
-      timer.mark("local-check");
-
-      if (!local.needsCloud && (local.intent === "dictate" || local.intent === "edit")) {
-        // Clean enough, and the user wants it typed/applied as-is: skip
-        // Gemini entirely (source: "local"). No gateway timer mark — there
-        // was no Gateway call.
-        void recordUsage();
-        return Response.json(
-          {
-            text: localTranscript,
-            language: null,
-            durationSeconds,
-            source: "local",
-            intent: {
-              intent: local.intent,
-              confidence: local.intentConfidence,
-              source: local.intentSource,
-              classifiedOn: "local",
-            },
-            route: { cleanProbability: local.cleanProbability, reason: local.reason },
-            // Never attempted on the local fast path: the list guard
-            // (lib/list-guard.ts, needsFormattingGuard) already forces
-            // cloud for anything that looks like an unformatted list, so a
-            // local transcript reaching here can't be one.
-            formatRepair: null,
-          },
-          { headers: { "Server-Timing": timer.toServerTimingHeader() } }
-        );
-      }
-    }
-
-    // --- Cloud path (today's behavior, extended with source/intent/route) --
-    let result;
     try {
-      result = await transcribeBatch({
-        // The whole file's bytes (WAV header+data, or the whole Ogg
-        // container), not just raw PCM — see BatchTranscribeParams's doc
-        // comment in lib/gateway.ts. `transcribe()` auto-detects the media
-        // type from magic bytes for both formats; nothing format-specific
-        // is passed here.
-        audio: audioBuffer,
-        mode,
-        vocabulary,
-        languageHints,
-      });
+      await store.consumeModelRequest(user.id, periodStart, modelRequestLimit());
+      // --- P1.2 combined route+intent check on the local transcript ---------
+      let local: LocalCheckDecision | null = null;
+      if (localTranscript) {
+        local = await checkLocalTranscript({
+          transcript: localTranscript,
+          vocabulary,
+          languageHints,
+          hasSelection,
+          appName: app?.appName ?? null,
+        });
+        timer.mark("local-check");
+
+        if (!local.needsCloud && (local.intent === "dictate" || local.intent === "edit")) {
+          // Clean enough, and the user wants it typed/applied as-is: skip
+          // Gemini entirely (source: "local"). No gateway timer mark — there
+          // was no Gateway call.
+          return await respond(
+            {
+              text: localTranscript,
+              language: null,
+              durationSeconds,
+              source: "local",
+              intent: {
+                intent: local.intent,
+                confidence: local.intentConfidence,
+                source: local.intentSource,
+                classifiedOn: "local",
+              },
+              route: { cleanProbability: local.cleanProbability, reason: local.reason },
+              // Never attempted on the local fast path: the list guard
+              // (lib/list-guard.ts, needsFormattingGuard) already forces
+              // cloud for anything that looks like an unformatted list, so a
+              // local transcript reaching here can't be one.
+              formatRepair: null,
+            }
+          );
+        }
+      }
+
+      // --- Cloud path (today's behavior, extended with source/intent/route) --
+      let result;
+      try {
+        result = await transcribeBatch({
+          // The whole file's bytes (WAV header+data, or the whole Ogg
+          // container), not just raw PCM — see BatchTranscribeParams's doc
+          // comment in lib/gateway.ts. `transcribe()` auto-detects the media
+          // type from magic bytes for both formats; nothing format-specific
+          // is passed here.
+          audio: audioBuffer,
+          signal: req.signal,
+          mode,
+          vocabulary,
+          languageHints,
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Gateway request failed";
+        throw new ApiError("upstream_error", `Transcription failed: ${message}`);
+      }
+      // Normalize stray bullet-marker glyphs ("* "/"• "/"· "/"– ") to "- "
+      // (lib/text-format.ts, auto-formatting follow-up) — done once here so
+      // every downstream use (leading-text comparison, intent reclassify,
+      // and the response body) sees the same normalized text.
+      const markerNormalized = normalizeListMarkers(result.text);
+      timer.mark("gateway");
+
+      // P1.2.1 follow-up (docs/PROMPTS.md §1b): repair a run-on sentence that
+      // looks like an unformatted list (mixed zh/en implicit lists are the
+      // observed gap — scripts/format-eval.ts) into a proper Markdown list.
+      // Only fires when lib/list-guard.ts's detector fires; a no-op (`text`
+      // returned unchanged, `formatRepair: null`) otherwise, so this adds no
+      // latency to the common case. lib/list-repair.ts re-normalizes markers
+      // on its own output internally (the repair model's own bullet glyph
+      // may differ), so `repair.text` is always already normalized.
+      const repair = await repairListFormatting(markerNormalized);
+      const finalText = repair.text;
+      timer.mark("format");
+
+      // Reclassify intent on the final text when there was no usable local
+      // classification to reuse: no localTranscript was sent at all, the
+      // local check's intent came back null (Jev unavailable, or the answer
+      // was structurally invalid), or the final text's leading ~6
+      // non-punctuation characters differ enough from the local transcript's
+      // that the earlier classification might no longer apply (per
+      // docs/P1.2-AUDIO-ROUTING.md §3). Otherwise the local classification is
+      // reused as-is — it already answered the same question, just against
+      // text that turned out close enough to the final.
+      let intentResult: { intent: IntentDecision["intent"]; confidence: IntentDecision["confidence"]; source: IntentDecision["source"]; classifiedOn: "local" | "final" };
+      if (local !== null && local.intent !== null && !leadingTextDiffers(localTranscript ?? "", finalText)) {
+        intentResult = { intent: local.intent, confidence: local.intentConfidence, source: local.intentSource, classifiedOn: "local" };
+      } else {
+        const reclassified = await classifyIntent({ transcript: finalText, hasSelection, appName: app?.appName ?? null });
+        timer.mark("reclassify");
+        intentResult = { intent: reclassified.intent, confidence: reclassified.confidence, source: reclassified.source, classifiedOn: "final" };
+      }
+
+      return await respond(
+        {
+          text: finalText,
+          language: result.language,
+          durationSeconds,
+          source: "cloud",
+          intent: intentResult,
+          route: local ? { cleanProbability: local.cleanProbability, reason: local.reason } : { cleanProbability: null, reason: "no-local-transcript" },
+          formatRepair: repair.formatRepair,
+        }
+      );
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Gateway request failed";
-      throw new ApiError("upstream_error", `Transcription failed: ${message}`);
+      // Persist a terminal error too: replay must not spend model money again.
+      // Failed inference consumes no audio minutes. An explicit new attempt uses a new session ID.
+      const response = toErrorResponse(err);
+      await store.finishCloud(user.id, sessionID, { status: response.status, body: await response.json() }, false);
+      throw err;
     }
-    // Normalize stray bullet-marker glyphs ("* "/"• "/"· "/"– ") to "- "
-    // (lib/text-format.ts, auto-formatting follow-up) — done once here so
-    // every downstream use (leading-text comparison, intent reclassify,
-    // and the response body) sees the same normalized text.
-    const markerNormalized = normalizeListMarkers(result.text);
-    timer.mark("gateway");
-
-    // P1.2.1 follow-up (docs/PROMPTS.md §1b): repair a run-on sentence that
-    // looks like an unformatted list (mixed zh/en implicit lists are the
-    // observed gap — scripts/format-eval.ts) into a proper Markdown list.
-    // Only fires when lib/list-guard.ts's detector fires; a no-op (`text`
-    // returned unchanged, `formatRepair: null`) otherwise, so this adds no
-    // latency to the common case. lib/list-repair.ts re-normalizes markers
-    // on its own output internally (the repair model's own bullet glyph
-    // may differ), so `repair.text` is always already normalized.
-    const repair = await repairListFormatting(markerNormalized);
-    const finalText = repair.text;
-    timer.mark("format");
-
-    // Reclassify intent on the final text when there was no usable local
-    // classification to reuse: no localTranscript was sent at all, the
-    // local check's intent came back null (Jev unavailable, or the answer
-    // was structurally invalid), or the final text's leading ~6
-    // non-punctuation characters differ enough from the local transcript's
-    // that the earlier classification might no longer apply (per
-    // docs/P1.2-AUDIO-ROUTING.md §3). Otherwise the local classification is
-    // reused as-is — it already answered the same question, just against
-    // text that turned out close enough to the final.
-    let intentResult: { intent: IntentDecision["intent"]; confidence: IntentDecision["confidence"]; source: IntentDecision["source"]; classifiedOn: "local" | "final" };
-    if (local !== null && local.intent !== null && !leadingTextDiffers(localTranscript ?? "", finalText)) {
-      intentResult = { intent: local.intent, confidence: local.intentConfidence, source: local.intentSource, classifiedOn: "local" };
-    } else {
-      const reclassified = await classifyIntent({ transcript: finalText, hasSelection, appName: app?.appName ?? null });
-      timer.mark("reclassify");
-      intentResult = { intent: reclassified.intent, confidence: reclassified.confidence, source: reclassified.source, classifiedOn: "final" };
-    }
-
-    void recordUsage();
-
-    return Response.json(
-      {
-        text: finalText,
-        language: result.language,
-        durationSeconds,
-        source: "cloud",
-        intent: intentResult,
-        route: local ? { cleanProbability: local.cleanProbability, reason: local.reason } : { cleanProbability: null, reason: "no-local-transcript" },
-        formatRepair: repair.formatRepair,
-      },
-      { headers: { "Server-Timing": timer.toServerTimingHeader() } }
-    );
   } catch (err) {
     outcome = "error";
     throw err;

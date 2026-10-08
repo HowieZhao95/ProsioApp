@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { GET, POST } from "@/app/api/usage/route";
-import { resetStoreForTests } from "@/lib/store";
+import { getStore, resetStoreForTests } from "@/lib/store";
 import { authedUser, jsonRequest } from "./helpers";
 
 describe("/api/usage", () => {
@@ -25,7 +25,7 @@ describe("/api/usage", () => {
     expect((await res.json()).error.code).toBe("bad_request");
   });
 
-  it("POST 204s and GET reflects the reported usage", async () => {
+  it("acknowledges client telemetry without trusting it as billable usage", async () => {
     const user = await authedUser();
     const sessionID = crypto.randomUUID();
     const postRes = await POST(
@@ -42,17 +42,18 @@ describe("/api/usage", () => {
     const getRes = await GET(jsonRequest("/api/usage", "GET", undefined, user.authHeader));
     expect(getRes.status).toBe(200);
     const body = await getRes.json();
-    expect(body.audioSecondsUsed).toBeCloseTo(12.3);
+    expect(body.audioSecondsUsed).toBe(0);
     expect(body.audioSecondsLimit).toBe(3600);
     expect(typeof body.periodStart).toBe("string");
     expect(typeof body.periodEnd).toBe("string");
   });
 
-  it("POST is idempotent on sessionID", async () => {
+  it("client telemetry cannot overwrite authoritative usage or double-count it", async () => {
     const user = await authedUser();
     const sessionID = crypto.randomUUID();
     const report = { sessionID, engineID: "cloud.gemini-3.5-transcribe", audioSeconds: 10, startedAt: new Date().toISOString() };
 
+    await getStore().recordUsage(user.id, report);
     await POST(jsonRequest("/api/usage", "POST", report, user.authHeader));
     // Same sessionID, different audioSeconds: should NOT be double-counted or overwritten additively.
     await POST(jsonRequest("/api/usage", "POST", { ...report, audioSeconds: 999 }, user.authHeader));
@@ -74,6 +75,7 @@ describe("/api/usage", () => {
       )
     );
 
+    await getStore().recordUsage(userA.id, { sessionID: crypto.randomUUID(), engineID: "server", audioSeconds: 42, startedAt: new Date().toISOString() });
     const bBody = await (await GET(jsonRequest("/api/usage", "GET", undefined, userB.authHeader))).json();
     expect(bBody.audioSecondsUsed).toBe(0);
   });

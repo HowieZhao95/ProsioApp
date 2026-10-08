@@ -5,6 +5,7 @@ import ProsioCore
 /// Clipboard + Cmd+V insertion with AX fallback. Owned by mac-system agent.
 final class TextInserter: TextInserting {
     private let settings: AppSettings
+    var practiceTarget: (() -> (any PracticeTextTarget)?)?
 
     /// Pasteboard types clipboard managers (Copied, Paste, Raycast, ...) recognize to skip
     /// recording an item — see https://nspasteboard.org.
@@ -25,6 +26,15 @@ final class TextInserter: TextInserting {
     }
 
     func insert(_ text: String, into context: FocusContext?) async -> InsertionOutcome {
+        if PracticeTextRouting.isPractice(context) {
+            if let target = practiceTarget?(), PracticeTextRouting.matches(target, context: context),
+               target.insertPracticeText(text) {
+                return .accessibility
+            }
+            // A closed practice window must never redirect the result to the new foreground app.
+            Self.writePlain(text)
+            return .copiedToClipboard
+        }
         if context?.isSecureInput == true {
             ProsioLog.textInsertion.info("copiedToClipboard: secure input field focused")
             Self.writePlain(text)

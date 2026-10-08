@@ -1,6 +1,7 @@
+import { readJson } from "@/lib/request-body";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
-import { currentBillingPeriod, getEntitlement } from "@/lib/entitlements";
+import { currentBillingPeriod, getEntitlement, modelRequestLimit } from "@/lib/entitlements";
 import { ApiError, withErrorHandling } from "@/lib/errors";
 import { getStore } from "@/lib/store";
 
@@ -14,16 +15,16 @@ const bodySchema = z.object({
 });
 
 export const POST = withErrorHandling(async (req: Request) => {
-  const user = await requireUser(req);
+  await requireUser(req);
 
-  const json = await req.json().catch(() => null);
+  const json = await readJson(req);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     throw new ApiError("bad_request", parsed.error.issues[0]?.message ?? "Invalid usage report");
   }
 
-  const store = getStore();
-  await store.recordUsage(user.id, parsed.data);
+  // Compatibility acknowledgement only: client-reported durations are untrusted.
+  // Authoritative usage is committed with the cloud operation.
 
   return new Response(null, { status: 204 });
 });
@@ -40,6 +41,8 @@ export const GET = withErrorHandling(async (req: Request) => {
     periodStart: periodStart.toISOString(),
     periodEnd: periodEnd.toISOString(),
     audioSecondsUsed,
+    modelRequestsUsed: await store.sumModelRequests(user.id, periodStart),
+    modelRequestsLimit: modelRequestLimit(),
     audioSecondsLimit: entitlement.audioSecondsLimit,
   });
 });

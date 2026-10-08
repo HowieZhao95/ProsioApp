@@ -27,6 +27,7 @@ final class CaptureCoordinator {
     @ObservationIgnored private var applicationObserver:NSObjectProtocol?
     @ObservationIgnored private var screenObserver:NSObjectProtocol?
     @ObservationIgnored var hotkey:CaptureHotkey?
+    @ObservationIgnored var translateTexts: CaptureTranslationPipeline.Translate = { _, _ in throw CaptureTranslationError.unavailable }
 
     init(permissions:PermissionsManager,rootURL:URL,service:ScreenCaptureService=ScreenCaptureService()) {
         self.permissions=permissions;self.service=service
@@ -98,7 +99,7 @@ final class CaptureCoordinator {
                     try Task.checkCancellation()
                     let afterInventory=Self.windowInventory()
                     let stable=Self.stableWindowIDs(before:windowInfo,after:afterInventory)
-                    let source=FrozenCaptureSource(id:snapshotID,image:screenshot.image,display:display,sourceRect:screenshot.sourceRect,overlayRect:localRect,kind:action == .region ? .region : screenshot.kind,name:screenshot.sourceName,capturedAt:screenshot.capturedAt)
+                    let source=FrozenCaptureSource(id:UUID(),image:screenshot.image,display:display,sourceRect:screenshot.sourceRect,overlayRect:localRect,kind:action == .region ? .region : screenshot.kind,name:screenshot.sourceName,capturedAt:screenshot.capturedAt)
                     sources.append(source)
                     let transform=CaptureDisplayTransform(captureFrame:display.frame,overlayFrame:display.overlayFrame)
                     let boundaries=windowInfo.compactMap { info -> CaptureWindowBoundary? in
@@ -148,6 +149,7 @@ final class CaptureCoordinator {
         if !isShuttingDown { previous?.activate(options:[]) }
     }
     private func configure(_ session:CaptureEditingSession) {
+        session.translationPipeline = CaptureTranslationPipeline(translate: translateTexts)
         session.output={ [weak self] document,action,window in
             guard let self else { return .failure("Prosio is unavailable.") }
             return await self.output(document,action:action,window:window)

@@ -101,7 +101,7 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
         await withCheckedContinuation { continuation in
             queue.async { [self] in
                 timeline.pause(at: time)
-                closeAll()
+                closeAll(endingAt: time)
                 audioLastAcceptedEnd.removeAll()
                 continuation.resume()
             }
@@ -195,12 +195,12 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
             // AAC packs submitted PCM densely even when its input PTS skips samples. A new file
             // anchors subsequent audio to its original host time instead of moving the hole to EOF.
             active.removeValue(forKey: sourceID)
-            finish(current)
+            finish(current, endingAt: pts)
         }
         if let current = active[sourceID],
            CMTimeGetSeconds(pts - current.start) >= interval || !current.matches(sample) {
             active.removeValue(forKey: sourceID)
-            finish(current)
+            finish(current, endingAt: pts)
         }
         do {
             if active[sourceID] == nil {
@@ -249,10 +249,10 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
         } catch { fail(error.localizedDescription) }
     }
 
-    private func closeAll() {
+    private func closeAll(endingAt boundary: CMTime? = nil) {
         let chunks = Array(active.values)
         active.removeAll()
-        for chunk in chunks { finish(chunk) }
+        for chunk in chunks { finish(chunk, endingAt: boundary) }
     }
 
     private func recordLoss(_ sample: CMSampleBuffer, sourceID: String, kind: RecordingSourceKind, reason: RecordingSampleLossReason) {
@@ -305,14 +305,17 @@ nonisolated final class RecordingMediaWriter: @unchecked Sendable {
         CMTimeConvertScale(time, timescale: 1_000_000, method: .roundHalfAwayFromZero).value
     }
 
-    private func finish(_ chunk: Chunk) {
-        guard chunk.sampleCount > 0 else {
+    private func finish(_ chunk: Chunk, endingAt boundary: CMTime? = nil) {
+        // A final video frame can extend past the pause instant. Clip the file at the
+        // shared boundary so resumed sources retain their host-clock alignment.
+        let end = min(chunk.end, chunk.start + CMTime(seconds: interval, preferredTimescale: 1_000_000), boundary ?? chunk.end)
+        guard chunk.sampleCount > 0, end > chunk.start else {
             chunk.writer.cancelWriting()
             try? FileManager.default.removeItem(at: chunk.temporaryURL)
             return
         }
         pending[chunk.sourceID, default: 0] += 1
-        chunk.writer.endSession(atSourceTime: min(chunk.end, chunk.start + CMTime(seconds: interval, preferredTimescale: 1_000_000)))
+        chunk.writer.endSession(atSourceTime: end)
         chunk.input.markAsFinished()
         chunk.writer.finishWriting { [self, chunk] in
             Task {

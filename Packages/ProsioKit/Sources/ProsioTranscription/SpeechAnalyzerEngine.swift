@@ -411,9 +411,9 @@ actor PreparedAnalyzerCache {
         guard cache[key] == nil, preparingTasks[key] == nil else { return }
         preparingTasks[key] = Task {
             if let prepared = try? await Self.buildPrepared(locale: locale) {
-                await self.store(prepared, forKey: key)
+                self.store(prepared, forKey: key)
             }
-            await self.clearPreparing(forKey: key)
+            self.clearPreparing(forKey: key)
         }
     }
 

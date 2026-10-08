@@ -9,7 +9,9 @@ export type ErrorCode =
   | "payload_too_large"
   | "unsupported_media_type"
   | "upstream_error"
-  | "not_found";
+  | "not_found"
+  | "conflict"
+  | "unavailable";
 
 const STATUS_BY_CODE: Record<ErrorCode, number> = {
   unauthorized: 401,
@@ -20,6 +22,8 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   unsupported_media_type: 415,
   upstream_error: 502,
   not_found: 404,
+  conflict: 409,
+  unavailable: 503,
 };
 
 export class ApiError extends Error {
@@ -39,7 +43,9 @@ export function errorBody(code: ErrorCode, message: string) {
 }
 
 export function errorResponse(err: ApiError): Response {
-  return Response.json(errorBody(err.code, err.message), { status: err.status });
+  const message = isProduction() && (err.code === "upstream_error" || err.code === "unavailable")
+    ? "Service temporarily unavailable. Please try again." : err.message;
+  return Response.json(errorBody(err.code, message), { status: err.status });
 }
 
 /**
@@ -52,8 +58,8 @@ export function toErrorResponse(err: unknown): Response {
   if (err instanceof ApiError) {
     return errorResponse(err);
   }
-  console.error("[unhandled]", err);
-  const message = err instanceof Error ? err.message : "Unexpected server error";
+  console.error("[unhandled]", isProduction() ? "Server request failed" : err);
+  const message = !isProduction() && err instanceof Error ? err.message : "Unexpected server error";
   return Response.json(errorBody("upstream_error", message), { status: 502 });
 }
 
@@ -68,4 +74,8 @@ export function withErrorHandling<Args extends unknown[]>(
       return toErrorResponse(err);
     }
   };
+}
+
+function isProduction(): boolean {
+  return process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
 }

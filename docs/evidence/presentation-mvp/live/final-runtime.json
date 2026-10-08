@@ -1,0 +1,18 @@
+{
+  "awake" : false,
+  "chordVisible" : false,
+  "displayedChords" : 2,
+  "excludedApp" : false,
+  "inputHealthy" : true,
+  "inputPermission" : true,
+  "keyboardEvents" : 4,
+  "keysStatus" : "仅快捷组合 · 运行中",
+  "maximumFrameGap" : 0.52403979166410863,
+  "phase" : "idle",
+  "pid" : 82618,
+  "pointerFrames" : 37276,
+  "pointerMoves" : 2902,
+  "pointerStatus" : "运行中",
+  "privacyStopped" : false,
+  "secureInput" : false
+}

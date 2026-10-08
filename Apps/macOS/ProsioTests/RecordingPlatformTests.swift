@@ -114,6 +114,30 @@ nonisolated final class RecordingPlatformTests: XCTestCase {
         XCTAssertEqual(collected.segments.map(\.timelineStartMicroseconds).sorted(), [0, 5_000_000])
     }
 
+    nonisolated func testPauseWithinLastVideoFrameDoesNotOverlapResumedFile() async throws {
+        let directory = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let collected = Collected()
+        let writer = try makeWriter(directory, collected: collected)
+        for index in 0...30 {
+            writer.append(try video(at: Double(index) / 30), sourceID: "screen", kind: .screen)
+            await drain(writer)
+        }
+        // Pause 12 ms into the last 33 ms frame, then resume with a frame 1 ms later.
+        await writer.pause(at: CMTime(seconds: 1.012, preferredTimescale: 1_000_000))
+        await writer.resume(at: CMTime(seconds: 2.012, preferredTimescale: 1_000_000))
+        writer.append(try video(at: 2.013), sourceID: "screen", kind: .screen)
+        await drain(writer)
+        try await writer.stop()
+        XCTAssertTrue(collected.failures.isEmpty)
+        let ordered = collected.segments.sorted { $0.timelineStartMicroseconds < $1.timelineStartMicroseconds }
+        XCTAssertEqual(ordered.count, 2)
+        let first = try XCTUnwrap(ordered.first), last = try XCTUnwrap(ordered.last)
+        XCTAssertLessThanOrEqual(try XCTUnwrap(first.timelineEndMicroseconds), last.timelineStartMicroseconds)
+        XCTAssertLessThanOrEqual(first.durationMicroseconds, 1_012_000)
+        XCTAssertEqual(last.timelineStartMicroseconds, 1_013_000)
+    }
+
     nonisolated func testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline() async throws {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }

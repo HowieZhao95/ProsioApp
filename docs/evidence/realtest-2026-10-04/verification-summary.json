@@ -1,0 +1,16 @@
+{
+  "osVersion": "26.3.1",
+  "installedDebugSHA256": "34bb6a57780289ce2e755397e9b97d2fb445e4dcd22fb731a7f2ff26c89e9328",
+  "releaseSHA256": "8b3782301420c8309ef1d6d6f2dfc85f69123f95f067bbaabbb137e35375e05a",
+  "releaseArchitectures": "x86_64 arm64",
+  "nativeTests": {
+    "result": "Passed",
+    "totalTestCount": 322,
+    "passedTests": 322,
+    "failedTests": 0,
+    "skippedTests": 0
+  },
+  "fcpxmlWellFormed": true,
+  "fcpxmlMediaReferences": 3,
+  "exportFullDecodePassed": true
+}

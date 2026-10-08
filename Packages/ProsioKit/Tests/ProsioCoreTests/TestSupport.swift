@@ -474,7 +474,7 @@ func makeTestSettings() -> AppSettings {
     let suiteName = "prosio.tests.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
     let settings = AppSettings(defaults: defaults)
-    // `AppSettings.saveDebugRecordings` defaults to `true`, and `DictationController` falls back to
+    // `AppSettings.saveDebugRecordings` is explicitly disabled in tests, and `DictationController` falls back to
     // the REAL `~/Library/Application Support/Prosio/debug` whenever a test doesn't set
     // `debugRecordingsRootOverride` — which is nearly every test in this package. Disable it here so
     // that only tests which explicitly opt back in (and, doing so, must also point

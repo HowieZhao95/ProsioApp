@@ -20,6 +20,12 @@ targets:
         excludes:
           - "Resources/Info.plist"
           - "Resources/Prosio.entitlements"
+          - "Resources/Prosio.Release.entitlements"
+          - "Notes/Editor"
+      - path: Apps/macOS/Prosio/Notes/Editor/NotesEditor
+        type: folder
+        name: NotesEditor
+        buildPhase: resources
     dependencies:
       - package: ProsioKit
         product: ProsioCore
@@ -33,28 +39,17 @@ targets:
     info:
       path: Apps/macOS/Prosio/Resources/Info.plist
       properties:
+        ProsioBackendURL: $(PROSIO_BACKEND_URL)
         CFBundleDisplayName: Prosio
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
-        NSMicrophoneUsageDescription: Prosio uses your microphone when you start voice input, meeting recording, or screen recording.
-        NSCameraUsageDescription: Prosio previews and records only the cameras you select for screen recording.
+        NSCalendarsFullAccessUsageDescription: Prosio 读取系统节假日日历，在便签月历中显示节日名称，不创建或修改日历事件。
+        NSMicrophoneUsageDescription: 用于语音输入、录音转写及录屏中的声音。仅在你开始录制时使用。
+        NSCameraUsageDescription: 仅在你为录屏选择摄像头时预览与录制画面。
         NSCameraUseContinuityCameraDeviceType: true
-        NSSpeechRecognitionUsageDescription: Prosio uses on-device speech recognition when you are offline or in private mode.
-    entitlements:
-      path: Apps/macOS/Prosio/Resources/Prosio.entitlements
-      properties:
-        com.apple.security.app-sandbox: false
-        com.apple.security.device.audio-input: true
-        com.apple.security.device.camera: true
-        # Under the hardened runtime, library validation rejects the ProsioTests.xctest bundle
-        # dlopen'd into the running Prosio.app at test time — self-signed certs without a real
-        # Team ID are treated as mismatched even when both the app and the test bundle use the
-        # same "Prosio Local Development" identity ("different Team IDs"). Same root cause as the
-        # ENABLE_DEBUG_DYLIB workaround below. TODO(P1): scope this to Debug/test builds only
-        # once the project has per-configuration entitlements; Release should not carry it.
-        com.apple.security.cs.disable-library-validation: true
+        NSSpeechRecognitionUsageDescription: 用于在设备上识别语音，支持离线与私密模式。
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.prosio.mac
@@ -62,6 +57,7 @@ targets:
         MARKETING_VERSION: 0.1.0
         CURRENT_PROJECT_VERSION: 2
         ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_ENTITLEMENTS: Apps/macOS/Prosio/Resources/Prosio.entitlements
         CODE_SIGN_STYLE: Manual
         CODE_SIGN_IDENTITY: "Prosio Local Development" # stable local identity so TCC grants survive rebuilds; see docs/DEV_SIGNING.md
         DEVELOPMENT_TEAM: ""
@@ -71,6 +67,10 @@ targets:
         # Xcode's separate Prosio.debug.dylib fails library validation under the hardened runtime
         # with the self-signed dev identity ("different Team IDs"); link everything into the binary.
         ENABLE_DEBUG_DYLIB: NO
+      configs:
+        Release:
+          CODE_SIGN_ENTITLEMENTS: Apps/macOS/Prosio/Resources/Prosio.Release.entitlements
+          CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
   ProsioTests:
     type: bundle.unit-test
     platform: macOS
@@ -81,10 +81,17 @@ targets:
     # handful of pure-logic files under test are compiled directly into this target as plain
     # sources — they have no app-specific dependencies, only Foundation/AppKit/ProsioCore.
     sources:
+      - path: Apps/macOS/Prosio/Notes/Domain
+      - path: Apps/macOS/Prosio/Notes/Storage
       - path: Apps/macOS/ProsioTests
       - path: Apps/macOS/Prosio/System/HotkeyStateMachine.swift
       - path: Apps/macOS/Prosio/System/HotkeyRouting.swift
       - path: Apps/macOS/Prosio/System/FocusContextProvider.swift
+      - path: Apps/macOS/Prosio/System/PracticeTextTarget.swift
+      - path: Apps/macOS/Prosio/System/TextInserter.swift
+      - path: Apps/macOS/Prosio/UI/Onboarding/OnboardingProgress.swift
+      - path: Apps/macOS/Prosio/UI/Onboarding/OnboardingPermissionGuide.swift
+      - path: Apps/macOS/Prosio/UI/Onboarding/OnboardingPracticeEditor.swift
       - path: Apps/macOS/Prosio/System/ProsioLog.swift
       - path: Apps/macOS/Prosio/Capture/Domain
       - path: Apps/macOS/Prosio/Capture/Platform
@@ -96,6 +103,11 @@ targets:
       - path: Apps/macOS/Prosio/UI/Editor
       - path: Apps/macOS/Prosio/Capture/Storage
       - path: Apps/macOS/Prosio/Meeting/MeetingStore.swift
+      - path: Apps/macOS/Prosio/Presentation/Domain
+      - path: Apps/macOS/Prosio/Presentation/Platform/PresentationClock.swift
+      - path: Apps/macOS/Prosio/Presentation/Platform/AwakeService.swift
+      - path: Apps/macOS/Prosio/Presentation/Platform/PresentationInputMonitor.swift
+      - path: Apps/macOS/Prosio/Presentation/Platform/PresentationOverlays.swift
       - path: Apps/macOS/Prosio/Recording
       - path: Apps/macOS/Prosio/UI/Recording
       - path: Apps/macOS/Prosio/System/PermissionsManager.swift

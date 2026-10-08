@@ -1,0 +1,62 @@
+{
+  "pids" : [
+    82618
+  ],
+  "screens" : [
+    {
+      "frame" : "{{0, 0}, {1680, 1050}}",
+      "scale" : 2,
+      "visibleFrame" : "{{0, 0}, {1680, 1020}}"
+    }
+  ],
+  "windows" : [
+    {
+      "bounds" : {
+        "Height" : 72,
+        "Width" : 500,
+        "X" : 590,
+        "Y" : 948
+      },
+      "id" : 19665,
+      "layer" : 25,
+      "name" : "",
+      "onscreen" : false
+    },
+    {
+      "bounds" : {
+        "Height" : 724,
+        "Width" : 520,
+        "X" : 80,
+        "Y" : 258
+      },
+      "id" : 19588,
+      "layer" : 0,
+      "name" : "Prosio 演示验收",
+      "onscreen" : true
+    },
+    {
+      "bounds" : {
+        "Height" : 0,
+        "Width" : 0,
+        "X" : 0,
+        "Y" : 1050
+      },
+      "id" : 19587,
+      "layer" : 25,
+      "name" : "",
+      "onscreen" : false
+    },
+    {
+      "bounds" : {
+        "Height" : 1050,
+        "Width" : 1680,
+        "X" : 0,
+        "Y" : 0
+      },
+      "id" : 19586,
+      "layer" : 25,
+      "name" : "",
+      "onscreen" : false
+    }
+  ]
+}

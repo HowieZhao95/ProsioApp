@@ -1,0 +1,22 @@
+{
+  "session": "43522378-69BE-4791-B895-90689AB77A16",
+  "timestampPassthrough": true,
+  "allSegmentsDecoded": true,
+  "results": [
+    {
+      "file": "media/D68D5A71-E897-46EC-BC74-D87227B6944D.mov",
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "file": "media/6483E8CD-55CB-4022-B2BE-056AD95BBF62.mov",
+      "exitCode": 0,
+      "errors": ""
+    },
+    {
+      "file": "media/415008C8-E111-4C69-8575-5DE983229AC3.mov",
+      "exitCode": 0,
+      "errors": ""
+    }
+  ]
+}

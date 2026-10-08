@@ -1,0 +1,240 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Prosio.xcodeproj -scheme ProsioValidation -configuration Debug -derivedDataPath .build-onboarding "-only-testing:ProsioTests/RecordingPlatformTests" test
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  FluidAudio: /Users/guest01/projectCodeMac2/ProsioApp/.vendor/FluidAudio @ local
+  ProsioKit: /Users/guest01/projectCodeMac2/ProsioApp/Packages/ProsioKit
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00008103-000655A10E8A001E, name:My Mac }
+{ platform:macOS, name:Any Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'ProsioTests' in project 'Prosio'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit'
+        ➜ Explicit dependency on target 'ProsioCore' in project 'ProsioKit'
+    Target 'ProsioCore' in project 'ProsioKit' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/guest01/projectCodeMac2/ProsioApp/Prosio.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+SwiftDriver ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/PackageFrameworks -F /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -sdk-module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/include -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ RecordingPlatformTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingPlatformTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingPlatformTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ProsioTests (in target 'ProsioTests' from project 'Prosio')
+EmitSwiftModule normal arm64 (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingMediaWriter.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingMediaWriter.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingMediaWriter.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 Compiling\ RecordingEngine.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingEngine.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingEngineLifecycleTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingEngineLifecycleTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingCaptureSources.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureSources.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingRecoveryTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingRecoveryTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingRecoveryTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingCoordinator.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingExportTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingExportTests.swift (in target 'ProsioTests' from project 'Prosio')
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingExportTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 Compiling\ RecordingCameraPreviewController.swift,\ RecordingCameraPreviewTests.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCameraPreviewController.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingCameraPreviewTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCameraPreviewController.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/ProsioTests/RecordingCameraPreviewTests.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingPlatformTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 Compiling\ RecordingCaptureBackend.swift /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftCompile normal arm64 /Users/guest01/projectCodeMac2/ProsioApp/Apps/macOS/Prosio/Recording/Platform/RecordingCaptureBackend.swift (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingRecoveryTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingCaptureSources.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingEngine.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingCameraPreviewController.swift, RecordingCameraPreviewTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingEngineLifecycleTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingCaptureBackend.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingCoordinator.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ProsioTests (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation\ Requirements ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/PackageFrameworks -F /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -sdk-module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/include -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftsourceinfo /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftmodule /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.abi.json /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.swiftmodule/arm64-apple-macos.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling RecordingExportTests.swift (in target 'ProsioTests' from project 'Prosio')
+
+SwiftDriver\ Compilation ProsioTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ProsioTests -Onone @/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -default-isolation\=MainActor -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.0 -g -module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/PackageFrameworks -F /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -sdk-module-cache-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-generated-files.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-own-target-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/Prosio-2b99550036fe60d5c172a360ef701e4d-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests-project-headers.hmap -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/include -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources/arm64 -Xcc -I/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-Swift.h -working-directory /Users/guest01/projectCodeMac2/ProsioApp -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests normal (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/PackageFrameworks -F/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.LinkFileList -Xlinker -rpath -Xlinker /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.swiftmodule @/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -framework AVKit -Xlinker -no_adhoc_codesign -o /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests -Xlinker -add_ast_path -Xlinker /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore.swiftmodule @/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/ProsioKit.build/Debug/ProsioCore.build/Objects-normal/arm64/ProsioCore-linker-args.resp
+
+CopySwiftLibs /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    builtin-swiftStdLibTool --copy --verbose --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --scan-executable /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --scan-folder /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --scan-folder /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/PlugIns --scan-folder /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/Extensions --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AVKit.framework --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ProsioTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.0 --bundle-identifier app.prosio.ProsioTests --output /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.0 --binary-file /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest/Contents/MacOS/ProsioTests --dependency-file /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests_dependency_info.dat --stringsdata-file /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftFileList --metadata-file-list /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyMetadataFileList --static-metadata-file-list /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/ProsioTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Intermediates.noindex/Prosio.build/Debug/ProsioTests.build/Objects-normal/arm64/ProsioTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-10-04 15:16:51.749 appintentsmetadataprocessor[70029:14238155] Starting appintentsmetadataprocessor export
+2026-10-04 15:16:51.760 appintentsmetadataprocessor[70029:14238155] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CodeSign /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest (in target 'ProsioTests' from project 'Prosio')
+    cd /Users/guest01/projectCodeMac2/ProsioApp
+    
+    Signing Identity:     "Prosio Local Development"
+    
+    /usr/bin/codesign --force --sign 6F8F561AD9381CFB7FC22C4D41F66024A668E492 --timestamp\=none --generate-entitlement-der /Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Build/Products/Debug/ProsioTests.xctest
+
+Test Suite 'Selected tests' started at 2026-10-04 15:16:55.689.
+Test Suite 'ProsioTests.xctest' started at 2026-10-04 15:16:55.691.
+Test Suite 'RecordingPlatformTests' started at 2026-10-04 15:16:55.691.
+Test Case '-[ProsioTests.RecordingPlatformTests testAdmissionDropping20msOfAudioDoesNotCompactMarkerAndStopJoins]' started.
+2026-10-04 15:16:57.494404+0800 xctest[70034:14238232] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x71b08fc20> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-04 15:16:57.796415+0800 xctest[70034:14238269] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-10-04 15:16:57.826775+0800 xctest[70034:14238232] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+AAC_MARKER scenario=admission-drop-20ms expectedTimelineSeconds=0.4 decodedTimelineSeconds=0.4000625 errorMicroseconds=62.49999999996536
+Test Case '-[ProsioTests.RecordingPlatformTests testAdmissionDropping20msOfAudioDoesNotCompactMarkerAndStopJoins]' passed (2.165 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioChunkBoundaryDoesNotAddAACPrimingToTimeline]' passed (0.356 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioPauseExcludesOnlyPauseAndPreservesPostResumeMarker]' started.
+2026-10-04 15:16:58.601698+0800 xctest[70034:14238270] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-10-04 15:16:58.609667+0800 xctest[70034:14238270] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+AAC_MARKER scenario=pause-resume expectedTimelineSeconds=0.4 decodedTimelineSeconds=0.4000625 errorMicroseconds=62.49999999996536
+Test Case '-[ProsioTests.RecordingPlatformTests testAudioPauseExcludesOnlyPauseAndPreservesPostResumeMarker]' passed (0.401 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testDroppedVideoWithInvalidDurationDoesNotInspectAudioFormat]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testDroppedVideoWithInvalidDurationDoesNotInspectAudioFormat]' passed (0.021 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testEncoderRejecting20msOfAudioDoesNotCompactMarker]' started.
+2026-10-04 15:16:58.988999+0800 xctest[70034:14238232] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-10-04 15:16:58.996580+0800 xctest[70034:14238269] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+AAC_MARKER scenario=encoder-drop-20ms expectedTimelineSeconds=0.4 decodedTimelineSeconds=0.4000625 errorMicroseconds=62.49999999996536
+Test Case '-[ProsioTests.RecordingPlatformTests testEncoderRejecting20msOfAudioDoesNotCompactMarker]' passed (0.368 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testLossDiagnosticsStayBoundedWhileCountsCoverEveryRejectedSample]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testLossDiagnosticsStayBoundedWhileCountsCoverEveryRejectedSample]' passed (0.047 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' started.
+2026-10-04 15:16:59.123780+0800 xctest[70034:14238269] [] (Fig) signalled err=0 at <>:85
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseAndDisconnectProduceAlignedNewFilesAndRejectStaleSamples]' passed (0.883 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseWithinLastVideoFrameDoesNotOverlapResumedFile]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testPauseWithinLastVideoFrameDoesNotOverlapResumedFile]' passed (0.252 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testRealAudioPTSGapPreservesMarkerTimeAndEditorOffsets]' started.
+2026-10-04 15:17:00.876129+0800 xctest[70034:14238232] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+2026-10-04 15:17:00.886950+0800 xctest[70034:14238269] [AQ]      AudioQueueObject.cpp:3530  _Start: Error (-4) getting reporterIDs
+AAC_MARKER scenario=real-PTS-gap expectedTimelineSeconds=0.4 decodedTimelineSeconds=0.4000625 errorMicroseconds=62.49999999996536
+Test Case '-[ProsioTests.RecordingPlatformTests testRealAudioPTSGapPreservesMarkerTimeAndEditorOffsets]' passed (0.771 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' started.
+2026-10-04 15:17:03.656786+0800 xctest[70034:14238270] [] <<<< SampleBuffer >>>> signalled err=-16750 at <>:4269
+Test Case '-[ProsioTests.RecordingPlatformTests testRealVideoEncoderRollsPlayableChunksAndWaitsForCallbacks]' passed (2.764 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testSeparateAudioFilesAreEncodedAndRemainAligned]' passed (0.311 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testStaticScreenIdleFramesStillCreateDurableChunks]' passed (0.311 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' started.
+Test Case '-[ProsioTests.RecordingPlatformTests testTimelineExcludesPausesButKeepsSourceGaps]' passed (0.010 seconds).
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' started.
+2026-10-04 15:17:04.481656+0800 xctest[70034:14238232] [] <<<< FigFile >>>> signalled err=-17913 at <>:745
+2026-10-04 15:17:04.483107+0800 xctest[70034:14238232] [] <<<< FigAssetWriter >>>> signalled err=-12143 at <>:384
+Test Case '-[ProsioTests.RecordingPlatformTests testWriterFailureIsReportedAndStopThrowsAfterDrain]' passed (0.153 seconds).
+Test Suite 'RecordingPlatformTests' passed at 2026-10-04 15:17:04.515.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 8.814 (8.823) seconds
+Test Suite 'ProsioTests.xctest' passed at 2026-10-04 15:17:04.518.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 8.814 (8.827) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 15:17:04.518.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 8.814 (8.829) seconds
+2026-10-04 15:17:05.251 xcodebuild[69985:14237666] [MT] IDETestOperationsObserverDebug: 13.031 elapsed -- Testing started completed.
+2026-10-04 15:17:05.251 xcodebuild[69985:14237666] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 15:17:05.251 xcodebuild[69985:14237666] [MT] IDETestOperationsObserverDebug: 13.031 sec, +13.031 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/guest01/projectCodeMac2/ProsioApp/.build-onboarding/Logs/Test/Test-ProsioValidation-2026.10.04_15-16-34-+0800.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

@@ -158,6 +158,12 @@ nonisolated struct TextShape: Equatable, Codable, Sendable {
     var text: String
     var alignment: TextAlignmentMode = .left
     var automaticallySizesToText: Bool = true
+    /// Present only on translated overlays. Optional for older saved captures.
+    var translationSource: String? = nil
+    /// Optional so older captures keep their existing rendering. Font matching is best effort.
+    var fontName: String? = nil
+    /// Only the original ink is erased when translation wraps into surrounding free space.
+    var translationSourceRect: CGRect? = nil
 }
 
 nonisolated struct HighlightShape: Equatable, Codable, Sendable {
@@ -207,7 +213,7 @@ nonisolated enum AnnotationKind: Equatable, Codable, Sendable {
         case .arrow(let s): .arrow(ArrowShape(start: point(s.start), end: point(s.end)))
         case .line(let s): .line(LineShape(start: point(s.start), end: point(s.end)))
         case .markerLine(let s): .markerLine(LineShape(start: point(s.start), end: point(s.end)))
-        case .text(let s): .text(TextShape(rect: rect(s.rect), text: s.text, alignment: s.alignment, automaticallySizesToText: s.automaticallySizesToText))
+        case .text(let s): .text(TextShape(rect: rect(s.rect), text: s.text, alignment: s.alignment, automaticallySizesToText: s.automaticallySizesToText, translationSource: s.translationSource, fontName: s.fontName, translationSourceRect: s.translationSourceRect.map(rect)))
         case .freehand(let s): .freehand(FreehandShape(points: s.points.map(point)))
         case .highlight(let s): .highlight(HighlightShape(rect: rect(s.rect)))
         case .redaction(let s): .redaction(RedactionShape(rect: rect(s.rect), mode: s.mode))
@@ -223,6 +229,10 @@ nonisolated struct Annotation: Identifiable, Equatable, Codable, Sendable {
     var isColorEditable: Bool {
         if case .redaction = kind { return false }
         return true
+    }
+    var isTranslation: Bool {
+        if case .text(let shape) = kind { return shape.translationSource != nil }
+        return false
     }
     var propertyTool: EditorTool {
         switch kind {

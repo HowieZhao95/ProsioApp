@@ -101,3 +101,17 @@ final class EditorHistory {
     func undo() { endGroupedEdit(); guard let s=undoSnapshots.popLast() else { return }; redoSnapshots.append(snapshot); snapshot=s }
     func redo() { endGroupedEdit(); guard let s=redoSnapshots.popLast() else { return }; undoSnapshots.append(snapshot); snapshot=s }
 }
+
+/// One undo step replaces translations without disturbing user annotations.
+nonisolated struct SetCaptureTranslationCommand: DocumentCommand {
+    let annotations: [Annotation]
+    let crop: CGRect
+    var label: String { "Translate Screenshot" }
+    func apply(to snapshot: EditorSnapshot) -> EditorSnapshot {
+        var result = snapshot
+        result.annotations.removeAll { $0.isTranslation && $0.renderBounds.intersects(crop) }
+        result.annotations.append(contentsOf: annotations)
+        result.selectedAnnotationIDs = []
+        return result
+    }
+}
