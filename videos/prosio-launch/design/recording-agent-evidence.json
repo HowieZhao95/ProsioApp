@@ -1,0 +1,250 @@
+{
+  "task": "Native fidelity and synchronized interactions for Recording and Agent scenes",
+  "files": [
+    "src/scenes/Recording.tsx",
+    "src/scenes/Agent.tsx",
+    "src/scenes/recording-agent-native.tsx"
+  ],
+  "coordinateSystem": {
+    "nativePlane": {
+      "width": 900,
+      "height": 620
+    },
+    "filmOrigin": {
+      "x": 800,
+      "y": 212
+    },
+    "scale": 1.128888889,
+    "note": "One shared transformed parent contains both UI and InteractionCursor. Target rectangles are local native points; DOM boundaries can differ by the native window border (1-2 points).",
+    "agentCamera": "After answer-field focus, scale rises from 1.128888889 to 1.8, translation to (-625,-250), then returns following read-update. UI and cursor share the camera parent."
+  },
+  "nativeUI": {
+    "recording": {
+      "sourcePaths": [
+        "Apps/macOS/Prosio/UI/Recording/RecordingSelectionToolbarView.swift",
+        "Apps/macOS/Prosio/UI/Recording/RecordingWorkspaceView.swift",
+        "Apps/macOS/Prosio/UI/Recording/RecordingPreviewController.swift",
+        "Apps/macOS/Prosio/Recording/Integration/RecordingCoordinator.swift",
+        "Apps/macOS/Prosio/Recording/Export/RecordingExportSupport.swift",
+        "Apps/macOS/Prosio/Presentation/UI/PresentationViews.swift",
+        "Apps/macOS/Prosio/Presentation/Platform/PresentationOverlays.swift",
+        "Apps/macOS/Prosio/Presentation/Domain/PresentationPreferences.swift"
+      ],
+      "screenshotsViewed": [
+        "docs/evidence/recording/immersive-a/toolbar-light.png",
+        "docs/evidence/recording/immersive-a/control-recording.png",
+        "docs/evidence/recording/immersive-a/control-paused.png",
+        "docs/evidence/recording/finalization-regression-2026-10-01/completion-warning-light.png",
+        "docs/evidence/realtest-2026-10-04/recording-first-frame.png"
+      ],
+      "mediaEvidenceReviewed": [
+        "docs/evidence/realtest-2026-10-04/recording-manifest.json"
+      ],
+      "facts": [
+        "Compact control is regular-material rounded rectangle: status dot, HH:MM:SS timer, pause.fill/play.fill, red rounded-square stop, ellipsis menu.",
+        "The recording control panel can be moved by its background (RecordingCoordinator.showControlPanel). Initial upper-right placement represents a panel moved before this process excerpt.",
+        "Stop finalizes original media and shows RecordingCompletionView with 录制已保存, 查看素材 and close; clicking 查看素材 opens the native 屏幕录制 workspace.",
+        "Recording workspace has 180-240-point sidebar, 新建录制, 录制素材, original-media list, title/phase/duration, 查看原片, source picker, AVKit preview, 导出范围 and 导出 MP4….",
+        "There is no in-app MP4 success toast. The real export opens NSSavePanel, then Finder. This excerpt stops at the actual export entry without claiming an export completed.",
+        "Presentation default pointer ring is blue, 64 native points and 3-point stroke. It is centered on the same pointer coordinates and excluded over Prosio controls.",
+        "Presentation keycap is white 25-point semibold text, blue while pressed and black 0.78 opacity when released, rounded rectangle 12, bottom-of-screen placement."
+      ],
+      "exampleData": [
+        "发布计划 slide content",
+        "Recording session title 2026年10月8日 20:26",
+        "14.4-second media duration; scene begins at 12 seconds into an already active recording"
+      ],
+      "omittedForTiming": [
+        "Initial selection and real 3-second countdown occur before this process excerpt.",
+        "NSSavePanel and actual export completion are not depicted."
+      ],
+      "actionFrames": [
+        {
+          "id": "show-shortcut",
+          "frame": 6,
+          "x": 340,
+          "y": 248,
+          "type": "key"
+        },
+        {
+          "id": "point-to-content",
+          "frame": 22,
+          "x": 570,
+          "y": 285,
+          "type": "move",
+          "travel": 15
+        },
+        {
+          "id": "pause",
+          "frame": 39,
+          "x": 717,
+          "y": 78,
+          "target": {
+            "x": 706,
+            "y": 64,
+            "width": 22,
+            "height": 28
+          },
+          "travel": 12
+        },
+        {
+          "id": "resume",
+          "frame": 65,
+          "x": 717,
+          "y": 78,
+          "target": {
+            "x": 706,
+            "y": 64,
+            "width": 22,
+            "height": 28
+          },
+          "travel": 0
+        },
+        {
+          "id": "continue-demonstration",
+          "frame": 81,
+          "x": 575,
+          "y": 283,
+          "type": "move",
+          "travel": 12
+        },
+        {
+          "id": "stop",
+          "frame": 99,
+          "x": 749,
+          "y": 78,
+          "target": {
+            "x": 738,
+            "y": 64,
+            "width": 22,
+            "height": 28
+          },
+          "travel": 12
+        },
+        {
+          "id": "view-material",
+          "frame": 127,
+          "x": 476,
+          "y": 546,
+          "target": {
+            "x": 443,
+            "y": 532,
+            "width": 66,
+            "height": 28
+          },
+          "travel": 14
+        },
+        {
+          "id": "export-entry",
+          "frame": 151,
+          "x": 828,
+          "y": 428,
+          "type": "move",
+          "target": {
+            "x": 779,
+            "y": 416,
+            "width": 99,
+            "height": 24
+          },
+          "travel": 16
+        }
+      ],
+      "asyncStateBoundaries": {
+        "pause": 39,
+        "resume": 65,
+        "stop": 99,
+        "finalizingVisible": 100,
+        "savedCompletion": 108,
+        "viewMaterialClick": 127,
+        "workspaceVisible": 128,
+        "exportHover": 151
+      }
+    },
+    "agent": {
+      "sourcePaths": [
+        "Apps/macOS/Prosio/Agents/UI/AgentMonitorView.swift",
+        "Apps/macOS/Prosio/Agents/UI/AgentMenuPane.swift",
+        "Apps/macOS/Prosio/Agents/UI/AgentMonitorCoordinator.swift",
+        "Apps/macOS/Prosio/Agents/Domain/AgentCommand.swift",
+        "Apps/macOS/Prosio/Agents/Domain/AgentTask.swift"
+      ],
+      "screenshotsViewed": [
+        "docs/evidence/agent-interaction/light.png"
+      ],
+      "facts": [
+        "Native monitor header uses cpu, Agent 任务, 查看已经在电脑上启动的任务, 刷新 and 暂停监控.",
+        "Monitoring status row and native HSplitView remain visible. Sidebar retains 任务范围 segmented filter plus task title, surface, state and relative time.",
+        "Detail order remains task title, state/source, 最近活动 card, 当前问题, decision title, rounded answer field, 语音回答, 发送回答, helper, and supplement section.",
+        "This example structured question has no predefined options, a supported decision.options empty case. The freeform answer is typed only after the answer field is clicked.",
+        "On response the top receipt uses the exact applied receipt text from AgentCommand.swift. Async runtime completion moves the state from 等待你回答 to 执行中.",
+        "Native footer retains the limitation on ordinary ChatGPT/cloud tasks and source-app approvals."
+      ],
+      "exampleData": [
+        "制作产品发布内容",
+        "先完成文案，还是先制作演示？",
+        "先完成文案，再制作演示。",
+        "Synthetic local task list and runtime status"
+      ],
+      "actionFrames": [
+        {
+          "id": "answer-field",
+          "frame": 24,
+          "x": 596,
+          "y": 416,
+          "target": {
+            "x": 364,
+            "y": 396,
+            "width": 512,
+            "height": 42
+          },
+          "travel": 15
+        },
+        {
+          "id": "type-answer",
+          "frame": 30,
+          "x": 596,
+          "y": 416,
+          "type": "key"
+        },
+        {
+          "id": "send-answer",
+          "frame": 68,
+          "x": 404,
+          "y": 488,
+          "target": {
+            "x": 364,
+            "y": 477,
+            "width": 80,
+            "height": 22
+          },
+          "travel": 13
+        },
+        {
+          "id": "read-update",
+          "frame": 95,
+          "x": 704,
+          "y": 285,
+          "type": "move",
+          "travel": 14
+        }
+      ],
+      "asyncStateBoundaries": {
+        "answerFocus": 24,
+        "typingBegins": 30,
+        "typingComplete": 54,
+        "sendClick": 68,
+        "sendingReceiptVisible": 74,
+        "runtimeUpdate": 80
+      },
+      "note": "Receipt insertion intentionally begins 6 frames after the click so the source control remains under the pointer for the actual press. The real native header reflows when a receipt appears."
+    }
+  },
+  "verification": {
+    "scopedESLint": "passed",
+    "typescriptNoEmit": "passed",
+    "actionOrderAndTargetInclusion": "passed",
+    "cursorAtActionFrame": "passed",
+    "nativeSymbolFiles": "passed",
+    "browserRendering": "Delegated to root; no browser opened and no frames rendered by this worker."
+  }
+}

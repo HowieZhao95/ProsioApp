@@ -1,0 +1,371 @@
+{
+  "scope": "Voice and Capture scenes only. Native UI reconstructed from current Swift sources; no app code modified.",
+  "fps": 30,
+  "durationFramesPerScene": 300,
+  "sourcepaths": [
+    "Apps/macOS/Prosio/UI/HUD/HUDCapsuleView.swift",
+    "Apps/macOS/Prosio/UI/HUD/HUDViewState.swift",
+    "Apps/macOS/Prosio/UI/HUD/HUDPanel.swift",
+    "Apps/macOS/Prosio/UI/HUD/HUDController.swift",
+    "Apps/macOS/Prosio/UI/HUD/ProsioPalette.swift",
+    "Apps/macOS/Prosio/UI/Onboarding/OnboardingView.swift",
+    "Apps/macOS/Prosio/UI/Onboarding/OnboardingPracticeEditor.swift",
+    "Apps/macOS/Prosio/UI/Editor/CaptureEditingToolbar.swift",
+    "Apps/macOS/Prosio/UI/Editor/CaptureEditingCanvas.swift",
+    "Apps/macOS/Prosio/UI/Editor/CapturePinnedWindow.swift",
+    "Apps/macOS/Prosio/Capture/Interaction/CaptureInteractionGeometry.swift",
+    "Apps/macOS/Prosio/Capture/Editing/EditorModel.swift",
+    "Apps/macOS/Prosio/Capture/Integration/CaptureEditingSession.swift"
+  ],
+  "visuallyInspectedNativeEvidence": [
+    "docs/evidence/onboarding/native-light/1-语音输入.png",
+    "docs/evidence/capture-m2/synthetic-native/synthetic-native-light.png",
+    "docs/evidence/capture-m2/synthetic-native/synthetic-native-annotation-palette.png",
+    "docs/evidence/capture-translation/font-preservation-source.png",
+    "docs/evidence/capture-translation/font-preservation-translated.png"
+  ],
+  "nativeUIfacts": {
+    "voice": [
+      "The target is a magnified crop of Prosio's real Onboarding voice-practice view, not an invented messaging window. The outside caption identifies the crop.",
+      "Tabs use native 14pt text, 24pt gaps, and a 2pt accent underline. The input tab remains selected: selected-text voice editing does not automatically change the onboarding mode tab.",
+      "The practice card has a 14pt corner radius, a 14pt prompt, 24pt horizontal insets, a 21pt NSTextView, a 174pt native editor area, and a 12pt status/clear row.",
+      "The primary practice button is 40pt tall with an 8pt radius and RGB(0.29,0.36,0.52). Existing button/status labels are copied from the Swift UI.",
+      "The real HUD is a 36pt single-line capsule with 14pt horizontal padding, 8pt spacing, regular-material-like neutral fill, 0.5pt stroke and 6pt shadow. There is no large listening card, red waveform, permanent Fn hint, or separate success label inside it.",
+      "Listening uses eight 2.5pt black bars separated by 2.5pt, with height in 3...16pt. Preview text is 13pt, one line, head truncated, max 360pt. Finished insertion shows only a 13pt checkmark.",
+      "The edit mode chip is the exact pencil emoji used in HUDCapsuleView, on the native small neutral pill; it is deliberately not replaced with an unrelated glyph.",
+      "Fn key events start and stop recording; mouse events only focus and select the actual text area. Status, text insertion, selection, waveform phase and keyboard indication derive from the shared action table.",
+      "The sample is signed in and permission-ready. Its content is fictional demonstration text; native controls and layout come from the app. HUD and practice-view crop are arranged together for readability, with all pointer/control positions on one scale plane."
+    ],
+    "capture": [
+      "The capture editor overlays frozen screen pixels; it is not a separate generic Mac document window. The source is fictional dark-background project content with the same light/dark typography treatment inspected in the installed-app translation fixtures.",
+      "The outside-selection shade is black at 28%; the selection has a 2pt system-blue border and eight blue 7pt resize handles.",
+      "Toolbar width is 404pt and height 42pt; it is a warm light capsule. Ink RGB is (0.37,0.35,0.32); surface RGB is (0.99,0.98,0.96). Hit areas are 28x30pt.",
+      "Primary tool order is selection, rectangle, ellipse, line, pen, text, redaction; the fixed right controls are translation, exit, pin, save JPEG, copy-and-exit. Copy is a dark circular control with a white doc.on.doc native SF Symbol.",
+      "The bounded primary-tool scroll area clips redo just as in the inspected 404pt native screenshot. Translation and output controls stay fixed.",
+      "Line is the toolbar entry for arrow drawing. The current native default preferredLineTool is arrow. Clicking line reveals the actual 350x118pt contextual palette with endpoint segmented control (none/arrow/tick), color swatches, width and opacity.",
+      "The arrow turns orange only after clicking the actual orange swatch. Orange is RGB(0.95,0.56,0.14); line width is 3pt, opacity 100%.",
+      "Toolbar is 12pt below the crop; the palette is 7pt below the toolbar because it fits in the viewport, matching CaptureInteractionGeometry.",
+      "Translation changes pixels only inside the capture editor after the translation-button action's processing delay. Copy output closes the editor after a four-frame asynchronous write and restores the untouched English source. No invented toast or persistent translation of the source app remains.",
+      "CapturePinnedWindow is borderless and image-only. Its source was checked to avoid adding any fabricated pin-preview window; this scene uses copy, so it does not show pinned UI.",
+      "The arrow endpoint segment is explicitly clicked at frame 183 even though the current Swift default is already arrow. This makes the visible drawing choice unambiguous and does not invent a different native default.",
+      "At arrow-end, the native AddAnnotationCommand selects the new arrow. Both 8x8pt white endpoint handles with 1.5pt system-blue borders appear, and the palette label becomes 已选中.",
+      "The last custom color well follows displayedAnnotationColor, so it becomes orange after the orange-color click rather than remaining red."
+    ]
+  },
+  "coordinatePlanes": {
+    "voice": {
+      "origin": {
+        "x": 800,
+        "y": 230
+      },
+      "scale": 1.8,
+      "width": 560,
+      "height": 414
+    },
+    "capture": {
+      "originAtRest": {
+        "x": 800,
+        "y": 221
+      },
+      "scaleAtRest": 1.5,
+      "width": 676,
+      "height": 450,
+      "heroCamera": "h=progress(translate,16)*(1-progress(line-hover,13)); origin=(800-348h,221-67h); scale=1.5*(1+0.25h). UI and cursor are inside this same container."
+    }
+  },
+  "actionframes": {
+    "voice": [
+      {
+        "id": "focus-editor",
+        "frame": 20,
+        "type": "click",
+        "x": 28,
+        "y": 121,
+        "target": {
+          "x": 24,
+          "y": 110,
+          "width": 512,
+          "height": 154
+        }
+      },
+      {
+        "id": "fn-start",
+        "frame": 35,
+        "type": "key",
+        "key": "Fn"
+      },
+      {
+        "id": "fn-stop",
+        "frame": 93,
+        "type": "key",
+        "key": "Fn"
+      },
+      {
+        "id": "select-start",
+        "frame": 158,
+        "type": "down",
+        "x": 24,
+        "y": 121,
+        "target": {
+          "x": 24,
+          "y": 110,
+          "width": 512,
+          "height": 154
+        }
+      },
+      {
+        "id": "select-end",
+        "frame": 181,
+        "type": "up",
+        "x": 213,
+        "y": 173,
+        "target": {
+          "x": 24,
+          "y": 110,
+          "width": 512,
+          "height": 154
+        }
+      },
+      {
+        "id": "fn-rewrite-start",
+        "frame": 193,
+        "type": "key",
+        "key": "Fn"
+      },
+      {
+        "id": "fn-rewrite-stop",
+        "frame": 222,
+        "type": "key",
+        "key": "Fn"
+      },
+      {
+        "id": "rest-pointer",
+        "frame": 265,
+        "type": "move",
+        "x": 509,
+        "y": 273
+      }
+    ],
+    "capture": [
+      {
+        "id": "option-open",
+        "frame": 24,
+        "type": "key",
+        "key": "Option tap and release"
+      },
+      {
+        "id": "selection-start",
+        "frame": 45,
+        "type": "down",
+        "x": 25,
+        "y": 36,
+        "target": {
+          "x": 0,
+          "y": 0,
+          "width": 676,
+          "height": 450
+        }
+      },
+      {
+        "id": "selection-end",
+        "frame": 76,
+        "type": "up",
+        "x": 651,
+        "y": 243,
+        "target": {
+          "x": 0,
+          "y": 0,
+          "width": 676,
+          "height": 450
+        }
+      },
+      {
+        "id": "translate-hover",
+        "frame": 92,
+        "type": "move",
+        "x": 402,
+        "y": 276
+      },
+      {
+        "id": "translate",
+        "frame": 99,
+        "type": "click",
+        "x": 402,
+        "y": 276,
+        "target": {
+          "x": 388,
+          "y": 261,
+          "width": 28,
+          "height": 30
+        }
+      },
+      {
+        "id": "line-hover",
+        "frame": 160,
+        "type": "move",
+        "x": 244,
+        "y": 275
+      },
+      {
+        "id": "line-tool",
+        "frame": 173,
+        "type": "click",
+        "x": 244,
+        "y": 275,
+        "target": {
+          "x": 230,
+          "y": 260,
+          "width": 28,
+          "height": 30
+        }
+      },
+      {
+        "id": "arrow-endpoint",
+        "frame": 183,
+        "type": "click",
+        "x": 355,
+        "y": 368,
+        "target": {
+          "x": 306.333,
+          "y": 358,
+          "width": 97.333,
+          "height": 20
+        }
+      },
+      {
+        "id": "orange-color",
+        "frame": 196,
+        "type": "click",
+        "x": 278,
+        "y": 335,
+        "target": {
+          "x": 269,
+          "y": 326,
+          "width": 18,
+          "height": 18
+        }
+      },
+      {
+        "id": "arrow-start",
+        "frame": 212,
+        "type": "down",
+        "x": 530,
+        "y": 212,
+        "target": {
+          "x": 0,
+          "y": 0,
+          "width": 676,
+          "height": 450
+        }
+      },
+      {
+        "id": "arrow-end",
+        "frame": 234,
+        "type": "up",
+        "x": 269,
+        "y": 154,
+        "target": {
+          "x": 0,
+          "y": 0,
+          "width": 676,
+          "height": 450
+        }
+      },
+      {
+        "id": "copy-hover",
+        "frame": 273,
+        "type": "move",
+        "x": 522,
+        "y": 276
+      },
+      {
+        "id": "copy-exit",
+        "frame": 280,
+        "type": "click",
+        "x": 522,
+        "y": 276,
+        "target": {
+          "x": 508,
+          "y": 261,
+          "width": 28,
+          "height": 30
+        }
+      }
+    ]
+  },
+  "stateBoundaries": {
+    "voiceInsert": {
+      "trigger": "fn-stop",
+      "delayFrames": 14,
+      "visibleFrom": 107
+    },
+    "voiceRewrite": {
+      "trigger": "fn-rewrite-stop",
+      "delayFrames": 12,
+      "visibleFrom": 234
+    },
+    "translation": {
+      "trigger": "translate",
+      "delayFrames": 21,
+      "visibleFrom": 120
+    },
+    "arrowColor": {
+      "trigger": "orange-color",
+      "delayFrames": 0,
+      "visibleFrom": 196
+    },
+    "copyAndExit": {
+      "trigger": "copy-exit",
+      "delayFrames": 4,
+      "visibleFrom": 284
+    },
+    "selectionGeometry": "The crop endpoint comes from interactionAt(min(frame,selection-end.frame)).x/y. It tracks the exact held pointer through frame 76 and remains fixed thereafter.",
+    "arrowGeometry": "The arrow endpoint and both head vertices derive from interactionAt(min(frame,arrow-end.frame)).x/y, with no separate animation curve.",
+    "voiceSelectionGeometry": "The selected line and width derive from the same held pointer used by InteractionCursor and freeze at select-end. Native text rows use 21pt font at 25.2pt line height.",
+    "arrowSelection": {
+      "trigger": "arrow-end",
+      "delayFrames": 0,
+      "visibleFrom": 234,
+      "changes": [
+        "two endpoint handles",
+        "palette 已选中 label"
+      ]
+    }
+  },
+  "qa": {
+    "dataAttribute": "data-action-target accepts whitespace-separated action IDs, including shared drag regions.",
+    "recommendedVoiceFrames": [
+      20,
+      75,
+      107,
+      132,
+      170,
+      181,
+      208,
+      234,
+      256
+    ],
+    "recommendedCaptureFrames": [
+      45,
+      62,
+      76,
+      99,
+      120,
+      131,
+      173,
+      183,
+      196,
+      223,
+      234,
+      264,
+      280,
+      284,
+      286
+    ],
+    "checksPassed": [
+      "ESLint on the three owned TSX files",
+      "Strict TypeScript check on the three owned TSX files"
+    ],
+    "browserRenderOwner": "Root agent performs the unified browser/action and image QA; no worker browser or render run."
+  }
+}

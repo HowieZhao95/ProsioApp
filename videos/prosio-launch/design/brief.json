@@ -1,0 +1,130 @@
+{
+  "title": "Prosio · 让工作顺着想法走",
+  "durationSeconds": 60,
+  "fps": 30,
+  "canvas": [
+    1920,
+    1080
+  ],
+  "audience": "Mac 知识工作者与创作者",
+  "reference": {
+    "url": "https://www.typeless.com/",
+    "inspectedOn": "2026-10-08",
+    "observed": [
+      "白色大留白",
+      "黑色重点词与灰色辅助词",
+      "大字短句",
+      "功能动作与结果并置",
+      "深色圆角行动按钮"
+    ],
+    "adaptation": "保留 Prosio waveform 字标与蓝色交互点。原创文案、组件与音乐，不复用 Typeless 的品牌资产、数据或媒体。"
+  },
+  "visualSystem": {
+    "paper": "#F7F7F5",
+    "ink": "#191919",
+    "muted": "#91918C",
+    "accent": "#526991",
+    "font": "PingFang SC / system-ui",
+    "headlinePx": [
+      104,
+      148
+    ],
+    "bodyPx": [
+      32,
+      48
+    ],
+    "safeMargins": [
+      96,
+      104
+    ],
+    "motion": "UI状态、鼠标尖端、按下/释放、拖拽和操作音效共用 InteractionAction 帧表。镜头缩放与指针共用父级坐标。",
+    "appUI": "按 Prosio SwiftUI/AppKit/Milkdown 源码和仓库原生截图重建；实际 SF Symbols 由 AppKit 导出。营销画面与原生 UI 使用独立视觉参数。"
+  },
+  "sound": "原创合成器乐与操作音效；首版以字幕传达信息，无旁白。",
+  "scenes": [
+    {
+      "id": "Opening",
+      "start": 0,
+      "end": 7,
+      "message": "少一点操作，多一点想法。",
+      "proof": "工作小动作聚集后收束为 Prosio"
+    },
+    {
+      "id": "Voice",
+      "start": 7,
+      "end": 17,
+      "message": "开口，就能写。",
+      "proof": "Fn 开始/结束，文字写入；选文后简短改写"
+    },
+    {
+      "id": "Capture",
+      "start": 17,
+      "end": 27,
+      "message": "看懂，也讲清楚。",
+      "proof": "Option 框选，原位翻译，箭头标注，复制"
+    },
+    {
+      "id": "Notes",
+      "start": 27,
+      "end": 34,
+      "message": "灵感，随手留下。",
+      "proof": "桌面便签、Markdown、勾选待办、按日回看"
+    },
+    {
+      "id": "Recording",
+      "start": 34,
+      "end": 40,
+      "message": "操作，录给他看。",
+      "proof": "真实控制条：暂停、继续、结束；保存后查看素材，展示 MP4 导出入口"
+    },
+    {
+      "id": "Meeting",
+      "start": 40,
+      "end": 45,
+      "message": "听过的，还能回看。",
+      "proof": "真实会议窗口：本地稿、时间戳、回放、复制全文"
+    },
+    {
+      "id": "Agent",
+      "start": 45,
+      "end": 49,
+      "message": "任务进度，一眼掌握。",
+      "proof": "已接入的本机 Codex 任务状态和明确发送回答"
+    },
+    {
+      "id": "Pricing",
+      "start": 49,
+      "end": 56,
+      "message": "顺手的日常，一个月付方案。",
+      "proof": "US$9.90/月；600分钟云端转录/账期；本地听写不限量"
+    },
+    {
+      "id": "End",
+      "start": 56,
+      "end": 60,
+      "message": "让工作，顺着想法走。",
+      "proof": "Prosio 品牌收束，了解 Prosio"
+    }
+  ],
+  "truthConstraints": [
+    "演示文本为虚构项目内容，重建的交互镜头标为界面演示。",
+    "不声称效率倍数、识别准确率、跨所有应用、自动会议摘要或全平台支持。",
+    "Agent 仅展示已接入的本机 Codex 任务。",
+    "价格为已记录的商业化决策，不宣称全部功能不限量或已开放购买。",
+    "云端处理以过程节选表示，动画时长不作为性能承诺。"
+  ],
+  "evidence": [
+    "../../../docs/P1-COMMERCIALIZATION.md",
+    "../../../docs/RELEASE-AUDIT-2026-10-04.md",
+    "../../../docs/evidence/capture-translation/installed-app-test-report.md",
+    "../../../docs/evidence/agent-interaction/acceptance.md",
+    "../../../docs/DAILY-NOTES-IMPLEMENTATION.md",
+    "../../../docs/MEETING-INTEGRATION.md",
+    "../../../docs/PRESENTATION-MVP.md",
+    "voice-capture-evidence.json",
+    "notes-meeting-evidence.json",
+    "recording-agent-evidence.json",
+    "interaction-events.json"
+  ],
+  "revision": "Native UI fidelity and shared interaction timeline"
+}

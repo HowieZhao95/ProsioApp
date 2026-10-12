@@ -1,0 +1,214 @@
+{
+  "revision": "native-ui-and-pointer-sync",
+  "sources": {
+    "notes": [
+      "Apps/macOS/Prosio/Notes/UI/NotesViews.swift",
+      "Apps/macOS/Prosio/Notes/UI/NoteEditorBridge.swift",
+      "Apps/macOS/Prosio/Notes/Editor/editor.css",
+      "Apps/macOS/Prosio/Notes/Editor/editor.js",
+      "Apps/macOS/Prosio/Notes/Editor/node_modules/@milkdown/crepe/lib/esm/feature/list-item/index.js",
+      "tools/notes-ui-validation/README.md"
+    ],
+    "meeting": [
+      "Apps/macOS/Prosio/Meeting/MeetingLibraryView.swift",
+      "Apps/macOS/Prosio/Meeting/MeetingCoordinator.swift",
+      "Apps/macOS/Prosio/Meeting/MeetingStore.swift",
+      "Packages/ProsioKit/Sources/ProsioMeeting/MeetingProcessor.swift"
+    ]
+  },
+  "inspectedNativeImages": [
+    "docs/evidence/notes-outline-2026-10-04/outline-native-dark.png",
+    "docs/evidence/notes-outline-2026-10-04/outline-light.png"
+  ],
+  "imageLimitations": "No native meeting screenshot was found in repository evidence. Meeting is reconstructed from current SwiftUI source, not claimed to be a screenshot or a pixel-exact native rendering.",
+  "nativeFacts": {
+    "notes": [
+      "NotesPanel defaults to 420 by 510 points; hides title and native traffic lights.",
+      "DailyNotesView uses a 34-point header: xmark, date-chevron button, today remaining-task capsule, optional return-to-today arrow, and pin/pin.fill.",
+      "Date button opens a 348-point calendar popover. Picking another day does not itself dismiss the popover; clicking outside dismisses it.",
+      "Calendar has Monday-first columns, month navigation, task completion counts, a return-to-today button, and selected-day task preview.",
+      "Today's remaining-task count stays tied to today when viewing another date.",
+      "Editor is a Milkdown WKWebView; body font 18 is an actual supported preference. Editor padding, title styles and checkbox paths follow bundled source.",
+      "No permanent date sidebar, saved-file footer, separate titlebar, or textual pin button exists in the real note UI. These prior inventions were removed.",
+      "The note content and dates are synthetic demo data; calendar cells correspond to October 2026. The native window is displayed at 1.45x without changing its aspect ratio."
+    ],
+    "meeting": [
+      "showLibrary creates a 900 by 600 content window titled 会议转写.",
+      "MeetingLibraryView uses NavigationSplitView, a meeting list with minimum 210-point sidebar, and a detail region with 20-point padding.",
+      "Meeting titles derive from start-date formatting; the fabricated editable 发布讨论 title was removed.",
+      "Detail header contains 打开录音文件夹, 播放录音 / 停止播放, and 复制全文 buttons.",
+      "Apple 本地稿 / Soniox 增强稿 uses a 300-point segmented picker. It is disabled when there is no cloud text. A ready local record with no cloud result exposes 上传到 Soniox; the demo does not activate that button.",
+      "Transcript lines have HH:MM:SS timestamps, source/speaker labels and selectable text. Playback does not animate highlights or expose a progress slider in current UI.",
+      "copy() writes the transcript to the pasteboard and does not show an in-app success toast. Copy confirmation in this film is external editorial text.",
+      "The five-second excerpt starts with an existing local transcript and demonstrates playback, stop and copy. It makes no claim that long audio is transcribed within the scene duration.",
+      "A shared camera plane crops toward the detail view; both UI and pointer undergo identical translation and scale.",
+      "MeetingProcessor actually runs FluidAudio locally and carries optional speaker labels, but its generated labels are source-speakerID, not 说话人 1/2. This excerpt uses the real source fallback labels 麦克风 / 系统声音 and makes no identity-recognition claim."
+    ]
+  },
+  "scenes": {
+    "Notes": {
+      "durationFrames": 210,
+      "actionExport": "notesActions",
+      "coordinatePlane": {
+        "width": 420,
+        "height": 510,
+        "left": 1035,
+        "top": 185,
+        "scale": 1.45
+      },
+      "actions": [
+        {
+          "id": "check-task",
+          "frame": 36,
+          "point": [
+            32,
+            163
+          ],
+          "target": {
+            "x": 22,
+            "y": 149,
+            "width": 20,
+            "height": 28
+          },
+          "effect": "Checkbox changes and today's pending count drops from 2 to 1."
+        },
+        {
+          "id": "pin-note",
+          "frame": 69,
+          "point": [
+            399,
+            17
+          ],
+          "target": {
+            "x": 388,
+            "y": 5,
+            "width": 22,
+            "height": 24
+          },
+          "effect": "pin changes to accent-colored pin.fill."
+        },
+        {
+          "id": "open-calendar",
+          "frame": 101,
+          "point": [
+            91,
+            17
+          ],
+          "target": {
+            "x": 38,
+            "y": 5,
+            "width": 115,
+            "height": 24
+          },
+          "effect": "The actual month popover appears below the date button."
+        },
+        {
+          "id": "select-yesterday",
+          "frame": 142,
+          "point": [
+            159,
+            179
+          ],
+          "target": {
+            "x": 138,
+            "y": 159,
+            "width": 41,
+            "height": 40
+          },
+          "effect": "October 7 cell, header, selected-day task preview and underlying note update. Popover remains open."
+        },
+        {
+          "id": "close-calendar",
+          "frame": 176,
+          "point": [
+            401,
+            395
+          ],
+          "target": {
+            "x": 382,
+            "y": 360,
+            "width": 28,
+            "height": 90
+          },
+          "effect": "Clicking outside the popover leaves the historical note visible for 34 frames."
+        }
+      ]
+    },
+    "Meeting": {
+      "durationFrames": 150,
+      "actionExport": "meetingActions",
+      "coordinatePlane": {
+        "width": 900,
+        "height": 600,
+        "viewportLeft": 800,
+        "viewportTop": 220,
+        "viewportWidth": 1016,
+        "viewportHeight": 650
+      },
+      "actions": [
+        {
+          "id": "focus-library",
+          "frame": 16,
+          "type": "move",
+          "point": [
+            697,
+            59
+          ],
+          "effect": "Editorial camera focuses the existing detail region; no application control or content changes."
+        },
+        {
+          "id": "play-recording",
+          "frame": 47,
+          "point": [
+            765,
+            60
+          ],
+          "target": {
+            "x": 726,
+            "y": 48,
+            "width": 78,
+            "height": 24
+          },
+          "effect": "Actual button label changes from 播放录音 to 停止播放."
+        },
+        {
+          "id": "stop-recording",
+          "frame": 88,
+          "point": [
+            765,
+            60
+          ],
+          "target": {
+            "x": 726,
+            "y": 48,
+            "width": 78,
+            "height": 24
+          },
+          "effect": "Button returns to 播放录音. Transcript stays unchanged."
+        },
+        {
+          "id": "copy-transcript",
+          "frame": 112,
+          "point": [
+            844,
+            60
+          ],
+          "target": {
+            "x": 812,
+            "y": 48,
+            "width": 68,
+            "height": 24
+          },
+          "effect": "Native button press feedback; external copy caption appears. No invented native toast."
+        }
+      ]
+    }
+  },
+  "verification": {
+    "determinism": "All changing application state reads interactionAt.done/progress/since. Pointer and state share the same exported action table.",
+    "domTargets": "Each clickable target has a matching data-action-target attribute; the playback button lists both play-recording and stop-recording.",
+    "rendering": "Root agent owns browser, DOM-hit and frame-image validation; this worker did not open a browser or launch a render.",
+    "typecheck": "Passed: node node_modules/typescript/bin/tsc --noEmit",
+    "lint": "Passed: node node_modules/eslint/bin/eslint.js src/scenes/Notes.tsx src/scenes/Meeting.tsx"
+  }
+}

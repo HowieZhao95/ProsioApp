@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-10-08",
+  "composition": {
+    "id": "ProsioLaunch",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_frames": 1800,
+    "duration_seconds": 60
+  },
+  "checks": {
+    "eslint_and_typescript": "passed",
+    "remotion_bundle": "passed in keyframe rendering",
+    "git_diff_check": "passed",
+    "runtime_dependency_audit": "0 vulnerabilities",
+    "keyframe_review": "28 revision frames, plus three Agent camera refinement frames",
+    "browser_playback": "passed: reached frame 1799, paused at end, no player error",
+    "preview_audio_range_request": "206; valid RIFF WAV signature",
+    "preview_navigation": "chapter seeking and paused start state verified",
+    "interaction_timeline": "42 action boundaries, coordinates, target bounds and drag states passed",
+    "browser_dom_hit_test": "26 click/drag destinations inside actual DOM target rectangles; Agent send rechecked after camera change",
+    "audio_sync": "mouse and keyboard SFX derived from design/interaction-events.json"
+  },
+  "review_fixes": [
+    "Rebuilt six product UI scenes from current SwiftUI/AppKit/Milkdown sources and native evidence screenshots",
+    "Exported actual SF Symbols using AppKit",
+    "Shared event table drives cursor, UI state and pointer-down drags",
+    "Native copy-and-exit flow, selected arrow handles and custom color state",
+    "Removed fictional notes sidebar, meeting waveform and recording export success toast",
+    "Native Agent answer panel enlarges with pointer in the same camera plane"
+  ],
+  "delivery": {
+    "type": "editable Remotion composition and playable local preview",
+    "preview_url": "http://127.0.0.1:3211/?v=2",
+    "studio_url": "http://localhost:3210/ProsioLaunch",
+    "mp4_exported": false,
+    "audio": "original synthesized music and effects, no narration",
+    "audio_listening_review": "not performed"
+  },
+  "publication_notes": [
+    "Demonstrations are reconstructed from documented product behavior",
+    "Replace CTA with verified release/download or purchase destination before public distribution"
+  ],
+  "revision": "2 — native UI and synchronized input",
+  "native_evidence": [
+    "voice-capture-evidence.json",
+    "notes-meeting-evidence.json",
+    "recording-agent-evidence.json"
+  ]
+}

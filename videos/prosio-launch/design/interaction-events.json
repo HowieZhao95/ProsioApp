@@ -1,0 +1,562 @@
+{
+  "revision": "native-ui-and-synchronized-input",
+  "fps": 30,
+  "actionCount": 42,
+  "events": [
+    {
+      "scene": "Voice",
+      "id": "focus-editor",
+      "frame": 230,
+      "localFrame": 20,
+      "type": "click",
+      "x": 28,
+      "y": 121,
+      "target": {
+        "x": 24,
+        "y": 110,
+        "width": 512,
+        "height": 154
+      }
+    },
+    {
+      "scene": "Voice",
+      "id": "fn-start",
+      "frame": 245,
+      "localFrame": 35,
+      "type": "key",
+      "x": 28,
+      "y": 121,
+      "target": null
+    },
+    {
+      "scene": "Voice",
+      "id": "fn-stop",
+      "frame": 303,
+      "localFrame": 93,
+      "type": "key",
+      "x": 28,
+      "y": 121,
+      "target": null
+    },
+    {
+      "scene": "Voice",
+      "id": "select-start",
+      "frame": 368,
+      "localFrame": 158,
+      "type": "down",
+      "x": 24,
+      "y": 121,
+      "target": {
+        "x": 24,
+        "y": 110,
+        "width": 512,
+        "height": 154
+      }
+    },
+    {
+      "scene": "Voice",
+      "id": "select-end",
+      "frame": 391,
+      "localFrame": 181,
+      "type": "up",
+      "x": 213,
+      "y": 173,
+      "target": {
+        "x": 24,
+        "y": 110,
+        "width": 512,
+        "height": 154
+      }
+    },
+    {
+      "scene": "Voice",
+      "id": "fn-rewrite-start",
+      "frame": 403,
+      "localFrame": 193,
+      "type": "key",
+      "x": 213,
+      "y": 173,
+      "target": null
+    },
+    {
+      "scene": "Voice",
+      "id": "fn-rewrite-stop",
+      "frame": 432,
+      "localFrame": 222,
+      "type": "key",
+      "x": 213,
+      "y": 173,
+      "target": null
+    },
+    {
+      "scene": "Voice",
+      "id": "rest-pointer",
+      "frame": 475,
+      "localFrame": 265,
+      "type": "move",
+      "x": 509,
+      "y": 273,
+      "target": null
+    },
+    {
+      "scene": "Capture",
+      "id": "option-open",
+      "frame": 534,
+      "localFrame": 24,
+      "type": "key",
+      "x": 552,
+      "y": 346,
+      "target": null
+    },
+    {
+      "scene": "Capture",
+      "id": "selection-start",
+      "frame": 555,
+      "localFrame": 45,
+      "type": "down",
+      "x": 25,
+      "y": 36,
+      "target": {
+        "x": 0,
+        "y": 0,
+        "width": 676,
+        "height": 450
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "selection-end",
+      "frame": 586,
+      "localFrame": 76,
+      "type": "up",
+      "x": 651,
+      "y": 243,
+      "target": {
+        "x": 0,
+        "y": 0,
+        "width": 676,
+        "height": 450
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "translate-hover",
+      "frame": 602,
+      "localFrame": 92,
+      "type": "move",
+      "x": 402,
+      "y": 276,
+      "target": null
+    },
+    {
+      "scene": "Capture",
+      "id": "translate",
+      "frame": 609,
+      "localFrame": 99,
+      "type": "click",
+      "x": 402,
+      "y": 276,
+      "target": {
+        "x": 388,
+        "y": 261,
+        "width": 28,
+        "height": 30
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "line-hover",
+      "frame": 670,
+      "localFrame": 160,
+      "type": "move",
+      "x": 244,
+      "y": 275,
+      "target": null
+    },
+    {
+      "scene": "Capture",
+      "id": "line-tool",
+      "frame": 683,
+      "localFrame": 173,
+      "type": "click",
+      "x": 244,
+      "y": 275,
+      "target": {
+        "x": 230,
+        "y": 260,
+        "width": 28,
+        "height": 30
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "arrow-endpoint",
+      "frame": 693,
+      "localFrame": 183,
+      "type": "click",
+      "x": 355,
+      "y": 368,
+      "target": {
+        "x": 306.333,
+        "y": 358,
+        "width": 97.333,
+        "height": 20
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "orange-color",
+      "frame": 706,
+      "localFrame": 196,
+      "type": "click",
+      "x": 278,
+      "y": 335,
+      "target": {
+        "x": 269,
+        "y": 326,
+        "width": 18,
+        "height": 18
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "arrow-start",
+      "frame": 722,
+      "localFrame": 212,
+      "type": "down",
+      "x": 530,
+      "y": 212,
+      "target": {
+        "x": 0,
+        "y": 0,
+        "width": 676,
+        "height": 450
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "arrow-end",
+      "frame": 744,
+      "localFrame": 234,
+      "type": "up",
+      "x": 269,
+      "y": 154,
+      "target": {
+        "x": 0,
+        "y": 0,
+        "width": 676,
+        "height": 450
+      }
+    },
+    {
+      "scene": "Capture",
+      "id": "copy-hover",
+      "frame": 783,
+      "localFrame": 273,
+      "type": "move",
+      "x": 522,
+      "y": 276,
+      "target": null
+    },
+    {
+      "scene": "Capture",
+      "id": "copy-exit",
+      "frame": 790,
+      "localFrame": 280,
+      "type": "click",
+      "x": 522,
+      "y": 276,
+      "target": {
+        "x": 508,
+        "y": 261,
+        "width": 28,
+        "height": 30
+      }
+    },
+    {
+      "scene": "Notes",
+      "id": "check-task",
+      "frame": 846,
+      "localFrame": 36,
+      "type": "click",
+      "x": 32,
+      "y": 163,
+      "target": {
+        "x": 22,
+        "y": 149,
+        "width": 20,
+        "height": 28
+      }
+    },
+    {
+      "scene": "Notes",
+      "id": "pin-note",
+      "frame": 879,
+      "localFrame": 69,
+      "type": "click",
+      "x": 399,
+      "y": 17,
+      "target": {
+        "x": 388,
+        "y": 5,
+        "width": 22,
+        "height": 24
+      }
+    },
+    {
+      "scene": "Notes",
+      "id": "open-calendar",
+      "frame": 911,
+      "localFrame": 101,
+      "type": "click",
+      "x": 91,
+      "y": 17,
+      "target": {
+        "x": 38,
+        "y": 5,
+        "width": 115,
+        "height": 24
+      }
+    },
+    {
+      "scene": "Notes",
+      "id": "select-yesterday",
+      "frame": 952,
+      "localFrame": 142,
+      "type": "click",
+      "x": 159,
+      "y": 179,
+      "target": {
+        "x": 138,
+        "y": 159,
+        "width": 41,
+        "height": 40
+      }
+    },
+    {
+      "scene": "Notes",
+      "id": "close-calendar",
+      "frame": 986,
+      "localFrame": 176,
+      "type": "click",
+      "x": 401,
+      "y": 395,
+      "target": {
+        "x": 382,
+        "y": 360,
+        "width": 28,
+        "height": 90
+      }
+    },
+    {
+      "scene": "Recording",
+      "id": "show-shortcut",
+      "frame": 1026,
+      "localFrame": 6,
+      "type": "key",
+      "x": 340,
+      "y": 248,
+      "target": null
+    },
+    {
+      "scene": "Recording",
+      "id": "point-to-content",
+      "frame": 1042,
+      "localFrame": 22,
+      "type": "move",
+      "x": 570,
+      "y": 285,
+      "target": null
+    },
+    {
+      "scene": "Recording",
+      "id": "pause",
+      "frame": 1059,
+      "localFrame": 39,
+      "type": "click",
+      "x": 717,
+      "y": 78,
+      "target": {
+        "x": 706,
+        "y": 64,
+        "width": 22,
+        "height": 28
+      }
+    },
+    {
+      "scene": "Recording",
+      "id": "resume",
+      "frame": 1085,
+      "localFrame": 65,
+      "type": "click",
+      "x": 717,
+      "y": 78,
+      "target": {
+        "x": 706,
+        "y": 64,
+        "width": 22,
+        "height": 28
+      }
+    },
+    {
+      "scene": "Recording",
+      "id": "continue-demonstration",
+      "frame": 1101,
+      "localFrame": 81,
+      "type": "move",
+      "x": 575,
+      "y": 283,
+      "target": null
+    },
+    {
+      "scene": "Recording",
+      "id": "stop",
+      "frame": 1119,
+      "localFrame": 99,
+      "type": "click",
+      "x": 749,
+      "y": 78,
+      "target": {
+        "x": 738,
+        "y": 64,
+        "width": 22,
+        "height": 28
+      }
+    },
+    {
+      "scene": "Recording",
+      "id": "view-material",
+      "frame": 1147,
+      "localFrame": 127,
+      "type": "click",
+      "x": 476,
+      "y": 546,
+      "target": {
+        "x": 443,
+        "y": 532,
+        "width": 66,
+        "height": 28
+      }
+    },
+    {
+      "scene": "Recording",
+      "id": "export-entry",
+      "frame": 1171,
+      "localFrame": 151,
+      "type": "move",
+      "x": 828,
+      "y": 428,
+      "target": {
+        "x": 779,
+        "y": 416,
+        "width": 99,
+        "height": 24
+      }
+    },
+    {
+      "scene": "Meeting",
+      "id": "focus-library",
+      "frame": 1216,
+      "localFrame": 16,
+      "type": "move",
+      "x": 697,
+      "y": 59,
+      "target": null
+    },
+    {
+      "scene": "Meeting",
+      "id": "play-recording",
+      "frame": 1247,
+      "localFrame": 47,
+      "type": "click",
+      "x": 765,
+      "y": 60,
+      "target": {
+        "x": 726,
+        "y": 48,
+        "width": 78,
+        "height": 24
+      }
+    },
+    {
+      "scene": "Meeting",
+      "id": "stop-recording",
+      "frame": 1288,
+      "localFrame": 88,
+      "type": "click",
+      "x": 765,
+      "y": 60,
+      "target": {
+        "x": 726,
+        "y": 48,
+        "width": 78,
+        "height": 24
+      }
+    },
+    {
+      "scene": "Meeting",
+      "id": "copy-transcript",
+      "frame": 1312,
+      "localFrame": 112,
+      "type": "click",
+      "x": 844,
+      "y": 60,
+      "target": {
+        "x": 812,
+        "y": 48,
+        "width": 68,
+        "height": 24
+      }
+    },
+    {
+      "scene": "Agent",
+      "id": "answer-field",
+      "frame": 1374,
+      "localFrame": 24,
+      "type": "click",
+      "x": 596,
+      "y": 416,
+      "target": {
+        "x": 364,
+        "y": 396,
+        "width": 512,
+        "height": 42
+      }
+    },
+    {
+      "scene": "Agent",
+      "id": "type-answer",
+      "frame": 1380,
+      "localFrame": 30,
+      "type": "key",
+      "x": 596,
+      "y": 416,
+      "target": null
+    },
+    {
+      "scene": "Agent",
+      "id": "send-answer",
+      "frame": 1418,
+      "localFrame": 68,
+      "type": "click",
+      "x": 404,
+      "y": 488,
+      "target": {
+        "x": 364,
+        "y": 477,
+        "width": 80,
+        "height": 22
+      }
+    },
+    {
+      "scene": "Agent",
+      "id": "read-update",
+      "frame": 1445,
+      "localFrame": 95,
+      "type": "move",
+      "x": 704,
+      "y": 285,
+      "target": null
+    }
+  ]
+}

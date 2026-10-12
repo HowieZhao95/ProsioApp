@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+.DS_Store
+.env
+
+# Keep generated files and MP4 media out of version control.
+out
+*.[mM][pP]4

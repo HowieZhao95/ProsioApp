@@ -1,0 +1,315 @@
+{
+  "title": "Prosio - Follow the Thought",
+  "source": "Original deterministic synthesis; no external music, samples or voice",
+  "bpm": 120,
+  "key": "D major",
+  "duration_seconds": 60.0,
+  "sample_rate": 48000,
+  "channels": 2,
+  "sample_format": "24-bit PCM WAV",
+  "integrated_lufs": -17.0,
+  "true_peak_dbtp": -1.85,
+  "sample_peak_dbfs": -1.854,
+  "loudness_range_lu": 8.0,
+  "sections": [
+    {
+      "start": 0,
+      "end": 7,
+      "arrangement": "spacious keys and soft pad"
+    },
+    {
+      "start": 7,
+      "end": 27,
+      "arrangement": "restrained syncopated rhythm"
+    },
+    {
+      "start": 27,
+      "end": 49,
+      "arrangement": "open harmony and developing pluck motif"
+    },
+    {
+      "start": 49,
+      "end": 56,
+      "arrangement": "price: drums and bass removed"
+    },
+    {
+      "start": 56,
+      "end": 60,
+      "arrangement": "Dmaj9 brand resolution and fade"
+    }
+  ],
+  "transition_cues": [
+    {
+      "time": 0.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 4.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 7.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 17.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 27.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 34.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 40.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 45.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 49.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 56.0,
+      "type": "soft scene transition"
+    },
+    {
+      "time": 7.666666666666667,
+      "frame": 230,
+      "type": "click",
+      "scene": "Voice",
+      "action": "focus-editor"
+    },
+    {
+      "time": 8.166666666666666,
+      "frame": 245,
+      "type": "key",
+      "scene": "Voice",
+      "action": "fn-start"
+    },
+    {
+      "time": 10.1,
+      "frame": 303,
+      "type": "key",
+      "scene": "Voice",
+      "action": "fn-stop"
+    },
+    {
+      "time": 12.266666666666667,
+      "frame": 368,
+      "type": "down",
+      "scene": "Voice",
+      "action": "select-start"
+    },
+    {
+      "time": 13.033333333333333,
+      "frame": 391,
+      "type": "up",
+      "scene": "Voice",
+      "action": "select-end"
+    },
+    {
+      "time": 13.433333333333334,
+      "frame": 403,
+      "type": "key",
+      "scene": "Voice",
+      "action": "fn-rewrite-start"
+    },
+    {
+      "time": 14.4,
+      "frame": 432,
+      "type": "key",
+      "scene": "Voice",
+      "action": "fn-rewrite-stop"
+    },
+    {
+      "time": 17.8,
+      "frame": 534,
+      "type": "key",
+      "scene": "Capture",
+      "action": "option-open"
+    },
+    {
+      "time": 18.5,
+      "frame": 555,
+      "type": "down",
+      "scene": "Capture",
+      "action": "selection-start"
+    },
+    {
+      "time": 19.533333333333335,
+      "frame": 586,
+      "type": "up",
+      "scene": "Capture",
+      "action": "selection-end"
+    },
+    {
+      "time": 20.3,
+      "frame": 609,
+      "type": "click",
+      "scene": "Capture",
+      "action": "translate"
+    },
+    {
+      "time": 22.766666666666666,
+      "frame": 683,
+      "type": "click",
+      "scene": "Capture",
+      "action": "line-tool"
+    },
+    {
+      "time": 23.1,
+      "frame": 693,
+      "type": "click",
+      "scene": "Capture",
+      "action": "arrow-endpoint"
+    },
+    {
+      "time": 23.533333333333335,
+      "frame": 706,
+      "type": "click",
+      "scene": "Capture",
+      "action": "orange-color"
+    },
+    {
+      "time": 24.066666666666666,
+      "frame": 722,
+      "type": "down",
+      "scene": "Capture",
+      "action": "arrow-start"
+    },
+    {
+      "time": 24.8,
+      "frame": 744,
+      "type": "up",
+      "scene": "Capture",
+      "action": "arrow-end"
+    },
+    {
+      "time": 26.333333333333332,
+      "frame": 790,
+      "type": "click",
+      "scene": "Capture",
+      "action": "copy-exit"
+    },
+    {
+      "time": 28.2,
+      "frame": 846,
+      "type": "click",
+      "scene": "Notes",
+      "action": "check-task"
+    },
+    {
+      "time": 29.3,
+      "frame": 879,
+      "type": "click",
+      "scene": "Notes",
+      "action": "pin-note"
+    },
+    {
+      "time": 30.366666666666667,
+      "frame": 911,
+      "type": "click",
+      "scene": "Notes",
+      "action": "open-calendar"
+    },
+    {
+      "time": 31.733333333333334,
+      "frame": 952,
+      "type": "click",
+      "scene": "Notes",
+      "action": "select-yesterday"
+    },
+    {
+      "time": 32.86666666666667,
+      "frame": 986,
+      "type": "click",
+      "scene": "Notes",
+      "action": "close-calendar"
+    },
+    {
+      "time": 34.2,
+      "frame": 1026,
+      "type": "key",
+      "scene": "Recording",
+      "action": "show-shortcut"
+    },
+    {
+      "time": 35.3,
+      "frame": 1059,
+      "type": "click",
+      "scene": "Recording",
+      "action": "pause"
+    },
+    {
+      "time": 36.166666666666664,
+      "frame": 1085,
+      "type": "click",
+      "scene": "Recording",
+      "action": "resume"
+    },
+    {
+      "time": 37.3,
+      "frame": 1119,
+      "type": "click",
+      "scene": "Recording",
+      "action": "stop"
+    },
+    {
+      "time": 38.233333333333334,
+      "frame": 1147,
+      "type": "click",
+      "scene": "Recording",
+      "action": "view-material"
+    },
+    {
+      "time": 41.56666666666667,
+      "frame": 1247,
+      "type": "click",
+      "scene": "Meeting",
+      "action": "play-recording"
+    },
+    {
+      "time": 42.93333333333333,
+      "frame": 1288,
+      "type": "click",
+      "scene": "Meeting",
+      "action": "stop-recording"
+    },
+    {
+      "time": 43.733333333333334,
+      "frame": 1312,
+      "type": "click",
+      "scene": "Meeting",
+      "action": "copy-transcript"
+    },
+    {
+      "time": 45.8,
+      "frame": 1374,
+      "type": "click",
+      "scene": "Agent",
+      "action": "answer-field"
+    },
+    {
+      "time": 46.0,
+      "frame": 1380,
+      "type": "key",
+      "scene": "Agent",
+      "action": "type-answer"
+    },
+    {
+      "time": 47.266666666666666,
+      "frame": 1418,
+      "type": "click",
+      "scene": "Agent",
+      "action": "send-answer"
+    }
+  ],
+  "verification": "Measured electronically, not auditioned. Final listening review is recommended with picture."
+}
