@@ -85,39 +85,23 @@
       "proof": "真实会议窗口：本地稿、时间戳、回放、复制全文"
     },
     {
-      "id": "Agent",
+      "id": "End",
       "start": 45,
       "end": 49,
-      "message": "任务进度，一眼掌握。",
-      "proof": "已接入的本机 Codex 任务状态和明确发送回答"
-    },
-    {
-      "id": "Pricing",
-      "start": 49,
-      "end": 56,
-      "message": "顺手的日常，一个月付方案。",
-      "proof": "US$9.90/月；600分钟云端转录/账期；本地听写不限量"
-    },
-    {
-      "id": "End",
-      "start": 56,
-      "end": 60,
       "message": "让工作，顺着想法走。",
-      "proof": "Prosio 品牌收束，了解 Prosio"
+      "proof": "Prosio 品牌收束，开源免费"
     }
   ],
   "truthConstraints": [
     "演示文本为虚构项目内容，重建的交互镜头标为界面演示。",
     "不声称效率倍数、识别准确率、跨所有应用、自动会议摘要或全平台支持。",
-    "Agent 仅展示已接入的本机 Codex 任务。",
-    "价格为已记录的商业化决策，不宣称全部功能不限量或已开放购买。",
+    "片头和片尾标明开源免费。不展示订阅价格、套餐或 Agent 提醒。云端听写和会议增强由用户自己的 Key 调用。",
     "云端处理以过程节选表示，动画时长不作为性能承诺。"
   ],
   "evidence": [
     "../../../docs/P1-COMMERCIALIZATION.md",
     "../../../docs/RELEASE-AUDIT-2026-10-04.md",
     "../../../docs/evidence/capture-translation/installed-app-test-report.md",
-    "../../../docs/evidence/agent-interaction/acceptance.md",
     "../../../docs/DAILY-NOTES-IMPLEMENTATION.md",
     "../../../docs/MEETING-INTEGRATION.md",
     "../../../docs/PRESENTATION-MVP.md",

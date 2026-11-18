@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum MenuBarPane: Hashable, CaseIterable {
-    case voice, capture, meeting, presentation, recording, agents
+    case voice, capture, meeting, presentation, recording
 
     var title: String {
         switch self {
@@ -11,7 +11,6 @@ enum MenuBarPane: Hashable, CaseIterable {
         case .meeting: "录音转写"
         case .recording: "屏幕录制"
         case .presentation: "演示"
-        case .agents: "Agent"
         }
     }
 }

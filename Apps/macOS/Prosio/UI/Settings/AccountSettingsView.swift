@@ -1,10 +1,7 @@
 import ProsioCore
 import SwiftUI
 
-/// Signed in: email (`environment.signedInEmail`, mirrored from `BackendClient.signedInEmail` —
-/// persisted server-side, current whenever `isSignedIn` is) + usage this month (`fetchUsage()`,
-/// loaded via `.task`, row hidden entirely on error) + Sign out. Signed out: a clean one-field
-/// sign-in form. "Backend URL" lives in a `#if DEBUG`-only collapsed "Developer" section.
+/// Cloud provider keys. Secrets stay in the Keychain; model names stay in settings.
 struct AccountSettingsView: View {
     let environment: AppEnvironment
     @Bindable private var settings: AppSettings
@@ -14,130 +11,90 @@ struct AccountSettingsView: View {
         self.settings = environment.settings
     }
 
-    @State private var email = ""
-    @State private var isSigningIn = false
-    @State private var errorMessage: String?
-    @State private var usage: UsageStatus?
+    @State private var openRouterKey = ""
+    @State private var sonioxKey = ""
+    @State private var openRouterStatus: String?
+    @State private var sonioxStatus: String?
+    @State private var checkingOpenRouter = false
+    @State private var checkingSoniox = false
 
     var body: some View {
         Form {
-            if environment.isSignedIn {
-                Section {
-                    HStack(spacing: 10) {
-                        Image(systemName: "checkmark.seal.fill")
-                            .foregroundStyle(.green)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text("Signed in")
-                                .font(.callout)
-                            if let email = environment.signedInEmail {
-                                Text(email)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        Spacer()
-                        Button("Sign Out", role: .destructive) { environment.signOut() }
-                    }
-
-                    if let usage {
-                        usageRow(usage)
-                    }
-                }
-                .task(id: environment.isSignedIn) {
-                    guard environment.isSignedIn else { usage = nil; return }
-                    do {
-                        usage = try await environment.backend.fetchUsage()
-                    } catch {
-                        // Hide the row entirely on error rather than showing a broken/stale number.
-                        usage = nil
-                    }
-                }
-            } else {
-                Section {
-                    Text("Sign in for cloud-polished transcription, translation, and Ask.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                    TextField("Email", text: $email)
-                        .textFieldStyle(.roundedBorder)
-                        .disableAutocorrection(true)
-                        .onSubmit(signIn)
-                    HStack {
-                        Button(action: signIn) {
-                            if isSigningIn {
-                                ProgressView().controlSize(.small)
-                            } else {
-                                Text("Sign In")
-                            }
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(email.trimmingCharacters(in: .whitespaces).isEmpty || isSigningIn)
-
-                        if let errorMessage {
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
-                    }
-                }
+            Section {
+                Text("软件免费。填写后，听写润色和会议增强按你自己的账单计费。不填写时，本机听写和本地会议稿仍然可用。")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
             }
 
-            #if DEBUG
-            DisclosureGroup("Developer") {
-                TextField("Backend URL", text: backendURLBinding)
+            Section("OpenRouter") {
+                SecureField("OpenRouter Key", text: $openRouterKey)
                     .textFieldStyle(.roundedBorder)
-                    .disableAutocorrection(true)
-                Text("更改服务地址后，请重新启动 Prosio。")
-                    .font(.caption).foregroundStyle(.secondary)
+                TextField("转写模型", text: $settings.transcriptionModel)
+                    .textFieldStyle(.roundedBorder)
+                TextField("写作模型", text: $settings.composeModel)
+                    .textFieldStyle(.roundedBorder)
+                TextField("备用写作模型", text: $settings.composeFallbackModel)
+                    .textFieldStyle(.roundedBorder)
+                HStack {
+                    Link("获取 OpenRouter Key", destination: OpenRouterClient.openRouterKeysURL)
+                    Spacer()
+                    Button(checkingOpenRouter ? "测试中…" : "测试连接") { testOpenRouter() }
+                        .disabled(checkingOpenRouter || openRouterKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button("保存") { save(.openRouter, openRouterKey) }
+                }
+                if let openRouterStatus {
+                    Text(openRouterStatus).font(.caption).foregroundStyle(.secondary)
+                }
             }
-            #endif
+
+            Section("Soniox") {
+                SecureField("Soniox Key", text: $sonioxKey)
+                    .textFieldStyle(.roundedBorder)
+                Text("用于会议增强。Key 需要异步转写和文件上传权限。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                HStack {
+                    Link("获取 Soniox Key", destination: SonioxClient.consoleURL)
+                    Spacer()
+                    Button(checkingSoniox ? "测试中…" : "测试连接") { testSoniox() }
+                        .disabled(checkingSoniox || sonioxKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button("保存") { save(.soniox, sonioxKey) }
+                }
+                if let sonioxStatus {
+                    Text(sonioxStatus).font(.caption).foregroundStyle(.secondary)
+                }
+            }
         }
         .formStyle(.grouped)
-    }
-
-    @ViewBuilder
-    private func usageRow(_ usage: UsageStatus) -> some View {
-        let usedMinutes = Int((usage.audioSecondsUsed / 60).rounded())
-        VStack(alignment: .leading, spacing: 4) {
-            if let limitSeconds = usage.audioSecondsLimit, limitSeconds > 0 {
-                let limitMinutes = Int((limitSeconds / 60).rounded())
-                Text("\(usedMinutes) / \(limitMinutes) min used this month")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                ProgressView(value: min(usage.audioSecondsUsed, limitSeconds), total: limitSeconds)
-                    .progressViewStyle(.linear)
-                    .tint(.accentColor)
-            } else {
-                Text("Used \(usedMinutes) min this month")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+        .onAppear {
+            openRouterKey = KeychainStore.load(.openRouter) ?? ""
+            sonioxKey = KeychainStore.load(.soniox) ?? ""
         }
-        .padding(.top, 2)
     }
 
-    #if DEBUG
-    private var backendURLBinding: Binding<String> {
-        Binding(
-            get: { settings.backendURL.absoluteString },
-            set: { newValue in
-                if let url = URL(string: newValue) { settings.backendURL = url }
-            }
-        )
+    private func save(_ account: ProviderCredential, _ secret: String) {
+        environment.saveProviderKey(secret, account: account)
+        if account == .openRouter { openRouterStatus = secret.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "已清除 OpenRouter Key。" : "已保存 OpenRouter Key。" }
+        else { sonioxStatus = secret.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "已清除 Soniox Key。" : "已保存 Soniox Key。" }
     }
-    #endif
 
-    private func signIn() {
-        let trimmed = email.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty, !isSigningIn else { return }
-        errorMessage = nil
-        isSigningIn = true
+    private func testOpenRouter() {
+        let secret = openRouterKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        checkingOpenRouter = true
         Task {
-            do {
-                try await environment.signIn(email: trimmed)
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-            isSigningIn = false
+            let message = await environment.openRouter.testKey(secret)
+            checkingOpenRouter = false
+            openRouterStatus = message
+        }
+    }
+
+    private func testSoniox() {
+        let secret = sonioxKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        checkingSoniox = true
+        Task {
+            let message = await environment.soniox.testKey(secret)
+            checkingSoniox = false
+            sonioxStatus = message
         }
     }
 }
@@ -145,6 +102,5 @@ struct AccountSettingsView: View {
 #if DEBUG
 #Preview {
     AccountSettingsView(environment: AppEnvironment())
-        .frame(width: 520, height: 460)
 }
 #endif

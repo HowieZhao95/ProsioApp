@@ -62,6 +62,18 @@ public final class AppSettings {
     public var adaptToApp: Bool = true {
         didSet { defaults.set(adaptToApp, forKey: Keys.adaptToApp) }
     }
+    /// OpenRouter speech-to-text model slug. The key itself lives in the Keychain.
+    public var transcriptionModel: String = OpenRouterModels.defaultTranscription {
+        didSet { defaults.set(transcriptionModel, forKey: Keys.transcriptionModel) }
+    }
+    /// OpenRouter chat model slug for rewrite, translate, edit, ask, and capture translation.
+    public var composeModel: String = OpenRouterModels.defaultCompose {
+        didSet { defaults.set(composeModel, forKey: Keys.composeModel) }
+    }
+    /// Used once when the primary compose model returns empty text or edit drift.
+    public var composeFallbackModel: String = OpenRouterModels.defaultComposeFallback {
+        didSet { defaults.set(composeFallbackModel, forKey: Keys.composeFallbackModel) }
+    }
     /// Per-app scene overrides (bundleID -> scene), consulted before `SceneResolver`'s built-in table.
     public var sceneOverrides: [String: WritingScene] = [:] {
         didSet {
@@ -84,6 +96,9 @@ public final class AppSettings {
         static let translateTarget = "prosio.translateTarget"
         static let adaptToApp = "prosio.adaptToApp"
         static let sceneOverrides = "prosio.sceneOverrides"
+        static let transcriptionModel = "prosio.transcriptionModel"
+        static let composeModel = "prosio.composeModel"
+        static let composeFallbackModel = "prosio.composeFallbackModel"
         // "prosio.askTriggerKey" removed (P1.1: single fn hotkey; Ask is voice-triggered). Not
         // read/written anymore — tolerate a stale value left over in a user's defaults.
         // "prosio.enginePreference" removed (P1.2: no engine-mode setting — routing is always
@@ -132,12 +147,27 @@ public final class AppSettings {
         if let raw = defaults.dictionary(forKey: Keys.sceneOverrides) as? [String: String] {
             sceneOverrides = raw.compactMapValues { WritingScene(rawValue: $0) }
         }
+        if let model = defaults.string(forKey: Keys.transcriptionModel), !model.isEmpty {
+            transcriptionModel = model
+        }
+        if let model = defaults.string(forKey: Keys.composeModel), !model.isEmpty {
+            composeModel = Self.retiredComposeModels.contains(model) ? OpenRouterModels.defaultCompose : model
+        }
+        if let model = defaults.string(forKey: Keys.composeFallbackModel), !model.isEmpty {
+            composeFallbackModel = Self.retiredComposeModels.contains(model) ? OpenRouterModels.defaultComposeFallback : model
+        }
     }
 
     /// Every BCP-47 tag `languageHints` will ever default to, and the language-code prefixes (and,
     /// for Chinese, script/region hints) that map to each — in priority order, first match wins.
     /// `nonisolated`: pure data, no `AppSettings` instance state — lets `defaultLanguageHints`
     /// (also `nonisolated`) be called from a non-`@MainActor` context (e.g. plain unit tests).
+    /// Defaults chosen before Muse. Replaced on launch so an already-opened settings window does not keep them.
+    private nonisolated static let retiredComposeModels: Set<String> = [
+        "openai/gpt-4o-mini", "google/gemini-2.5-flash", "google/gemini-3.5-flash", "google/gemini-3.5-flash-lite",
+        "meta/muse-wonder", "meta/muse-spark-1.3",
+    ]
+
     private nonisolated static let supportedLanguageHints: [(bcp47: String, matches: @Sendable (String) -> Bool)] = [
         ("zh-TW", { lower in
             lower.hasPrefix("zh") && (lower.contains("hant") || lower.contains("-tw") || lower.contains("-hk") || lower.contains("-mo"))

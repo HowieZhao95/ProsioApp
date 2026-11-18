@@ -4,7 +4,7 @@ import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const id = process.argv[2] || 'ProsioLaunch';
-const frames = (process.argv[3] || '0,60,165,260,430,590,740,890,990,1100,1170,1270,1355,1415,1455,1550,1650,1730,1799').split(',').map(Number);
+const frames = (process.argv[3] || '0,60,165,260,430,590,740,890,990,1100,1170,1270,1355,1415,1455').split(',').map(Number);
 const out = path.resolve(process.env.STILL_OUTPUT || 'out/stills');
 await mkdir(out, {recursive:true});
 const serveUrl = await bundle({entryPoint:path.resolve('src/index.ts'), webpackOverride:config=>config});

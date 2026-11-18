@@ -39,7 +39,7 @@ struct SettingsRootView: View {
 
             AccountSettingsView(environment: environment)
                 .tag(SettingsTab.account)
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tabItem { Label("Cloud", systemImage: "key") }
         }
         .frame(width: 520, height: 460)
         // The window title tracks the selected tab's own (localized) name.
@@ -51,6 +51,18 @@ struct SettingsRootView: View {
         .onReceive(NotificationCenter.default.publisher(for: .prosioOpenSettingsNotesTab)) { _ in
             selectedTab = .notes
         }
+        .onAppear {
+            if environment.openCloudSettings {
+                selectedTab = .account
+                environment.openCloudSettings = false
+            }
+        }
+        .onChange(of: environment.openCloudSettings) { _, open in
+            if open {
+                selectedTab = .account
+                environment.openCloudSettings = false
+            }
+        }
     }
 
     private func title(for tab: SettingsTab) -> LocalizedStringKey {
@@ -59,7 +71,7 @@ struct SettingsRootView: View {
         case .general: "General"
         case .dictionary: "Dictionary"
         case .history: "History"
-        case .account: "Account"
+        case .account: "Cloud"
         case .presentation: "演示"
         }
     }

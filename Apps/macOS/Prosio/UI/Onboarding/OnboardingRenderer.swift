@@ -3,7 +3,7 @@ import AppKit
 import SwiftUI
 
 /// Offscreen QA uses the production view, isolated defaults and temporary document stores.
-/// It never launches hotkeys, media services or Agent monitoring and never asks for permissions.
+/// It never launches hotkeys or media services and never asks for permissions.
 enum OnboardingRenderer {
     static func render(environment: AppEnvironment) {
         guard let index = CommandLine.arguments.firstIndex(of: "--onboarding-render"),

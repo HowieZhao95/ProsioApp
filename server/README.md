@@ -1,5 +1,11 @@
 # Prosio Backend
 
+The Mac app no longer calls this server. Dictation, writing, and screenshot
+translation go directly from the Mac to OpenRouter with the user's key.
+Meeting enhancement goes directly to Soniox with the user's key. This
+directory is a frozen archive of the previous hosted API. Do not change it
+expecting the app to follow.
+
 Next.js (App Router, route handlers only) backend for Prosio, deployable to
 Vercel as-is. Implements `docs/API.md` exactly.
 

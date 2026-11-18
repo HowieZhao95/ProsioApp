@@ -16,6 +16,8 @@ import Observation
 @Observable
 public final class DictationController {
     public private(set) var phase: DictationPhase = .idle
+    /// Shown when cloud transcription is skipped because the recording is too long for one request.
+    public private(set) var notice: String?
     /// Live preview (cumulative) while listening/finalizing; final text afterwards.
     public private(set) var previewText: String = ""
     /// Smoothed level 0...1.
@@ -258,6 +260,7 @@ public final class DictationController {
         }
         if !isFollowUp {
             answer = nil
+            notice = nil
         }
         isFollowUpAsk = isFollowUp
 
@@ -497,7 +500,8 @@ public final class DictationController {
             localTranscript: localTranscript,
             hasSelection: hasSelection,
             app: makeAppContext(),
-            sessionID: sessionID
+            sessionID: sessionID,
+            durationSeconds: prepared.trimmedSeconds
         )
 
         do {
@@ -508,7 +512,10 @@ public final class DictationController {
         } catch {
             tResponseReceived = Date()
             guard generation == sessionGeneration else { return }
-            // Offline/unreachable/timed-out -> fall back to the local transcript, same as today.
+            if let prosio = error as? ProsioError, case .transcriptionFailed(let message) = prosio, message == "too-long" {
+                notice = "这次较长，已使用本机听写结果。"
+            }
+            // Offline/unreachable/timed-out/no key -> fall back to the local transcript.
             guard let localTranscript else {
                 handleEmptyFinal()
                 return

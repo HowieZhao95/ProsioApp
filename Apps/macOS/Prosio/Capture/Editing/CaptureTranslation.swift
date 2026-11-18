@@ -185,7 +185,7 @@ nonisolated enum CaptureTranslationError: LocalizedError {
     case unavailable, noText, tooMuchText, invalidResponse, insufficientSpace
     var errorDescription: String? {
         switch self {
-        case .unavailable: "请先登录，再使用截图翻译。"
+        case .unavailable: "请先填写 OpenRouter Key，再使用截图翻译。"
         case .noText: "选区内没有识别到可翻译的文字。"
         case .tooMuchText: "选区文字过多，请缩小选区后翻译。"
         case .invalidResponse: "翻译结果不完整，请重试。"

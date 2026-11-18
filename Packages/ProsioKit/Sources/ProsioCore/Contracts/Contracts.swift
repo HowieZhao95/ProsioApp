@@ -150,8 +150,10 @@ public struct CloudTranscribeRequest: Sendable {
     public var hasSelection: Bool
     public var app: AppContext?
     public var sessionID: UUID
+    /// Trimmed audio length. OpenRouter transcription is skipped when this exceeds its upstream limit.
+    public var durationSeconds: Double?
 
-    public init(audioData: Data, audioFormat: UploadAudioFormat = .wav, options: TranscriptionOptions, localTranscript: String? = nil, hasSelection: Bool = false, app: AppContext? = nil, sessionID: UUID = UUID()) {
+    public init(audioData: Data, audioFormat: UploadAudioFormat = .wav, options: TranscriptionOptions, localTranscript: String? = nil, hasSelection: Bool = false, app: AppContext? = nil, sessionID: UUID = UUID(), durationSeconds: Double? = nil) {
         self.audioData = audioData
         self.audioFormat = audioFormat
         self.options = options
@@ -159,6 +161,7 @@ public struct CloudTranscribeRequest: Sendable {
         self.hasSelection = hasSelection
         self.app = app
         self.sessionID = sessionID
+        self.durationSeconds = durationSeconds
     }
 }
 

@@ -28,7 +28,7 @@ export const Opening: React.FC = () => {
     <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: reveal, translate: `0 ${(1-reveal)*28}px`, scale: interpolate(f, [120, 210], [.99, 1.015], clamp)}}>
       <Brand size={62} style={{marginBottom: 58}} />
       <div style={{fontSize: 142, fontWeight: 600, letterSpacing: '-.065em', lineHeight: 1.3}}>让工作，<span style={{color: T.muted}}>顺着想法走。</span></div>
-      <div style={{fontSize: 34, color: '#777771', marginTop: 38, letterSpacing: '.07em'}}>为 Mac 日常而来</div>
+      <div style={{fontSize: 34, color: '#777771', marginTop: 38, letterSpacing: '.07em'}}>开源免费 · 为 Mac 日常而来</div>
     </div>
   </Frame>;
 };

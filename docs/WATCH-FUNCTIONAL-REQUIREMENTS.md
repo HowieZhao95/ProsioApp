@@ -74,7 +74,7 @@ Prosio 剩余分钟按 `max(0, 总秒数 − 已用秒数) ÷ 60` 计算，向�
 
 今日结束轮次数、历史用量趋势、智能叠放卡片、多电脑与更多 Agent 来源作为后续扩展；结束轮次去重统计不等于完成任务数。套餐购买及额度重置操作留在手机或电脑。
 
-当前依据：桌面回答、补充和中断已验收，见 [桌面验收记录](evidence/agent-interaction/acceptance.md)。Prosio 的 [用量接口](../server/app/api/usage/route.ts) 提供周期和语音已用／总量，当前 [套餐权益](../server/lib/entitlements.ts) 仍是试用占位实现。Agent 模块尚无额度适配，仓库尚无 Watch 与 iPhone 目标；因此本文中的手表能力和通信通路均为新增需求。
+当前依据：Prosio 的 [用量接口](../server/app/api/usage/route.ts) 提供周期和语音已用／总量，当前 [套餐权益](../server/lib/entitlements.ts) 仍是试用占位实现。仓库尚无 Watch 与 iPhone 目标；因此本文中的手表能力和通信通路均为新增需求。
 
 ## 首版验收
 

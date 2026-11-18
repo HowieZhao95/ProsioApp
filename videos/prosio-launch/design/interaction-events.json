@@ -1,7 +1,7 @@
 {
   "revision": "native-ui-and-synchronized-input",
   "fps": 30,
-  "actionCount": 42,
+  "actionCount": 38,
   "events": [
     {
       "scene": "Voice",
@@ -507,56 +507,6 @@
         "width": 68,
         "height": 24
       }
-    },
-    {
-      "scene": "Agent",
-      "id": "answer-field",
-      "frame": 1374,
-      "localFrame": 24,
-      "type": "click",
-      "x": 596,
-      "y": 416,
-      "target": {
-        "x": 364,
-        "y": 396,
-        "width": 512,
-        "height": 42
-      }
-    },
-    {
-      "scene": "Agent",
-      "id": "type-answer",
-      "frame": 1380,
-      "localFrame": 30,
-      "type": "key",
-      "x": 596,
-      "y": 416,
-      "target": null
-    },
-    {
-      "scene": "Agent",
-      "id": "send-answer",
-      "frame": 1418,
-      "localFrame": 68,
-      "type": "click",
-      "x": 404,
-      "y": 488,
-      "target": {
-        "x": 364,
-        "y": 477,
-        "width": 80,
-        "height": 22
-      }
-    },
-    {
-      "scene": "Agent",
-      "id": "read-update",
-      "frame": 1445,
-      "localFrame": 95,
-      "type": "move",
-      "x": 704,
-      "y": 285,
-      "target": null
     }
   ]
 }

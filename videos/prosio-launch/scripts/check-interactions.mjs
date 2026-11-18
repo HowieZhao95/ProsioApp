@@ -12,15 +12,13 @@ import {captureActions} from './src/scenes/Capture';
 import {notesActions} from './src/scenes/Notes';
 import {recordingActions} from './src/scenes/Recording';
 import {meetingActions} from './src/scenes/Meeting';
-import {agentActions} from './src/scenes/Agent';
 export {interactionAt};
 export const scenes = [
  {id:'Voice',start:210,duration:300,actions:voiceActions},
  {id:'Capture',start:510,duration:300,actions:captureActions},
  {id:'Notes',start:810,duration:210,actions:notesActions},
  {id:'Recording',start:1020,duration:180,actions:recordingActions},
- {id:'Meeting',start:1200,duration:150,actions:meetingActions},
- {id:'Agent',start:1350,duration:120,actions:agentActions}
+ {id:'Meeting',start:1200,duration:150,actions:meetingActions}
 ];`;
 const output = path.resolve('out/check-interactions.cjs');
 await build({stdin:{contents:entry,resolveDir:process.cwd(),loader:'ts'},outfile:output,bundle:true,packages:'external',platform:'node',format:'cjs',logLevel:'silent'});

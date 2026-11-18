@@ -21,7 +21,6 @@ struct MenuBarContentView: View {
                 case .meeting: meetingPane
                 case .presentation: PresentationMenuView(coordinator: environment.presentation, permissions: environment.permissions)
                 case .recording: recordingPane
-                case .agents: AgentMenuPane(coordinator: .shared)
                 }
             }
         } footer: {
@@ -30,7 +29,6 @@ struct MenuBarContentView: View {
     }
 
     private var voiceBusy: Bool {
-        if AgentMonitorCoordinator.shared.voice.recording || AgentMonitorCoordinator.shared.voice.finishing { return true }
         switch environment.controller.phase {
         case .idle, .finished, .failed: return false
         default: return true
@@ -86,6 +84,12 @@ struct MenuBarContentView: View {
                     .padding(.top, 11)
             }
             voiceHotkeyStatus
+            if let notice = environment.controller.notice {
+                Text(notice)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 8)
+            }
             Divider().padding(.vertical, 14)
             Text("语音偏好")
                 .font(.system(size: 12, weight: .semibold))
@@ -101,7 +105,10 @@ struct MenuBarContentView: View {
                 )
             )
             .padding(.horizontal, -14)
-            AccountRow(isSignedIn: environment.isSignedIn)
+            AccountRow(hasOpenRouterKey: environment.hasOpenRouterKey) {
+                environment.openCloudSettings = true
+                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            }
                 .padding(.horizontal, -14)
             Divider().padding(.vertical, 8)
             RecentHistorySection(
@@ -392,7 +399,7 @@ struct MenuBarContentView: View {
                 set: { environment.meeting.cloudEnabled = $0 }
             ))
             .font(.system(size: 12))
-            .disabled(!environment.isSignedIn)
+            .disabled(!environment.hasSonioxKey)
             Text("关闭时仅在本机处理；云端失败也保留本地稿。")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
             if !environment.permissions.screenCaptureGranted {
@@ -483,10 +490,6 @@ struct MenuBarContentView: View {
                         } else if selectedPane == .recording {
                             Text("屏幕录制").font(.system(size: 13, weight: .semibold))
                             Text("选择屏幕与最多两个机位，麦克风和系统声音独立保存。结束后可预览、裁剪导出，或将原片与项目交给剪辑软件。")
-                                .font(.system(size: 12)).foregroundStyle(.secondary)
-                        } else if selectedPane == .agents {
-                            Text("Agent 任务").font(.system(size: 13, weight: .semibold))
-                            Text("菜单栏显示执行和待处理数量，点击任务查看详情。关闭详情窗口后继续监控；暂停监控可停止读取。")
                                 .font(.system(size: 12)).foregroundStyle(.secondary)
                         } else {
                             Text("会议转写")
@@ -641,24 +644,23 @@ private struct TranslateRow: View {
 /// A single subtle row, shown only when signed out — nothing when signed in, per the redesign
 /// (no persistent "signed in" chrome needed).
 struct AccountRow: View {
-    var isSignedIn: Bool
+    var hasOpenRouterKey: Bool
+    var openCloud: () -> Void
 
     var body: some View {
-        if !isSignedIn {
+        if !hasOpenRouterKey {
             HStack(spacing: 8) {
-                Image(systemName: "person.crop.circle.badge.exclamationmark")
+                Image(systemName: "key")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .frame(width: 16)
-                Text("登录以启用云端润色")
+                Text("填写 OpenRouter Key 以启用云端润色")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()
-                SettingsLink {
-                    Text("登录")
-                }
-                .buttonStyle(.link)
-                .font(.system(size: 12))
+                Button("填写", action: openCloud)
+                    .buttonStyle(.link)
+                    .font(.system(size: 12))
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 6)

@@ -30,7 +30,14 @@ final class AppEnvironment {
     let settings: AppSettings
     let dictionary: DictionaryStore
     let history: HistoryStore
-    let backend: BackendClient
+    let openRouter: OpenRouterClient
+    let soniox: SonioxClient
+    /// True when an OpenRouter key is in the Keychain. Refreshed after the user saves or clears it.
+    private(set) var hasOpenRouterKey: Bool
+    /// True when a Soniox key is in the Keychain. Refreshed after the user saves or clears it.
+    private(set) var hasSonioxKey: Bool
+    /// Set by the menu before opening Settings so the Cloud tab is selected.
+    var openCloudSettings = false
     let capture: CaptureCoordinator
     let meeting: MeetingCoordinator
     let recording: RecordingCoordinator
@@ -44,13 +51,6 @@ final class AppEnvironment {
     @ObservationIgnored private(set) var hotkey: HotkeyMonitor?
     @ObservationIgnored private(set) var hud: HUDController?
     @ObservationIgnored private let audioCapture: AudioCapture
-
-    /// Whether the backend has a stored session (kept in sync explicitly since `BackendClient`
-    /// isn't itself `@Observable`; see `signIn`/`signOut`).
-    private(set) var isSignedIn: Bool
-    /// The signed-in account's email, mirrored from `backend.signedInEmail` at the same points
-    /// `isSignedIn` is (init, `onSignInStateChange`, `signIn`/`signOut`) — `nil` when signed out.
-    private(set) var signedInEmail: String?
 
     #if DEBUG
     @ObservationIgnored private var presentationTestWindow: NSWindow?
@@ -67,37 +67,50 @@ final class AppEnvironment {
         onboarding = OnboardingProgress(defaults: defaults)
         dictionary = DictionaryStore(fileURL: support.appending(path: "dictionary.json"))
         history = HistoryStore(fileURL: support.appending(path: "history.json"))
-        // TODO(P1): if `settings.backendURL` changes at runtime, `backend` (and anything holding
-        // a reference to it, e.g. the cloud engine's token provider) would need to be recreated.
-        // Not needed for the P0 skeleton, where the URL is effectively fixed at launch.
-        backend = BackendClient(baseURL: settings.backendURL)
-        isSignedIn = backend.isSignedIn
-        signedInEmail = backend.signedInEmail
+        hasOpenRouterKey = KeychainStore.load(.openRouter) != nil
+        hasSonioxKey = KeychainStore.load(.soniox) != nil
+        let settingsBox = settings
+        openRouter = OpenRouterClient(
+            key: { KeychainStore.load(.openRouter) },
+            models: {
+                await MainActor.run {
+                    OpenRouterModels(
+                        transcription: settingsBox.transcriptionModel,
+                        compose: settingsBox.composeModel,
+                        composeFallback: settingsBox.composeFallbackModel
+                    )
+                }
+            }
+        )
+        soniox = SonioxClient()
         presentation = PresentationCoordinator(defaults: defaults)
         notes = DailyNotesCoordinator(root: support.appending(path: "Notes", directoryHint: .isDirectory), defaults: defaults)
         permissions = PermissionsManager()
         capture = CaptureCoordinator(permissions: permissions, rootURL: support.appending(path: "Captures", directoryHint: .isDirectory))
-        let captureBackend = backend
+        let translator = openRouter
         capture.translateTexts = { texts, language in
-            try await captureBackend.translateCaptureTexts(texts, targetLanguage: language)
+            do {
+                return try await translator.translateCaptureTexts(texts, targetLanguage: language)
+            } catch ProsioError.notSignedIn {
+                throw CaptureTranslationError.unavailable
+            }
         }
-        meeting = MeetingCoordinator(root: support.appending(path: "Meetings", directoryHint: .isDirectory), permissions: permissions, backend: backend, settings: settings)
+        meeting = MeetingCoordinator(root: support.appending(path: "Meetings", directoryHint: .isDirectory), permissions: permissions, enhancer: soniox, settings: settings)
         recording = RecordingCoordinator(root: support.appending(path: "Recordings", directoryHint: .isDirectory), permissions: permissions)
         focus = FocusContextProvider()
         inserter = TextInserter(settings: settings)
         let practiceFocus = focus
         inserter.practiceTarget = { [weak practiceFocus] in practiceFocus?.practiceTarget }
 
-        // Live preview: on-device SpeechAnalyzer. Final text: one /api/transcribe request with the
-        // silence-trimmed Ogg/Opus audio + the local transcript; the server decides (Jev) whether
-        // the local text is good enough (no Gemini call) and which mode the utterance is.
+        // Live preview stays on device. With an OpenRouter key, the final transcript is requested
+        // directly from OpenRouter; otherwise the on-device transcript is inserted.
         let audio = AudioCapture()
         audioCapture = audio
-        let cloudTranscriber = backend
+        let cloudTranscriber = openRouter
         controller = DictationController(
             audio: audio,
             localEngine: SpeechAnalyzerEngine(locale: Self.previewLocale(for: settings)),
-            cloudTranscriber: backend,
+            cloudTranscriber: openRouter,
             inserter: inserter,
             contextProvider: focus,
             history: history,
@@ -105,55 +118,12 @@ final class AppEnvironment {
             settings: settings,
             audioPreparer: SilenceTrimmingOpusAudioPreparer(),
             prewarmCloud: { await cloudTranscriber.prewarm() },
-            composer: backend
+            composer: openRouter
         )
 
         let feedback = DictationSoundFeedback()
-        controller.onRecordingStarted = {
-            AgentMonitorCoordinator.shared.voice.cancel()
-            feedback.playStart()
-        }
+        controller.onRecordingStarted = { feedback.playStart() }
         controller.onRecordingStopped = { feedback.playStop() }
-
-        AgentMonitorCoordinator.shared.voice.factory = { [weak self] target in
-            guard let self else { throw CancellationError() }
-            switch self.controller.phase {
-            case .idle, .finished, .failed: break
-            default: throw ProsioError.audioUnavailable("Voice input is already active")
-            }
-            guard !self.recording.blocksOtherCapture, self.meeting.activeID == nil,
-                  !self.meeting.starting, !self.meeting.finishingRecording else {
-                throw ProsioError.audioUnavailable("Another recording is active")
-            }
-            await self.permissions.request(.microphone)
-            guard !Task.isCancelled, self.permissions.statuses[.microphone] == .granted else { throw CancellationError() }
-            switch self.controller.phase {
-            case .idle, .finished, .failed: break
-            default: throw ProsioError.audioUnavailable("Voice input is already active")
-            }
-            guard !self.recording.blocksOtherCapture, self.meeting.activeID == nil,
-                  !self.meeting.starting, !self.meeting.finishingRecording else {
-                throw ProsioError.audioUnavailable("Another recording is active")
-            }
-            let audio = AudioCapture()
-            let input = try audio.start()
-            let engine = SpeechAnalyzerEngine(locale: Self.previewLocale(for: self.settings))
-            let events = engine.transcribe(audio: input, options: TranscriptionOptions(vocabulary: target.vocabulary, languageHints: self.settings.languageHints))
-            let pair = AsyncThrowingStream<String, Error>.makeStream()
-            let transcription = Task {
-                do {
-                    for try await event in events {
-                        switch event { case .partial(let text), .final(let text): pair.continuation.yield(text) }
-                    }
-                    pair.continuation.finish()
-                } catch { pair.continuation.finish(throwing: error) }
-            }
-            pair.continuation.onTermination = { @Sendable _ in audio.stop(); transcription.cancel() }
-            return AgentVoiceStream(text: pair.stream, stop: { audio.stop() }, cancel: { audio.stop(); transcription.cancel() })
-        }
-
-        // Cloud usage is recorded by the server, never by client reports.
-
     }
 
     /// Fallback locale for the on-device preview; the engine re-resolves from `languageHints` per session.
@@ -163,15 +133,7 @@ final class AppEnvironment {
 
     func launch() {
         Task { await recording.recoverSavedSessions() }
-        // The stored session token loads asynchronously; reading `isSignedIn` at init is too early.
-        backend.onSignInStateChange = { [weak self] signedIn in
-            Task { @MainActor in
-                guard let self else { return }
-                self.isSignedIn = signedIn
-                // `signedInEmail` is documented as current by the time this fires.
-                self.signedInEmail = self.backend.signedInEmail
-            }
-        }
+        refreshProviderKeys()
         // Download/prepare on-device speech assets up front so the first dictation previews instantly.
         let locale = Self.previewLocale(for: settings)
         Task.detached(priority: .utility) {
@@ -190,13 +152,11 @@ final class AppEnvironment {
         }
         recording.canBegin = { [weak self] in
             guard let self, !self.capture.isBusy, self.meeting.activeID == nil,
-                  !self.meeting.starting, !self.meeting.finishingRecording,
-                  !AgentMonitorCoordinator.shared.voice.recording, !AgentMonitorCoordinator.shared.voice.finishing else { return false }
+                  !self.meeting.starting, !self.meeting.finishingRecording else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         meeting.canBegin = { [weak self] in
-            guard let self, !self.capture.isBusy, !self.recording.blocksOtherCapture,
-                  !AgentMonitorCoordinator.shared.voice.recording, !AgentMonitorCoordinator.shared.voice.finishing else { return false }
+            guard let self, !self.capture.isBusy, !self.recording.blocksOtherCapture else { return false }
             switch self.controller.phase { case .idle, .finished, .failed: return true; default: return false }
         }
         hotkey = HotkeyMonitor(settings: settings, controller: controller)
@@ -332,18 +292,16 @@ final class AppEnvironment {
         window.makeKeyAndOrderFront(nil)
     }
 
-    /// Dev sign-in against `settings.backendURL`, then syncs the dictionary.
-    func signIn(email: String) async throws {
-        try await backend.devSignIn(email: email)
-        isSignedIn = backend.isSignedIn
-        signedInEmail = backend.signedInEmail
-        await syncDictionaryAfterSignIn()
+    func refreshProviderKeys() {
+        hasOpenRouterKey = KeychainStore.load(.openRouter) != nil
+        hasSonioxKey = KeychainStore.load(.soniox) != nil
     }
 
-    func signOut() {
-        backend.signOut()
-        isSignedIn = backend.isSignedIn
-        signedInEmail = backend.signedInEmail
+    func saveProviderKey(_ secret: String, account: ProviderCredential) {
+        let trimmed = secret.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { KeychainStore.delete(account) }
+        else { KeychainStore.save(trimmed, account: account) }
+        refreshProviderKeys()
     }
 
     /// Status of the global hotkey, for the UI to explain a non-working trigger key and offer a
@@ -379,14 +337,6 @@ final class AppEnvironment {
             return false
         }
         return usage != 0
-    }
-
-    /// Best-effort last-write-wins merge of the server dictionary into the local store (keeping
-    /// server ids so devices converge), then pushes the merged result back.
-    private func syncDictionaryAfterSignIn() async {
-        guard let remoteEntries = try? await backend.fetchDictionary() else { return }
-        try? dictionary.merge(remoteEntries)
-        try? await backend.pushDictionary(dictionary.entries)
     }
 
     #if DEBUG

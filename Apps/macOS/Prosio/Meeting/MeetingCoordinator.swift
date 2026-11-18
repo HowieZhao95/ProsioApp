@@ -9,7 +9,7 @@ import SwiftUI
 final class MeetingCoordinator {
     let store: MeetingStore
     private let permissions: PermissionsManager
-    private let backend: BackendClient
+    private let enhancer: any MeetingCloudEnhancing
     private let settings: AppSettings
     private var recorder: MeetingRecorder?
     private var liveMic: MeetingLiveCaptions?
@@ -28,10 +28,10 @@ final class MeetingCoordinator {
     @ObservationIgnored var onRecordingActivity: ((Bool) -> Void)?
     @ObservationIgnored var canBegin: () -> Bool = { true }
 
-    init(root: URL, permissions: PermissionsManager, backend: BackendClient, settings: AppSettings) {
+    init(root: URL, permissions: PermissionsManager, enhancer: any MeetingCloudEnhancing, settings: AppSettings) {
         store = MeetingStore(root: root)
         self.permissions = permissions
-        self.backend = backend
+        self.enhancer = enhancer
         self.settings = settings
         cloudEnabled = UserDefaults.standard.bool(forKey: "meetingCloudEnabled")
     }
@@ -226,9 +226,9 @@ final class MeetingCoordinator {
     private func enhanceWithCloud(id: UUID, files: MeetingAudioFiles) async {
         guard var record = store.records.first(where: { $0.id == id }),
               record.cloudStatus != "processing", record.cloudStatus != "ready" else { return }
-        guard await backend.loadedIsSignedIn() else {
+        guard KeychainStore.load(.soniox) != nil else {
             record.cloudStatus = "failed"
-            record.cloudError = "请先登录 Prosio，或继续使用本地稿。"
+            record.cloudError = "请先在设置中填写 Soniox Key，或继续使用本地稿。"
             try? store.save(record)
             return
         }
@@ -241,7 +241,7 @@ final class MeetingCoordinator {
             if let playback, FileManager.default.fileExists(atPath: playback.path) { file = playback }
             else { file = try await MeetingCloudAudio.export(files, to: store.directory(for: id).appending(path: "recognition.m4a")) }
             let duration = max(1, try await AVURLAsset(url: file).load(.duration).seconds)
-            let transcript = try await backend.submitMeeting(id: id, file: file,
+            let transcript = try await enhancer.submitMeeting(id: id, file: file,
                                                               durationSeconds: duration,
                                                               languageHints: settings.languageHints)
             record.cloud = Self.groupCloudTokens(transcript.tokens)

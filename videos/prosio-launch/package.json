@@ -1,7 +1,7 @@
 {
   "name": "prosio-launch-film",
   "version": "1.0.0",
-  "description": "Prosio 60-second product film",
+  "description": "Prosio 49-second product film",
   "scripts": {
     "dev": "remotion studio --no-open --port=3210",
     "build": "remotion bundle",
@@ -13,7 +13,7 @@
     "render": "remotion render ProsioLaunch out/prosio-launch.mp4 --codec=h264 --crf=16"
   },
   "repository": {},
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "@remotion/cli": "4.0.534",
     "@remotion/media": "4.0.534",

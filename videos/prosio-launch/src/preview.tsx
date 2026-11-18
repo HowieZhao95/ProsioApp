@@ -5,7 +5,7 @@ import {Film} from './Film';
 
 const FPS = 30;
 const requestedFrame = Number(new URLSearchParams(window.location.search).get('frame') ?? 0);
-const initialFrame = Number.isFinite(requestedFrame) ? Math.max(0, Math.min(1799, Math.round(requestedFrame))) : 0;
+const initialFrame = Number.isFinite(requestedFrame) ? Math.max(0, Math.min(1469, Math.round(requestedFrame))) : 0;
 const chapters = [
   {seconds: 0, title: '开场'},
   {seconds: 7, title: '语音输入'},
@@ -13,9 +13,7 @@ const chapters = [
   {seconds: 27, title: '每日便签'},
   {seconds: 34, title: '录屏演示'},
   {seconds: 40, title: '会议记录'},
-  {seconds: 45, title: 'Agent 协作'},
-  {seconds: 49, title: '价格'},
-  {seconds: 56, title: '品牌'},
+  {seconds: 45, title: '品牌'},
 ];
 
 function Preview() {
@@ -54,7 +52,7 @@ function Preview() {
       <header className="preview-header">
         <div>
           <p className="eyebrow">PROSIO</p>
-          <h1>Prosio <span aria-hidden="true">·</span> 60秒品牌片</h1>
+          <h1>Prosio <span aria-hidden="true">·</span> 49秒品牌片</h1>
         </div>
         <a className="studio-link" href="http://localhost:3210/ProsioLaunch" target="_blank" rel="noreferrer">
           打开 Studio <span aria-hidden="true">↗</span>
@@ -65,7 +63,7 @@ function Preview() {
         <Player
           ref={player}
           component={Film}
-          durationInFrames={1800}
+          durationInFrames={1470}
           fps={FPS}
           compositionWidth={1920}
           compositionHeight={1080}
@@ -111,7 +109,7 @@ function Preview() {
 
       <footer className="preview-footer">
         <p>Typeless 风格参考 <span>·</span> 原创画面与配乐 <span>·</span> 界面演示</p>
-        <span className="format-note">60s / 16:9 / 30fps</span>
+        <span className="format-note">49s / 16:9 / 30fps</span>
       </footer>
     </main>
   );

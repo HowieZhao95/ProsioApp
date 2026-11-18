@@ -30,7 +30,7 @@
     {
       "start": 49,
       "end": 56,
-      "arrangement": "price: drums and bass removed"
+      "arrangement": "unused tail after the price scene was removed"
     },
     {
       "start": 56,
@@ -288,27 +288,6 @@
       "type": "click",
       "scene": "Meeting",
       "action": "copy-transcript"
-    },
-    {
-      "time": 45.8,
-      "frame": 1374,
-      "type": "click",
-      "scene": "Agent",
-      "action": "answer-field"
-    },
-    {
-      "time": 46.0,
-      "frame": 1380,
-      "type": "key",
-      "scene": "Agent",
-      "action": "type-answer"
-    },
-    {
-      "time": 47.266666666666666,
-      "frame": 1418,
-      "type": "click",
-      "scene": "Agent",
-      "action": "send-answer"
     }
   ],
   "verification": "Measured electronically, not auditioned. Final listening review is recommended with picture."

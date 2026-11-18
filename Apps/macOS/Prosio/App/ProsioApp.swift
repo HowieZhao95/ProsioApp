@@ -8,7 +8,9 @@ struct ProsioApp: App {
         MenuBarExtra {
             MenuBarContentView(environment: appDelegate.environment)
         } label: {
-            AgentMenuStatusLabel(coordinator: .shared)
+            Image(systemName: "waveform")
+                .accessibilityLabel("Prosio")
+                .help("Prosio")
         }
         .menuBarExtraStyle(.window)
 
@@ -68,11 +70,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         environment.launch()
-        AgentMonitorCoordinator.shared.restoreMonitoring()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        AgentMonitorCoordinator.shared.stop(persistPreference: false)
         environment.shutdown()
     }
 

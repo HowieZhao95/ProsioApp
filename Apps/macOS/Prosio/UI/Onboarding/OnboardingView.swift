@@ -14,9 +14,9 @@ struct OnboardingView: View {
     @State private var permissionChecked = false
     @State private var requestingPermission = false
     @State private var accountVisible = false
-    @State private var email = ""
-    @State private var signingIn = false
-    @State private var accountError: String?
+    @State private var openRouterKey = ""
+    @State private var sonioxKey = ""
+    @State private var accountStatus: String?
     @State private var message: String?
     @State private var pointerBeforePractice: Bool?
     @State private var meetingStartedHere = false
@@ -28,6 +28,7 @@ struct OnboardingView: View {
     private var voiceBusy: Bool {
         switch environment.controller.phase {
         case .idle, .finished, .failed: false
+        case .answering: environment.controller.answer?.isStreaming != false
         default: true
         }
     }
@@ -90,7 +91,7 @@ struct OnboardingView: View {
         case .notes:
             OnboardingHeading(title: "想到了，就记下。", detail: "灵感与待办，随手留在桌面。")
         case .tools:
-            OnboardingHeading(title: "还有这些顺手的事。", detail: "录下来、讲清楚、看看任务进展。")
+            OnboardingHeading(title: "还有这些顺手的事。", detail: "录下屏幕和声音，演示时突出光标。")
         case .ready:
             OnboardingHeading(title: "用得上时，就在这里。", detail: "点击菜单栏的 Prosio，继续你的工作。")
         }
@@ -175,8 +176,8 @@ struct OnboardingView: View {
                     Button(environment.permissions.allRequiredGranted ? "调整" : "开启") { settingsVisible = true }
                         .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(OnboardingStyle.accent)
                 }
-            } else if !environment.isSignedIn {
-                Button("登录以使用智能整理与翻译") { accountVisible = true }
+            } else if !environment.hasOpenRouterKey {
+                Button("填写 Key 以使用智能整理与翻译") { accountVisible = true }
                     .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(.secondary)
             }
         }
@@ -284,10 +285,6 @@ struct OnboardingView: View {
                     environment.onboarding.markExperienced(.tools)
                 }
             }
-            Divider().overlay(OnboardingStyle.line)
-            toolRow(symbol: "square.stack.3d.up", title: "Agent 任务", detail: "进展与待办，一眼知道。", action: "打开") {
-                AgentMonitorCoordinator.shared.show()
-            }
             if let reason = environment.meeting.message {
                 Text(reason).font(.system(size: 12)).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.top, 12)
@@ -368,8 +365,8 @@ struct OnboardingView: View {
                 Text("右 Option 与截图快捷键重复，请更换其中一个。")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
             }
-            if !environment.isSignedIn {
-                Button("登录智能服务") { settingsVisible = false; accountVisible = true }
+            if !environment.hasOpenRouterKey {
+                Button("填写 OpenRouter Key") { settingsVisible = false; accountVisible = true }
                     .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(OnboardingStyle.accent)
             }
             Button("完成") { settingsVisible = false; editor.focus() }.buttonStyle(OnboardingPrimaryButton())
@@ -377,19 +374,26 @@ struct OnboardingView: View {
     }
 
     private var accountSettings: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("智能服务").font(.system(size: 21, weight: .semibold))
-            if environment.isSignedIn {
-                Text(environment.signedInEmail ?? "已登录").font(.system(size: 14)).foregroundStyle(.secondary)
-                Button("完成") { accountVisible = false }.buttonStyle(OnboardingPrimaryButton())
-            } else {
-                Text("用于整理、翻译与改写。").font(.system(size: 13)).foregroundStyle(.secondary)
-                TextField("邮箱", text: $email).textFieldStyle(.roundedBorder).onSubmit(signIn)
-                if let accountError { Text(accountError).font(.system(size: 12)).foregroundStyle(.secondary) }
-                Button(signingIn ? "登录中…" : "登录", action: signIn)
-                    .buttonStyle(OnboardingPrimaryButton()).disabled(signingIn || email.trimmingCharacters(in: .whitespaces).isEmpty)
+        VStack(alignment: .leading, spacing: 16) {
+            Text("云端 Key").font(.system(size: 21, weight: .semibold))
+            Text("可选。费用记在你自己的账单上，跳过仍可使用本机听写。")
+                .font(.system(size: 13)).foregroundStyle(.secondary)
+            SecureField("OpenRouter Key", text: $openRouterKey).textFieldStyle(.roundedBorder)
+            Link("获取 OpenRouter Key", destination: OpenRouterClient.openRouterKeysURL)
+                .font(.system(size: 12))
+            SecureField("Soniox Key", text: $sonioxKey).textFieldStyle(.roundedBorder)
+            Link("获取 Soniox Key", destination: SonioxClient.consoleURL)
+                .font(.system(size: 12))
+            if let accountStatus { Text(accountStatus).font(.system(size: 12)).foregroundStyle(.secondary) }
+            HStack {
+                Button("保存") { saveProviderKeys() }.buttonStyle(OnboardingPrimaryButton())
+                Button("稍后填写") { accountVisible = false }.buttonStyle(.plain).foregroundStyle(.secondary)
             }
-        }.padding(28).frame(width: 340)
+        }.padding(28).frame(width: 380)
+        .onAppear {
+            openRouterKey = KeychainStore.load(.openRouter) ?? ""
+            sonioxKey = KeychainStore.load(.soniox) ?? ""
+        }
     }
 
     private func permissionRow(title: String, detail: String, granted: Bool, request: @escaping () -> Void) -> some View {
@@ -423,6 +427,7 @@ struct OnboardingView: View {
     private var voiceButtonTitle: String {
         if practicingVoice && environment.controller.phase == .listening { return "结束说话" }
         if practicingVoice && voiceBusy { return "处理中…" }
+        if case .answering = environment.controller.phase { return "再试一句" }
         return environment.permissions.allRequiredGranted ? "试着说一句" : "设置并体验"
     }
     private var practiceStatus: String {
@@ -430,10 +435,17 @@ struct OnboardingView: View {
         switch environment.controller.phase {
         case .listening: return environment.controller.previewText.isEmpty ? "正在聆听…" : environment.controller.previewText
         case .finalizing, .composing, .inserting: return "正在处理…"
+        case .answering:
+            if let answer = environment.controller.answer {
+                if let error = answer.error { return "回答没有完成，请重试。" }
+                if answer.isStreaming, answer.text.isEmpty { return "正在回答…" }
+                return answer.text
+            }
+            return "正在回答…"
         case .finished(let outcome): return outcome == .copiedToClipboard ? "已复制，可粘贴到这里" : "已写入"
         case .failed(let error):
             switch error {
-            case .notSignedIn: return "请先登录智能服务。"
+            case .notSignedIn: return "请先填写 OpenRouter Key。"
             case .emptyTranscript: return "没听清，再试一次。"
             case .microphonePermissionDenied: return "请开启麦克风。"
             case .network: return "服务暂不可用，请重试。"
@@ -452,9 +464,12 @@ struct OnboardingView: View {
     }
     private func toggleVoice() {
         if practicingVoice && environment.controller.phase == .listening { environment.controller.stop(); return }
+        if case .answering = environment.controller.phase, environment.controller.answer?.isStreaming == false {
+            environment.controller.dismissAnswer()
+        }
         guard !voiceBusy && !mediaBusy else { return }
         guard environment.permissions.allRequiredGranted else { settingsVisible = true; return }
-        if mode != .input && !environment.isSignedIn { accountVisible = true; return }
+        if mode != .input && !environment.hasOpenRouterKey { accountVisible = true; return }
         editor.focus(selectAll: mode == .edit)
         if mode == .translate {
             // Use the spoken one-off translate instruction; persistent translation preferences
@@ -540,14 +555,11 @@ struct OnboardingView: View {
     private func openKeyboardSettings() {
         if let url = URL(string: "x-apple.systempreferences:com.apple.Keyboard-Settings.extension") { NSWorkspace.shared.open(url) }
     }
-    private func signIn() {
-        guard !signingIn else { return }
-        signingIn = true; accountError = nil
-        Task {
-            defer { signingIn = false }
-            do { try await environment.signIn(email: email.trimmingCharacters(in: .whitespacesAndNewlines)); accountVisible = false }
-            catch { accountError = "登录未完成，请检查邮箱与服务连接。" }
-        }
+    private func saveProviderKeys() {
+        environment.saveProviderKey(openRouterKey, account: .openRouter)
+        environment.saveProviderKey(sonioxKey, account: .soniox)
+        accountStatus = "已保存。没有填写的 Key 会保持清除。"
+        accountVisible = false
     }
     private func navigate(_ target: OnboardingPage) {
         guard !voiceBusy || !practicingVoice else { message = "请先结束说话。"; return }
